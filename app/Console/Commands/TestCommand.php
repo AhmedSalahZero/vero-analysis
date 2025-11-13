@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Company;
 use App\Models\FinancialStatement;
+use App\Models\LetterOfGuaranteeIssuance;
 use App\Models\MoneyPayment;
 use App\Models\NonBankingService\Study;
 use App\Models\NonBankingService\TestCashFlowStatement;
@@ -52,53 +53,7 @@ class TestCommand extends Command
 	}
 	public function handle()
 	{
-		// dD($this->getAllColumnNamesFromTable('cashflow_statement_reports',NON_BANKING_SERVICE_CONNECTION_NAME));
-		// $study  = Study::find(66);
-		// 	$securitizationRevenueTypes = [Study::LEASING,Study::IJARA,Study::MICROFINANCE];
-		// $loanSchedulePayments = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('study_id',$study->id)->where('portfolio_loan_type','portfolio')->whereIn('revenue_stream_type',$securitizationRevenueTypes)->get();
-		// $portfolioEndBalancePerType=[];
-		// foreach($loanSchedulePayments as $loanSchedulePayment){
-		// 	$revenueStreamType = $loanSchedulePayment->revenue_stream_type;
-		// 	$securitizationDateIndex = $loanSchedulePayment->securitization_date_index;
-		// 	$endBalances = json_decode($loanSchedulePayment->endBalance,true);
-		// 	foreach($endBalances as $dateAsIndex => $endBalance){
-		// 		if(isSecuritized($securitizationDateIndex,$dateAsIndex)){
-		// 			$endBalance=  0;
-		// 		}
-		// 		$portfolioEndBalancePerType[$revenueStreamType][$dateAsIndex] = $endBalance;
-		// 	}
-		// }
-		// foreach($securitizationRevenueTypes as $revenueStreamType){
-		// 	$totalPortfolioEndBalance = $portfolioEndBalancePerType[$revenueStreamType]??[];
-		// 	$study->recalculateMonthlyAndAccumulatedEcl($revenueStreamType, $totalPortfolioEndBalance);
-		// }
-		
-		// TestCashFlowStatement::where('id','>',0)->delete();
-		// TestIncomeStatement::where('id','>',0)->delete();
-		// $cashIn = [
-		// 	100 , 200 , 300 
-		// ];
-		// $cashOut = [
-		// 	100 , 400 , 300 
-		// ];
-		// $OdaInterestsOut = [
-		// 	0 , 50 , 0 
-		// ];
-		// $incomeStatement = TestIncomeStatement::create([
-		// 	'oda_interests'=>$OdaInterestsOut
-		// ]);
-		// $cashflowStatement = TestCashFlowStatement::create([
-		// 	'oda_interests'=>$OdaInterestsOut
-		// ]);
-		// $incomeStatement->update([
-		// 	'revenues'=>[1000,2000,3000]
-		// ]);
-		// $incomeStatement->update([
-		// 	'corporate_taxes'=>[100 ]
-		// ]);
-		// $cashflowStatement->update([
-		// 	'corporate_taxes_payments'=>[100 ]
-		// ]);
+		// LetterOfGuaranteeIssuance::where('')
 	}
 	
 	/**

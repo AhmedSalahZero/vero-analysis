@@ -30,6 +30,6 @@ class Department extends Model
 	{
 		return $this->hasMany(Position::class,'department_id','id');
 	}
-	
+
 	
 }

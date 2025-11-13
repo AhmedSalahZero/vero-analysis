@@ -5,7 +5,6 @@ namespace App\Http\Controllers\NonBankingServices;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\NonBankingService\Study;
-use App\ReadyFunctions\ConvertFlatRateToDecreasingRate;
 use App\Traits\NonBankingService;
 use Illuminate\Http\Request;
 
@@ -61,7 +60,8 @@ class SecuritizationController extends Controller
     {
 		$study->storeRepeaterRelations($request,['securitizations'],$company,[]);
 		 $study->calculateSecuritizationLoans();
-		if($request->get('save') == 'save_and_next'){
+		 $securitizations = $request->get('securitizations',[]) ;
+		if($request->get('save') == 'save_and_next' || !count($securitizations)){
 						return response()->json([
                 'redirectTo'=>route('view.manpower.for.non.banking', ['company'=>$company->id,'study'=>$study->id])
             ]);

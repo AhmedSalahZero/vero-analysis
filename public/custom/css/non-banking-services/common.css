@@ -1,3 +1,6 @@
+i.row-repeater-icon{
+	cursor: pointer;	
+}
 /* html table th span{
 	font-size:16px
 } */
@@ -343,6 +346,7 @@ input.custom-input-string-width{
 .w-240px{
 	width:240px !important;
 }
+
 .max-w-20{
 	max-width:200px;
 }
@@ -1263,4 +1267,29 @@ td > .kt-radio.kt-radio--single {
 	max-width: 250px !important;
 	min-width: 250px !important;
 	width: 250px !important;
+}
+.w-50{
+	max-width:50px !important;
+	min-width:50px !important;
+	width:50px !important;
+}
+
+.w-60-prc{
+		max-width:60% !important;
+	min-width:60% !important;
+	width:60% !important;
+}
+.w-35-prc{
+		max-width:35% !important;
+	min-width:35% !important;
+	width:35% !important;
+}
+.w-10-prc{
+		max-width:10% !important;
+	min-width:10% !important;
+	width:10% !important;
+}.w-5-prc{
+		max-width:5% !important;
+	min-width:5% !important;
+	width:5% !important;
 }

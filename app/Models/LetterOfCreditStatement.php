@@ -217,7 +217,7 @@ class LetterOfCreditStatement extends Model
 	// }
 	
 	
-	public static function getTotalOutstandingBalanceForAllTypes(int $lcFacilityId , int $companyId , int $financialInstitutionId,string $currencyName):float 
+	public static function getTotalOutstandingBalanceForAllTypes(int $lcFacilityId , int $companyId , int $financialInstitutionId,string $currencyName , $debug=false):float 
 	{
 		$totalLastOutstandingBalanceOfFourTypes = 0 ;
 		foreach(LcTypes::getAll() as $lcTypeId => $lcTypeNameFormatted){	
@@ -225,6 +225,7 @@ class LetterOfCreditStatement extends Model
 				if($currentSourceId != LetterOfCreditIssuance::LC_FACILITY ){
 					continue ;
 				}
+				
 				$letterOfCreditStatement = DB::table((new self)->getTable())
 					->where('company_id',$companyId)
 					->where('financial_institution_id',$financialInstitutionId)
@@ -236,6 +237,8 @@ class LetterOfCreditStatement extends Model
 					->first();
 					$letterOfCreditStatementEndBalance = $letterOfCreditStatement ? $letterOfCreditStatement->end_balance : 0 ;
 					$totalLastOutstandingBalanceOfFourTypes += $letterOfCreditStatementEndBalance;
+					
+					
 				
 			}
 			
@@ -329,7 +332,7 @@ class LetterOfCreditStatement extends Model
 	public static function getTotalCashCoverForAllTypes(int $lcFacilityId,int $companyId , int $financialInstitutionId,string $currency , ?string $type = null , ?string $source = null):float 
 	{
 		$totalLastCashCoverOfFourTypes = 0 ;
-		foreach(LcTypes::getAll() as $lcTypeId => $lcTypeNameFormatted){
+		// foreach(LcTypes::getAll() as $lcTypeId => $lcTypeNameFormatted){
 			$letterOfCreditCashCover = DB::table('letter_of_credit_cash_cover_statements')
 			->where('company_id',$companyId)
 			->where('currency',$currency)
@@ -344,10 +347,11 @@ class LetterOfCreditStatement extends Model
 			})
 			->orderByRaw('date desc,id desc')
 			->first();
+			// dd($letterOfCreditCashCover);
 			
 			$letterOfCreditCashCoverEndBalance = $letterOfCreditCashCover ? $letterOfCreditCashCover->end_balance : 0 ;
 			$totalLastCashCoverOfFourTypes += $letterOfCreditCashCoverEndBalance;
-		}
+		// }
 		return abs($totalLastCashCoverOfFourTypes) ; 
 	}
 	public function getForeignKeyNamesThatUsedInFilter():array 

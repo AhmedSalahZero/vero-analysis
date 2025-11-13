@@ -16,19 +16,21 @@ class LeasingController extends Controller
     use NonBankingService ;
     public function create(Company $company, Request $request, Study $study)
     {
+		// Study::sumTwoIncomeStatements();
         return view('non_banking_services.leasing-revenue-stream-breakdown.form', $this->getViewVars($company, $study));
     }
     protected function getViewVars(Company $company, Study $study)
     {
-        $leasingEclAndNewPortfolioFundingRate = $study?  $study->getEclAndNewPortfolioFundingRatesForStreamType(Study::LEASING) : null;
+        $eclAndNewPortfolioFundingRate = $study?  $study->getEclAndNewPortfolioFundingRatesForStreamType(Study::LEASING) : null;
         $yearsWithItsMonths =  $study->getOperationDurationPerYearFromIndexes() ;
         $yearOrMonthsIndexes = $study->getYearOrMonthIndexes();
         $isYearsStudy = !$study->isMonthlyStudy();
+		// dd($studyMonthsForViews = );
         return [
             'company'=>$company ,
             'study'=>$study,
             'model'=>$study ,
-            'leasingEclAndNewPortfolioFundingRate'=>$leasingEclAndNewPortfolioFundingRate,
+            'eclAndNewPortfolioFundingRate'=>$eclAndNewPortfolioFundingRate,
             'title'=>__('Leasing Revenue Stream Breakdown'),
             'storeRoute'=>route('store.leasing.revenue.stream.breakdown', ['company'=>$company->id , 'study'=>$study->id]),
             'yearsWithItsMonths' =>$yearsWithItsMonths,
@@ -54,7 +56,7 @@ class LeasingController extends Controller
                 'leasing_growth_rates'=>$request->get('growth_rate')
             ]);
         }
-        	$study->syncSeasonality($request->get('seasonality', []), Study::LEASING, $company->id) ;
+        $study->syncSeasonality($request->get('seasonality', []), Study::LEASING, $company->id) ;
         
         // $study->storeAdminFeesAndFundingStructureFor($request, Study::LEASING);
         $study->storeFixedLoans($request,Study::LEASING, 'leasingRevenueStreamBreakdown');

@@ -5,7 +5,6 @@ use App\Helpers\HArr;
 use Carbon\Carbon ;
 @endphp
 <x-styles.commons></x-styles.commons>
-
 <style>
 .expandable-percentage-input {
     max-width: 75px !important;
@@ -434,7 +433,7 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                             @endphp
 
                                             @foreach(['customers','suppliers','cash_expenses','lg'] as $mainReportKey)
-
+ 
                                             @foreach( $finalResult[$currentCurrencyName][$mainReportKey] ?? [] as $parentKeyName => $subRows)
                                             @php
                                             $customerName = $parentKeyName ;
@@ -454,7 +453,7 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
 											$isTotalRow = true ;
                                             @endphp
                                             
-											
+								{{-- {{ dd('v') }}			 --}}
 											
 											{{-- {{ dD($pastDueLoanInstallments,$dates) }} --}}
 					 <tr class=" @if($customerName == __('Total Cash Inflow') || $customerName == __('Total Cash Outflow') ||  $customerName == __('Total Cash')) bg-lighter @else  @endif  parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   " data-model-id="{{ $rowIndex }}">
@@ -463,6 +462,7 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                     <td class="  sub-numeric-bg text-center editable-date"> 
 										@if($customerName == __('Customers Past Due Invoices'))
 										<button   class="btn btn-sm btn-danger text-white js-show-customer-due-invoices-modal">{{ __('View') }}</button>
+										{{-- {{ dd($contractCode , $currencyName , isset($cashflowReport) ? $cashflowReport:null ,$reportInterval ) }} --}}
                                                 <x-modal.due-invoices :contractCode="$contractCode" :currencyName="$currencyName"  :cashflowReport="isset($cashflowReport) ? $cashflowReport:null" :report-interval="$reportInterval" :currentInvoiceType="'CustomerInvoice'" :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueCustomerInvoices[$currentCurrencyName]??[]" :id="'test-modal-id'"></x-modal.due-invoices>
 										@endif 
 										
@@ -474,13 +474,11 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
 												@if($customerName == 'Loan Past Due Installments')
 												<button   class="btn btn-sm btn-danger text-white js-show-loan-past-due-installment-modal">{{ __('View') }}</button>
                                                 <x-modal.loan-installment  :contractCode="$contractCode" :currencyName="$currencyName" :cashflowReport="isset($cashflowReport) ? $cashflowReport:null" :report-interval="$reportInterval"  :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueInstallments" :id="'test-modal-id'"></x-modal.loan-installment>
-										
 											@endif 
 											
 									
 									 </td>
 									 @php
-										//	$currentMainRowTotal = $finalResult[$currentCurrencyName][$mainReportKey][$parentKeyName]['total']['total_of_total']??0;
 											$currentMainRowTotal = 0;
 									 @endphp
                                     @foreach($weeks as $weekAndYear => $week)

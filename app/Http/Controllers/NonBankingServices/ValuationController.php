@@ -1,0 +1,214 @@
+<?php
+
+namespace App\Http\Controllers\NonBankingServices;
+
+use App\Helpers\HArr;
+use App\Http\Controllers\Controller;
+use App\Models\Company;
+use App\Models\NonBankingService\CashAndBankOpeningBalance;
+use App\Models\NonBankingService\EclAndNewPortfolioFundingRate;
+use App\Models\NonBankingService\Expense;
+use App\Models\NonBankingService\Manpower;
+use App\Models\NonBankingService\SecuritizationLoanSchedule;
+use App\Models\NonBankingService\Study;
+use Carbon\Carbon;
+use Exception;
+use Illuminate\Support\Facades\DB;
+use MathPHP\Finance;
+
+class ValuationController extends Controller
+{
+    public function index(Company $company, Study $study,$onlyViewVars = false )
+    {
+		// $study->recalculateCashflowStatement();
+		
+        // $start = microtime(true);
+        $dateIndexWithDate = app('dateIndexWithDate');
+        $formattedExpenses = [];
+        $formattedResult = [];
+        $salesRevenuePerTypes = [];
+        $yearWithItsIndexes = $study->getOperationDurationPerYearFromIndexes();
+        $monthsWithItsYear = $study->getMonthsWithItsYear($yearWithItsIndexes) ;
+        $tableDataFormatted = [];
+			$yearIndexWithYear = app('yearIndexWithYear');
+        $expenseMainTitlesMapping = getExpenseTypes();
+        $loanSchedulePayments = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->selectRaw('portfolio_loan_type,revenue_stream_type,interestAmount,securitization_date_index,endBalance')->where('study_id', $study->id)->get()->toArray();
+        $defaultNumericInputClasses = [
+            'number-format-decimals'=>0,
+            'is-percentage'=>false,
+            'classes'=>'repeater-with-collapse-input',
+            'formatted-input-classes'=>'custom-input-numeric-width ',
+        ];
+        $defaultPercentageInputClasses = [
+            'classes'=>'',
+            'formatted-input-classes'=>'',
+            'is-percentage'=>true ,
+            'number-format-decimals'=> 2,
+        ];
+        $defaultClasses = [
+            $defaultNumericInputClasses,
+            $defaultPercentageInputClasses
+        ];
+        $orderIndexPerExpenseCategory = [
+            // 'sales_revenue'=>0,
+            'cost-of-service'=>1 ,
+            'gross-profit'=>2 ,
+            'other-operation-expense'=>3,
+            'marketing-expense'=>4 ,
+            'sales-expense'=>5,
+            'general-expense'=>6,
+            'ebitda'=>7,
+            'ecl'=>8,
+            'ebit'=>9,
+            'financial-expense'=>10,
+            'ebt'=>11,
+            'corporate-taxes'=>12,
+            'net-profit'=>13
+        ];
+		
+		$yearOrMonthsIndexesFromStudy = $study->getYearOrMonthIndexes();
+		
+		// $isMonthlyStudy = $study->isMonthlyStudy();
+       
+		
+		//  $formattedDcfMethod['ebit'] = $ebit = $incomeStatement ? $incomeStatement->ebit : [];
+        
+        
+        // $taxRate = $project->tax_rate / 100 ;
+        // $formattedDcfMethod['taxes'] = $taxes =  HArr::MultiplyWithNumberIfPositive($formattedDcfMethod['ebit'], $taxRate);
+        // $formattedDcfMethod['depreciation'] = $depreciation =  $incomeStatement ? $incomeStatement->total_depreciation : [];
+        // $formattedDcfMethod['net-change-in-working-capital'] = $netChangeInWorkingCapital = $balanceSheet ? $project->replaceMonthIndexWithYearIndex($balanceSheet->net_change_in_working_capital) : [];
+        // $fixedAssetPayments = $project->replaceMonthIndexWithYearIndex($cashflow->fixed_asset_payments) ;
+        // $formattedDcfMethod['capex'] = $capex =  $cashflow ? $fixedAssetPayments  : [];
+        // $sum = HArr::sumAtDates([$ebit,$depreciation,$netChangeInWorkingCapital], $years);
+        // $minus = HArr::sumAtDates([$taxes,$capex], $years);
+        // $freeCashflow = HArr::subtractAtDates([$sum,$minus], $years);
+        // $formattedDcfMethod['free-cashflow'] = $freeCashflow ;
+        // $lastValueFreeCashflow = $freeCashflow[array_key_last($freeCashflow)] ??0;
+    
+        // $perptual = $this->perpetual_growth_rate/100;
+        // $lastValueFreeCashflow = $lastValueFreeCashflow * (1+$perptual);
+        // $returnRate = $this->return_rate/100;
+        // $total =  0 ;
+        // $fixedAssetAmounts = [];
+        // foreach ($this->fixedAssets as $fixedAsset) {
+        //     $debitFundingRate = (100-($fixedAsset->equity_funding_rate/100)) ;
+        //     $amount = $fixedAsset->getAmount();
+        //     $total += 	($amount*$debitFundingRate);
+        //     $fixedAssetAmounts[$fixedAsset->id] = $amount*$debitFundingRate ;
+        // }
+        // $totalAfterInterest = [];
+        // foreach ($fixedAssetAmounts as $fixedAssetId => &$currentTotal) {
+        //     $fixedAsset = FixedAsset::find($fixedAssetId);
+        //     if ($total != 0) {
+        //         $totalAfterInterest[$fixedAssetId] = ($currentTotal / $total) * ($fixedAsset->interest_rate/100);
+                
+        //     } else {
+        //         $totalAfterInterest[$fixedAssetId] = 0;
+        //     }
+        // }
+        // $costOfDebit = array_sum($totalAfterInterest);
+        // $debitFundingPercentages = $balanceSheet ? $balanceSheet->debit_funding_percentages  : [];
+        // $equityFundingPercentages = $balanceSheet ? $balanceSheet->equity_funding_percentages  : [];
+        // $debitFundingPercentages = HArr::MultiplyWithNumber($debitFundingPercentages, $costOfDebit);
+        // $equityFundingPercentages = HArr::MultiplyWithNumber($equityFundingPercentages, $returnRate);
+        // $wacc = HArr::sumAtDates([$equityFundingPercentages,$debitFundingPercentages]);
+        // // unset($wacc[array_key_last($wacc)]);
+        // $lastKeyInWacc  = $wacc[array_key_last($wacc)] ?? 0;
+        // $terminalValues = [];
+		// $years = range(0 , $study->getStudyEndDateAsIndex());
+        // foreach ($years as $index => $yearIndex) {
+        //     $terminalValues[$yearIndex] = 0 ;
+        //     if ($index == count($years)-1) {
+        //         $terminalValues[$yearIndex] = $lastValueFreeCashflow /($lastKeyInWacc-$perptual);
+        //     }
+        // }
+        // $formattedDcfMethod['terminal-value'] = $terminalValues ;
+        // $formattedDcfMethod['free-cashflow-with-terminal'] = $freeCashflowWithTerminal = HArr::sumAtDates([$terminalValues,$freeCashflow]) ;
+        // $newWacc=[];
+        // $index = 1 ;
+        // foreach ($wacc as $yearAsIndex => $wacc) {
+        //     $newWacc[$yearAsIndex] = pow(1+$wacc, $index);
+        //     $index++;
+        // }
+        // $formattedDcfMethod['discount-factor'] = $study->replaceMonthIndexWithYearIndex($newWacc) ;
+        // $formattedDcfMethod['npv'] = [0=>array_sum(HArr::divideTwoArrAtSameIndex($freeCashflowWithTerminal, array_values($newWacc)))] ;
+        // $formattedDcfMethod['irr'] = [Finance::irr($freeCashflowWithTerminal)*100] ;
+		$title  = __('Valuation');
+        return view('non_banking_services.income-statement.valuation',[
+			'company'=>$company ,
+			'study'=>$study , 
+			'model'=>$study ,
+			'title'=>$title,
+			'tableTitle'=>$title,
+			'formattedDcfMethod'=>$formattedDcfMethod??[],
+			    'studyDates'=>$yearOrMonthsIndexesFromStudy,
+				 'yearWithItsIndexes'=>$yearWithItsIndexes,
+				 
+		] );
+        
+        
+        
+    }
+    // protected function getViewVars(Company $company, Study $model = null):array
+    // {
+    //     $actionRoute=isset($model) ? route('update.study', [$company->id , $model->id]) : route('store.financial.planning.study', ['company'=>$company->id]);
+    //     return [
+    //         'company'=>$company,
+    //         'title'=>$company->getName().' ' . __(' Financial Plan'),
+    //         'model'=>$model,
+    //         'actionRoute'=>$actionRoute,
+    //         'navigators' => [],
+    //     ];
+    // }
+    // public function create(Company $company, Request $request)
+    // {
+    //     return view('financial_planning.study.form', $this->getViewVars($company));
+    // }
+    // public function store(Company $company, Request $request, Study $study = null)
+    // {
+    //     $request->merge([
+    //         'study_start_date'=>Carbon::make($request->get('study_start_date'))->format('Y-m-d'),
+    //         'study_end_date'=>Carbon::make($request->get('study_end_date'))->format('Y-m-d'),
+    //         'operation_start_date'=>Carbon::make($request->get('operation_start_date'))->format('Y-m-d'),
+
+            
+    //     ]);
+    //     $data = $request->except(['_token']) ;
+    //     $model = null ;
+    //     if (is_null($study)) {
+    //         $model = Study::create($data);
+    //     } else {
+    //         $study->update($data);
+    //         $model = $study;
+    //     }
+
+    //     /**
+    //      * @var Study $model
+    //      */
+    //     $datesAsStringAndIndex = $model->getDatesAsStringAndIndex();
+    //     $studyDates = $model->getStudyDates() ;
+    //     $datesAndIndexesHelpers = $model->datesAndIndexesHelpers($studyDates);
+    //     $datesIndexWithYearIndex=$datesAndIndexesHelpers['datesIndexWithYearIndex'];
+    //     $yearIndexWithYear=$datesAndIndexesHelpers['yearIndexWithYear'];
+    //     $dateIndexWithDate=$datesAndIndexesHelpers['dateIndexWithDate'];
+    //     $dateWithMonthNumber=$datesAndIndexesHelpers['dateWithMonthNumber'];
+    //     $model->updateStudyAndOperationDates($datesAsStringAndIndex, $datesIndexWithYearIndex, $yearIndexWithYear, $dateIndexWithDate, $dateWithMonthNumber);
+    //     return response()->json([
+    //         'redirectTo'=>route('create.general.assumption', ['company'=>$company->id,'study'=>$model->id])
+    //     ]);
+    // }
+    // public function edit(Company $company, Request $request, Study $study)
+    // {
+    //     return view('financial_planning.study.form', $this->getViewVars($company, $study));
+    // }
+    // public function update(Request $request, Company $company, Study $study)
+    // {
+    //     return $this->store($company, $request, $study);
+    // }
+    // public function destroy(Request $request, Company $company, Study $study)
+    // {
+    //     $study->delete();
+    //     return redirect()->back()->with('success', __('Study Has Been Deleted Successfully'));
+    // }
+}

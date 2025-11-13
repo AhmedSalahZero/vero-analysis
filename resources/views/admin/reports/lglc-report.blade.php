@@ -190,7 +190,7 @@
 						
 						] as $currentColType=>$currentColOptions )
                     <div class="col-md-6 col-lg-3 col-xl-3">
-@php
+@php+
 @endphp
                         <!--begin::Total Profit-->
                         <div class="kt-widget24 text-center">

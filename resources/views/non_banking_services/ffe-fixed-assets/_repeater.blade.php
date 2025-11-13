@@ -26,7 +26,6 @@ use App\Models\NonBankingService\FixedAssetName;
                 $currentYear= explode('-',$dateAsString)[0];
                 $currentYearRepeaterIndex = 0 ;
                 @endphp
-
                 <x-tables.repeater-table-th data-column-index="{{ $dateAsIndex }}" :font-size-class="'font-14px'" class=" interval-class header-border-down " :title="dateFormatting($dateAsString, 'M\' Y') . ' <br> ' .__('Count #')"></x-tables.repeater-table-th>
                 @if($financialYearEndMonthNumber == $currentMonthNumber || $loop->last)
                 <x-tables.repeater-table-th :icon="true" data-column-index="{{ $dateAsIndex }}" :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down {{ 'year-repeater-index-'.$currentYearRepeaterIndex }} collapse-before-me exclude-from-collapse" :title="__('Total Yr.').' <br> '. $currentYear"></x-tables.repeater-table-th>
@@ -68,22 +67,6 @@ use App\Models\NonBankingService\FixedAssetName;
                         </div>
                     </td>
 
-                    {{-- <td>
-
-
-                        <div class="d-flex align-items-center">
-                            <input value="{{ isset($subModel) ? $subModel->getVatRate():0 }}" @if($isRepeater) name="vat_rate" @else name="{{ $tableId }}[0][vat_rate]" @endif class="form-control exclude-from-trigger-change-when-repeat expandable-percentage-input text-left " type="text">
-                            <span style="margin-left:3px	">%</span>
-                        </div>
-                    </td>
-                    <td>
-
-
-                        <div class="d-flex align-items-center">
-                            <input value="{{ isset($subModel) ? $subModel->getWithholdTaxRate():0 }}" @if($isRepeater) name="withhold_tax_rate" @else name="{{ $tableId }}[0][withhold_tax_rate]" @endif class="form-control exclude-from-trigger-change-when-repeat expandable-percentage-input text-left exclude-from-trigger-change-when-repeat" type="text">
-                            <span style="margin-left:3px	">%</span>
-                        </div>
-                    </td> --}}
 
                     <td>
                         <div class="d-flex align-items-center">
@@ -111,11 +94,6 @@ use App\Models\NonBankingService\FixedAssetName;
                     </td>
                     <td>
 
-
-                        {{-- <div class="">
-                            <input value="{{ isset($subModel) ? $subModel->getReplacementCostRate():0 }}" @if($isRepeater) name="replacement_cost_rate" @else name="{{ $tableId }}[0][replacement_cost_rate]" @endif class="form-control expandable-percentage-input exclude-from-trigger-change-when-repeat text-left " type="text">
-                        </div> --}}
-						
 						<div class="d-flex align-items-center justify-content-center">
                             <input value="{{ isset($subModel) ? $subModel->getReplacementCostRate():0 }}" @if($isRepeater) name="replacement_cost_rate" @else name="{{ $tableId }}[0][replacement_cost_rate]" @endif  class="form-control expandable-percentage-input exclude-from-trigger-change-when-repeat text-left" type="text">
                             <span style="margin-left:3px	">%</span>

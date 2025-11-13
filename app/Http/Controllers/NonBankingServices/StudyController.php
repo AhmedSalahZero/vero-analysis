@@ -5,6 +5,7 @@ namespace App\Http\Controllers\NonBankingServices;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreStudyRequest;
 use App\Models\Company;
+use App\Models\NonBankingService\Consolidation;
 use App\Models\NonBankingService\Study;
 use Artisan;
 use Carbon\Carbon;
@@ -90,10 +91,11 @@ class StudyController extends Controller
 				'study_end_date'=>__('Study End Date'),
 			],
 		];
-	
+		$consolidations = Consolidation::where('company_id',$company->id)->get();
 		$models = [
 			Study::BUSINESS_PLAN =>$monthlyStudies ,
 			Study::ANNUALLY_STUDY =>$yearlyStudies ,
+			Study::CONSOLIDATION=>$consolidations
 		];
         return view('non_banking_services.study.index', [
 			'company'=>$company,

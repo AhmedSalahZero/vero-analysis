@@ -224,7 +224,9 @@ class LetterOfGuaranteeIssuanceController
 		$letterOfGuaranteeStatementCommentEn = LetterOfGuaranteeStatement::generateIssuanceComment('en',$customerName,$transactionName,$lgCode); ;
 		$letterOfGuaranteeStatementCommentAr = LetterOfGuaranteeStatement::generateIssuanceComment('ar',$customerName,$transactionName,$lgCode); ;
 		$model->handleLetterOfGuaranteeStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId , $lgType,$company->id , $issuanceDate ,0 ,0,$lgAmount,$currency,0,$cdOrTdId,'credit-lg-amount',$letterOfGuaranteeStatementCommentEn,$letterOfGuaranteeStatementCommentAr);
-		$model->handleLetterOfGuaranteeCashCoverStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId , $lgType,$company->id , $issuanceDate ,0 ,$cashCoverAmount,0,$currency,0,'debit-lg-amount');
+		if(!$isOpeningBalance && !$isCdOrTdCashCoverAccount){
+			$model->handleLetterOfGuaranteeCashCoverStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId , $lgType,$company->id , $issuanceDate ,0 ,$cashCoverAmount,0,$currency,0,'debit-lg-amount');
+		}
 		
 		$lgDurationMonths = $request->get('lg_duration_months',1);
 		$numberOfIterationsForQuarter = ceil($lgDurationMonths / 3); 
@@ -424,10 +426,14 @@ class LetterOfGuaranteeIssuanceController
 		$cashCoverAmount = $letterOfGuaranteeIssuance->getCashCoverRate() /100  * $decreaseAmount ;
 		$letterOfGuaranteeFacility = $source == LetterOfGuaranteeIssuance::LG_FACILITY  ? $letterOfGuaranteeIssuance->letterOfGuaranteeFacility : null;
 		$letterOfGuaranteeFacilityId =  null ; 
+		
 		$lgType =$letterOfGuaranteeIssuance->getLgType();
 		$currency = $letterOfGuaranteeIssuance->getLgCurrency();
 		$cdOrTdId = $letterOfGuaranteeIssuance->getCdOrTdId() ;
-		$financialInstitutionAccountId = FinancialInstitutionAccount::find($letterOfGuaranteeIssuance->getCashCoverDeductedFromAccountId())->id;
+		$financialInstitutionAccountId = null ;
+		if($letterOfGuaranteeIssuance->cash_cover_deducted_from_account_type == 27){
+			$financialInstitutionAccountId = FinancialInstitutionAccount::find($letterOfGuaranteeIssuance->getCashCoverDeductedFromAccountId())->id;
+		}
 		
 		if($source == LetterOfGuaranteeIssuance::LG_FACILITY && is_null($letterOfGuaranteeFacility)){
 			return redirect()->back()->with('fail',__('No Available Letter Of Guarantee Facility Found !'));
@@ -447,10 +453,12 @@ class LetterOfGuaranteeIssuanceController
 		$commentEn = LetterOfGuaranteeStatement::generateAdvancedPaymentLgComment('en',$partnerName,$transactionName,$lgCode);
 		$commentAr = LetterOfGuaranteeStatement::generateAdvancedPaymentLgComment('ar',$partnerName,$transactionName,$lgCode);
 		$letterOfGuaranteeIssuanceAdvancedPaymentHistory->handleLetterOfGuaranteeStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId , $lgType,$company->id , $decreaseDate ,0 ,$decreaseAmount,0,$currency,$letterOfGuaranteeIssuanceAdvancedPaymentHistory->id,$cdOrTdId,LetterOfGuaranteeIssuance::AMOUNT_TO_BE_DECREASED,$commentEn,$commentAr);
-		$letterOfGuaranteeIssuanceAdvancedPaymentHistory->handleLetterOfGuaranteeCashCoverStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId,$lgType,$company->id,$decreaseDate,0,0 , $cashCoverAmount ,$currency,$letterOfGuaranteeIssuanceAdvancedPaymentHistory->id,LetterOfGuaranteeIssuance::AMOUNT_TO_BE_DECREASED);
-		$commentEn = __('Refund Cash Cover [ :customerName ] [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'customerName'=>$customerName,'transactionName'=>$transactionName],'en') ;
-		$commentAr = __('Refund Cash Cover [ :customerName ] [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'customerName'=>$customerName,'transactionName'=>$transactionName],'ar') ;
-		$letterOfGuaranteeIssuanceAdvancedPaymentHistory->storeCurrentAccountDebitBankStatement($decreaseDate,$cashCoverAmount , $financialInstitutionAccountId,$letterOfGuaranteeIssuanceAdvancedPaymentHistory->id,$letterOfGuaranteeIssuance->id,$commentEn,$commentAr);
+		if($financialInstitutionAccountId){
+			$letterOfGuaranteeIssuanceAdvancedPaymentHistory->handleLetterOfGuaranteeCashCoverStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId,$lgType,$company->id,$decreaseDate,0,0 , $cashCoverAmount ,$currency,$letterOfGuaranteeIssuanceAdvancedPaymentHistory->id,LetterOfGuaranteeIssuance::AMOUNT_TO_BE_DECREASED);
+			$commentEn = __('Refund Cash Cover [ :customerName ] [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'customerName'=>$customerName,'transactionName'=>$transactionName],'en') ;
+			$commentAr = __('Refund Cash Cover [ :customerName ] [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'customerName'=>$customerName,'transactionName'=>$transactionName],'ar') ;
+			$letterOfGuaranteeIssuanceAdvancedPaymentHistory->storeCurrentAccountDebitBankStatement($decreaseDate,$cashCoverAmount , $financialInstitutionAccountId,$letterOfGuaranteeIssuanceAdvancedPaymentHistory->id,$letterOfGuaranteeIssuance->id,$commentEn,$commentAr);
+		}
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$letterOfGuaranteeIssuance->getLgType()])->with('success',__('Data Store Successfully'));
 	}
 	
@@ -459,6 +467,7 @@ class LetterOfGuaranteeIssuanceController
 		/**
 		 * ! No Odoo Service Yet
 		 */
+
 		
 		$decreaseDate = Carbon::make($request->get('decrease_date',now()->format('Y-m-d')))->format('Y-m-d');
 		$decreaseAmount = $request->get('amount_to_be_decreased',0);
@@ -467,6 +476,7 @@ class LetterOfGuaranteeIssuanceController
 			'date'=>$decreaseDate
 		]);
 		$letterOfGuaranteeIssuance = $lgAdvancedPaymentHistory->letterOfGuaranteeIssuance;
+				// dd($letterOfGuaranteeIssuance);
 		$financialInstitutionId = $letterOfGuaranteeIssuance->financial_institution_id ;
 		/**
 		 * @var LetterOfGuaranteeIssuanceAdvancedPaymentHistory $lgAdvancedPaymentHistory
@@ -474,7 +484,7 @@ class LetterOfGuaranteeIssuanceController
 
 		$cashCoverAmount = $letterOfGuaranteeIssuance->getCashCoverRate() /100  * $decreaseAmount ;
 	
-		$letterOfGuaranteeFacility = $source == LetterOfGuaranteeIssuance::LG_FACILITY  ?$letterOfGuaranteeIssuance->letterOfGuaranteeFacility : null;
+		$letterOfGuaranteeFacility = $source == LetterOfGuaranteeIssuance::LG_FACILITY  ? $letterOfGuaranteeIssuance->letterOfGuaranteeFacility : null;
 
 		if($source == LetterOfGuaranteeIssuance::LG_FACILITY && is_null($letterOfGuaranteeFacility)){
 			return redirect()->back()->with('fail',__('No Available Letter Of Guarantee Facility Found !'));
@@ -484,10 +494,10 @@ class LetterOfGuaranteeIssuanceController
 		$letterOfGuaranteeStatement->handleFullDateAfterDateEdit($decreaseDate,$decreaseAmount,0);
 	
 		$letterOfGuaranteeCashCoverStatement =  $lgAdvancedPaymentHistory->letterOfGuaranteeCashCoverStatements->where('type',LetterOfGuaranteeIssuance::AMOUNT_TO_BE_DECREASED)->first();
-		$letterOfGuaranteeCashCoverStatement->handleFullDateAfterDateEdit($decreaseDate,0,$cashCoverAmount);
+		$letterOfGuaranteeCashCoverStatement ? $letterOfGuaranteeCashCoverStatement->handleFullDateAfterDateEdit($decreaseDate,0,$cashCoverAmount) : null;
 		
 		$currentAccountDebitBankStatement = $lgAdvancedPaymentHistory->currentAccountDebitBankStatement;
-		$currentAccountDebitBankStatement->handleFullDateAfterDateEdit($decreaseDate,$cashCoverAmount,0);
+		$currentAccountDebitBankStatement ? $currentAccountDebitBankStatement->handleFullDateAfterDateEdit($decreaseDate,$cashCoverAmount,0):null;
 	
 
 		return response()->json([

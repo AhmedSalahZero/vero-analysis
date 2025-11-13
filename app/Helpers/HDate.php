@@ -193,9 +193,12 @@ class HDate
 		}
 		return $result;
 	}
-	// public static function getWeekNumberAndYearFromDateString(string $date)
-	// {
-	// 	$date = Carbon::parse($date);
-	// 	return $date->weekOfYear.'-'.$date->year;
-	// }
+	public static function convertDatesIndexToDateIndexes(array $dateIndexes, array $dateIndexWithDate){
+		$result = [];
+		foreach($dateIndexes as $index=>$dateIndex ){
+			$dateAsString = $dateIndexWithDate[$dateIndex];
+			$result[$dateIndex] = $dateAsString;
+		}
+		return $result;
+	}
 }

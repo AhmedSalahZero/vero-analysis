@@ -123,12 +123,25 @@ use App\Models\NonBankingService\LeasingCategory;
                         $rowIndex = 0;
                         @endphp
 
-
+                        @php
+                        $currentYearRepeaterIndex = 0 ;
+                        @endphp
                         <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden overflow-scroll'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class="  header-border-down first-column-th-class" :title="__('Item')"></x-tables.repeater-table-th>
                                 @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                @php
+                                $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                                $currentMonthNumber = explode('-',$dateAsString)[1];
+                                $currentYear= explode('-',$dateAsString)[0];
+                                @endphp
                                 <x-tables.repeater-table-th class=" interval-class header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
+                                @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                                <x-tables.repeater-table-th :icon="true" data-column-index="{{ $yearOrMonthAsIndex }}" :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down {{ 'year-repeater-index-'.$currentYearRepeaterIndex }} collapse-before-me exclude-from-collapse" :title="__('Total Yr.').' <br> '. $currentYear"></x-tables.repeater-table-th>
+                                @php
+                                $currentYearRepeaterIndex ++;
+                                @endphp
+                                @endif
                                 @endforeach
                                 <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Total')"></x-tables.repeater-table-th>
                             </x-slot>
@@ -239,6 +252,7 @@ use App\Models\NonBankingService\LeasingCategory;
 
                                     @php
                                     $columnIndex = 0 ;
+                                    $currentYearRepeaterIndex = 0;
                                     @endphp
                                     @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                     @php
@@ -247,10 +261,31 @@ use App\Models\NonBankingService\LeasingCategory;
                                     @endphp
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :number-format-decimals="0" :currentVal="$currentVal" :formattedInputClasses="'current-growth-rate-result-value-formatted'" :classes="'only-greater-than-or-equal-zero-allowed current-loan-input current-growth-rate-result-value '" :is-percentage="false" :name="'loan_amounts['.$currentLeasingRevenueStreamBreakdown->id.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-
+                                            <x-repeat-right-dot-inputs data-group-index="{{ $currentYearRepeaterIndex }}" :number-format-decimals="0" :currentVal="$currentVal" :formattedInputClasses="'current-growth-rate-result-value-formatted'" :classes="'only-greater-than-or-equal-zero-allowed current-loan-input current-growth-rate-result-value repeater-with-collapse-input'" :is-percentage="false" :name="'loan_amounts['.$currentLeasingRevenueStreamBreakdown->id.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                         </div>
                                     </td>
+
+                                    @php
+                                    $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                                    $currentMonthNumber = explode('-',$dateAsString)[1];
+                                    $currentYear= explode('-',$dateAsString)[0];
+                                    @endphp
+
+
+                                    @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                                    <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="0 " :formattedInputClasses="'exclude-from-collapse exclude-from-total exclude-from-trigger-change-when-repeat expandable-amount-input'" :classes="'year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse exclude-from-total'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
+                                        </div>
+
+                                    </td>
+                                    @php
+                                    $currentYearRepeaterIndex++;
+                                    @endphp
+                                    @endif
+
+
+
                                     @php
                                     $columnIndex++ ;
                                     @endphp
@@ -282,7 +317,9 @@ use App\Models\NonBankingService\LeasingCategory;
 
                                     @php
                                     $columnIndex = 0 ;
+                                    $currentYearRepeaterIndex = 0;
                                     @endphp
+									
                                     @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                     @php
                                     $currentLoanTotal = $currentLoanTotalPerYear[$yearOrMonthAsIndex] ;
@@ -295,7 +332,7 @@ use App\Models\NonBankingService\LeasingCategory;
                                                 <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
                                                     <div class="input-hidden-parent">
                                                         <input readonly class="form-control copy-value-to-his-input-hidden  expandable-amount-input  repeat-to-right-input-formatted  " type="text" value="{{ number_format($currentLoanTotal,0)  }}" data-column-index="{{ $columnIndex }}">
-                                                        <input js-recalculate-equity-funding-value type="hidden" class="repeat-to-right-input-hidden input-hidden-with-name  total-loans-hidden" value="{{ $currentLoanTotal  }}" data-column-index="{{ $columnIndex }}" name="ee">
+                                                        <input js-recalculate-equity-funding-value type="hidden" class="repeat-to-right-input-hidden input-hidden-with-name  total-loans-hidden repeater-with-collapse-input" value="{{ $currentLoanTotal  }}" data-group-index="{{ $currentYearRepeaterIndex }}" data-column-index="{{ $columnIndex }}" name="ee">
                                                     </div>
 
                                                     <span class="ml-2 currency-class">
@@ -311,6 +348,30 @@ use App\Models\NonBankingService\LeasingCategory;
 
                                         </div>
                                     </td>
+									
+									
+									
+									
+									
+									   @php
+                                    $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                                    $currentMonthNumber = explode('-',$dateAsString)[1];
+                                    $currentYear= explode('-',$dateAsString)[0];
+                                    @endphp
+
+
+                                    @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                                    <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="0 " :formattedInputClasses="'exclude-from-collapse exclude-from-total exclude-from-trigger-change-when-repeat expandable-amount-input'" :classes="'year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed  exclude-from-collapse '" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
+                                        </div>
+
+                                    </td>
+                                    @php
+                                    $currentYearRepeaterIndex++;
+                                    @endphp
+                                    @endif
+									
                                     @php
                                     $columnIndex++ ;
                                     @endphp
@@ -401,7 +462,7 @@ use App\Models\NonBankingService\LeasingCategory;
                                     @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                     @php
 
-                                    $currentAdminFeesRateAtYearIndex = $leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getAdminFeesRatesAtYearOrMonthIndex($yearOrMonthAsIndex):0;
+                                    $currentAdminFeesRateAtYearIndex = $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getAdminFeesRatesAtYearOrMonthIndex($yearOrMonthAsIndex):0;
                                     @endphp
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
@@ -434,7 +495,7 @@ use App\Models\NonBankingService\LeasingCategory;
 
                                     @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                     @php
-                                    $currentExpectedCreditLossRateAtYearIndex = $leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getEclRatesAtYearOrMonthIndex($yearOrMonthAsIndex):0;
+                                    $currentExpectedCreditLossRateAtYearIndex = $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getEclRatesAtYearOrMonthIndex($yearOrMonthAsIndex):0;
 
                                     @endphp
 
@@ -494,6 +555,7 @@ use App\Models\NonBankingService\LeasingCategory;
                     <div class="row new-portfolio-funding">
                         @php
                         $rowIndex = 0;
+						$currentYearRepeaterIndex =0;
                         @endphp
 
 
@@ -502,154 +564,30 @@ use App\Models\NonBankingService\LeasingCategory;
                                 <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
                                 @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                 <x-tables.repeater-table-th class=" interval-class header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
+								
+								 @php
+                                $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                                $currentMonthNumber = explode('-',$dateAsString)[1];
+                                $currentYear= explode('-',$dateAsString)[0];
+                                @endphp
+								
+								@if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                                <x-tables.repeater-table-th :icon="true" data-column-index="{{ $yearOrMonthAsIndex }}" :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down {{ 'year-repeater-index-'.$currentYearRepeaterIndex }} collapse-before-me exclude-from-collapse" :title="__('Total Yr.').' <br> '. $currentYear"></x-tables.repeater-table-th>
+                                @php
+                                $currentYearRepeaterIndex ++;
+                                @endphp
+                                @endif
+                                
+								
+								
                                 @endforeach
                                 <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Total')"></x-tables.repeater-table-th>
                             </x-slot>
                             <x-slot name="trs">
+							
+							
+							@include('loan-structure-trs')
 
-                                <tr data-repeat-formatting-decimals="2" data-repeater-style>
-
-                                    <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
-
-
-                                    <td>
-                                        <input value="{{ __('Equity Funding Rate (%)') }}" disabled class="form-control  min-width-hover-300 text-left mt-2" type="text">
-
-                                    </td>
-                                    @php
-                                    $columnIndex = 0 ;
-                                    @endphp
-                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
-
-
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-
-                                            <x-repeat-right-dot-inputs :inputHiddenAttributes="'js-recalculate-equity-funding-value'" :currentVal="$leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getEquityFundingRatesAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed equity-funding-rates equity-funding-rate-input-hidden-class'" :is-percentage="true" :name="'equity_funding_rates['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-
-                                        </div>
-                                    </td>
-                                    @php
-                                    $columnIndex++;
-                                    @endphp
-                                    @endforeach
-
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <input type="text" class="form-control expandable-amount-input  sum-percentage-css" disabled value="-">
-                                        </div>
-                                    </td>
-
-
-
-
-                                </tr>
-
-
-
-                                <tr data-repeat-formatting-decimals="0" data-repeater-style total-row-tr data-row-total>
-
-                                    <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
-
-
-                                    <td>
-                                        <input value="{{ __('Equity Funding Value') }}" disabled class="form-control min-width-hover-300 text-left mt-2" type="text">
-
-                                    </td>
-                                    @php
-                                    $columnIndex = 0 ;
-                                    @endphp
-                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
-
-                                    <td>
-
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :readonly="true" :numberFormatDecimals="0" :currentVal="$leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getEquityFundingValuesAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed '" :formatted-input-classes="'equity-funding-formatted-value-class'" :is-percentage="false" :name="'equity_funding_values['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-
-                                        </div>
-                                    </td>
-                                    @php
-                                    $columnIndex++;
-                                    @endphp
-                                    @endforeach
-
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="0">
-                                        </div>
-                                    </td>
-
-
-
-                                </tr>
-
-
-
-                                <tr data-repeat-formatting-decimals="2" data-repeater-style>
-                                    <td>
-                                        <input disabled value="{{ __('New Loans Funding Rate (%)') }}" class="form-control min-width-hover-300 text-left" type="text">
-                                    </td>
-                                    @php
-                                    $columnIndex = 0 ;
-                                    @endphp
-
-                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
-
-
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <input type="text" data-column-index="{{ $columnIndex }}" readonly class="form-control expandable-amount-input new-loan-function-rates-js" name="new_loans_funding_rates[{{ $yearOrMonthAsIndex }}]'" value="{{ $leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getNewLoansFundingRatesAtYearOrMonthIndex($yearOrMonthAsIndex):100 }}"> <span class="ml-2">%</span>
-                                        </div>
-                                    </td>
-                                    @php
-                                    $columnIndex++;
-                                    @endphp
-
-                                    @endforeach
-
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <input type="text" class="form-control expandable-amount-input  sum-percentage-css" disabled value="-">
-                                        </div>
-                                    </td>
-
-
-
-                                </tr>
-
-                                <tr data-repeat-formatting-decimals="0" data-repeater-style total-row-tr data-row-total>
-
-
-                                    <td>
-                                        <input disabled value="{{ __('New Loans Funding Value') }}" class="form-control min-width-hover-300 text-left" type="text">
-
-                                    </td>
-                                    @php
-                                    $columnIndex = 0 ;
-                                    @endphp
-
-                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
-
-
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :readonly="true" :numberFormatDecimals="0" :formatted-input-classes="'new-loans-funding-formatted-value-class'" :currentVal="$leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getNewLoansFundingValuesAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'new_loans_funding_values['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-                                        </div>
-                                    </td>
-                                    @php
-                                    $columnIndex++;
-                                    @endphp
-
-                                    @endforeach
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="0">
-                                        </div>
-                                    </td>
-
-
-
-                                </tr>
 
                             </x-slot>
 
@@ -667,33 +605,6 @@ use App\Models\NonBankingService\LeasingCategory;
             {{-- end of Leasing New Portfolio Funding Structure   --}}
             <x-save-or-back />
             @endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     </div>
 
@@ -789,9 +700,13 @@ use App\Models\NonBankingService\LeasingCategory;
                 , error: function(res) {
                     $('.save-form').prop('disabled', false);
                     $('.submit-form-btn-new').prop('disabled', false)
+                    let errorMessage = res.responseJSON.message;
+                    if (res.responseJSON && res.responseJSON.errors) {
+                        errorMessage = res.responseJSON.errors[Object.keys(res.responseJSON.errors)[0]][0]
+                    }
                     Swal.fire({
                         icon: 'error'
-                        , title: res.responseJSON.message
+                        , title: errorMessage
                     , });
                 }
             });

@@ -697,6 +697,7 @@ class MoneyReceivedController
 		 */
 		// $collectionFeesAmount = $request->get('collection_fees',0) ;
 		$actualCollectionDate = Carbon::make($request->get('actual_collection_date'))->format('Y-m-d')  ;
+		// dd($moneyReceived);
 		$moneyReceived->cheque->update([
 			'status'=>Cheque::COLLECTED,
 			// 'collection_fees'=>$collectionFeesAmount,
@@ -714,7 +715,6 @@ class MoneyReceivedController
 		/**
 		 * @var AccountType $accountType ;
 		 */
-		
 		$moneyReceived->handleDebitStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$actualCollectionDate,$receivedAmount,$currency,null);
 		// $moneyReceived->handleCreditStatement($company->id , $financialInstitutionId , $accountType,$accountNumber,'fees',$actualCollectionDate,$collectionFeesAmount,null,$currency,__('Cheque Collection Fees - Cheque [ :number ]' ,['number'=>$chequeNumber],'en' ),__('Cheque Collection Fees - Cheque [ :number ]' ,['number'=>$chequeNumber],'ar' ));
 		
@@ -723,6 +723,7 @@ class MoneyReceivedController
 		if($hasOdooIntegration){
 			$OdooPaymentService = new OdooPayment($company);
 		}
+		
 		
 		if($hasOdooIntegration && $company->withinIntegrationDate($actualCollectionDate)){
 			$odooSetting = $company->odooSetting;
@@ -743,14 +744,14 @@ class MoneyReceivedController
 				$res =$OdooPaymentService->chequeCollection($odooId,$receivedAmount,$actualCollectionDate,$odooCurrencyId,$journalId,$debitAccountOdooId,$creditOdooAccountId,$odooPartnerId,$ref);
 		}
 		
-		if($request->ajax()){
-			return response()->json([
-				'status'=>true ,
-				'redirectTo'=>route('view.money.receive',['company'=>$company->id,'active'=>MoneyReceived::CHEQUE_COLLECTED])
-			]);
-		}
-		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>MoneyReceived::CHEQUE_COLLECTED])->with('success',__('Cheque Is Returned To Safe'));
 	}
+	if($request->ajax()){
+		return response()->json([
+			'status'=>true ,
+			'redirectTo'=>route('view.money.receive',['company'=>$company->id,'active'=>MoneyReceived::CHEQUE_COLLECTED])
+		]);
+	}
+	return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>MoneyReceived::CHEQUE_COLLECTED])->with('success',__('Cheque Is Returned To Safe'));
 }
 	public function sendToUnderCollection(Company $company,BackToUnderCollectionChequeRequest $request,MoneyReceived $moneyReceived)
 	{

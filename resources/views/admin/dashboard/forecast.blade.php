@@ -157,7 +157,6 @@
     @endphp
     @foreach($selectedCurrencies as $name=>$currency)
     <div class="tab-pane  @if($index == 0) active @endif" id="kt_apps_contacts_view_tab_main{{ $index }}" role="tabpanel">
-
         <div class="row">
             <div class="kt-portlet ">
                 <div class="kt-portlet__head">
@@ -168,7 +167,26 @@
                     </div>
                     <div class="kt-portlet__head-label ">
                         <div class="kt-align-right">
+						
+						<div class="parent-item d-inline-block">
+											<button   class="btn btn-sm btn-danger text-white js-show-customer-due-invoices-modal">{{ __('Customer Past Dues INV') }}</button>
+                                                <x-modal.due-invoices :flowReportId="-1" :contractCode="$contractCode" :currencyName="$currencyName"  :cashflowReport="isset($cashflowReport) ? $cashflowReport:null" :report-interval="$reportInterval" :currentInvoiceType="'CustomerInvoice'" :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueCustomerInvoices[$currentCurrencyName]??[]" :id="'test-modal-id'"></x-modal.due-invoices>
+						</div>
+						<div class="parent-item d-inline-block">
+												<button   class="btn btn-sm btn-danger text-white js-show-customer-due-invoices-modal">{{ __('Supplier Past Dues INV') }}</button>
+                                                <x-modal.due-invoices :flowReportId="-1" :contractCode="$contractCode" :currencyName="$currencyName" :cashflowReport="isset($cashflowReport) ? $cashflowReport:null" :report-interval="$reportInterval" :currentInvoiceType="'SupplierInvoice'" :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueSupplierInvoices" :id="'test-modal-id'"></x-modal.due-invoices>
+						
+						</div>
+						{{-- <div class="parent-item d-inline-block">
+												<button   class="btn btn-sm btn-danger text-white js-show-loan-past-due-installment-modal">{{ __('View') }}</button>
+                                                <x-modal.loan-installment :flowReportId="-1"  :contractCode="$contractCode" :currencyName="$currencyName" :cashflowReport="isset($cashflowReport) ? $cashflowReport:null" :report-interval="$reportInterval"  :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueInstallments" :id="'test-modal-id'"></x-modal.loan-installment>
+						</div> --}}
+
+
+
                             <button type="button" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> {{ __('Report') }} </button>
+							
+
                         </div>
                     </div>
                 </div>
@@ -222,7 +240,6 @@
             </div>
         </div>
 
-        {{-- Customers Invoices Aging --}}
 
         @foreach($invoiceTypesModels as $modelType)
 		@php
@@ -355,6 +372,7 @@
                             </table>
                         </div>
                         <div class="col-md-8">
+			
                             <div class="chartdivchart" id="chartdivline2_{{ $modelType.$currency }}"></div>
                         </div>
                     </div>
@@ -527,23 +545,6 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody id="append-loan-{{ $currency }}">
-                                                    {{-- <tr>
-                                                        <td>Date 1</td>
-                                                        <td class="text-center">600,000</td>
-                                                    </tr> --}}
-                                                    {{-- <tr>
-                                                        <td>Date 2</td>
-                                                        <td class="text-center">600,000</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Date 3</td>
-                                                        <td class="text-center">600,000</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Date 4</td>
-                                                        <td class="text-center">600,000</td>
-                                                    </tr> --}}
-
                                                 </tbody>
                                             </table>
                                         </div>
@@ -557,67 +558,7 @@
                         </div>
                     </div>
                 </div>
-                {{-- Leasing Facilities Comming Dues --}}
-                {{-- <div class="col-md-4">
-                    <div class="kt-portlet ">
-                        <div class="kt-portlet__head">
-                            <div class="kt-portlet__head-label">
-                                <h3 class="kt-portlet__head-title head-title text-primary">
-                                    {{ __('Leasing Facilities Comming Dues') }}
-                                </h3>
-                            </div>
-                            <div class="kt-portlet__head-label ">
-                                <div class="kt-align-right">
-                                    <button type="button" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> {{ __('Report') }} </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="kt-portlet__body">
-                            <div class="row">
-
-
-                                <div class="col-md-12">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <table class="table table-sm table-striped table-head-bg-brand ">
-                                                <thead class="thead-inverse">
-                                                    <tr>
-                                                        <th>{{ __('Date') }}</th>
-                                                        <th class="text-center">{{ __('Amount') }}</th>
-
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>Date 1</td>
-                                                        <td class="text-center">600,000</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Date 2</td>
-                                                        <td class="text-center">600,000</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Date 3</td>
-                                                        <td class="text-center">600,000</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Date 4</td>
-                                                        <td class="text-center">600,000</td>
-                                                    </tr>
-
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="chartdivchart" id="chartdivline6{{ $currency }}"></div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div> --}}
+              
             </div>
         </form>
     </div>
@@ -1141,8 +1082,7 @@
 
 
 
-
-
+									
 
 <script>
     am4core.ready(function() {
@@ -1158,7 +1098,6 @@
 
         // Increase contrast by taking evey second color
         chart.colors.step = 2;
-
         // Add data
         chart.data = @json($cashFlowReport['total_cash_in_out_flow'] ?? []);
 		
@@ -1273,7 +1212,10 @@
                     })
                 }
                 $('#append-withdrawal-due-' + currencyName).empty().append(trs)
+				if(chartData.length){
                 am4core.registry.baseSprites.find(c => c.htmlContainer.id === currentChartId).data = chartData
+					
+				}
             }
         })
     })
@@ -1313,7 +1255,9 @@
                     })
                 }
                 $('#append-loan-' + currencyName).empty().append(trs)
-                am4core.registry.baseSprites.find(c => c.htmlContainer.id === currentChartId).data = chartData
+				if(chartData.length){
+	                am4core.registry.baseSprites.find(c => c.htmlContainer.id === currentChartId).data = chartData
+				}
             }
         })
     })
@@ -1410,5 +1354,24 @@
         $('select.suppliers-or-customers-js').trigger('change')
         $('select.financial-instutiton-js').trigger('change')
     })
+	
+	
 </script>
+
+
+<script>
+$(document).on('click', '.js-show-customer-due-invoices-modal', function(e) {
+        e.preventDefault();
+        $(this).closest('.parent-item').find('.modal-item-js').modal('show')
+    })
+	
+	
+	
+$(document).on('click', '.js-show-loan-past-due-installment-modal', function(e) {
+        e.preventDefault();
+        $(this).closest('.parent-item').find('.modal-item-js').modal('show')
+    })
+	
+</script>
+
 @endsection

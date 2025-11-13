@@ -180,11 +180,11 @@ $months = $study->getMicrofinanceMonths() ;
                                                 -
                                             </div>
                                         </td>
-                                        <td>
+                                        {{-- <td>
                                             <div class="text-center">
                                                 -
                                             </div>
-                                        </td>
+                                        </td> --}}
 
 
                                         @php

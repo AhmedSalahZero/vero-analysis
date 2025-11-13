@@ -6,11 +6,17 @@
 'reportInterval',
 'cashflowReport'=>null,
 'currencyName',
-'contractCode'
+'contractCode',
+'flowReportId'=>null
 ])
 @php
+
+	
 	$cashflowReportId = isset($cashflowReport) ? $cashflowReport->id:0;
+	$cashflowReportId = isset($flowReportId) ? $flowReportId :  $cashflowReportId;
+	
 	$isContract = $contractCode ? 1 : 0 ;
+	
 @endphp
 <div class="modal fade modal-item-js" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-90 modal-dialog-centered" role="document">

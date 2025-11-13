@@ -369,6 +369,8 @@ Route::middleware([])->group(function () {
                     route::delete('fixed-assets-names/{fixedAssetName}/destroy', 'FixedAssetController@destroy')->name('fixed.asset.names.destroy');
                     
                     
+                    route::post('consolidations', 'ConsolidationController@create')->name('view.consolidations');
+                    route::post('consolidations', 'ConsolidationController@store')->name('store.consolidations');
                     route::get('expense-per-employees/{study}/create', 'ExpensePerEmployeeController@create')->name('create.expense.per.employees');
                     
                     // route::get('leasing-categories/edit/{leasingCategory}','LeasingCategoriesController@edit')->name('edit.leasing.categories');
@@ -493,6 +495,8 @@ Route::middleware([])->group(function () {
                          
                         route::post('recalculate-spread-rates-sensitivity', 'RecalculateSpreadRateSensitivityController@recalculate')->name('calculate.spread.rate.sensitivity');
                         route::get('income-statement', 'IncomeStatementController@index')->name('view.non.banking.forecast.income.statement');
+                       
+                        route::get('valuation', 'ValuationController@index')->name('view.non.banking.valuation');
                         route::get('expense-statement-reports', 'ExpenseStatementReportController@index')->name('view.expense.statement.reports');
                         route::post('expense-statement-reports', 'ExpenseStatementReportController@result')->name('result.expense.statement.reports');
                         
@@ -517,6 +521,9 @@ Route::middleware([])->group(function () {
                         
                         route::get('fixed-assets/per-employee', 'PerEmployeeFixedAssetsController@create')->name('create.per.employee.fixed.assets');
                         route::post('fixed-assets/per-employee', 'PerEmployeeFixedAssetsController@store')->name('store.per.employee.fixed.assets');
+						
+                        // route::get('fixed-assets/employee', 'EmployeeFixedAssetsController@create')->name('create.per.employee.fixed.assets');
+                        // route::post('fixed-assets/employee', 'EmployeeFixedAssetsController@store')->name('store.per.employee.fixed.assets');
                         route::post('fixed-assets/per-employee/funding-structure', 'NewBranchFixedAssetsController@storeFunding')->name('store.per.employee.funding.structure.fixed.assets');
                         
                         

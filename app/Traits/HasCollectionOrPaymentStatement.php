@@ -222,25 +222,27 @@ trait HasCollectionOrPaymentStatement {
         
     }
 	
+	
 	 public static function calculateCorporateTaxesStatement(array $dates,array $additions  ,array $calculatedCorporateTaxesPerYear , float $initialBeginningBalance  , array $dateIndexWithDate , string $studyStartDateAsMonthNumber)
     {
 	
-		$financialYearStartMonth = 'january';
+	//	$financialYearStartMonth = 'january';
         $additionsForIntervals = [
             'monthly'=>$additions,
-            'quarterly'=>sumIntervalsIndexes($additions, 'quarterly', $financialYearStartMonth, $dateIndexWithDate),
-            'semi-annually'=>sumIntervalsIndexes($additions, 'semi-annually', $financialYearStartMonth, $dateIndexWithDate),
-            'annually'=>sumIntervalsIndexes($additions, 'annually', $financialYearStartMonth, $dateIndexWithDate),
+            // 'quarterly'=>sumIntervalsIndexes($additions, 'quarterly', $financialYearStartMonth, $dateIndexWithDate),
+            // 'semi-annually'=>sumIntervalsIndexes($additions, 'semi-annually', $financialYearStartMonth, $dateIndexWithDate),
+            // 'annually'=>sumIntervalsIndexes($additions, 'annually', $financialYearStartMonth, $dateIndexWithDate),
         ];
 		$corporateTaxesForIntervals = [
             'monthly'=>$calculatedCorporateTaxesPerYear,
-            'quarterly'=>sumIntervalsIndexes($calculatedCorporateTaxesPerYear, 'quarterly', $financialYearStartMonth, $dateIndexWithDate),
-            'semi-annually'=>sumIntervalsIndexes($calculatedCorporateTaxesPerYear, 'semi-annually', $financialYearStartMonth, $dateIndexWithDate),
-            'annually'=>sumIntervalsIndexes($calculatedCorporateTaxesPerYear, 'annually', $financialYearStartMonth, $dateIndexWithDate),
+            // 'quarterly'=>sumIntervalsIndexes($calculatedCorporateTaxesPerYear, 'quarterly', $financialYearStartMonth, $dateIndexWithDate),
+            // 'semi-annually'=>sumIntervalsIndexes($calculatedCorporateTaxesPerYear, 'semi-annually', $financialYearStartMonth, $dateIndexWithDate),
+            // 'annually'=>sumIntervalsIndexes($calculatedCorporateTaxesPerYear, 'annually', $financialYearStartMonth, $dateIndexWithDate),
         ];
         $result = [];
+		
 		$lastMonthsInYearKeys = array_keys($calculatedCorporateTaxesPerYear);
-        foreach (getIntervalFormatted() as $intervalName=>$intervalNameFormatted) {
+        foreach (['monthly'=>__('Monthly')] as $intervalName=>$intervalNameFormatted) {
             $beginningBalance = $initialBeginningBalance;
 			$settlements = [];
 			$isFirstLoop = true ; 
@@ -252,6 +254,7 @@ trait HasCollectionOrPaymentStatement {
                 $result[$intervalName]['beginning_balance'][$dateIndex] = $beginningBalance;
 				$isLastMonthInYear = in_array($dateIndex,$lastMonthsInYearKeys);
                 $totalDue[$dateIndex] =  $beginningBalance-$additionAtDate + $corporateTaxesAtDate;
+				// dump($corporateTaxesAtDate,$dateIndex,'-----------');
 				if($isStudyDateIsJan && $isFirstLoop){
 					$settlements[$dateIndex+4] = $initialBeginningBalance;
 				}
@@ -261,10 +264,12 @@ trait HasCollectionOrPaymentStatement {
 						$settlements[$dateIndex+4]=0;
 					}else{
 						$settlements[$dateIndex+4]= $totalDue[$dateIndex];
+						// dd($dateIndex+4,$settlements[$dateIndex+4],$totalDue);
 					}
+					// dd($settlements);
 				}
 				$settlementAtDate = $settlements[$dateIndex]??0;
-			
+				
                 $endBalance[$dateIndex] = $totalDue[$dateIndex] - $settlementAtDate   ;
                 $beginningBalance = $endBalance[$dateIndex] ;
                 $result[$intervalName]['addition'][$dateIndex] =  $additionAtDate ;
@@ -274,7 +279,7 @@ trait HasCollectionOrPaymentStatement {
 				$isFirstLoop=false ;
             }
         }
-		
+	//	dump($result[$intervalName]['payment']);
         return $result;
     
         

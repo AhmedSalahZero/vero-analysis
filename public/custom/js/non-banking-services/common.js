@@ -1,5 +1,6 @@
 $(document).on('click', '.repeat-to-right', function () {
 	// console.log('from 1')
+	
 	let columnIndex = parseInt($(this).attr('data-column-index'))
 	let parent = $(this).closest('tr')
 	let name = $(this).attr('data-name')
@@ -19,12 +20,12 @@ $(document).on('click', '.repeat-to-right', function () {
 		}
 	})
 })
-$('.repeat-to-right-input-hidden').on('change', function () {
-	// console.log('from 2')
-	const val = $(this).val()
-	const columnIndex = $(this).attr('data-column-index')
-	const numberOfDecimals = $(this).closest('.input-hidden-parent').find('.copy-value-to-his-input-hidden[data-column-index="' + columnIndex + '"]').attr('data-number-of-decimals')
-	$(this).closest('.input-hidden-parent').find('.copy-value-to-his-input-hidden[data-column-index="' + columnIndex + '"]').val(number_format(val, numberOfDecimals))
+$('.repeat-to-right-input-hidden').on('change', function (event) {
+		// console.log('from2');
+		const val = $(this).val()
+		const columnIndex = $(this).attr('data-column-index')
+		const numberOfDecimals = $(this).closest('.input-hidden-parent').find('.copy-value-to-his-input-hidden[data-column-index="' + columnIndex + '"]').attr('data-number-of-decimals')
+		$(this).closest('.input-hidden-parent').find('.copy-value-to-his-input-hidden[data-column-index="' + columnIndex + '"]').val(number_format(val, numberOfDecimals))
 })
 $(document).on('click', '.repeat-select-to-right', function () {
 	// console.log('from 3')
@@ -128,18 +129,6 @@ $(document).on('change', '[js-recalculate-equity-funding-value],.js-recalculate-
 
 })
 
-// $(document).on('change', '[js-recalculate-equity-funding-value],.js-recalculate-equity-funding-value', function () {
-// 	// console.log('from 7')
-// 	const columnIndex = parseInt($(this).attr('data-column-index'))
-// 	const total = $('.total-loans-hidden[data-column-index="' + columnIndex + '"]').val()
-// 	const equityFundingRate = $('.equity-funding-rates[data-column-index="' + columnIndex + '"]').val()
-// 	let equityFundingValue = equityFundingRate / 100 * total
-// 	let newLoanFundingValue = (1 - (equityFundingRate / 100)) * total
-// 	$('input.equity-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').val(number_format(equityFundingValue)).trigger('change')
-// 	$('input.new-loans-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').val(number_format(newLoanFundingValue)).trigger('change')
-// })
-
-//$('[js-recalculate-equity-funding-value]').trigger('change')
 function convertDateToDefaultDateFormat(dateStr) {
 	const [month, day, year] = dateStr.split("/") // Split the string by "/";
 	return `${year}-${month}-${day}` // Rearrange to YYYY-MM-DD
@@ -215,6 +204,7 @@ $(document).on('click', '.collapse-before-me', function () {
 	// console.log('from 11')
 	let columnIndex = $(this).attr('data-column-index')
 	hide = true
+	console.log(columnIndex)
 	let counter = 0
 	while (hide) {
 		if (counter != 0) {
@@ -224,8 +214,7 @@ $(document).on('click', '.collapse-before-me', function () {
 				return
 			}
 		}
-
-		$(this).closest('table').find('[data-column-index="' + columnIndex + '"]:not(.exclude-from-collapse):not(.total-td):not(.total-td-formatted)').toggle()
+		$(this).closest('table').find('[data-column-index="' + columnIndex + '"]:not(.exclude-from-collapse):not(.total-td):not(.total-td-formatted)').closest('td,th').toggle()
 
 		columnIndex--
 		counter++
@@ -256,52 +245,85 @@ $(document).on('click', '.add-btn-js', function (e) {
 	$(this).toggleClass('rotate-180')
 	$(this).closest('[data-is-main-row]').nextUntil('[data-is-main-row]').toggleClass('hidden')
 })
+
+
 $(document).on('change', '.recalculate-gr', function () {
-	// console.log('from 14')
-	const columnIndex = parseInt($(this).attr('data-column-index'))
-	const previousColumnIndex = columnIndex - 1
-	const nextColumnIndex = columnIndex + 1
-	const growthRateOfCurrentYear = $('.gr-field[data-column-index="' + columnIndex + '"]').val()
+   
+  
+        const $table = $(this).closest('table');
+        const columnIndex = parseInt($(this).attr('data-column-index'));
+        const growthRate = number_unformat($(this).val()) / 100;
 
+        if (columnIndex === 0) return;
 
+        const prevCol = columnIndex - 1;
+        let hasChanges = false;
+	
+        $table.find('tr[total-row-tr]').not(':has(.gr-field)').each(function() {
+            const $prevCell = $(this).find(`.current-growth-rate-result-value[data-column-index="${prevCol}"]`);
+            const $currCell = $(this).find(`.current-growth-rate-result-value[data-column-index="${columnIndex}"]`);
+            const $currFormatted = $(this).find(`.current-growth-rate-result-value-formatted[data-column-index="${columnIndex}"]`);
 
-	allElements = $('.current-growth-rate-result-value-formatted[data-column-index="' + columnIndex + '"]')
-	allElements.each(function (index, element) {
-		const loanAmount = $(element).closest('tr').find('.current-growth-rate-result-value[data-column-index="' + previousColumnIndex + '"]').val()
-		if (loanAmount != undefined) {
-			currentAmount = (1 + (growthRateOfCurrentYear / 100)) * loanAmount
-			$(element).val(number_format(currentAmount)).trigger('change')
-		}
+            const prevVal = number_unformat($prevCell.val());
+            if (prevVal > 0) {
+                const newVal = prevVal * (1 + growthRate);
+                $currCell.val(newVal);
+                $currFormatted.val(number_format(newVal, 0)).trigger('change');
+                hasChanges = true;
+            }
+        });
 
-	})
-	$('.recalculate-gr[data-column-index="' + nextColumnIndex + '"]').trigger('change')
-})
+        if (hasChanges) {
+            // Only trigger next year once
+            const nextGr = $table.find(`.recalculate-gr[data-column-index="${columnIndex + 1}"]`);
+			// console.log(nextGr.length);
+            if (nextGr.length){
+				// console.log(nextGr);
+				 nextGr.trigger('change');
+			}
+        }
+  
+});
+
+// $(document).on('change', '.recalculate-gr', function () {
+// 	// console.log('from 14')
+// 	const columnIndex = parseInt($(this).attr('data-column-index'))
+// 	const previousColumnIndex = columnIndex - 1
+// 	const nextColumnIndex = columnIndex + 1
+// 	const growthRateOfCurrentYear = $('.gr-field[data-column-index="' + columnIndex + '"]').val()
+// 	allElements = $('.current-growth-rate-result-value-formatted[data-column-index="' + columnIndex + '"]')
+// 	// console.log('lennnnnnnn',allElements.length)
+// 	allElements.each(function (index, element) {
+// 		const loanAmount = $(element).closest('tr').find('.current-growth-rate-result-value[data-column-index="' + previousColumnIndex + '"]').val()
+// 		if (loanAmount != undefined) {
+// 			currentAmount = (1 + (growthRateOfCurrentYear / 100)) * loanAmount
+// 			$(element).val(number_format(currentAmount)).trigger('change')
+// 		}
+
+// 	})
+// 	$('.recalculate-gr[data-column-index="' + nextColumnIndex + '"]').trigger('change')
+// })
 $(document).on('change', '.current-growth-rate-result-value-formatted', function (event) {
-	// console.log('from 15')
-	const columnIndex = parseInt($(this).attr('data-column-index'))
-	const nextColumnIndex = columnIndex + 1
-	const previousColumnIndex = columnIndex - 1
 	if (event.originalEvent && event.originalEvent.isTrusted) {
-		// console.log('if---------')
+		// console.log('from 15')
+		const columnIndex = parseInt($(this).attr('data-column-index'))
+		const nextColumnIndex = columnIndex + 1
+		const previousColumnIndex = columnIndex - 1
+		// console.log('if');
 		let previousValue = $(this).closest('tr').find('.current-growth-rate-result-value[data-column-index="' + previousColumnIndex + '"]').val()
 		if (previousValue !== undefined) {
-
 			let currentValue = number_unformat($(this).val())
 			let currentGrowthRate = Math.round(((currentValue - previousValue) / previousValue) * 100, 2)
 			$(this).closest('table').find('.gr-field[data-column-index="' + columnIndex + '"]').val(currentGrowthRate).trigger('change')
 		} else {
 			$(this).closest('table').find('.gr-field[data-column-index="' + nextColumnIndex + '"]').trigger('change')
-
+			
 		}
-		//	// console.log(previousValue ,currentValue ,'--' )
-
-		// $('.recalculate-gr[data-column-index="' + nextColumnIndex + '"]').trigger('change')
 	} else {
 		// console.log('else---------')
 		// console.log("Input was changed programmatically.")
 
 	}
-	//$('.recalculate-gr[data-column-index="'+nextColumnIndex+'"]').trigger('change');
 })
 $(document).on('click', '#enable-editing-btn', function (e) {
 	// console.log('from 16')
@@ -477,7 +499,6 @@ $(document).ready(function () {
 		const table = $(repeaterId)
 		table.find('input, select').prop('readonly', true)
 	}
-	// Toggle editability
 	$('#toggleEditBtn').click(function (e) {
 		e.preventDefault()
 		const table = $(repeaterId)
@@ -497,31 +518,22 @@ $(document).ready(function () {
 
 		} else {
 			table.removeClass('editable').addClass('readonly')
-
 			$(this).text('Enable Editing')
-			//		$(this).attr('is-save-and-continue',0);
 			$(this).attr('can-show-funding-structure', 1)
-			// Disable all inputs and selects
 			table.find('input,select').prop('readonly', true)
-
 		}
 		$('.is-fully-funded-checkbox:checked').trigger('change')
 	})
-
-	// Initially disable all inputs and selects
-	// $('#fixedAssets_repeater').find('input, select').prop('readonly', true);
-	// $('#fixedAssets_repeater').find('.bootstrap-select').addClass('readonly');
 })
 
-$(function () {
-	//	$('#toggleEditBtn').click();
-})
 $(document).on('change', '[total-row-tr] input.input-hidden-with-name', function () {
 	// console.log('from 22')
 	let parent = $(this).closest('tr')
 	let totalRow = parent.find('.sum-total-row')
 	let numberOfDecimals = parent.attr('data-repeat-formatting-decimals')
 	if (totalRow) {
+		// console.log('from223')
+		// console.log('emgth',parent.find('input.input-hidden-with-name:not(.exclude-from-total)').length);
 		let total = 0
 		parent.find('input.input-hidden-with-name:not(.exclude-from-total)').each(function (index, row) {
 			var currentTotal = parseFloat(number_unformat($(row).val()))
@@ -529,8 +541,6 @@ $(document).on('change', '[total-row-tr] input.input-hidden-with-name', function
 		})
 		parent.find('input.sum-total-row').val(number_format(total, numberOfDecimals))
 	}
-//	console.log('t',parent,total,number_format(total, numberOfDecimals));
-
 })
 $('[total-row-tr] input.input-hidden-with-name').trigger('change')
 
@@ -831,23 +841,6 @@ function replaceRepeaterIndex(element) {
 
 
 
-
-
-// $(document).on('change', '[total-row-tr] input.input-hidden-with-name', function () {
-// 		// console.log('from 40')
-// 	let parent = $(this).closest('tr')
-// 	let totalRow = parent.find('.sum-total-row')
-// 	let numberOfDecimals = parent.attr('data-repeat-formatting-decimals')
-// 	if (totalRow) {
-// 		let total = 0
-// 		parent.find('input.input-hidden-with-name').each(function (index, row) {
-// 			var currentTotal = parseFloat(number_unformat($(row).val()))
-// 			total += currentTotal
-// 		})
-// 		parent.find('input.sum-total-row').val(number_format(total, numberOfDecimals))
-// 	}
-
-// })
 $(document).on('change', 'select.expense-category-class', function () {
 	// console.log('from 41')
 	const value = $(this).val()
@@ -1172,21 +1165,14 @@ function calculateResult(input) {
                 } else {
                     baseValue = parseFloat(baseValue);
                 }
-			//	console.log('after',baseValue);
+			//	// console.log('after',baseValue);
                 if (!isNaN(baseValue)) {
 					baseValueHidden = baseValue.toFixed(10); // Format to 5 decimals
                     baseValue = baseValue.toFixed(3); // Format to 5 decimals
                    $(input).val(baseValue).trigger('change'); // Update input field
 				   $(input).closest('.input-hidden-parent').find('input.input-hidden-with-name').val(baseValueHidden);
                 }
-			//	let columnIndex = $(input).attr('data-column-index')
-			//	let total =  0 ;
-			//	console.log($(this).closest('table').find('input[type="hidden"]').length)
-			//	$(input).closest('table').find('input[type="hidden"][data-column-index="'+columnIndex+'"]').each(function(index,currentInput){
-			//		total+=parseFloat($(currentInput).val());
-			//	})
-			//	$(input).closest('table').find('input.sum-total-row[data-column-index="'+columnIndex+'"]').val(total);
-				// $(this).closest('');
+		
 
             }
 			$(document).on('blur','.calcField',function(){

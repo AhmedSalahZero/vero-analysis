@@ -46,8 +46,7 @@ $months = $study->getMicrofinanceMonths() ;
                             </div>
                         </div>
                         <div class="col-md-2 text-right">
-                            <x-show-hide-btn :query="'.direct-factoring-revenue-projection-by-category'"></x-show-hide-btn>
-
+						 <a href="{{ route('create.loan.microfinance',['company'=>$company->id,'study'=>$study->id]) }}" class="btn show-hide-style show-hide-repeater" >{{ __('Company Loan Report') }}</a>
                         </div>
                     </div>
                     <div class="row">
@@ -124,7 +123,7 @@ $months = $study->getMicrofinanceMonths() ;
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center flex-column ">
-                                            <a href="#" class="btn btn-md-width btn-2-bg btn-sm btn-brand btn-pill">{{ __('Loan Report') }}</a>
+                                            {{-- <a href="{{ route('loan') }}" class="btn btn-md-width btn-2-bg btn-sm btn-brand btn-pill">{{ __('Loan Report') }}</a> --}}
                                         </div>
                                     </td>
                                 </tr>
@@ -314,9 +313,13 @@ $months = $study->getMicrofinanceMonths() ;
                 , error: function(res) {
                     $('.save-form').prop('disabled', false);
                     $('.submit-form-btn-new').prop('disabled', false)
+					let errorMessage = res.responseJSON.message;
+					if (res.responseJSON && res.responseJSON.errors) {
+                            errorMessage = res.responseJSON.errors[Object.keys(res.responseJSON.errors)[0]][0]
+                        }
                     Swal.fire({
                         icon: 'error'
-                        , title: res.responseJSON.message
+                        , title: errorMessage
                     , });
                 }
             });

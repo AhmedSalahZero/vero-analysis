@@ -15,7 +15,6 @@
          <x-tables.repeater-table-th class=" rate-class header-border-down " :title="__('Tenor <br> Months')"></x-tables.repeater-table-th>
          <x-tables.repeater-table-th class=" rate-class header-border-down " :title="__('Grace <br> Period')"></x-tables.repeater-table-th>
          <x-tables.repeater-table-th class=" rate-class header-border-down " :title="__('Spread <br> Rate')" :helperTitle="__('You can either choose one of the system default terms (cash, quarterly, semi-annually, or annually), if else please choose Customize to insert your payment terms')"></x-tables.repeater-table-th>
-         {{-- <x-tables.repeater-table-th class=" rate-class header-border-down " :title="__('Pricing <br> Rate')"></x-tables.repeater-table-th> --}}
          <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Installment <br> Interval')"></x-tables.repeater-table-th>
          <x-tables.repeater-table-th class=" rate-class header-border-down " :title="__('Step <br> Rate (+/-)')" :helperTitle="__('Withhold Tax rate will be calculated based on Monthly Amount excluding VAT')"></x-tables.repeater-table-th>
          <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Step <br> Interval')"></x-tables.repeater-table-th>
@@ -83,8 +82,6 @@
                  <div class="d-flex align-items-center">
                      <input @if($isRepeater) name="step_rate" @else name="{{ $tableId }}[0][step_rate]" @endif class="form-control only-percentage-allowed-between-minus-plus-hundred text-center" value="{{ isset($subModel) ? $subModel->getStepRate() : 0 }}" type="text">
                      <span style="margin-left:3px	">%</span>
-                     {{-- <input type="hidden" value="{{ (isset($subModel) ? $subModel->getIncreaseRate() : 0) }}" @if($isRepeater) name="increase_rate" @else name="{{ $tableId }}[0][increase_rate]" @endif> --}}
-
                  </div>
              </td>
              <td>

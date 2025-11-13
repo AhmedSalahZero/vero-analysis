@@ -83,7 +83,7 @@
                                 var contractName = res.purchase_orders[purchaseOrderId];
                                 purchaseOrdersOptions += `<option ${currentSelectedId == purchaseOrderId ? 'selected' : '' } value="${purchaseOrderId}"> ${contractName}  </option> `;
                             }
-							$('select.lc-currency').val(currencyName).trigger('change');
+					//		$('select.lc-currency').val(currencyName).trigger('change');
                             $('select#purchase-order-id').empty().append(purchaseOrdersOptions).selectpicker("refresh");
                         }
                     })

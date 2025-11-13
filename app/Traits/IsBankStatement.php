@@ -27,8 +27,10 @@ trait IsBankStatement
 			] ;
 			$updatedData = array_merge($updatedData , $additionUpdateData);
 			$row = DB::table($this->getTable())->where('id',$this->id)->first();
-			$isEndOfMonthRow = $row->interest_type=='end_of_month' || $row->interest_type =='end_of_month_final';
-			
+			$isEndOfMonthRow = false ;
+			if(isset($row->interest_type)){
+				$isEndOfMonthRow =  $row->interest_type=='end_of_month' || $row->interest_type =='end_of_month_final';
+			}
 			if($isEndOfMonthRow){
 				if(Request()->has('is_end_of_month_final')){
 					$updatedData['interest_type']='end_of_month_final';

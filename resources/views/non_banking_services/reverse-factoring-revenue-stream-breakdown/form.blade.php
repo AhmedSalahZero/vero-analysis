@@ -54,6 +54,7 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
                     <div class="row factoring-revenue-projection-by-category">
                         @php
                         $rowIndex = 0;
+                        $currentYearRepeaterIndex = 0 ;
                         @endphp
 
 
@@ -61,12 +62,27 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class="  header-border-down first-column-th-class" :title="__('Item')"></x-tables.repeater-table-th>
                                 @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
-                                <x-tables.repeater-table-th class=" header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
+                                <x-tables.repeater-table-th data-column-index="{{ $yearOrMonthAsIndex }}" class=" header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
+
+                                @php
+                                $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                                $currentMonthNumber = explode('-',$dateAsString)[1];
+                                $currentYear= explode('-',$dateAsString)[0];
+                                @endphp
+
+                                @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                                <x-tables.repeater-table-th :icon="true" data-column-index="{{ $yearOrMonthAsIndex }}" :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down {{ 'year-repeater-index-'.$currentYearRepeaterIndex }} collapse-before-me exclude-from-collapse" :title="__('Total Yr.').' <br> '. $currentYear"></x-tables.repeater-table-th>
+                                @php
+                                $currentYearRepeaterIndex ++;
+                                @endphp
+                                @endif
+                                
+
                                 @endforeach
-								<x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Total')"></x-tables.repeater-table-th>
+                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Total')"></x-tables.repeater-table-th>
                             </x-slot>
                             <x-slot name="trs">
-							@if($isYearsStudy)
+                                @if($isYearsStudy)
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
                                     <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
@@ -81,6 +97,7 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
                                     </td>
                                     @php
                                     $columnIndex = 0 ;
+                                    $currentYearRepeaterIndex = 0;
                                     @endphp
                                     @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
@@ -94,22 +111,40 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
                                             </div>
                                         </div>
                                     </td>
+
+                                    @php
+                                    $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                                    $currentMonthNumber = explode('-',$dateAsString)[1];
+                                    $currentYear= explode('-',$dateAsString)[0];
+                                    @endphp
+                                    @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                                    <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <x-repeat-right-dot-inputs :isNumber="false" :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="'-' " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                        </div>
+
+                                    </td>
+                                    @php
+                                    $currentYearRepeaterIndex++;
+                                    @endphp
+                                    @endif
+
                                     @php
                                     $columnIndex++;
                                     @endphp
                                     @endforeach
-									
-									 <td>
+
+                                    <td>
                                         <div class="d-flex align-items-center justify-content-center">
                                             <input type="text" class="form-control expandable-amount-input  sum-percentage-css" disabled value="-">
                                         </div>
                                     </td>
-									
+
 
 
                                 </tr>
-								@endif
-@if($isYearsStudy)
+                                @endif
+                                @if($isYearsStudy)
 
                                 <tr data-repeat-formatting-decimals="2" data-repeater-style>
 
@@ -126,6 +161,7 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
                                     @php
                                     $columnIndex = 0 ;
                                     $currentVal = 0 ;
+                                    $currentYearRepeaterIndex = 0 ;
 
                                     @endphp
                                     @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
@@ -136,19 +172,39 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
 
                                         </div>
                                     </td>
+
+                                    @php
+                                    $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                                    $currentMonthNumber = explode('-',$dateAsString)[1];
+                                    $currentYear= explode('-',$dateAsString)[0];
+                                    @endphp
+
+
+                                    @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                                    <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <x-repeat-right-dot-inputs :isNumber="false" :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="'-' " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
+                                        </div>
+
+                                    </td>
+                                    @php
+                                    $currentYearRepeaterIndex++;
+                                    @endphp
+                                    @endif
+
                                     @php
                                     $columnIndex++;
                                     @endphp
                                     @endforeach
-									
-									<td>
+
+                                    <td>
                                         <div class="d-flex align-items-center justify-content-center">
                                             <input type="text" class="form-control expandable-amount-input  sum-percentage-css" disabled value="-">
                                         </div>
                                     </td>
-									
+
                                 </tr>
-								@endif
+                                @endif
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style total-row-tr data-row-total>
 
                                     <td>
@@ -158,6 +214,7 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
 
                                     @php
                                     $columnIndex = 0 ;
+                                    $currentYearRepeaterIndex = 0 ;
                                     @endphp
                                     @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                     @php
@@ -165,17 +222,37 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
                                     @endphp
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :number-format-decimals="0" :currentVal="$currentVal" :formattedInputClasses="'current-growth-rate-result-value-formatted'" :classes="'only-greater-than-or-equal-zero-allowed total-loans-hidden factoring-projection-amount recalculate-factoring js-recalculate-equity-funding-value current-growth-rate-result-value'" :is-percentage="false" :name="'ReverseFactoringRevenueProjectionByCategory['.'reverse_factoring_transactions_projections'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :number-format-decimals="0" :currentVal="$currentVal" :formattedInputClasses="'current-growth-rate-result-value-formatted'" data-group-index="{{ $currentYearRepeaterIndex }}" :classes="'only-greater-than-or-equal-zero-allowed repeater-with-collapse-input total-loans-hidden factoring-projection-amount recalculate-factoring js-recalculate-equity-funding-value current-growth-rate-result-value'" :is-percentage="false" :name="'ReverseFactoringRevenueProjectionByCategory['.'reverse_factoring_transactions_projections'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                         </div>
                                     </td>
+
+                                    @php
+                                    $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                                    $currentMonthNumber = explode('-',$dateAsString)[1];
+                                    $currentYear= explode('-',$dateAsString)[0];
+                                    @endphp
+
+
+                                    @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                                    <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="0 " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
+                                        </div>
+
+                                    </td>
+                                    @php
+                                    $currentYearRepeaterIndex++;
+                                    @endphp
+                                    @endif
+
                                     @php
                                     $columnIndex++ ;
                                     @endphp
-									
+
 
                                     @endforeach
 
-  <td>
+                                    <td>
                                         <div class="d-flex align-items-center justify-content-center">
                                             <input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="0">
                                         </div>
@@ -238,6 +315,7 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
                     <div class="row reverse-factoring-admin-fees">
                         @php
                         $rowIndex = 0;
+                        $currentYearRepeaterIndex = 0;
                         $relationName ='reverseFactoringBreakdowns';
                         $repeaterId =$relationName.'repeater';
                         @endphp
@@ -247,9 +325,22 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
                                 <x-tables.repeater-table-th class=" tenor-selector-class header-border-down " :title="__('Tenor <br> (Months)')"></x-tables.repeater-table-th>
                                 <x-tables.repeater-table-th class=" tenor-selector-class header-border-down " :title="__('Spread <br> Rate')"></x-tables.repeater-table-th>
                                 @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
-                                <x-tables.repeater-table-th class="header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
+                                <x-tables.repeater-table-th data-column-index="{{ $yearOrMonthAsIndex }}" class="header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
+
+                                @php
+                                $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                                $currentMonthNumber = explode('-',$dateAsString)[1];
+                                $currentYear= explode('-',$dateAsString)[0];
+                                @endphp
+                                @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                                <x-tables.repeater-table-th :icon="true" data-column-index="{{ $yearOrMonthAsIndex }}" :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down {{ 'year-repeater-index-'.$currentYearRepeaterIndex }} collapse-before-me exclude-from-collapse" :title="__('Total Yr.').' <br> '. $currentYear"></x-tables.repeater-table-th>
+                                @php
+                                $currentYearRepeaterIndex ++;
+                                @endphp
+                                @endif
+
                                 @endforeach
-								 <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Total')"></x-tables.repeater-table-th>
+                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Total')"></x-tables.repeater-table-th>
                             </x-slot>
                             <x-slot name="trs">
                                 @php
@@ -288,19 +379,45 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
 
                                     @php
                                     $columnIndex = 0 ;
+                                    $currentYearRepeaterIndex = 0 ;
                                     @endphp
                                     @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                     <td>
                                         <x-repeat-right-dot-inputs :numberFormatDecimals="2" :multiple="true" :currentVal="isset($subModel) ? $subModel->getPercentageAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed recalculate-factoring factoring-rate exclude-from-total'" :is-percentage="true" :name="'percentage_payload'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
-                                        <x-repeat-right-dot-inputs :numberFormatDecimals="0" :multiple="true" :currentVal="isset($subModel) ? $subModel->getLoanAmountPayloadAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed current-loan-input factoring-value'" :is-percentage="false" :name="'loan_amounts'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                        <x-repeat-right-dot-inputs data-group-index="{{ $currentYearRepeaterIndex }}" :numberFormatDecimals="0" :multiple="true" :currentVal="isset($subModel) ? $subModel->getLoanAmountPayloadAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed current-loan-input factoring-value repeater-with-collapse-input'" :is-percentage="false" :name="'loan_amounts'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                     </td>
+
+                                    @php
+                                    $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                                    $currentMonthNumber = explode('-',$dateAsString)[1];
+                                    $currentYear= explode('-',$dateAsString)[0];
+                                    @endphp
+
+
+                                    @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+
+
+
+                                    <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
+
+
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="0 " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
+                                        </div>
+
+                                    </td>
+                                    @php
+                                    $currentYearRepeaterIndex++;
+                                    @endphp
+                                    @endif
+
                                     @php
                                     $columnIndex++;
                                     @endphp
                                     @endforeach
- <td>
+                                    <td>
                                         <div class="d-flex align-items-center justify-content-center">
                                             <input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="0">
                                         </div>
@@ -330,7 +447,7 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
             {{-- end of Reverse Factoring Breakdown   --}}
 
 
-@include('seasonality_card')
+            @include('seasonality_card')
 
 
             {{-- start of Administration Fees Rate & ECL Rate   --}}
@@ -374,7 +491,7 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
 
 
                                     <td>
-                                        <input value="{{ __('Administration Fees Rate') }}" disabled class="form-control text-left mt-2" type="text">
+                                        <input value="{{ __('Administration Fees Rate') }}" disabled class="form-control  min-width-hover-300 text-left mt-2" type="text">
 
                                     </td>
                                     @php
@@ -471,6 +588,7 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
                     <div class="row new-portfolio-funding">
                         @php
                         $rowIndex = 0;
+						$currentYearRepeaterIndex = 0;
                         @endphp
 
 
@@ -478,15 +596,32 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
                                 @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
-                                <x-tables.repeater-table-th class=" header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
+                                <x-tables.repeater-table-th data-column-index="{{ $yearOrMonthAsIndex }}" class=" header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
+								
+								@php
+                                $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                                $currentMonthNumber = explode('-',$dateAsString)[1];
+                                $currentYear= explode('-',$dateAsString)[0];
+                                @endphp
+                                
+                        
+
+
+@if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                                <x-tables.repeater-table-th :icon="true" data-column-index="{{ $yearOrMonthAsIndex }}" :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down {{ 'year-repeater-index-'.$currentYearRepeaterIndex }} collapse-before-me exclude-from-collapse" :title="__('Total Yr.').' <br> '. $currentYear"></x-tables.repeater-table-th>
+                                @php
+                                $currentYearRepeaterIndex ++;
+                                @endphp
+                                @endif
+								
                                 @endforeach
-								 <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Total')"></x-tables.repeater-table-th>
+                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Total')"></x-tables.repeater-table-th>
                             </x-slot>
                             <x-slot name="trs">
+							@include('loan-structure-trs')
 
-                                <tr data-repeat-formatting-decimals="2" data-repeater-style >
+                                {{-- <tr data-repeat-formatting-decimals="2" data-repeater-style>
 
-                                    {{-- <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}"> --}}
 
 
                                     <td>
@@ -509,8 +644,8 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
                                     $columnIndex++;
                                     @endphp
                                     @endforeach
-									
-									<td>
+
+                                    <td>
                                         <div class="d-flex align-items-center justify-content-center">
                                             <input type="text" class="form-control expandable-amount-input  sum-percentage-css" disabled value="-">
                                         </div>
@@ -546,7 +681,7 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
                                     @endphp
                                     @endforeach
 
-  <td>
+                                    <td>
                                         <div class="d-flex align-items-center justify-content-center">
                                             <input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="0">
                                         </div>
@@ -577,7 +712,7 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
                                     @endphp
 
                                     @endforeach
-<td>
+                                    <td>
                                         <div class="d-flex align-items-center justify-content-center">
                                             <input type="text" class="form-control expandable-amount-input  sum-percentage-css" disabled value="-">
                                         </div>
@@ -617,13 +752,13 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
 
                                     @endforeach
 
-<td>
+                                    <td>
                                         <div class="d-flex align-items-center justify-content-center">
                                             <input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="0">
                                         </div>
                                     </td>
 
-                                </tr>
+                                </tr> --}}
 
                             </x-slot>
 
@@ -763,9 +898,13 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
                 , error: function(res) {
                     $('.save-form').prop('disabled', false);
                     $('.submit-form-btn-new').prop('disabled', false)
+                    let errorMessage = res.responseJSON.message;
+                    if (res.responseJSON && res.responseJSON.errors) {
+                        errorMessage = res.responseJSON.errors[Object.keys(res.responseJSON.errors)[0]][0]
+                    }
                     Swal.fire({
                         icon: 'error'
-                        , title: res.responseJSON.message
+                        , title: errorMessage
                     , });
                 }
             });
@@ -777,10 +916,10 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
 
 <script>
 
-  
 
- 
-   
+
+
+
 
 
 

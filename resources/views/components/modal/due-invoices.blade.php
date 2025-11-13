@@ -7,10 +7,13 @@
 'reportInterval',
 'cashflowReport'=>null,
 'currencyName',
-'contractCode'
+'contractCode',
+'cashflowReportId',
+'flowReportId'=>null
 ])
 @php
 	$cashflowReportId = isset($cashflowReport) ? $cashflowReport->id:0;
+	$cashflowReportId = isset($flowReportId) ? $flowReportId :  $cashflowReportId;
 	$isContract = $contractCode ? 1 : 0 ;
 @endphp
 
@@ -19,6 +22,14 @@
         <form action="{{ route('adjust.customer.dues.invoices',['company'=>$company->id]) }}" class="modal-content" method="post">
 		
 		<input type="hidden" name="cashFlowReportId" value="{{ $cashflowReportId }}">
+		<input type="hidden" name="invoiceType" value="{{ $currentInvoiceType }}">
+											<input type="hidden" name="currency_name"  value="{{ $currencyName }}">
+											<input type="hidden" name="cashflow_report_id"  value="{{ $cashflowReportId }}">
+											<input type="hidden" name="is_contract"  value="{{ $contractCode ? 1 : 0 }}">
+											@if($contractCode)
+											<input type="hidden" name="contract_code"  value="{{ $contractCode }}">
+											@endif 
+											
 		@csrf
             <div class="modal-header">
                 <h5 class="modal-title" style="color:#0741A5 !important" id="exampleModalLongTitle">{{ $currentInvoiceType == 'CustomerInvoice' ?  __('Customer Past Due Invoices') :  __('Supplier Past Due Invoices') }}</h5>
@@ -47,23 +58,12 @@
 								$dueInvoiceRow = \DB::table('weekly_cashflow_custom_due_invoices')->where('is_contract',$isContract)->where('cashflow_report_id',$cashflowReportId)->where('invoice_type',$currentInvoiceType)->where('company_id',$company->id)->whereIn('invoice_id',$allIds)->get();
 								
 							@endphp
+							{{-- dd($pastDueCustomerInvoices); --}}
                             @foreach($pastDueCustomerInvoices as $pastDueCustomerInvoice)
 							@php
-								//if($pastDueCustomerInvoice->net_balance_until_date <= 0 ){
-								//	continue;
-							//	}
 								$row = $dueInvoiceRow->where('invoice_id',$pastDueCustomerInvoice['id'])->first();
-								
 							@endphp
-                            <input type="hidden" name="customer_invoice_id[]" value="{{ $pastDueCustomerInvoice['id'] }}">
-											<input type="hidden" name="invoice_amount[{{ $pastDueCustomerInvoice['id'] }}]"  value="{{ $pastDueCustomerInvoice['net_balance_in_main_currency'] }}">
-											<input type="hidden" name="invoiceType" value="{{ $currentInvoiceType }}">
-											<input type="hidden" name="currency_name"  value="{{ $currencyName }}">
-											<input type="hidden" name="cashflow_report_id"  value="{{ $cashflowReportId }}">
-											<input type="hidden" name="is_contract"  value="{{ $contractCode ? 1 : 0 }}">
-											@if($contractCode)
-											<input type="hidden" name="contract_code"  value="{{ $contractCode }}">
-											@endif 
+					
                             <tr>
                                 <td>
                                     <div class="kt-input-icon">
@@ -84,6 +84,13 @@
                                 <td>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
+										
+											<input type="hidden" name="dd" value="ali">
+							{{-- {{ dd($currentInvoiceType) }} --}}
+                          	  <input type="hidden" name="customer_invoice_id[]" value="{{ $pastDueCustomerInvoice['id'] }}">
+											<input type="hidden" name="invoice_amount[{{ $pastDueCustomerInvoice['id'] }}]"  value="{{ $pastDueCustomerInvoice['net_balance_in_main_currency'] }}">
+											
+											
                                             <input disabled type="text" class="form-control text-center" value="{{ number_format($pastDueCustomerInvoice['net_balance_in_main_currency']) }}">
 											@php
 												$totalNetBalance +=$pastDueCustomerInvoice['net_balance_in_main_currency']; 

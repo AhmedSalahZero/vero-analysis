@@ -55,6 +55,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                     <div class="row factoring-revenue-projection-by-category">
                         @php
                         $rowIndex = 0;
+                        $currentYearRepeaterIndex = 0 ;
                         @endphp
 
 
@@ -62,7 +63,19 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class="  header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
                                 @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
-                                <x-tables.repeater-table-th class="  header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
+                                <x-tables.repeater-table-th data-column-index="{{ $yearOrMonthAsIndex }}" class="  header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
+                                @php
+                                $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                                $currentMonthNumber = explode('-',$dateAsString)[1];
+                                $currentYear= explode('-',$dateAsString)[0];
+                                @endphp
+
+                                @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                                <x-tables.repeater-table-th :icon="true" data-column-index="{{ $yearOrMonthAsIndex }}" :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down {{ 'year-repeater-index-'.$currentYearRepeaterIndex }} collapse-before-me exclude-from-collapse" :title="__('Total Yr.').' <br> '. $currentYear"></x-tables.repeater-table-th>
+                                @php
+                                $currentYearRepeaterIndex ++;
+                                @endphp
+                                @endif
                                 @endforeach
                                 <x-tables.repeater-table-th class="  header-border-down " :title="__('Total')"></x-tables.repeater-table-th>
                             </x-slot>
@@ -82,6 +95,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                                     </td>
                                     @php
                                     $columnIndex = 0 ;
+                                    $currentYearRepeaterIndex = 0;
                                     @endphp
                                     @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
@@ -95,6 +109,28 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                                             </div>
                                         </div>
                                     </td>
+
+
+
+
+                                    @php
+                                    $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                                    $currentMonthNumber = explode('-',$dateAsString)[1];
+                                    $currentYear= explode('-',$dateAsString)[0];
+                                    @endphp
+                                    @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                                    <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <x-repeat-right-dot-inputs :isNumber="false" :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="'-' " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                        </div>
+
+                                    </td>
+                                    @php
+                                    $currentYearRepeaterIndex++;
+                                    @endphp
+                                    @endif
+
+
                                     @php
                                     $columnIndex++;
                                     @endphp
@@ -117,7 +153,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                                 </tr>
                                 @endif
 
-@if($isYearsStudy)
+                                @if($isYearsStudy)
                                 <tr total-row-tr data-repeat-formatting-decimals="2" data-repeater-style>
 
                                     <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
@@ -133,6 +169,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                                     @php
                                     $columnIndex = 0 ;
                                     $currentVal = 0 ;
+                                    $currentYearRepeaterIndex = 0 ;
 
                                     @endphp
                                     @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
@@ -142,6 +179,28 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                                             <x-repeat-right-dot-inputs :currentVal="$model->directFactoringRevenueProjectionByCategory ? $model->directFactoringRevenueProjectionByCategory->getGrowthRateAtYearOrMonthIndex($yearOrMonthAsIndex) : 0" :classes="'only-number-allowed recalculate-gr gr-field'" :is-percentage="true" :name="'directFactoringRevenueProjectionByCategory['.'growth_rates'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                         </div>
                                     </td>
+
+
+                                    @php
+                                    $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                                    $currentMonthNumber = explode('-',$dateAsString)[1];
+                                    $currentYear= explode('-',$dateAsString)[0];
+                                    @endphp
+
+
+                                    @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                                    <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <x-repeat-right-dot-inputs :isNumber="false" :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="'-' " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
+                                        </div>
+
+                                    </td>
+                                    @php
+                                    $currentYearRepeaterIndex++;
+                                    @endphp
+                                    @endif
+
+
                                     @php
                                     $columnIndex++;
                                     @endphp
@@ -161,7 +220,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                                 </tr>
 
 
-@endif
+                                @endif
 
 
 
@@ -177,6 +236,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
                                     @php
                                     $columnIndex = 0 ;
+                                    $currentYearRepeaterIndex = 0 ;
                                     @endphp
                                     @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                     @php
@@ -184,9 +244,30 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                                     @endphp
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :number-format-decimals="0" :currentVal="$currentVal" :formattedInputClasses="'current-growth-rate-result-value-formatted'" :classes="'only-greater-than-or-equal-zero-allowed    factoring-projection-amount recalculate-factoring  is-percentage-total-of current-growth-rate-result-value '" data-common-percentage-of-class="percentage-of-total-target" :is-percentage="false" :name="'directFactoringRevenueProjectionByCategory['.'direct_factoring_transactions_projections'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :number-format-decimals="0" :currentVal="$currentVal" :formattedInputClasses="'current-growth-rate-result-value-formatted'" data-group-index="{{ $currentYearRepeaterIndex }}" :classes="'only-greater-than-or-equal-zero-allowed  repeater-with-collapse-input   factoring-projection-amount recalculate-factoring  is-percentage-total-of current-growth-rate-result-value '" data-common-percentage-of-class="percentage-of-total-target" :is-percentage="false" :name="'directFactoringRevenueProjectionByCategory['.'direct_factoring_transactions_projections'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                         </div>
                                     </td>
+
+
+                                    @php
+                                    $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                                    $currentMonthNumber = explode('-',$dateAsString)[1];
+                                    $currentYear= explode('-',$dateAsString)[0];
+                                    @endphp
+
+
+                                    @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                                    <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="0 " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
+                                        </div>
+
+                                    </td>
+                                    @php
+                                    $currentYearRepeaterIndex++;
+                                    @endphp
+                                    @endif
+
                                     @php
                                     $columnIndex++ ;
                                     @endphp
@@ -258,6 +339,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                     <div class="row direct-factoring-admin-fees">
                         @php
                         $rowIndex = 0;
+                        $currentYearRepeaterIndex = 0;
                         $relationName ='directFactoringBreakdowns';
                         $repeaterId =$relationName.'repeater';
                         @endphp
@@ -266,7 +348,20 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                                 <x-tables.repeater-table-th class="  header-border-down " :title="__('Category')"></x-tables.repeater-table-th>
                                 <x-tables.repeater-table-th class="  header-border-down " :title="__('Spread Rate')"></x-tables.repeater-table-th>
                                 @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
-                                <x-tables.repeater-table-th class="  header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
+                                <x-tables.repeater-table-th data-column-index="{{ $yearOrMonthAsIndex }}" class="  header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
+
+                                @php
+                                $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                                $currentMonthNumber = explode('-',$dateAsString)[1];
+                                $currentYear= explode('-',$dateAsString)[0];
+                                @endphp
+                                @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                                <x-tables.repeater-table-th :icon="true" data-column-index="{{ $yearOrMonthAsIndex }}" :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down {{ 'year-repeater-index-'.$currentYearRepeaterIndex }} collapse-before-me exclude-from-collapse" :title="__('Total Yr.').' <br> '. $currentYear"></x-tables.repeater-table-th>
+                                @php
+                                $currentYearRepeaterIndex ++;
+                                @endphp
+                                @endif
+
                                 @endforeach
                                 <x-tables.repeater-table-th class="  header-border-down " :title="__('Total')"></x-tables.repeater-table-th>
 
@@ -305,17 +400,47 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
                                     </td>
                                     @php
+                                    $currentYearRepeaterIndex = 0 ;
                                     $columnIndex = 0 ;
                                     @endphp
                                     @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                     <td>
                                         <x-repeat-right-dot-inputs :multiple="true" :currentVal="isset($subModel) ? $subModel->getPercentageAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed recalculate-factoring factoring-rate is-percentage-from-total exclude-from-total'" data-common-percentage-of-class="percentage-of-total-target" :is-percentage="true" :name="'percentage_payload'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-                                        {{-- ['.$yearOrMonthAsIndex.'] --}}
-                                        <x-repeat-right-dot-inputs :multiple="true" :number-format-decimals="0" :currentVal="isset($subModel) ? $subModel->getLoanAmountPayloadAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed current-loan-input factoring-value is-result-total-of'" data-common-percentage-of-class="percentage-of-total-target" :is-percentage="false" :name="'loan_amounts'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+
+                                        <x-repeat-right-dot-inputs data-group-index="{{ $currentYearRepeaterIndex }}" :multiple="true" :number-format-decimals="0" :currentVal="isset($subModel) ? $subModel->getLoanAmountPayloadAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed current-loan-input factoring-value is-result-total-of repeater-with-collapse-input'" data-common-percentage-of-class="percentage-of-total-target" :is-percentage="false" :name="'loan_amounts'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+
+
+
 
 
                                     </td>
+
+
+                                    @php
+                                    $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                                    $currentMonthNumber = explode('-',$dateAsString)[1];
+                                    $currentYear= explode('-',$dateAsString)[0];
+                                    @endphp
+
+
+                                    @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+
+
+
+                                    <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
+
+
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="0 " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
+                                        </div>
+
+                                    </td>
+                                    @php
+                                    $currentYearRepeaterIndex++;
+                                    @endphp
+                                    @endif
+
                                     @php
                                     $columnIndex++;
                                     @endphp
@@ -464,14 +589,15 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
             </div>
             {{-- end of Administration Fees Rate & ECL Rate   --}}
 
-  <div class="kt-portlet " >
+            <div class="kt-portlet ">
                 <div class="kt-portlet__body">
-			<div class="row">
+                    <div class="row">
                         <div class="col-md-12 text-right">
                             <input type="submit" name="calculate-net-disbursement" class="btn active-style save-form" value="{{  __('Calculate Net Disbursement') }}">
                         </div>
-                </div> </div>
+                    </div>
                 </div>
+            </div>
             @if(count($study->directFactoringBreakdowns))
             {{-- start of Factoring New Portfolio Funding Structure   --}}
             <div class="kt-portlet " id="direct-factoring-funding">
@@ -495,6 +621,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                     <div class="row new-portfolio-funding">
                         @php
                         $rowIndex = 0;
+                        $currentYearRepeaterIndex = 0 ;
                         @endphp
 
 
@@ -502,7 +629,24 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class="  header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
                                 @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
-                                <x-tables.repeater-table-th class="  header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
+                                <x-tables.repeater-table-th data-column-index="{{ $yearOrMonthAsIndex }}" class="  header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
+								
+								@php
+                                $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                                $currentMonthNumber = explode('-',$dateAsString)[1];
+                                $currentYear= explode('-',$dateAsString)[0];
+                                @endphp
+                                
+                        
+
+
+@if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                                <x-tables.repeater-table-th :icon="true" data-column-index="{{ $yearOrMonthAsIndex }}" :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down {{ 'year-repeater-index-'.$currentYearRepeaterIndex }} collapse-before-me exclude-from-collapse" :title="__('Total Yr.').' <br> '. $currentYear"></x-tables.repeater-table-th>
+                                @php
+                                $currentYearRepeaterIndex ++;
+                                @endphp
+                                @endif
+								
                                 @endforeach
                                 <x-tables.repeater-table-th class="  header-border-down " :title="__('Total')"></x-tables.repeater-table-th>
                             </x-slot>
@@ -519,16 +663,38 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                                     </td>
                                     @php
                                     $columnIndex = 0 ;
+                                    $currentYearRepeaterIndex = 0;
                                     @endphp
                                     @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
 
-                                            <x-repeat-right-dot-inputs :numberFormatDecimals="0" :readonly="true" :removeThreeDots="true" :inputHiddenAttributes="''" :currentVal="$study->getTotalDirectFactoringNewPortfolioAmountsAtYearOrMonthIndex($yearOrMonthAsIndex)['sum']" :classes="'js-recalculate-equity-funding-value total-loans-hidden'" :is-percentage="false" :name="''" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs data-group-index="{{ $currentYearRepeaterIndex }}" :numberFormatDecimals="0" :readonly="true" :removeThreeDots="true" :inputHiddenAttributes="''" :currentVal="$study->getTotalDirectFactoringNewPortfolioAmountsAtYearOrMonthIndex($yearOrMonthAsIndex)['sum']" :classes="'js-recalculate-equity-funding-value repeater-with-collapse-input total-loans-hidden'" :is-percentage="false" :name="''" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>
+									
+									
+									@php
+                                    $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                                    $currentMonthNumber = explode('-',$dateAsString)[1];
+                                    $currentYear= explode('-',$dateAsString)[0];
+                                    @endphp
+
+
+                                    @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                                    <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="0 " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
+                                        </div>
+
+                                    </td>
+                                    @php
+                                    $currentYearRepeaterIndex++;
+                                    @endphp
+                                    @endif
+									
                                     @php
                                     $columnIndex++;
                                     @endphp
@@ -542,145 +708,10 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
                                 </tr>
 
-
-
-                                <tr data-repeat-formatting-decimals="2" data-repeater-style>
-
+@include('loan-structure-trs')
 
 
 
-                                    <td>
-                                        <input value="{{ __('Equity Funding Rate (%)') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
-
-                                    </td>
-                                    @php
-                                    $columnIndex = 0 ;
-                                    @endphp
-                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
-
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-
-                                            <x-repeat-right-dot-inputs :inputHiddenAttributes="'js-recalculate-equity-funding-value'" :currentVal="$eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getEquityFundingRatesAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed equity-funding-rates equity-funding-rate-input-hidden-class'" :is-percentage="true" :name="'equity_funding_rates['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-
-                                        </div>
-                                    </td>
-                                    @php
-                                    $columnIndex++;
-                                    @endphp
-                                    @endforeach
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <input type="text" class="form-control expandable-amount-input  sum-percentage-css" disabled value="-">
-                                        </div>
-                                    </td>
-
-
-                                </tr>
-
-
-
-                                <tr data-repeat-formatting-decimals="0" data-repeater-style total-row-tr data-row-total>
-
-                                    <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
-
-
-                                    <td>
-                                        <input value="{{ __('Equity Funding Value') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
-
-                                    </td>
-                                    @php
-                                    $columnIndex = 0 ;
-                                    @endphp
-                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-
-                                            <x-repeat-right-dot-inputs :readonly="true" :numberFormatDecimals="0" :currentVal="$eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getEquityFundingValuesAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed '" :formatted-input-classes="'equity-funding-formatted-value-class'" :is-percentage="false" :name="'equity_funding_values['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-
-                                        </div>
-                                    </td>
-                                    @php
-                                    $columnIndex++;
-                                    @endphp
-                                    @endforeach
-
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="0">
-                                        </div>
-                                    </td>
-
-                                </tr>
-
-
-
-                                <tr data-repeat-formatting-decimals="2" data-repeater-style>
-                                    <td>
-                                        <input disabled value="{{ __('New Loans Funding Rate (%)') }}" class="form-control text-left" type="text">
-                                    </td>
-                                    @php
-                                    $columnIndex = 0 ;
-                                    @endphp
-
-                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
-
-
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <input type="text" data-column-index="{{ $columnIndex }}" readonly class="form-control expandable-percentage-input new-loan-function-rates-js" name="new_loans_funding_rates[{{ $yearOrMonthAsIndex }}]" value="{{ $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getNewLoansFundingRatesAtYearOrMonthIndex($yearOrMonthAsIndex):100 }}"> <span class="ml-2">%</span>
-                                        </div>
-                                    </td>
-                                    @php
-                                    $columnIndex++;
-                                    @endphp
-
-                                    @endforeach
-
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <input type="text" class="form-control expandable-amount-input  sum-percentage-css" disabled value="-">
-                                        </div>
-                                    </td>
-
-                                </tr>
-
-
-
-
-
-
-                                <tr data-repeat-formatting-decimals="0" data-repeater-style total-row-tr data-row-total>
-
-
-                                    <td>
-                                        <input disabled value="{{ __('New Loans Funding Value') }}" class="form-control text-left" type="text">
-
-                                    </td>
-                                    @php
-                                    $columnIndex = 0 ;
-                                    @endphp
-
-                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :readonly="true" :numberFormatDecimals="0" :formatted-input-classes="'new-loans-funding-formatted-value-class'" :currentVal="$eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getNewLoansFundingValuesAtYearOrMonthIndex($yearOrMonthAsIndex):0 " :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'new_loans_funding_values['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-
-                                        </div>
-                                    </td>
-                                    @php
-                                    $columnIndex++;
-                                    @endphp
-
-                                    @endforeach
-
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="0">
-                                        </div>
-                                    </td>
-
-                                </tr>
 
                             </x-slot>
 
@@ -697,9 +728,9 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
             </div>
             @endif
             {{-- end of Factoring New Portfolio Funding Structure   --}}
-			@if(count($study->directFactoringBreakdowns))
+            @if(count($study->directFactoringBreakdowns))
             <x-save-or-back />
-			@endif
+            @endif
 
 
 
@@ -824,9 +855,13 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                 , error: function(res) {
                     $('.save-form').prop('disabled', false);
                     $('.submit-form-btn-new').prop('disabled', false)
+                    let errorMessage = res.responseJSON.message;
+                    if (res.responseJSON && res.responseJSON.errors) {
+                        errorMessage = res.responseJSON.errors[Object.keys(res.responseJSON.errors)[0]][0]
+                    }
                     Swal.fire({
                         icon: 'error'
-                        , title: res.responseJSON.message
+                        , title: errorMessage
                     , });
                 }
             });

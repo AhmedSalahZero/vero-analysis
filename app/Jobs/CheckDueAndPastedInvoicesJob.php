@@ -65,17 +65,39 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 				// $chequesUnderCollectionDays = 500 ;
 				
 				
-				$customerInvoicePastDueDays = $company->getCustomerComingDuesInvoicesNotificationsDays()  ;
+			//	$customerInvoicePastDueDays = $company->getCustomerComingDuesInvoicesNotificationsDays()  ;
                 $customerInvoiceComingDueDays = $company->getCustomerPastDuesInvoicesNotificationsDays() ;
 				
-				$chequesPastDueDays = $company->getChequesInSafeNotificationDays() ;
+				// $chequesPastDueDays = $company->getChequesInSafeNotificationDays() ;
 				$comingReceivableChequesDays = $company->getComingReceivableChequesNotificationDays() ;
 				$comingPayableChequeNotificationDays = $company->getComingPayableChequeNotificationDays() ;
 				
 
                 $todayDate = Carbon::make(now()->format($dateFormat))->format($dateFormat);
-                $dayBeforeDayDate = Carbon::make(now()->format($dateFormat))->subDay()->format($dateFormat);
-                $beforeIntervalDate = Carbon::make(now()->format($dateFormat))->subDays($customerInvoicePastDueDays)->format($dateFormat);
+                // $dayBeforeDayDate = Carbon::make(now()->format($dateFormat))->subDay()->format($dateFormat);
+                // $beforeIntervalDate = Carbon::make(now()->format($dateFormat))->subDays($customerInvoicePastDueDays)->format($dateFormat);
+				
+				/**
+				 * ! Copy It To Supplier Also
+				 */
+				 DB::table('customer_invoices')->where('company_id', $companyId)
+				 ->whereIn('invoice_status',['not_due_yet','due_to_day'])
+                ->where('invoice_due_date', '<',$todayDate)
+				->update([
+					'invoice_status'=>'past_due'
+				]);
+				
+				 DB::table('customer_invoices')->where('company_id', $companyId)
+				 ->whereIn('invoice_status',['not_due_yet'])
+                ->where('invoice_due_date', '=',$todayDate)
+				->update([
+					'invoice_status'=>'due_to_day'
+				]);
+				
+				/**
+				 * ! End Copy It To Supplier Also
+				 */
+				
 				
 				/**
                  * * فواتير متاخرة ولم تسدد بعد
@@ -108,7 +130,7 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
                  */
 				// 01-01-2025 due date
 				// 01-10-2026 now 
-				 $beforeIntervalDate = Carbon::make(now()->format($dateFormat))->subDays($chequesPastDueDays)->format($dateFormat);
+	//			 $beforeIntervalDate = Carbon::make(now()->format($dateFormat))->subDays($chequesPastDueDays)->format($dateFormat);
 				 $pastDueCheques = DB::table('cheques')->where('cheques.company_id', $companyId)
 				 ->where('cheques.status',Cheque::IN_SAFE)
 				 ->where('cheques.due_date','<', $todayDate)
@@ -142,23 +164,10 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 				 ->join('partners','partners.id','=','money_received.partner_id')
 				 ->get();
 				 
-				// $underCollectionChequesToday = DB::table('cheques')->where('cheques.company_id', $companyId)
-				// ->where('cheques.status',Cheque::UNDER_COLLECTION)
-				// ->where('cheques.expected_collection_date',$todayDate)
-				// ->join('money_received','money_received.id','=','cheques.money_received_id')
-				// ->join('partners','partners.id','=','money_received.partner_id')
-				// ->get();
-				
 				
 				/**
 				 * * الشيكات  التي ذهبت الي البنك ولكنها لاتزال تحت التحصيل وكان يجب ان تحصل منذ عدد من الايام ولكن لم تحصل بعد
 				 */
-				// $afterIntervalDate = Carbon::make(now()->format($dateFormat))->addDays($chequesUnderCollectionDays)->format($dateFormat);
-				// $underCollectionCheques = DB::table('cheques')->where('cheques.company_id', $companyId)
-				// ->where('cheques.status',Cheque::UNDER_COLLECTION)
-				// ->join('money_received','money_received.id','=','cheques.money_received_id')
-				// ->join('partners','partners.id','=','money_received.partner_id')
-				// ->where('cheques.expected_collection_date','<=',$afterIntervalDate)->get();
                 foreach ($pastDueCustomerInvoices as $customerInvoice) {
                     $invoiceDueDate = $customerInvoice->invoice_due_date ;
                     $invoiceNumber = $customerInvoice->invoice_number;
@@ -190,7 +199,6 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 					$invoiceAmount = number_format($customerInvoice->invoice_amount) ; 
                     $messageEn = __('Invoice Number ',[],'en') . $invoiceNumber . ' ' . __('Is Due Now For Customer',[],'en') . ' ' . $customerName ;
                     $messageAr = __('Invoice Number ',[],'ar') . $invoiceNumber . ' ' . __('Is Due Now For Customer',[],'ar') . ' ' . $customerName ;
-                //    $dueDays = Carbon::make(now()->format($dateFormat))->diffInDays(Carbon::make($invoiceDueDate));
                     $company->notify(new DueInvoiceNotification($messageEn, $messageAr, Notification::CUSTOMER_INVOICE_CURRENT_DUE,'customer',[
 						'Customer Name'=>$customerName,
 						'Invoice Number'=>$invoiceNumber ,
@@ -337,6 +345,10 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 				
 				
 				
+				
+				
+				
+				
 			
                 $supplierInvoicePastDueDays = $company->getSupplierComingDuesInvoicesNotificationsDays()  ;
                 $supplierInvoiceComingDueDays = $company->getSupplierPastDuesInvoicesNotificationsDays() ;
@@ -347,6 +359,23 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
                 $todayDate = Carbon::make(now()->format($dateFormat))->format($dateFormat);
                 $dayBeforeDayDate = Carbon::make(now()->format($dateFormat))->subDay()->format($dateFormat);
                 $beforeIntervalDate = Carbon::make(now()->format($dateFormat))->subDays($supplierInvoicePastDueDays)->format($dateFormat);
+				
+				
+				
+				 DB::table('supplier_invoices')->where('company_id', $companyId)
+				 ->whereIn('invoice_status',['not_due_yet','due_to_day'])
+                ->where('invoice_due_date', '<',$todayDate)
+				->update([
+					'invoice_status'=>'past_due'
+				]);
+				
+				 DB::table('supplier_invoices')->where('company_id', $companyId)
+				 ->whereIn('invoice_status',['not_due_yet'])
+                ->where('invoice_due_date', '=',$todayDate)
+				->update([
+					'invoice_status'=>'due_to_day'
+				]);
+				
 				
 				/**
                  * * سيكون مستحق الدفع بعد عدة ايام

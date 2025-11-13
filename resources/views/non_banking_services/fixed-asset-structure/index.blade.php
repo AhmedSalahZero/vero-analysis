@@ -88,17 +88,21 @@ use App\Helpers\HArr;
 											 <div class="col-md-6">
 											 <input value="{{ $model->getName() }}" disabled class="form-control text-left " type="text">
 											 </div>
-											@if($model->isEmployeeAsset())
-											<div class="col-md-3">
-											 <input value="{{ __('Is Employee Asset') }}" disabled class="form-control text-left " type="text">
-											</div>
-											@endif
-											@if($model->isBranchAsset())
-											<div class="col-md-3">
 											
-                                            <input value="{{ __('Is Branch Asset') }}" disabled class="form-control text-left " type="text">
+											<div class="col-md-3">
+											@php
+												$text = $model->isEmployeeAsset() ? __('Is Employee Asset') : '-';
+											@endphp
+											 <input value="{{ $text }}" disabled class="form-control text-left " type="text">
 											</div>
-											@endif
+											
+											
+											<div class="col-md-3">
+											@php
+												$text = $model->isBranchAsset() ? __('Is Branch Asset') : '-';
+											@endphp
+                                            <input value="{{ $text }}" disabled class="form-control text-left " type="text">
+											</div>
                                            
                                         </div>
                                     </td>

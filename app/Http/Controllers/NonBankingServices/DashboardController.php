@@ -221,7 +221,7 @@ class DashboardController extends Controller
 		$titlesMapping = Study::getProjectionTitles();
 		
 		$request = new Request();
-		$incomeStatement = (new IncomeStatementController())->index($company,$request,$study,true);
+		$incomeStatement = (new IncomeStatementController())->index($company,$study,true);
 		$resultPerRevenueStreamType = $incomeStatement['resultPerRevenueStreamType']??[];
 		
 		$chartsFormatted =$this->formatForTheeLineChart($resultPerRevenueStreamType); 

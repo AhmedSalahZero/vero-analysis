@@ -75,5 +75,22 @@ class OverdraftAgainstCommercialPaperRate extends Model
 		return number_format($this->getInterestRate(),2) . ' %';
 	}
 	
+	// public function getMinInterestRate()
+	// {
+	// 	return $this->min_interest_rate?:0;
+	// }
+	public function getMinInterestRateFormatted()
+	{
+		return number_format($this->getMinInterestRate(),2) . ' %';
+	}
+	// public function getInterestRate()
+	// {
+	// 	return $this->interest_rate?:0;
+	// }
+	// public function getInterestRateFormatted()
+	// {
+	// 	return number_format($this->getInterestRate(),2) . ' %';
+	// }
+	
 	
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\HArr;
 use App\Models\CashExpense;
 use App\Models\CashflowReport;
 use App\Models\Cheque;
@@ -41,10 +42,9 @@ class CashFlowReportController
 		return $isContract ?'result.contract.cashflow.report' :'result.cashflow.report';
 	}
 	
-	public function result(Company $company , Request $request, bool $returnResultAsArray = false ,  CashFlowReport $cashflowReport= null  ){
+	public function result(Company $company , Request $request, bool $returnResultAsArray = false ,  CashFlowReport $cashflowReport= null   , $defaultCashFlowId = 0 ){
 		$saveReport = $request->has('save_report');
 		$resetReport = $request->has('reset_report') && $request->get('reset_report');
-		
 		$contractId = $request->get('contract_id')	 ;
 		$contract = Contract::find($contractId);
 		/**
@@ -58,7 +58,7 @@ class CashFlowReportController
 		$isContract = (bool)$customerId;
 		$redirectRouteName = $this->getRedirectRoute($isContract);
 		
-		$cashflowReportId = $cashflowReport && $cashflowReport->id ? $cashflowReport->id : 0;
+		$cashflowReportId = $cashflowReport && $cashflowReport->id ? $cashflowReport->id : $defaultCashFlowId;
 		if( $resetReport && !session()->has('without_resetting') ){
 			$company->resetCashFlowReport();			
 			$queryParams = $request->query();
@@ -77,9 +77,13 @@ class CashFlowReportController
 			$currencyName = Arr::first($reportData['allCurrencies']);
 			return view('admin.reports.contract-cash-flow-report',array_merge($reportData,['cashflowReport'=>$cashflowReport,'currencyName'=>$currencyName,'contractCode'=>$contractCode]));
 		}
+			$mainFunctionalCurrency= $company->getMainFunctionalCurrency();
 		$isContract = (bool)$contract ;
-		$currencyName = $isContract ? $contract->getCurrency(): $request->get('currency');
+		$currencyName = $isContract ? $contract->getCurrency(): $request->get('currency',$mainFunctionalCurrency);
+		
+		
 		$customerContractId = $contractId ;
+		
 		$poAllocations = PoAllocation::where('po_allocations.contract_id',$customerContractId)	
 		->join('purchase_orders','purchase_orders.id','=','po_allocations.purchase_order_id')
 		->join('contracts','contracts.id','=','purchase_orders.contract_id')
@@ -134,7 +138,7 @@ class CashFlowReportController
 		$year = explode('-',$startDate)[0];
 		$endDate  = Carbon::make($request->get('end_date',$defaultEndDate))->format('Y-m-d');
 		$redirectRouteName = $this->getRedirectRoute($isContract);
-		$mainFunctionalCurrency= $company->getMainFunctionalCurrency();
+	
 		$datesWithWeeks = [];
 		if($reportInterval == 'weekly'){
 			$datesWithWeeks = 	getWeekNumberBetweenDates($year , Carbon::make($endDate)) ;
@@ -227,7 +231,6 @@ class CashFlowReportController
 			 LetterOfGuaranteeIssuance::getCashCovers($result,$foreignExchangeRates , $mainFunctionalCurrency,'renewal_date',$company->id,$startDate,$endDate,$currentWeekYear,$contractId);
 			 LetterOfCreditIssuance::getCommissionAndFeesAtDates($result,$foreignExchangeRates , $mainFunctionalCurrency,'date',$company->id,$startDate,$endDate,$currentWeekYear);
 			 LetterOfCreditIssuance::getRemainingLcAmountAtDates($result,$foreignExchangeRates , $mainFunctionalCurrency,$company->id,$startDate,$endDate,$currentWeekYear);
-			
 			CashExpense::getCashOutForExpenseCategoriesAtDates($result,$foreignExchangeRates,$mainFunctionalCurrency,CashExpense::OUTGOING_TRANSFER,'payment_date',$company->id,$startDate,$endDate,$currentWeekYear,$contractId,null);
 			CashExpense::getCashOutForExpenseCategoriesAtDates($result,$foreignExchangeRates,$mainFunctionalCurrency,CashExpense::CASH_PAYMENT,'payment_date',$company->id,$startDate,$endDate,$currentWeekYear,$contractId,null);
 			CashExpense::getCashOutForExpenseCategoriesAtDates($result,$foreignExchangeRates,$mainFunctionalCurrency,CashExpense::PAYABLE_CHEQUE,'actual_payment_date',$company->id,$startDate,$endDate,$currentWeekYear,$contractId,PayableCheque::PAID);
@@ -257,11 +260,9 @@ class CashFlowReportController
 		->groupBy('week_start_date')->selectRaw('week_start_date,sum(amount) as amount')->get()),true);
 		
 		
-		
 		// for suppliers 
 		$pastDueSupplierInvoices = $isContract ? $pastDueSupplierInvoicesForContracts->toArray() : $this->getPastDueCustomerInvoices('SupplierInvoice',$currency,$company->id,$contractCode);
 		$supplierContractCodes = $pastDueSupplierInvoicesForContracts->pluck('contract_code')->toArray();
-	
 		$currentContractCode = $isContract ? $supplierContractCodes : [$contractCode];
 		$supplierDueInvoices=  json_decode(json_encode(DB::table('weekly_cashflow_custom_due_invoices')->where('weekly_cashflow_custom_due_invoices.company_id',$company->id)
 		->where('invoice_type','SupplierInvoice')
@@ -272,7 +273,6 @@ class CashFlowReportController
 			->where('supplier_invoices.contract_code',$currentContractCode);
 			})
 		->groupBy('week_start_date')->selectRaw('week_start_date,sum(amount) as amount')->get()),true);
-		
 		$isContract ? SupplierInvoice::getForecastedProjectPayment($result ,$startDate , $endDate,$currency,$company->id,$datesWithWeekNumber,$contractId) : [];
 		
 		// for loans 
@@ -283,22 +283,29 @@ class CashFlowReportController
 		
 		// ->whereNotIn('loan_schedule_id',$excludeIds)
 		->groupBy('week_start_date')->selectRaw('week_start_date,sum(amount) as amount')->get()),true);
-		//$totalCashInFlowArray = $this->mergeTotal($totalCashInFlowArray,$customerDueInvoices,$datesWithWeekNumber);
-		//$totalCashOutFlowArray = $this->mergeTotal($totalCashOutFlowArray,$supplierDueInvoices,$datesWithWeekNumber);
-		//$totalCashOutFlowArray = $this->mergeTotal($totalCashOutFlowArray,$pastDueLoanInstallments,$datesWithWeekNumber);
 		
-		$result['customers'][__('Total Cash Inflow')]['total'] = [] ;
+		$totalCashInFlowArray = $result['customers'][__('Total Cash Inflow')]['total'] ?? [];
+		$totalCashInFlowArray = $this->mergeTotal($totalCashInFlowArray,$customerDueInvoices,$datesWithWeekNumber);
+		// $totalCashOutFlowArray =$result['suppliers']; 
+		$totalCashOutFlowArray = $this->sumAllTotalKeys( $result['suppliers']??[],$result['cash_expenses']??[]  , $datesWithWeekNumber);
+	
+		$totalCashOutFlowArray = $this->mergeTotal($totalCashOutFlowArray,$supplierDueInvoices,$datesWithWeekNumber,true);
+		
+		$totalCashOutFlowArray = $this->mergeTotal($totalCashOutFlowArray,$pastDueLoanInstallments,$datesWithWeekNumber);
+		$result['customers'][__('Total Cash Inflow')]['total'] = $totalCashInFlowArray ;
 		// $result['customers'][__('Total Cash Inflow')]['total']['total_of_total'] = array_sum($totalCashInFlowArray);
 		$outProjection = $result['cash_expenses'][__('Projected Other Cash Out Items')] ?? [];
 		unset($result['cash_expenses'][__('Projected Other Cash Out Items')]);
 		$result['cash_expenses'][__('Projected Other Cash Out Items')] =$outProjection;
-		$result['cash_expenses'][__('Total Cash Outflow')]['total'] = [];
+		$result['cash_expenses'][__('Total Cash Outflow')]['total'] = $totalCashOutFlowArray;
 		// $result['cash_expenses'][__('Total Cash Outflow')]['total']['total_of_total'] = array_sum($totalCashOutFlowArray);
-	//	$netCash = HArr::subtractAtDates([$totalCashInFlowArray,$totalCashOutFlowArray] , array_merge(array_keys($totalCashInFlowArray),array_keys($totalCashOutFlowArray))) ;
-		$result['cash_expenses'][__('Net Cash (+/-)')]['total'] = [];
+		$netCash = HArr::subtractAtDates([$totalCashInFlowArray,$totalCashOutFlowArray] , array_merge(array_keys($totalCashInFlowArray),array_keys($totalCashOutFlowArray))) ;
+	
+		$result['cash_expenses'][__('Net Cash (+/-)')]['total'] = $netCash;
 		// $result['cash_expenses'][__('Net Cash (+/-)')]['total']['total_of_total'] = array_sum($netCash) ;
-		$result['cash_expenses'][__('Accumulated Net Cash (+/-)')]['total'] = [];
-		// $result['cash_expenses'][__('Accumulated Net Cash (+/-)')]['total'] = $this->formatAccumulatedNetCash($netCash,$weeks);
+		// $result['cash_expenses'][__('Accumulated Net Cash (+/-)')]['total'] = [];
+		
+		$result['cash_expenses'][__('Accumulated Net Cash (+/-)')]['total'] = $this->formatAccumulatedNetCash($netCash,$weeks);
 		$orderByKeys = [
 			'Cash Payments',
 			'Outgoing Transfers',
@@ -313,11 +320,17 @@ class CashFlowReportController
 		$result['suppliers'] = collect($result['suppliers'])->sortBy(function($value,$key) use ($orderByKeys){
 			return array_search($key, $orderByKeys);
 		})->toArray();
-		
 		if($returnResultAsArray){
 			return [
 				'result'=>$result , 
 				'dates'=>$dates,
+				'contractCode'=>$contractCode,
+					'pastDueCustomerInvoices'=>[$currency=>$pastDueCustomerInvoices],
+				'currencyName'=>$currencyName,
+				'reportInterval'=>$reportInterval,
+				'weeks'=>$weeks,
+				'pastDueSupplierInvoices'=>$pastDueSupplierInvoices,
+				'pastDueInstallments'=>$pastDueInstallments
 			] ;
 		}
 		$allCurrencies = [$currency];
@@ -331,6 +344,7 @@ class CashFlowReportController
 			'dates'=>$dates,
 			
 			'pastDueCustomerInvoices'=>$pastDueCustomerInvoicesPerCurrency,
+			
 			'customerDueInvoices'=>$customerDueInvoicesPerCurrency,
 			'pastDueSupplierInvoices'=>$pastDueSupplierInvoices,
 			'supplierDueInvoices'=>$supplierDueInvoices,
@@ -344,6 +358,8 @@ class CashFlowReportController
 			'noRowHeaders'=>$noRowHeaders,
 			'title'=>$title
 		] ;
+		
+		
 			if($saveReport){
 				$cashFlowReport = CashflowReport::create([
 					'is_contract'=>$isContract,
@@ -360,7 +376,7 @@ class CashFlowReportController
 				}
 				return redirect()->route($redirectRouteName,$routeParams);
 			}
-		
+		// dd($reportData['finalResult']['EGP']['customers']);
 		return view('admin.reports.contract-cash-flow-report',array_merge($reportData,['currencyName'=>$currencyName,'contractCode'=>$contractCode]));
 	}
 	public function formatAccumulatedNetCash(array $netCashes,array $weeks)
@@ -374,10 +390,11 @@ class CashFlowReportController
 		}
 		return $result ;
 	}
-	public function mergeTotal(array $totals , $arrayOfItems,array $datesWithWeekNumber):array 
+	public function mergeTotal(array $totals , $arrayOfItems,array $datesWithWeekNumber,$debug = false ):array 
 	{
 		foreach($arrayOfItems as $itemArr){
 			$dateFormatted = $datesWithWeekNumber[$itemArr['week_start_date']]??null;
+		
 			if(is_null($dateFormatted)){
 				continue;
 			}
@@ -472,6 +489,7 @@ class CashFlowReportController
 		$contractCode = $request->get('contract_code');
 		$isContract = $request->get('is_contract');
 		$cashflowReportId = $request->get('cashflow_report_id');
+	
 		foreach($request->get('customer_invoice_id',[]) as $customerInvoiceId){
 			$weekStartDate = $request->input('week_start_date.'.$customerInvoiceId);
 			$percentage = $request->input('percentage.'.$customerInvoiceId);
@@ -534,7 +552,7 @@ class CashFlowReportController
 		$cashflowReportId = $request->get('cashFlowReportId');
 		$model  = $cashflowReportId ? CashFlowReport::find($cashflowReportId) : $company;
 		// for loans 
-		if($cashflowReportId){
+		if($cashflowReportId && $cashflowReportId > 0){
 			$oldReportData = json_decode($model->report_data,true);
 			$oldReportData ? extract($oldReportData) : null;
 			// for customers 
@@ -670,5 +688,21 @@ class CashFlowReportController
 		->where('cashflow_report_id',$cashflowReport->id)->delete();
 		$cashflowReport->delete();
 		return redirect()->route($viewRouteName,['company'=>$company->id]);
+	}
+	protected function sumAllTotalKeys(array $items,array $items2,array $datesWithWeekNumber){
+		
+		$totals=[];
+		foreach($datesWithWeekNumber as $week){
+			foreach($items as $subItemName => $itemArr){
+				$currentTotal = $itemArr['total'][$week]??0 ;
+				$totals[$week]= isset($totals[$week]) ? $totals[$week] + $currentTotal:$currentTotal ;
+			}
+			foreach($items2 as $subItemName => $itemArr){
+				$currentTotal = $itemArr['total'][$week]??0 ;
+				$totals[$week]= isset($totals[$week]) ? $totals[$week] + $currentTotal:$currentTotal ;
+			}
+		}
+		return $totals;
+		
 	}
 }

@@ -12,15 +12,16 @@ $repeaterId = $tableId.'_repeater';
 @endphp
 
 
-        @php
-        //$numberOfPositions = $department ? $department->positions->count() : 1 ;
-        $initialDepartmentIndex = isset($initialDepartmentIndex) ? $initialDepartmentIndex : 0 ;
-
-
-        @endphp
+       
         @include('non_banking_services.manpower._input-hidden')
         {{-- start of fixed monthly repeating amount --}}
-
+		<div class="row">
+		<div class="col-md-10 mt-4 mb-3">
+                        <div class="d-flex align-items-center ">
+                            <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style=""> {{ $department->getName() . ' - ' . $department->getExpenseTypeName() }} </h3>
+                        </div>
+                    </div>
+		</div>
 
         <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
 

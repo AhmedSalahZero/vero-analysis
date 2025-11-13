@@ -50,7 +50,7 @@ class CalculateFixedLoanAtBeginningService
 				// 	dd($loanAmount,$currentStartDateAsIndex ,$loanStartDate);
 				// }
 				
-				logger('inside base'.$currentBaseRate.'inside margin'.$marginRate.'inside loan start date'.$loanStartDate);
+			//	logger('inside base'.$currentBaseRate.'inside margin'.$marginRate.'inside loan start date'.$loanStartDate);
 				$currentResultArr =$this->__calculate($previousResult, $i, $loanType, $loanStartDate, $loanAmount, $currentBaseRate, $marginRate, $tenor, $installmentPaymentIntervalName, $stepUpRate, $stepUpIntervalName, $stepDownRate, $stepDownIntervalName, $gracePeriod, $currentStartDateAsIndex);
 				// if($i == 1){
 				// 	dd($currentResultArr ,$previousResult );

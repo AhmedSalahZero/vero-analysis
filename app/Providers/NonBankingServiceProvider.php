@@ -57,7 +57,7 @@ class NonBankingServiceProvider extends ServiceProvider
 					// [0 => '']
 					'datesIndexWithYearIndex'=>$datesIndexWithYearIndex , 
 					'yearIndexWithYear'=>$yearIndexWithYear 
-				// ,'dateIndexWithDate'=>$dateIndexWithDate 
+				,'dateIndexWithDate'=>$dateIndexWithDate 
 				// ,'dateWithMonthNumber'=>$dateWithMonthNumber
 				// ,'dateIndexWithMonthNumber'=>$dateIndexWithMonthNumber
 				// ,'dateWithDateIndex'=>$dateWithDateIndex

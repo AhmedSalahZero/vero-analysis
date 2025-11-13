@@ -31,6 +31,7 @@ use App\ReadyFunctions\ChequeAgingService;
 use App\ReadyFunctions\InvoiceAgingService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -47,7 +48,6 @@ class CustomerInvoiceDashboardController extends Controller
 			$fullySecuredOverdraftCardData = [];
 			$cdAccountTypeId = AccountType::onlyCdAccounts()->first()->id ;
 			$tdAccountTypeId = AccountType::onlyTdAccounts()->first()->id ;
-			
 			
 			$totalRoomForEachFullySecuredOverdraftId =  [];
 			// end fully SecuredOverdraft
@@ -527,16 +527,40 @@ class CustomerInvoiceDashboardController extends Controller
 		];
 		$cashFlowReportResult = null ;
 		$cashFlowReport = [];
+		$contractCode = null;
+		$reportCurrentName = null;
+		$weeks = [];
 		if($request->has('contract_id')){
-			$report =(new ContractCashFlowReportController())->result($company,$request,true);
+			$report =(new ContractCashFlowReportController())->result($company,$request,true,-1);
+			if($report instanceof RedirectResponse){
+				return $report;
+			}
 			$cashFlowReportResult = $report['result'];
 			$dates = $report['dates'];
+			$weeks = $report['weeks'];
+			$contractCode = $report['contractCode'];
+			$reportCurrentName = $report['currencyName'];
+			$reportInterval = $report['reportInterval'];
+			$pastDueSupplierInvoices = $report['pastDueSupplierInvoices'];
+			$pastDueInstallments = $report['pastDueInstallments'];
+			$pastDueCustomerInvoices = $report['pastDueCustomerInvoices'];
 			$cashFlowReport['total_cash_in_out_flow']=$this->formatFlowCashInOutChartData($cashFlowReportResult['customers'][__('Total Cash Inflow')]['total'] ?? [],$cashFlowReportResult['cash_expenses'][__('Total Cash Outflow')]['total'] ?? [],$dates);
 			$cashFlowReport['accumulated_net_cash']= formatAccumulatedNetCash($cashFlowReportResult['cash_expenses'][__('Net Cash (+/-)')]['total'] ?? [] ,$dates );
 		}else{
-			$report =(new CashFlowReportController())->result($company,$request,true);
+			$report =(new CashFlowReportController())->result($company,$request,true,null,-1);
+			if($report instanceof RedirectResponse){
+				return $report;
+			}
+				$reportInterval = $report['reportInterval'];
 			$cashFlowReportResult = $report['result'];
 			$dates = $report['dates'];
+			$weeks = $report['weeks'];
+			$contractCode = $report['contractCode'];
+			$reportCurrentName = $report['currencyName'];
+				$reportInterval = $report['reportInterval'];
+				$pastDueSupplierInvoices = $report['pastDueSupplierInvoices'];
+				$pastDueInstallments = $report['pastDueInstallments'];
+				$pastDueCustomerInvoices = $report['pastDueCustomerInvoices'];
 			$cashFlowReport['total_cash_in_out_flow']=$this->formatFlowCashInOutChartData($cashFlowReportResult['customers'][__('Total Cash Inflow')]['total'] ?? [],$cashFlowReportResult['cash_expenses'][__('Total Cash Outflow')]['total'] ?? [],$dates);
 			$cashFlowReport['accumulated_net_cash']= formatAccumulatedNetCash($cashFlowReportResult['cash_expenses'][__('Net Cash (+/-)')]['total'] ?? [] ,$dates );
 		}
@@ -595,12 +619,20 @@ class CustomerInvoiceDashboardController extends Controller
 			'withdrawalEndDate'=>$withdrawalEndDate,	
 			'loanStartDate'=>$loanStartDate,
 			'loanEndDate'=>$loanEndDate,
+			'reportInterval'=>$reportInterval,
+			'dates'=>$dates,
+			'weeks'=>$weeks,
 			'overdraftAccountTypes'=>$overdraftAccountTypes,
 			'selectedCurrencies'=>$selectedCurrencies,
 			'allFinancialInstitutionIds'=>$allFinancialInstitutionIds,
 			'clientsWithContracts'=>$clientsWithContracts,
 			'cashFlowReport'=>$cashFlowReport,
-			
+			'contractCode'=>$contractCode,
+			'currencyName'=>$reportCurrentName,
+			'currentCurrencyName'=>$reportCurrentName,
+			'pastDueCustomerInvoices'=>$pastDueCustomerInvoices??[],
+			'pastDueSupplierInvoices'=>$pastDueSupplierInvoices,
+			'pastDueInstallments'=>$pastDueInstallments,
 			'selectedReportInterval'=>$request->get('report_interval','weekly'),
 			'selectedPartnerId'=>$request->get('partner_id'),
 			'selectedContractId'=>$request->get('contract_id'),
@@ -710,18 +742,24 @@ class CustomerInvoiceDashboardController extends Controller
 				
 				
 				$financialInstitutionBankIds = [
-					'lg'=>array_keys($company->letterOfGuaranteeIssuances->where('status','!=','cancelled')->where('lg_currency',$currencyName)->load('financialInstitutionBank')->pluck('financialInstitutionBank.bank.name_en','financialInstitutionBank.id')->toArray()),
-					'lc'=>array_keys($company->letterOfCreditIssuances->where('status','!=','cancelled')->where('lc_cash_cover_currency',$currencyName)->load('financialInstitutionBank')->pluck('financialInstitutionBank.bank.name_en','financialInstitutionBank.id')->toArray()),
+					// 'lg'=>array_keys($company->letterOfGuaranteeIssuances->where('status','!=','cancelled')->where('lg_currency',$currencyName)->load('financialInstitutionBank')->pluck('financialInstitutionBank.bank.name_en','financialInstitutionBank.id')->toArray()),
+					'lg'=>array_keys($company->letterOfGuaranteeFacilities->where('currency',$currencyName)->pluck('financialInstitution.bank.name_en','financialInstitution.id')->toArray()),
+					'lc'=>array_keys($company->letterOfCreditFacilities->where('currency',$currencyName)->pluck('financialInstitution.bank.name_en','financialInstitution.id')->toArray()),
+					// 'lg'=>array_keys($company->letterOfGuaranteeIssuances->where('status','!=','cancelled')->where('lg_currency',$currencyName)->load('financialInstitutionBank')->pluck('financialInstitutionBank.bank.name_en','financialInstitutionBank.id')->toArray()),
+					// 'lc'=>array_keys($company->letterOfCreditIssuances->where('status','!=','cancelled')->load('financialInstitutionBank')->pluck('financialInstitutionBank.bank.name_en','financialInstitutionBank.id')->toArray()),
 				][$currentLgOrLcType] ??[];
+					// if($currentLgOrLcType == 'lc'){
+					// 	dd($financialInstitutionBankIds);
+					// }
 				$selectedFinancialInstitutionBankIds = $request->ajax() && $request->get('financialInstitutionId') > 0 ? (array)$request->get('financialInstitutionId') : $financialInstitutionBankIds; 
 				
 				$currentLimit = DB::table($letterOfFacilityTableName)
 				->where($letterOfFacilityTableName.'.company_id', $company->id)
 				->where('currency', $currencyName)
 				->where('contract_end_date', '>=', $date)
-			//	->where($letterOfFacilityTableName.'.financial_institution_id', '=', $financialInstitutionBankId)
 				->orderBy('contract_end_date', 'desc')
 				->sum('limit'); 
+				
 				$reports[$currentLgOrLcType][$currencyName]['limit'] = $currentLimit ;
 				
 					$canShowDashboardPerCurrency[$currentLgOrLcType][$currencyName]  = $currentLimit > 0;
@@ -731,43 +769,51 @@ class CustomerInvoiceDashboardController extends Controller
 					$statementTableFullClassName::getDashboardOutstandingPerTypeFormattedData($charts,$company,$currencyName , $date , $currentLgType,$source,$selectedFinancialInstitutionBankIds);
 				}
 				
-				
 				foreach ($selectedFinancialInstitutionBankIds as $financialInstitutionBankId) {
 					
 					$currentFinancialInstitution = FinancialInstitution::find($financialInstitutionBankId);
 					$statementTableFullClassName::getDashboardOutstandingPerFinancialInstitutionFormattedData($charts,$company,$currencyName , $date ,$financialInstitutionBankId,$currentFinancialInstitution->getName(),$source,$lgOrLcTypes);
 						
 					$lastLetterOfGuaranteeOrCreditFacilities = DB::table($letterOfFacilityTableName)
-					// ->join('financial_institutions', $letterOfFacilityTableName.'.financial_institution_id', '=', 'financial_institutions.id')
 					->where($letterOfFacilityTableName.'.company_id', $company->id)
 					->where('currency', $currencyName)
 					->where('contract_end_date', '>=', $date)
 					->where($letterOfFacilityTableName.'.financial_institution_id', '=', $financialInstitutionBankId)
 					->orderBy('contract_end_date', 'desc')
 					->get();
-					
-					
 					foreach($lastLetterOfGuaranteeOrCreditFacilities as $currentLastLetterOfGuaranteeOrCreditFacility){
 						foreach($lgOrLcTypes as $currentLgType => $currentLgTitle){
 							$statementTableFullClassName::getDashboardOutstandingTableFormattedData($tablesData,$company,$currencyName , $date ,$financialInstitutionBankId,$currentLgType,$currentFinancialInstitution->getName(),$currentLastLetterOfGuaranteeOrCreditFacility,$source);
 						}
 						
 					}
-					
+						
 						foreach($lastLetterOfGuaranteeOrCreditFacilities as $currentLastLetterOfGuaranteeOrCreditFacility){
+							$debug = false ;
+							if($currentLgOrLcType =='lc' && $currencyName=='USD'){
+								// dd($currentOutstanding);
+								$debug=true;
+								}
 							$details[$currencyName][$currentLgOrLcType][] = [
 								'limit'=>$currentLimit = $currentLastLetterOfGuaranteeOrCreditFacility ? $currentLastLetterOfGuaranteeOrCreditFacility->limit : 0 ,
-								'outstanding_balance'=> $currentOutstanding = $statementTableFullClassName::getTotalOutstandingBalanceForAllTypes($currentLastLetterOfGuaranteeOrCreditFacility->id,$company->id,$financialInstitutionBankId,$currencyName)  , 
+								'outstanding_balance'=> $currentOutstanding = $statementTableFullClassName::getTotalOutstandingBalanceForAllTypes($currentLastLetterOfGuaranteeOrCreditFacility->id,$company->id,$financialInstitutionBankId,$currencyName,$debug)  , 
 								'room'=> $currentRoom = $currentLimit - $currentOutstanding ,
 								'cash_cover'=> $currentCashCover = $statementTableFullClassName::getTotalCashCoverForAllTypes($currentLastLetterOfGuaranteeOrCreditFacility->id,$company->id,$financialInstitutionBankId,$currencyName)  , 
 								'financial_institution_name'=>$currentFinancialInstitution->getName()
 							] ;
+							
+							// dd($lastLetterOfGuaranteeOrCreditFacilities,$currentLimit,$currentOutstanding);
+							// dd($currentLimit,$currentOutstanding);
+							// dd($details[$currencyName][$currentLgOrLcType]);
 							$total[$currentLgOrLcType][$currencyName]['limit'] = isset($total[$currentLgOrLcType][$currencyName]['limit']) ? $total[$currentLgOrLcType][$currencyName]['limit'] + $currentLimit  : $currentLimit ;
 							$total[$currentLgOrLcType][$currencyName]['outstanding_balance'] = isset($total[$currentLgOrLcType][$currencyName]['outstanding_balance']) ? $total[$currentLgOrLcType][$currencyName]['outstanding_balance'] + $currentOutstanding  : $currentOutstanding ;
+							// dump($currencyName);
+							// dump('current romm'.$currentRoom);
 							$total[$currentLgOrLcType][$currencyName]['room'] = isset($total[$currentLgOrLcType][$currencyName]['room']) ? $total[$currentLgOrLcType][$currencyName]['room'] + $currentRoom  : $currentRoom ;
 							$total[$currentLgOrLcType][$currencyName]['cash_cover'] = isset($total[$currentLgOrLcType][$currencyName]['cash_cover']) ? $total[$currentLgOrLcType][$currencyName]['cash_cover'] + $currentCashCover  : $currentCashCover ;
 				
 						}
+						// dd($total[$currentLgOrLcType][$currencyName]['room']);
 					
 	
 				}
@@ -804,7 +850,6 @@ class CustomerInvoiceDashboardController extends Controller
 			'tablesData'=>$tablesData,
 			'financialInstitutions'=>$financialInstitutions,
 			'canShowDashboardPerCurrency'=>$canShowDashboardPerCurrency
-			
         ]);
     }
 

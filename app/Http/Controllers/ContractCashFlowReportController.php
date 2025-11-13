@@ -27,7 +27,7 @@ class ContractCashFlowReportController
 		$contractCashflowReports = $company->cashflowReports->where('is_contract',1);
         return view('reports.contract_cash_flow_form', compact('company','clientsWithContracts','contractCashflowReports'));
     }
-	public function result(Company $company , Request $request , bool $returnResultAsArray = false ){
+	public function result(Company $company , Request $request , bool $returnResultAsArray = false ,$defaultCashFlowId = 0){
 		
 		$formStartDate =$request->get('start_date',$request->get('cash_start_date'));
 		$formEndDate =$request->get('end_date',$request->get('cash_end_date'));
@@ -53,7 +53,7 @@ class ContractCashFlowReportController
 			'title'=>$title
 		]);
 		
-		return  (new CashFlowReportController)->result($company,$request,false,null);
+		return  (new CashFlowReportController)->result($company,$request,false,null,$defaultCashFlowId);
 		
 		
 		// $result['customers']=[

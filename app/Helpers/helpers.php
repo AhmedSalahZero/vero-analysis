@@ -8545,3 +8545,6 @@ function isSecuritized($securitizationDateIndex , $currentMonthIndex):bool
 {
 	return is_numeric($securitizationDateIndex) && $currentMonthIndex>= $securitizationDateIndex;
 }
+	function getDivisionNumber(){
+	return 1000;
+}	

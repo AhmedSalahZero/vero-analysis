@@ -39,6 +39,7 @@
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
+																			
                                                                                 @foreach($overdraftAgainstCommercialPaper->rates as $index=>$rate)
                                                                                 <tr>
                                                                                     <td> {{ ++$index }} </td>

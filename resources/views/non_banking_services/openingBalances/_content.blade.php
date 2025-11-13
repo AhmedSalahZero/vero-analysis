@@ -373,7 +373,7 @@ $hiringPopModels[] = $repeaterId;
             <div class="row closest-parent pb-2  col-12">
                 <div class="col-3">
                     <label>{{ __('ODAs Outstanding') }}</label>
-                    <input type="text" name="odas_outstanding_amount" class="form-control" value="{{ $model ? $model->getOdasOutstandingAmount() : 0 }}">
+                    <input type="text" name="odas_outstanding_opening_amount" class="form-control" value="{{ $model ? $model->getOdasOutstandingAmount() : 0 }}">
                 </div>
 
                 <div class="col-2">

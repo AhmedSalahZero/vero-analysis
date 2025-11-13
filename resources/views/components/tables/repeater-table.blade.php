@@ -96,7 +96,7 @@ $canAddNewItem = true;
     </table>
     @endif
     @if($appendSaveOrBackBtn)
-    <x-save-or-back-inside-table  :btn-text="__('Create')" />
+    <x-save-or-back-inside-table :btn-text="__('Create')" />
     @endif
 </div>
 <input type="hidden" id="initi-empty-{{ $repeaterId }}" value="{{ $initEmpty }}">
@@ -109,12 +109,102 @@ $canAddNewItem = true;
     var studyStartDate = $('#study-start-date').val()
     var studyEndDate = $('#study-end-date').val()
 
+    function initMultiselect(container) {
+        const $container = $(container)
+        const $trigger = $container.find('.multiselect-trigger')
+        const $dropdown = $container.find('.multiselect-dropdown')
+        if (!$dropdown.length) {
+            return
+        }
+        console.log($container)
+        console.log($dropdown.length)
+        const $searchInput = $container.find('.search-input')
+        const $addOptionInput = $container.find('.add-option-input')
+        const $addOptionBtn = $container.find('.btn-add-option')
+        const $selectAllBtn = $container.find('.btn-select-all')
+        const $deselectAllBtn = $container.find('.btn-deselect-all')
+        const $optionsContainer = $container.find('.multiselect-options')
+        const $selectedText = $container.find('.selected-text')
+        const $selectedOptionsContainer = $container.find('.selected-options-container')
+        let selectedValues = []
+
+        // Toggle dropdown
+        $trigger.on('click', function(e) {
+            e.stopPropagation()
+            $dropdown.toggle()
+        })
+
+        // Close on outside click
+        $(document).on('click', function(e) {
+            if (!$container.has(e.target).length) {
+                $dropdown.hide()
+            }
+        })
+
+        // Bind checkbox events
+        function bindCheckboxEvents($checkbox) {
+            $checkbox.on('change', updateSelected)
+        }
+
+        // Update selected values and display
+        function updateSelected() {
+            const $options = $optionsContainer.find('.option-item input[type="checkbox"]')
+            selectedValues = $options.filter(':checked').map(function() {
+                return $(this).val()
+            }).get()
+            $selectedText.text(selectedValues.length ? `${selectedValues.length} selected` : 'Select options...')
+
+            // Clear existing hidden inputs
+            $selectedOptionsContainer.empty()
+            // Add a hidden input for each selected value
+            selectedValues.forEach(function(value) {
+                $selectedOptionsContainer.append(
+                    `<input type="hidden" name="selectedOptions[]" value="${value}">`
+                )
+            })
+        }
+
+        // Bind initial checkboxes
+        $optionsContainer.find('.option-item input[type="checkbox"]').each(function() {
+            bindCheckboxEvents($(this))
+        })
+
+        // Select All
+        $selectAllBtn.on('click', function(e) {
+            e.preventDefault()
+            $optionsContainer.find('.option-item input[type="checkbox"]').prop('checked', true)
+            updateSelected()
+        })
+
+        // Deselect All
+        $deselectAllBtn.on('click', function(e) {
+            e.preventDefault()
+            $optionsContainer.find('.option-item input[type="checkbox"]').prop('checked', false)
+            updateSelected()
+        })
+
+        // Search filter
+        $searchInput.on('input', function() {
+            const query = $(this).val().toLowerCase()
+            $optionsContainer.find('.option-item').each(function() {
+                const label = $(this).text().toLowerCase()
+                $(this).toggle(label.includes(query))
+            })
+        })
+
+
+
+
+
+        updateSelected() // Initial call
+    }
+	
     $('#' + "{{ $repeaterId }}").repeater({
         initEmpty: initEmpty
         , isFirstItemUndeletable: !firstElementDeleteable
         , defaultValues: {
-			"is_active":1,
-            "replacement_cost_rate": 0
+            "is_active": 1
+            , "replacement_cost_rate": 0
             , "replacement_interval": 1
             , "depreciation_duration": 5
             , 'counts': 1
@@ -133,17 +223,17 @@ $canAddNewItem = true;
             , "vat_rate": 0
             , "start_date": studyStartDate
             , "end_date": studyEndDate
-            , "withhold_tax_rate": 0,
-			"increase_rate":0
+            , "withhold_tax_rate": 0
+            , "increase_rate": 0
             , "contingency_rate": 0
             , "cost_annual_increase_rate": 0
 
         },
 
         show: function() {
-			initMultiselect();
-			
-	
+            initMultiselect();
+
+
             var appendNewOptionsToAllSelects = function(currentRepeaterItem) {
 
                 if ($('[data-modal-title]').length) {
@@ -187,19 +277,19 @@ $canAddNewItem = true;
                 dateFormat: 'yy-mm-dd'
                 , autoclose: true
             })
-	
-           $(this).find('input:not(.exclude-from-trigger-change-when-repeat):not([type="hidden"])').trigger('change');
-           //$('input.equity-funding-formatted-value-class').trigger('change');
+
+            $(this).find('input:not(.exclude-from-trigger-change-when-repeat):not([type="hidden"])').trigger('change');
+            //$('input.equity-funding-formatted-value-class').trigger('change');
             $(this).find('.dropdown-toggle').remove();
             $(this).find('select.repeater-select').selectpicker("refresh");
             appendNewOptionsToAllSelects(this)
-			initMultiselect($(this));
-			
-			const removeDisabledWhenAddNew = +"{{ $removeDisabledWhenAddNew }}";
-			if(removeDisabledWhenAddNew){
-				$(this).find('input').prop('disabled',false);
-				$(this).find('select').prop('disabled', false).selectpicker('refresh')
-			}
+            initMultiselect($(this));
+
+            const removeDisabledWhenAddNew = +"{{ $removeDisabledWhenAddNew }}";
+            if (removeDisabledWhenAddNew) {
+                $(this).find('input').prop('disabled', false);
+                $(this).find('select').prop('disabled', false).selectpicker('refresh')
+            }
         },
 
         hide: function(deleteElement) {

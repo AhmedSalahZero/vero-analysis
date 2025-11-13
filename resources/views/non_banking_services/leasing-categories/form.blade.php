@@ -157,13 +157,17 @@ use App\Models\NonBankingService\LeasingCategory;
 
                     }
                     , error: function(res) {
-                        $('.save-form').prop('disabled', false);
-                        $('.submit-form-btn-new').prop('disabled', false)
-                        Swal.fire({
-                            icon: 'error'
-                            , title: res.responseJSON.message
-                        , });
-                    }
+                    $('.save-form').prop('disabled', false);
+                    $('.submit-form-btn-new').prop('disabled', false)
+					let errorMessage = res.responseJSON.message;
+					if (res.responseJSON && res.responseJSON.errors) {
+                            errorMessage = res.responseJSON.errors[Object.keys(res.responseJSON.errors)[0]][0]
+                        }
+                    Swal.fire({
+                        icon: 'error'
+                        , title: errorMessage
+                    , });
+                }
                 });
             }
         })

@@ -19,7 +19,8 @@ class CashflowStatementReport extends Model
 								'total_existing_other_creditors_payment'=>'array',
 								'total_existing_other_long_term_liabilities_payment'=>'array',
 								'total_existing_other_debtors_collection'=>'array',
-							 "corporate_taxes_payments"=>'array'
+							 "corporate_taxes_payments"=>'array',
+							 "corporate_taxes_end_balances"=>'array'
 							, "direct-factoring_collection"=>'array'
 							, "direct-factoring_loan_withdrawal_amount"=>'array'
 							, "direct-factoring_payment"=>'array'
@@ -57,6 +58,23 @@ class CashflowStatementReport extends Model
 							, "securitization_reverse_collection"=>'array'
 							, "securitization_reverse_loan_payment"=>'array'
 							, "withhold_payments"=>'array'
+							, "securitization_npv"=>'array'
+							, "securitization_bank_settlement"=>'array'
+							, "securitization_early_settlement_expense"=>'array',
+							 "securitization_expense"=>'array',
+							 'total_fixed_asset_replacement_costs'=>'array',
+							 'oda_statements'=>'array',
+							 'extra_capital_injection'=>'array',
+							 'manual_capital_injection'=>'array',
+							 'cash_end_balances'=>'array',
+							 'cash_opening_balances'=>'array',
+							 'cash_and_bank_beginning_balances'=>'array',
+							 'leasing_disbursements'=>'array',
+							 'direct-factoring_disbursements'=>'array',
+							 'ijara_disbursements'=>'array',
+							 'reverse-factoring_disbursements'=>'array',
+							 'portfolio-mortgage_disbursements'=>'array',
+							 'microfinance_disbursements'=>'array',
     ];
 
 }

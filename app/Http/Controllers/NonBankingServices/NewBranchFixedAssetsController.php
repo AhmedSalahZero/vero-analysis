@@ -52,21 +52,9 @@ class NewBranchFixedAssetsController extends Controller
 		$oldIdsFromDatabase = $study->fixedAssets->where('type',$fixedAssetType)->pluck('id')->toArray();
 		$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company,['type'=>$fixedAssetType],$oldIdsFromDatabase);
 		$study->recalculateFixedAssets($fixedAssetType);
-		// $fundingStructureCounts = $study->getFixedAssetsWithCountsDates(FixedAsset::NEW_BRANCH);
-		// $loanStructure = $study->getLoanStructure($fixedAssetType);
-        // $isFullyFundedThroughEquity = $request->input('generalFixedAssetsFundingStructure.is_fully_funded_though_equity');
-		// if($isFullyFundedThroughEquity && $loanStructure){
-		// 	 $loanStructure->delete();
-		// }
-		// $study->recalculateFixedAssets($fixedAssetType);
-        // if (!$isFullyFundedThroughEquity && count($fundingStructureCounts) ) {
-        //     return response()->json([
-        //     'redirectTo'=>route('create.ffe.funding.structure.fixed.assets', ['company'=>$company->id,'study'=>$study->id])
-        // ]);
-        // }
-		
+		$redirectRoute = route('create.per.employee.fixed.assets',['company'=>$company->id,'study'=>$study->id]);
 		return response()->json([
-			'redirectTo'=>route('create.per.employee.fixed.assets',['company'=>$company->id,'study'=>$study->id])
+			'redirectTo'=>$redirectRoute
 		]);
 		
 	}

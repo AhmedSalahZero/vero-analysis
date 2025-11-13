@@ -29,12 +29,18 @@ class HArr
         }
         return $result;
     }
-    public static function sumAtDates(array $items, array $dates)
+    public static function sumAtDates(array $items, array $dates , bool $debug = false )
     {
         $itemsCount = count($items);
         if (!$itemsCount) {
             return [];
         }
+		// if($debug){
+		// 	dd($items[0]);
+		// }
+		// if($debug){
+		// 	dd($items , 0);
+		// }
         if (!isset($items[0])) {
             throw new Exception('Custom Exception .. First Parameter Must Be Indexes Array That Contains Arrays like [ [] , [] , [] ]');
         }
@@ -948,6 +954,16 @@ class HArr
         }
         return $result;
     }
+	public static function slice_from_start_index_and_end_index(array $arr, int $startIndex , $endIndex)
+    {
+        $result = [];
+        foreach ($arr as $currentIndex => $value) {
+            if ($currentIndex >= $startIndex && $currentIndex<= $endIndex ) {
+                $result[$currentIndex] = $value;
+            }
+        }
+        return $result;
+    }
     public static function getPerYearIndexForEndBalance(array $itemsAsDateIndexAndValue, array $yearWithItsMonths):array
     {
         $result = [];
@@ -1195,4 +1211,13 @@ class HArr
 		}
 		return $items;
 	}
+	public static function divideTwoArrAtSameIndex(array $firstArr , array $secondArr){
+	$result = [];
+	foreach($firstArr as $index => $value){
+		$secondAtValue = $secondArr[$index]??0;
+		$result[$index] = $secondAtValue ?  $value / $secondAtValue  : 0;
+	}
+	return $result ; 
+}
+
 }

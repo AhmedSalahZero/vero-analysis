@@ -18,33 +18,40 @@ class CashInOutFlowController extends Controller
 	public function view(Request $request , Company $company,Study $study)
 	{
 		$basicCashflowStatement = $study->getCashInOutFlowViewVars() ;
-		$hasMicrofinanceWithOdas =$basicCashflowStatement['hasMicrofinanceWithOdas']; 
-		if($hasMicrofinanceWithOdas){
+		// $hasMicrofinanceWithOdas =$basicCashflowStatement['hasMicrofinanceWithOdas']; 
+		// if($hasMicrofinanceWithOdas){
 			$netCashBeforeWorkingCapital = $basicCashflowStatement['netCashBeforeWorking'];
 			$tableDataFormattedForOdas = $study->cashFlowForOdas($netCashBeforeWorkingCapital);
-			$tableDataFormattedExtraCapitalInjections = $study->cashFlowForExtraCapitalInjections();
 			$tableDataFormatteds = [
-				$basicCashflowStatement['tableDataFormatted']??[],
-				$tableDataFormattedForOdas,
-				$tableDataFormattedExtraCapitalInjections
-				
+				__('Cashflow Statement')=>$basicCashflowStatement['tableDataFormatted']??[],
+				__('ODAs Statement')=>$tableDataFormattedForOdas,
 			];
 			
-			
+			$leasingEclAndNewPortfolioFundingRates =[];
+			foreach($study->getRevenuesTypesWithTitles() as $revenueStreamId => $revenueStreamTitle){
+				$loanStructure = $study->getEclAndNewPortfolioFundingRatesForStreamType($revenueStreamId) ;
+				if($loanStructure){
+					$leasingEclAndNewPortfolioFundingRates[$revenueStreamId] = $loanStructure;
+				}
+			}
 			
 			
 			return view(
             'non_banking_services.income-statement.cash-flow-with-odas',
 			array_merge(
 				$basicCashflowStatement , 
-				['tableDataFormatteds'=>$tableDataFormatteds]
+				['tableDataFormatteds'=>$tableDataFormatteds],
+				[
+					'studyDates'=>$study->getStudyDates(),
+					'leasingEclAndNewPortfolioFundingRates'=>$leasingEclAndNewPortfolioFundingRates
+				]
 			)
         );
-		}
+		// }
 		
-		  return view(
-            'non_banking_services.income-statement.cash-flow',
-			$basicCashflowStatement
-        );
+		//   return view(
+        //     'non_banking_services.income-statement.cash-flow',
+		// 	$basicCashflowStatement
+        // );
 	}
 }

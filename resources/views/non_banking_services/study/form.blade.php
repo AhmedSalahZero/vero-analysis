@@ -87,6 +87,12 @@
 																	  ] :
 																	  [
 																		1=>['title'=>1 ,'value'=>'1'],
+																	2=>['title'=>2 ,'value'=>'2'],
+																		3=>['title'=>3 ,'value'=>'3'],
+																		4=>['title'=>4 ,'value'=>'4'],
+																		5=>['title'=>5 ,'value'=>'5'],
+																		6=>['title'=>6 ,'value'=>'6'],
+																		7=>['title'=>7 ,'value'=>'7'],
 																		
 																	  ]
 																	  
@@ -569,7 +575,6 @@
                 , error: function(res) {
                     $('.save-form').prop('disabled', false);
                     $('.submit-form-btn-new').prop('disabled', false)
-					console.log(res.responseJSON)
 					let message =res.responseJSON.message;
 					if (res.responseJSON && res.responseJSON.errors){
 						message = res.responseJSON.errors[Object.keys(res.responseJSON.errors)[0]][0]

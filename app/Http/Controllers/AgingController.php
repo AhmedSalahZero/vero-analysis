@@ -45,9 +45,7 @@ class AgingController
 		->orderBy('currency')
 		->selectRaw('currency')->get()->pluck('currency')->unique()->values()->toArray();
 		
-		// $partners = $modelType == 'CustomerInvoice' ?  Partner::getCustomersWitAtLeastOneInvoiceWithNetBalanceGreaterThanZeroForCompany($company->id) : Partner::getSuppliersForCompany($company->id);
-		// $invoices = ('\App\Models\\'.$modelType)::onlyCompany($company->id)->get();
-		// $invoices = $invoices->unique($clientNameColumnName)->values() ;
+	
 		
         return view('reports.aging_form', [
 			'businessUnits'=>$businessUnits,

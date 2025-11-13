@@ -740,7 +740,7 @@ class LetterOfCreditIssuance extends Model
 		->where('status',LetterOfCreditIssuance::RUNNING)
 						// ->where('lc_cash_cover_currency',$currency)
 						->whereBetween('due_date',[$startDate,$endDate])
-						->selectRaw('transaction_name,letter_of_credit_issuances.lc_type as lc_type ,(amount_in_main_currency - cash_cover_amount) as paid_amount ,lc_cash_cover_currency as currency')->get();
+						->selectRaw('due_date,transaction_name,letter_of_credit_issuances.lc_type as lc_type ,(amount_in_main_currency - cash_cover_amount) as paid_amount ,lc_cash_cover_currency as currency')->get();
 		
 		$subType = __('LCs Remaining Amounts');
 		foreach($rows as $row){

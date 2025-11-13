@@ -168,23 +168,16 @@
 
                 }
                 , error: function(res) {
-                    
-					let title = '{{ __("Something Went Wrong") }}';
-                        if (res.responseJSON && res.responseJSON.message) {
-                            title = res.responseJSON.message;
+                    $('.save-form').prop('disabled', false);
+                    $('.submit-form-btn-new').prop('disabled', false)
+					let errorMessage = res.responseJSON.message;
+					if (res.responseJSON && res.responseJSON.errors) {
+                            errorMessage = res.responseJSON.errors[Object.keys(res.responseJSON.errors)[0]][0]
                         }
-                        $('.submit-form-btn,.save-form').prop('disabled', false)
-                        let message = null;
-                        if (res.responseJSON && res.responseJSON.errors) {
-                            message = res.responseJSON.errors[Object.keys(res.responseJSON.errors)[0]][0]
-                        }
-                        Swal.fire({
-                            icon: 'error'
-                            , title: title
-                            , text: message
-
-                        })
-						
+                    Swal.fire({
+                        icon: 'error'
+                        , title: errorMessage
+                    , });
                 }
             });
         }

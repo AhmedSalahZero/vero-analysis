@@ -1235,12 +1235,7 @@
                                 <div class="customize-elements">
                                     <table class="table">
                                         <thead>
-                                            {{-- <tr>
-
-                                                <th class="text-left"> {{ __('From Date') }} </th>
-                                                <th class="text-left"> {{ __('To Date') }} </th>
-
-                                            </tr> --}}
+                                           
                                         </thead>
                                         <tbody>
 
@@ -1250,26 +1245,14 @@
 
 
                                                 <td>
-                                                    {{-- <div class="col-md-3 d-flex align-items-center "> --}}
                                                     <label for="odoo-start-date" class="text-nowrap mr-3">{{ __('Start Date') }}</label>
-                                                    <input id="odoo-start-date" type="date" value="{{ $company->getIntegrationStartDate() }}" class="form-control" name="odoo_start_date">
-                                                    {{-- </div> --}}
-
+                                                    <input id="odoo-start-date" type="date" value="{{ \Carbon\Carbon::now()->startOfYear()->format('Y-m-d') }}" class="form-control" name="odoo_start_date">
                                                 </td>
 
                                                 <td>
-
-                                                    {{-- <div class="col-md-3 d-flex align-items-center "> --}}
                                                     <label for="odoo-end-date" class="text-nowrap mr-3">{{ __('End Date') }}</label>
-                                                    <input id="odoo-end-date" type="date" value="{{ \Carbon\Carbon::make($company->getIntegrationStartDate())->addMonth()->format('Y-m-d') }}" class="form-control" name="odoo_end_date">
-                                                    {{-- </div> --}}
-
+                                                    <input id="odoo-end-date" type="date" value="{{\Carbon\Carbon::now()->format('Y-m-d') }}" class="form-control" name="odoo_end_date">
                                                 </td>
-
-
-
-
-
                                             </tr>
 
 
@@ -1318,7 +1301,8 @@
                                                 <td>
                                                     {{-- <div class="col-md-3 d-flex align-items-center "> --}}
                                                     <label for="odoo-start-date" class="text-nowrap mr-3">{{ __('Start Date') }}</label>
-                                                    <input id="odoo-start-date" type="date"  value="{{ $company->getIntegrationStartDate() }}" class="form-control" name="odoo_start_date">
+                                                    <input id="odoo-start-date" type="date"  value="{{ \Carbon\Carbon::now()->startOfYear()->format('Y-m-d') }}" class="form-control" name="odoo_start_date">
+                                                    {{-- <input id="odoo-start-date" type="date"  value="{{ $company->getIntegrationStartDate() }}" class="form-control" name="odoo_start_date"> --}}
                                                     {{-- </div> --}}
 
                                                 </td>
@@ -1327,7 +1311,8 @@
 
                                                     {{-- <div class="col-md-3 d-flex align-items-center "> --}}
                                                     <label for="odoo-end-date" class="text-nowrap mr-3">{{ __('End Date') }}</label>
-                                                    <input id="odoo-end-date" type="date" value="{{ \Carbon\Carbon::make($company->getIntegrationStartDate())->addMonth()->format('Y-m-d') }}" class="form-control" name="odoo_end_date">
+                                                    <input id="odoo-end-date" type="date" value="{{\Carbon\Carbon::now()->format('Y-m-d') }}" class="form-control" name="odoo_end_date">
+                                                    {{-- <input id="odoo-end-date" type="date" value="{{ \Carbon\Carbon::make($company->getIntegrationStartDate())->addMonth()->format('Y-m-d') }}" class="form-control" name="odoo_end_date"> --}}
                                                     {{-- </div> --}}
 
                                                 </td>
@@ -1385,7 +1370,8 @@
                                                 <td>
                                                     {{-- <div class="col-md-3 d-flex align-items-center "> --}}
                                                     <label for="odoo-start-date" class="text-nowrap mr-3">{{ __('Start Date') }}</label>
-                                                    <input id="odoo-start-date" type="date"  value="{{ $company->getIntegrationStartDate() }}" class="form-control" name="odoo_start_date">
+                                                    <input id="odoo-start-date" type="date"  value="{{ \Carbon\Carbon::now()->startOfYear()->format('Y-m-d') }}" class="form-control" name="odoo_start_date">
+                                                    {{-- <input id="odoo-start-date" type="date"  value="{{ $company->getIntegrationStartDate() }}" class="form-control" name="odoo_start_date"> --}}
                                                     {{-- </div> --}}
 
                                                 </td>
@@ -1394,7 +1380,8 @@
 
                                                     {{-- <div class="col-md-3 d-flex align-items-center "> --}}
                                                     <label for="odoo-end-date" class="text-nowrap mr-3">{{ __('End Date') }}</label>
-                                                    <input id="odoo-end-date" type="date" value="{{ \Carbon\Carbon::make($company->getIntegrationStartDate())->addMonth()->format('Y-m-d') }}" class="form-control" name="odoo_end_date">
+                                                    <input id="odoo-end-date" type="date" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" class="form-control" name="odoo_end_date">
+                                                    {{-- <input id="odoo-end-date" type="date" value="{{ \Carbon\Carbon::make($company->getIntegrationStartDate())->addMonth()->format('Y-m-d') }}" class="form-control" name="odoo_end_date"> --}}
                                                     {{-- </div> --}}
 
                                                 </td>
@@ -1454,7 +1441,8 @@
 
                                                     {{-- <div class="col-md-3 d-flex align-items-center "> --}}
                                                     <label for="odoo-send-start-date" class="text-nowrap mr-3">{{ __('Start Date') }}</label>
-                                                    <input id="odoo-send-start-date" type="date"  value="{{ $company->getIntegrationStartDate() }}" class="form-control" name="odoo_start_date">
+                                                    <input id="odoo-send-start-date" type="date"  value="{{ \Carbon\Carbon::now()->startOfYear()->format('Y-m-d') }}" class="form-control" name="odoo_start_date">
+                                                    {{-- <input id="odoo-send-start-date" type="date"  value="{{ $company->getIntegrationStartDate() }}" class="form-control" name="odoo_start_date"> --}}
                                                     {{-- </div> --}}
 
                                                 </td>
@@ -1463,7 +1451,7 @@
 
                                                     {{-- <div class="col-md-3 d-flex align-items-center "> --}}
                                                     <label for="odoo-send-end-date" class="text-nowrap mr-3">{{ __('End Date') }}</label>
-                                                    <input id="odoo-send-end-date" type="date" value="{{ now()->format('Y-m-d') }}" class="form-control" name="odoo_end_date">
+                                                    <input id="odoo-send-end-date" type="date" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" class="form-control" name="odoo_end_date">
                                                     {{-- </div> --}}
 
                                                 </td>
@@ -1519,7 +1507,8 @@
 
                                                     {{-- <div class="col-md-3 d-flex align-items-center "> --}}
                                                     <label for="odoo-send-start-date" class="text-nowrap mr-3">{{ __('Start Date') }}</label>
-                                                    <input id="odoo-send-start-date" type="date"  value="{{ $company->getIntegrationStartDate() }}" class="form-control" name="odoo_start_date">
+                                                    <input id="odoo-send-start-date" type="date"  value="{{\Carbon\Carbon::now()->startOfYear()->format('Y-m-d') }}" class="form-control" name="odoo_start_date">
+                                                    {{-- <input id="odoo-send-start-date" type="date"  value="{{ $company->getIntegrationStartDate() }}" class="form-control" name="odoo_start_date"> --}}
                                                     {{-- </div> --}}
 
                                                 </td>
@@ -1528,7 +1517,8 @@
 
                                                     {{-- <div class="col-md-3 d-flex align-items-center "> --}}
                                                     <label for="odoo-send-end-date" class="text-nowrap mr-3">{{ __('End Date') }}</label>
-                                                    <input id="odoo-send-end-date" type="date" value="{{ now()->format('Y-m-d') }}" class="form-control" name="odoo_end_date">
+                                                    <input id="odoo-send-end-date" type="date" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" class="form-control" name="odoo_end_date">
+                                                    {{-- <input id="odoo-send-end-date" type="date" value="{{ now()->format('Y-m-d') }}" class="form-control" name="odoo_end_date"> --}}
                                                     {{-- </div> --}}
 
                                                 </td>
@@ -2203,6 +2193,7 @@
                 // Validate form before submit
 
                 form = $(this).closest('form')[0]
+			
 
                 var formData = new FormData(form);
 
@@ -2210,6 +2201,7 @@
                     alert('not action attr for this form');
                     return;
                 }
+		
                 //  this.disabled = true;
                 $.ajax({
                     type: "POST"
@@ -2576,6 +2568,7 @@ function roundToTwo(num) {
 
 
 @stack('js_last')
+
 </body>
 {{ session()->forget('fail') }}
 <!-- end::Body -->

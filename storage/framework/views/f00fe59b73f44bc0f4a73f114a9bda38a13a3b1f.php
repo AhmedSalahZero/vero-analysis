@@ -1235,7 +1235,7 @@
                                 <div class="customize-elements">
                                     <table class="table">
                                         <thead>
-                                            
+                                           
                                         </thead>
                                         <tbody>
 
@@ -1245,26 +1245,14 @@
 
 
                                                 <td>
-                                                    
                                                     <label for="odoo-start-date" class="text-nowrap mr-3"><?php echo e(__('Start Date')); ?></label>
-                                                    <input id="odoo-start-date" type="date" value="<?php echo e($company->getIntegrationStartDate()); ?>" class="form-control" name="odoo_start_date">
-                                                    
-
+                                                    <input id="odoo-start-date" type="date" value="<?php echo e(\Carbon\Carbon::now()->startOfYear()->format('Y-m-d')); ?>" class="form-control" name="odoo_start_date">
                                                 </td>
 
                                                 <td>
-
-                                                    
                                                     <label for="odoo-end-date" class="text-nowrap mr-3"><?php echo e(__('End Date')); ?></label>
-                                                    <input id="odoo-end-date" type="date" value="<?php echo e(\Carbon\Carbon::make($company->getIntegrationStartDate())->addMonth()->format('Y-m-d')); ?>" class="form-control" name="odoo_end_date">
-                                                    
-
+                                                    <input id="odoo-end-date" type="date" value="<?php echo e(\Carbon\Carbon::now()->format('Y-m-d')); ?>" class="form-control" name="odoo_end_date">
                                                 </td>
-
-
-
-
-
                                             </tr>
 
 
@@ -1308,7 +1296,8 @@
                                                 <td>
                                                     
                                                     <label for="odoo-start-date" class="text-nowrap mr-3"><?php echo e(__('Start Date')); ?></label>
-                                                    <input id="odoo-start-date" type="date"  value="<?php echo e($company->getIntegrationStartDate()); ?>" class="form-control" name="odoo_start_date">
+                                                    <input id="odoo-start-date" type="date"  value="<?php echo e(\Carbon\Carbon::now()->startOfYear()->format('Y-m-d')); ?>" class="form-control" name="odoo_start_date">
+                                                    
                                                     
 
                                                 </td>
@@ -1317,7 +1306,8 @@
 
                                                     
                                                     <label for="odoo-end-date" class="text-nowrap mr-3"><?php echo e(__('End Date')); ?></label>
-                                                    <input id="odoo-end-date" type="date" value="<?php echo e(\Carbon\Carbon::make($company->getIntegrationStartDate())->addMonth()->format('Y-m-d')); ?>" class="form-control" name="odoo_end_date">
+                                                    <input id="odoo-end-date" type="date" value="<?php echo e(\Carbon\Carbon::now()->format('Y-m-d')); ?>" class="form-control" name="odoo_end_date">
+                                                    
                                                     
 
                                                 </td>
@@ -1370,7 +1360,8 @@
                                                 <td>
                                                     
                                                     <label for="odoo-start-date" class="text-nowrap mr-3"><?php echo e(__('Start Date')); ?></label>
-                                                    <input id="odoo-start-date" type="date"  value="<?php echo e($company->getIntegrationStartDate()); ?>" class="form-control" name="odoo_start_date">
+                                                    <input id="odoo-start-date" type="date"  value="<?php echo e(\Carbon\Carbon::now()->startOfYear()->format('Y-m-d')); ?>" class="form-control" name="odoo_start_date">
+                                                    
                                                     
 
                                                 </td>
@@ -1379,7 +1370,8 @@
 
                                                     
                                                     <label for="odoo-end-date" class="text-nowrap mr-3"><?php echo e(__('End Date')); ?></label>
-                                                    <input id="odoo-end-date" type="date" value="<?php echo e(\Carbon\Carbon::make($company->getIntegrationStartDate())->addMonth()->format('Y-m-d')); ?>" class="form-control" name="odoo_end_date">
+                                                    <input id="odoo-end-date" type="date" value="<?php echo e(\Carbon\Carbon::now()->format('Y-m-d')); ?>" class="form-control" name="odoo_end_date">
+                                                    
                                                     
 
                                                 </td>
@@ -1439,7 +1431,8 @@
 
                                                     
                                                     <label for="odoo-send-start-date" class="text-nowrap mr-3"><?php echo e(__('Start Date')); ?></label>
-                                                    <input id="odoo-send-start-date" type="date"  value="<?php echo e($company->getIntegrationStartDate()); ?>" class="form-control" name="odoo_start_date">
+                                                    <input id="odoo-send-start-date" type="date"  value="<?php echo e(\Carbon\Carbon::now()->startOfYear()->format('Y-m-d')); ?>" class="form-control" name="odoo_start_date">
+                                                    
                                                     
 
                                                 </td>
@@ -1448,7 +1441,7 @@
 
                                                     
                                                     <label for="odoo-send-end-date" class="text-nowrap mr-3"><?php echo e(__('End Date')); ?></label>
-                                                    <input id="odoo-send-end-date" type="date" value="<?php echo e(now()->format('Y-m-d')); ?>" class="form-control" name="odoo_end_date">
+                                                    <input id="odoo-send-end-date" type="date" value="<?php echo e(\Carbon\Carbon::now()->format('Y-m-d')); ?>" class="form-control" name="odoo_end_date">
                                                     
 
                                                 </td>
@@ -1499,7 +1492,8 @@
 
                                                     
                                                     <label for="odoo-send-start-date" class="text-nowrap mr-3"><?php echo e(__('Start Date')); ?></label>
-                                                    <input id="odoo-send-start-date" type="date"  value="<?php echo e($company->getIntegrationStartDate()); ?>" class="form-control" name="odoo_start_date">
+                                                    <input id="odoo-send-start-date" type="date"  value="<?php echo e(\Carbon\Carbon::now()->startOfYear()->format('Y-m-d')); ?>" class="form-control" name="odoo_start_date">
+                                                    
                                                     
 
                                                 </td>
@@ -1508,7 +1502,8 @@
 
                                                     
                                                     <label for="odoo-send-end-date" class="text-nowrap mr-3"><?php echo e(__('End Date')); ?></label>
-                                                    <input id="odoo-send-end-date" type="date" value="<?php echo e(now()->format('Y-m-d')); ?>" class="form-control" name="odoo_end_date">
+                                                    <input id="odoo-send-end-date" type="date" value="<?php echo e(\Carbon\Carbon::now()->format('Y-m-d')); ?>" class="form-control" name="odoo_end_date">
+                                                    
                                                     
 
                                                 </td>
@@ -2182,6 +2177,7 @@
                 // Validate form before submit
 
                 form = $(this).closest('form')[0]
+			
 
                 var formData = new FormData(form);
 
@@ -2189,6 +2185,7 @@
                     alert('not action attr for this form');
                     return;
                 }
+		
                 //  this.disabled = true;
                 $.ajax({
                     type: "POST"
@@ -2555,6 +2552,7 @@ function roundToTwo(num) {
 
 
 <?php echo $__env->yieldPushContent('js_last'); ?>
+
 </body>
 <?php echo e(session()->forget('fail')); ?>
 

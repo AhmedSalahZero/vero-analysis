@@ -316,8 +316,9 @@ use App\Models\LetterOfCreditIssuance;
                                     <label>{{__('LC Currency')}}
                                         @include('star')
                                     </label>
+									{{-- {{ dd($model->getLcCurrency()) }} --}}
                                     <div class="input-group">
-                                        <select name="lc_currency" class="form-control lc-currency update-exchange-rate current-invoice-currency">
+                                        <select  name="lc_currency" class="form-control lc-currency update-exchange-rate current-invoice-currency">
                                             <option selected>{{__('Select')}}</option>
                                             @foreach(getCurrencies() as $currencyName => $currencyValue )
                                             <option value="{{ $currencyName }}" @if(isset($model) && $model->getLcCurrency() == $currencyName ) selected @elseif($currencyName == 'USD' ) selected @endif > {{ $currencyValue }}</option>
@@ -698,6 +699,7 @@ use App\Models\LetterOfCreditIssuance;
                 $('#total-room-id').val(res.total_room).prop('readonly', true)
                 $('#current-lc-type-outstanding-balance-id').val(res.current_lc_type_outstanding_balance).prop('readonly', true)
                 $('#min_lc_commission_fees_id').val(res.min_lc_commission_rate).trigger('change');
+			
                 $('#lc-currency-id').val(res.currency_name).trigger('change');
                 $('#lc_commission_rate-id').val(res.lc_commission_rate).trigger('change');
                 $('#issuance_fees_id').val(res.min_lc_issuance_fees_for_current_lc_type).trigger('change');

@@ -75,4 +75,9 @@ class OverdraftAgainstAssignmentOfContractRate extends Model
 		return number_format($this->getInterestRate(),2) . ' %';
 	}
 	
+	public function getMinInterestRateFormatted()
+	{
+		return number_format($this->getMinInterestRate(),2) . ' %';
+	}
+	
 }

@@ -13,14 +13,14 @@ use App\Models\NonBankingService\SecuritizationLoanSchedule;
 use App\Models\NonBankingService\Study;
 use Carbon\Carbon;
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class IncomeStatementController extends Controller
 {
-    public function index(Company $company, Request $request, Study $study,$onlyViewVars = false )
+    public function index(Company $company, Study $study,$onlyViewVars = false )
     {
-		// $study->recalculateCashflowStatement();
+		$study->recalculateCashflowStatement();
+		
         // $start = microtime(true);
         $dateIndexWithDate = app('dateIndexWithDate');
         $formattedExpenses = [];
@@ -589,7 +589,6 @@ class IncomeStatementController extends Controller
         }
         
 		$fixedAssetLoanInterestExpenses = $incomeStatementReport ? $incomeStatementReport->fixed_asset_loan_interest_expenses : [];
-		// dd($fixedAssetLoanInterestExpenses,$incomeStatementReport);
 		  if ($fixedAssetLoanInterestExpenses && count($fixedAssetLoanInterestExpenses)) {
             $tableDataFormatted[$financialExpenseOrderIndex]['sub_items'][__('Fixed Assets Loans Interests')]['data'] = $fixedAssetLoanInterestExpenses;
             $tableDataFormatted[$financialExpenseOrderIndex]['sub_items'][__('Fixed Assets Loans Interests')]['year_total'] = HArr::sumPerYearIndex($fixedAssetLoanInterestExpenses, $yearWithItsMonths);

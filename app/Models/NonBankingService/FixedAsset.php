@@ -8,12 +8,6 @@ use App\Models\Company;
 use App\Models\Traits\Scopes\BelongsToCompany;
 
 use App\Models\Traits\Scopes\NonBankingServices\BelongsToStudy;
-use App\ReadyFunctions\CalculateFixedLoanAtEndService;
-use App\ReadyFunctions\CalculateLoanWithdrawal;
-use App\ReadyFunctions\FfeExecutionAndPayment;
-use App\ReadyFunctions\FixedAssetsPayableEndBalance;
-use App\ReadyFunctions\ProjectsUnderProgress;
-use function PHPSTORM_META\map;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;

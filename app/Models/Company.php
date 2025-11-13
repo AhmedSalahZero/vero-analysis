@@ -377,6 +377,7 @@ class Company extends Model implements HasMedia
 		|| (auth()->check() && auth()->user()->isSuperAdmin());
 	}public function hasCashvero():bool 
 	{
+		// return true;
 		return in_array(CASH_VERO,$this->getSystemsNames())
 		|| (auth()->check() && auth()->user()->isSuperAdmin());
 	}
@@ -759,5 +760,12 @@ class Company extends Model implements HasMedia
 			'type'=>Department::MICROFINANCE,
 			'company_id'=>$this->id
 		]);
+	}
+	public function letterOfCreditFacilities()
+	{
+		return $this->hasMany(LetterOfCreditFacility::class,'company_id','id');
+	}public function letterOfGuaranteeFacilities()
+	{
+		return $this->hasMany(LetterOfGuaranteeFacility::class,'company_id','id');
 	}
 }
