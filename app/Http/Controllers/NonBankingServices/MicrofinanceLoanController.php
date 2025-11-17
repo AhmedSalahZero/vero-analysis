@@ -49,7 +49,6 @@ class MicrofinanceLoanController extends Controller
 				$salesProjectsPerTypes[$type]['total'][$currentYearOrMonthIndex] = isset($salesProjectsPerTypes[$type]['total'][$currentYearOrMonthIndex]) ? $salesProjectsPerTypes[$type]['total'][$currentYearOrMonthIndex] + $monthlyLoanAmount : $monthlyLoanAmount;
             }
         }
-		// dd($salesProjectsPerProducts);
 		$branchName = $branchId ? ExistingBranch::find($branchId)->getName() : '';
         return [
 			'branchName'=>$branchName,

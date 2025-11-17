@@ -266,11 +266,6 @@
                                                     <span></span>
                                                 </label>
 
-
-
-
-
-
                                                 <label class="kt-radio kt-radio--success text-black font-size-14px font-weight-bold">
 
                                                     <input type="checkbox" value="1" name="has_ijara_mortgage" @if(isset($model) && $model->hasIjaraMortgage()) checked @endisset
@@ -284,10 +279,6 @@
                                                     <span></span>
                                                 </label>
 
-
-
-
-
                                                 <label class="kt-radio kt-radio--success text-black font-size-14px font-weight-bold">
 
                                                     <input type="checkbox" value="1" name="has_securitization" @if(isset($model) && $model->hasSecuritization()) checked @endisset
@@ -300,7 +291,7 @@
                                                     > {{ __('Consumer Finance') }}
                                                     <span></span>
                                                 </label>
- --}}
+ 													--}}
 
 
 

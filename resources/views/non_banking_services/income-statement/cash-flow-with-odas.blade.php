@@ -49,6 +49,8 @@ $months = $study->getMicrofinanceMonths() ;
 @section('content')
 <div id="study-duration" data-duration="{{ $study->duration_in_years }}"></div>
 <div class="kt-portlet kt-portlet--tabs">
+<form action="{{ route('save.manual.equity.injection',['company'=>$company->id,'study'=>$study->id]) }}" method="post">
+@csrf
     <div class="kt-portlet__head">
         <div class="kt-portlet__head-toolbar justify-content-between flex-grow-1">
             <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
@@ -63,37 +65,42 @@ $months = $study->getMicrofinanceMonths() ;
 
         </div>
     </div>
-	  @foreach($tableDataFormatteds as $title=> $tableDataFormatted)
-    <div class="kt-portlet__body">
-        <div class="tab-content  kt-margin-t-20">
-		 <div class="row">
-
-                        <div class="col-md-10">
-                            <div class="d-flex align-items-center ">
-                                <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
-                                    {{ $title }}
-                                </h3>
-                            </div>
-                        </div>
-                        {{-- <div class="col-md-2 text-right">
-                            <x-show-hide-btn :query="'.new-portfolio-funding'"></x-show-hide-btn>
-                        </div> --}}
-                    </div>
-		
-
+	
             @php
             $currentType = 'study' ;
             @endphp
+			
+	{{-- {{ dd($tableDataFormatteds) }} --}}
+    @foreach($tableDataFormatteds as $title=> $tableDataFormatted)
+		@if($title != $odasTitleStatement ||  ($title == $odasTitleStatement && $hasMicrofinanceWithOdas)  )
+    <div class="kt-portlet__body">
+        <div class="tab-content  kt-margin-t-20">
+            <div class="row">
+
+                <div class="col-md-10">
+                    <div class="d-flex align-items-center ">
+                        <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
+                            {{ $title }}
+                        </h3>
+                    </div>
+                </div>
+                {{-- <div class="col-md-2 text-right">
+                            <x-show-hide-btn :query="'.new-portfolio-funding'"></x-show-hide-btn>
+                        </div> --}}
+            </div>
+
+
+		
             <!--Begin:: Tab Content-->
-
-          
             @include('non_banking_services.income-statement._odas')
-        
+			
+			
 
 
 
 
-          
+
+
 
 
 
@@ -107,144 +114,175 @@ $months = $study->getMicrofinanceMonths() ;
             <!--End:: Tab Content-->
         </div>
     </div>
-	    @endforeach
+	@endif
+	
+    @endforeach
 
 
-  <div class="kt-portlet">
-                <div class="kt-portlet__body">
-                    <div class="row">
+    <div class="kt-portlet">
+        <div class="kt-portlet__body">
+            <div class="row">
 
-                        <div class="col-md-10">
-                            <div class="d-flex align-items-center ">
-                                <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
-                                    {{ __('Manual Funding Structure') }}
-                                </h3>
-                            </div>
-                        </div>
-                        {{-- <div class="col-md-2 text-right">
-                            <x-show-hide-btn :query="'.new-portfolio-funding'"></x-show-hide-btn>
-                        </div> --}}
+                <div class="col-md-10">
+                    <div class="d-flex align-items-center ">
+                        <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
+                            {{ __('Manual Funding Structure') }}
+                        </h3>
                     </div>
-                    <div class="row">
-                        <hr style="flex:1;background-color:lightgray">
-                    </div>
-                    <div class="row new-portfolio-funding">
-                        @php
-                        $rowIndex = 0;
-                        @endphp
-
-
-                        <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden overflow-scroll'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
-                            <x-slot name="ths">
-                                <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
-
-                                @for($i = 0 ; $i<= $months ; $i++) 
-								@php
-									$monthName =formatDateForView($studyDates[$i]);
-								@endphp
-								<x-tables.repeater-table-th :font-size-class="'font-14px'" class=" interval-class header-border-down " :title="$monthName">
-                                    </x-tables.repeater-table-th>
-                                    @endfor
-                                    <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Total')"></x-tables.repeater-table-th>
-                            </x-slot>
-                            <x-slot name="trs">
-
-
-
-
-
-                                <tr data-repeat-formatting-decimals="0" data-repeater-style total-row-tr data-row-total>
-
-                                    <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
-
-
-                                    <td>
-                                        <input readonly value="{{ __('Equity Injection Value') }}" class="form-control name-max-width-class text-left mt-2" type="text">
-
-                                    </td>
-                                    @php
-                                    $columnIndex = 0 ;
-                                    @endphp
-                                    @for($i = 0 ; $i<= $months ; $i++) <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :readonly="false" :numberFormatDecimals="0" :currentVal="isset($leasingEclAndNewPortfolioFundingRate) ? $leasingEclAndNewPortfolioFundingRate->getEquityFundingValuesAtYearOrMonthIndex($i):0" :classes="'only-greater-than-or-equal-zero-allowed '" :formatted-input-classes="''" :is-percentage="false" :name="'equity_funding_values['.$i.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-                                        </div>
-                                        </td>
-                                        @php
-                                        $columnIndex++;
-                                        @endphp
-                                        @endfor
-
-                                        <td>
-                                            <div class="d-flex align-items-center justify-content-center">
-                                                <input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="0">
-                                            </div>
-                                        </td>
-
-
-
-                                </tr>
-
-                               
-                                @foreach($study->getRevenuesTypesWithTitles() as $revenueTypeId => $revenueTitle)
-								@php
-									$leasingEclAndNewPortfolioFundingRate = $leasingEclAndNewPortfolioFundingRates[$revenueTypeId]??null;
-									if(is_null($leasingEclAndNewPortfolioFundingRate)){
-										continue;
-									}
-								@endphp
-                               
-                                <tr data-repeat-formatting-decimals="2" data-repeater-style>
-                                    <td>
-                                        <input disabled value="{{'[ '.$revenueTitle.' ] '. __('New Loans Funding Rate (%)') }}" class="form-control  text-left" type="text">
-                                    </td>
-                                    @php
-                                    $columnIndex = 0 ;
-                                    @endphp
-
-                                    @for($i = 0 ; $i<= $months ; $i++) 
-									@php
-										$yearOrMonthIndex = $study->isMonthlyStudy() ? $i : $study->getYearIndexFromDateIndex($i);
-									@endphp
-									<td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <input type="text" data-column-index="{{ $columnIndex }}" class="form-control expandable-amount-input " name="new_loans_funding_rates[{{ $i }}]'" value="{{ isset($leasingEclAndNewPortfolioFundingRate) ? $leasingEclAndNewPortfolioFundingRate->getNewLoansFundingRatesAtYearOrMonthIndex($yearOrMonthIndex):0 }}"> <span class="ml-2">%</span>
-                                        </div>
-                                        </td>
-                                        @php
-                                        $columnIndex++;
-                                        @endphp
-
-                                        @endfor
-
-                                        <td>
-                                            <div class="d-flex align-items-center justify-content-center">
-                                                <input type="text" class="form-control expandable-amount-input  sum-percentage-css" disabled value="-">
-                                            </div>
-                                        </td>
-
-
-
-                                </tr>
-
-                                @endforeach
-
-
-
-                            </x-slot>
-
-
-
-
-                        </x-tables.repeater-table>
-                        {{-- end of fixed monthly repeating amount --}}
-
-
-                    </div>
-
                 </div>
+
+            </div>
+            <div class="row">
+                <hr style="flex:1;background-color:lightgray">
             </div>
 			
+            <div class="row new-portfolio-funding">
+                @php
+                $rowIndex = 0;
+                @endphp
+				
+                <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden overflow-scroll'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+                    <x-slot name="ths">
+                        <x-tables.repeater-table-th :subParentClass="'plus-max-width-class fixed-column'" class="  header-border-down plus-max-width-class" :title="__('+/-')"></x-tables.repeater-table-th>
+                        <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
+
+                        @for($i = 0 ; $i<= $months ; $i++) @php $monthName=formatDateForView($studyDates[$i]); @endphp <x-tables.repeater-table-th :font-size-class="'font-14px'" class=" interval-class header-border-down " :title="$monthName">
+                            </x-tables.repeater-table-th>
+                            @endfor
+                            <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Total')"></x-tables.repeater-table-th>
+                    </x-slot>
+                    <x-slot name="trs">
+
+
+
+
+
+                        <tr data-repeat-formatting-decimals="0" data-repeater-style total-row-tr data-row-total>
+
+                            <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
+
+
+                            <td class="fixed-column">
+							    <div class="col-md-12  text-left">
+                                        <div class="mt-2 d-inline-block">
+                                            <div class="kt-radio-inline">
+                                                <label class="mr-3">
+
+                                                </label>
+                                                <label class="kt-radio kt-radio--success text-black font-size-14px font-weight-bold mb-0">
+
+                                                    <input type="checkbox" value="1" name="has_manual_equity_injection" @if(  $cashflowStatementReport->hasManualEquityInjection()) checked @endisset
+                                                    > {{ __('Apply') }}
+                                                    <span></span>
+                                                </label>
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+									
+						
+                                <a href="#" class="btn 
+								
+									visibility-hidden
+								
+									 
+									 btn-1-bg btn-sm btn-brand add-btn-class  text-center add-btn-js">
+                                    <i class="fas fa-angle-double-down expand-icon   exclude-icon"></i>
+                                </a>
+                            </td>
+
+
+                            <td>
+
+                                <input readonly value="{{ __('Equity Injection Value') }}" class="form-control name-max-width-class text-left mt-2" type="text">
+
+                            </td>
+                            @php
+                            $columnIndex = 0 ;
+                            @endphp
+                            @for($i = 0 ; $i<= $months ; $i++) <td>
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <x-repeat-right-dot-inputs :readonly="false" :numberFormatDecimals="0" :currentVal="$cashflowStatementReport->getManualEquityInjectionAtMonthIndex($i)" :classes="'only-greater-than-or-equal-zero-allowed '" :formatted-input-classes="''" :is-percentage="false" :name="'manual_equity_injection['.$i.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                </div>
+                                </td>
+                                @php
+                                $columnIndex++;
+                                @endphp
+                                @endfor
+
+                                <td>
+                                    <div class="d-flex align-items-center justify-content-center">
+                                        <input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="0">
+                                    </div>
+                                </td>
+
+
+
+                        </tr>
+                        @foreach($study->getRevenuesTypesWithTitles() as $revenueTypeId => $revenueTitle)
+                        @php
+                        $leasingEclAndNewPortfolioFundingRate = $leasingEclAndNewPortfolioFundingRates[$revenueTypeId]??null;
+                        if(is_null($leasingEclAndNewPortfolioFundingRate)){
+                        continue;
+                        }
+                        @endphp
+
+                        <tr data-repeat-formatting-decimals="2" data-repeater-style>
+						
+						  <td class="fixed-column">
+
+                                <a href="#" class="btn 
+									visibility-hidden
+									 btn-1-bg btn-sm btn-brand add-btn-class  text-center add-btn-js">
+                                    <i class="fas fa-angle-double-down expand-icon   exclude-icon"></i>
+                                </a>
+                            </td>
+							
+							
+                            <td>
+                                <input disabled value="{{'[ '.$revenueTitle.' ] '. __('New Loans Funding Rate (%)') }}" class="form-control  text-left" type="text">
+                            </td>
+							
+							{{-- <td> --}}
+							  <td>
+							      <a href="{{ route('cash.in.out.flow.result',['company'=>$company->id,'study'=>$study->id]) }}" class="btn btn-lg-width btn-2-bg btn-sm btn-brand btn-pill">{{ __('Adjust') }}</a>
+                                </td>
+							
+
+
+
+                        </tr>
+
+                        @endforeach
+
+
+
+                    </x-slot>
+
+
+
+
+                </x-tables.repeater-table>
+				
+                {{-- end of fixed monthly repeating amount --}}
+
+
+            </div>
+			{{-- @endif --}}
+
+        </div>
+      
+		
+	    @if(isset($nextButton))
+        <div class="text-right mt-4 cash-flow-btn mr-2">
+		   <button type="submit" name="recalculate-cashflow" href="{{ $nextButton['link'] }}" class="btn text-white bg-green ">{{ __('Recalculate Cashflow') }}</button>
+            <a href="{{ $nextButton['link'] }}" class="btn btn-primary ">{{ $nextButton['title'] }}</a>
+        </div>
+        @endif
+		</form>
+    </div>
+
 </div>
 
 @endsection

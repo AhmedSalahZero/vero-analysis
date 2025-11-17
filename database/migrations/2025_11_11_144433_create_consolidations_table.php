@@ -13,14 +13,16 @@ class CreateConsolidationsTable extends Migration
      */
     public function up()
     {
-        Schema::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->create('consolidations', function (Blueprint $table) {
-            $table->id();
-			$table->string('name');
-			$table->json('study_ids')->comment('studies that will be consolidated')->nullable();
-			$table->string('study_type');
-			$table->unsignedBigInteger('company_id');
-            $table->timestamps();
-        });
+		if(!Schema::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->hasTable('consolidations')){
+			Schema::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->create('consolidations', function (Blueprint $table) {
+				$table->id();
+				$table->string('name');
+				$table->json('study_ids')->comment('studies that will be consolidated')->nullable();
+				$table->string('study_type');
+				$table->unsignedBigInteger('company_id');
+				$table->timestamps();
+			});
+		}
     }
 
     /**

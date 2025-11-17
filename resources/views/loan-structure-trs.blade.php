@@ -1,4 +1,7 @@
-
+@php
+	$newLoanFundingRateText = isset($newLoanFundingRateText) ?$newLoanFundingRateText :  __('New Loans Funding Rate (%)');
+	$newLoanFundingValueText = isset($newLoanFundingValueText) ?$newLoanFundingValueText :  __('New Loans Funding Value');
+@endphp
                                 <tr data-repeat-formatting-decimals="2" data-repeater-style>
 
                                     <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
@@ -127,7 +130,7 @@
 
                                 <tr data-repeat-formatting-decimals="2" data-repeater-style>
                                     <td>
-                                        <input disabled value="{{ __('New Loans Funding Rate (%)') }}" class="form-control min-width-hover-300 text-left" type="text">
+                                        <input disabled value="{{ $newLoanFundingRateText }}" class="form-control min-width-hover-300 text-left" type="text">
                                     </td>
                                     @php
                                     $columnIndex = 0 ;
@@ -184,7 +187,7 @@
 
 
                                     <td>
-                                        <input disabled value="{{ __('New Loans Funding Value') }}" class="form-control min-width-hover-300 text-left" type="text">
+                                        <input disabled value="{{ $newLoanFundingValueText }}" class="form-control min-width-hover-300 text-left" type="text">
 
                                     </td>
                                     @php

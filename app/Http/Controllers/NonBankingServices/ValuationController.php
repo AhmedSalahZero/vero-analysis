@@ -2,19 +2,10 @@
 
 namespace App\Http\Controllers\NonBankingServices;
 
-use App\Helpers\HArr;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
-use App\Models\NonBankingService\CashAndBankOpeningBalance;
-use App\Models\NonBankingService\EclAndNewPortfolioFundingRate;
-use App\Models\NonBankingService\Expense;
-use App\Models\NonBankingService\Manpower;
-use App\Models\NonBankingService\SecuritizationLoanSchedule;
 use App\Models\NonBankingService\Study;
-use Carbon\Carbon;
-use Exception;
 use Illuminate\Support\Facades\DB;
-use MathPHP\Finance;
 
 class ValuationController extends Controller
 {

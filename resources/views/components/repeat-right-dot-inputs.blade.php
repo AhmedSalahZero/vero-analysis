@@ -25,10 +25,17 @@ three-dots-parent
 @endif 
 
 ">
+@php
+	$groupIndex = $attributes->get('data-group-index');
+	$isYearRepeater = $groupIndex != null ;
+@endphp
+{{-- {{ dd() }} --}}
     <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
         <div class="input-hidden-parent">
             <input
-				
+		@if($isYearRepeater)
+				 data-gro-index="{{ $groupIndex }}"
+				 @endif
 				data-number-of-decimals="{{ $numberFormatDecimals }}"
 				@if($readonly)
 				readonly
@@ -89,7 +96,13 @@ three-dots-parent
 	class="fa
 	
 
-	 fa-ellipsis-h pull-left repeat-to-right row-repeater-icon " data-column-index="{{ $columnIndex}}" data-section="target" title="{{__('Repeat Right')}}"></i>
+	 fa-ellipsis-h pull-left repeat-to-right row-repeater-icon " data-column-index="{{ $columnIndex}}" 
+	 @if($isYearRepeater)
+	 data-group-repeater 
+	 data-group-index="{{ $groupIndex }}"	 
+	 @endif
+	 
+	   data-section="target" title="{{__('Repeat Right')}}"></i>
 	 @elseif(!$removeThreeDotsClass) 
 
 

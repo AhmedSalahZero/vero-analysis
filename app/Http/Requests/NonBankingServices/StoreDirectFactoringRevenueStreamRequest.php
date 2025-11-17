@@ -5,6 +5,7 @@ namespace App\Http\Requests\NonBankingServices;
 use App\Rules\TotalBreakdownMustBeHundered;
 use App\Rules\TotalBreakdownMustBeHundredRule;
 use Illuminate\Foundation\Http\FormRequest;
+use App\Rules\DirectFactoringBreakdownRule;
 
 class StoreDirectFactoringRevenueStreamRequest extends FormRequest
 {
@@ -31,9 +32,11 @@ class StoreDirectFactoringRevenueStreamRequest extends FormRequest
     public function rules()
     {
 		
-	
+		// dd(Request()->all());
+	// directFactoringBreakdowns
         return [
-            'total_must_be_hundred'=>[new TotalBreakdownMustBeHundredRule('directFactoringBreakdowns')]
+            'total_must_be_hundred'=>[new TotalBreakdownMustBeHundredRule('directFactoringBreakdowns')],
+			'direct_factoring_breakdown_rules'=>[new DirectFactoringBreakdownRule],
         ];
     }
 }

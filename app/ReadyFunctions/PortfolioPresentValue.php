@@ -41,9 +41,9 @@ class PortfolioPresentValue
 		$totalSchedulePayments = [];
 		$totalBankSchedulePayments = [];
         $yearWithItsMonths=$study->getYearIndexWithItsMonths();
+	
         $totalMonthlyAmountsPerYears = HArr::sumPerYearIndex($monthlyAmounts, $yearWithItsMonths);
          // $originalMonthlyAmounts = $monthlyAmounts;
-            
         foreach ($monthlyAmounts as $currentOccurrenceMonthIndex => &$currentOccurrenceAvgAmount) {
             if ($currentOccurrenceAvgAmount == 0) {
                 continue ;
@@ -65,6 +65,7 @@ class PortfolioPresentValue
                 $currentPrincipleAmount = $currentSchedulePaymentAmount - $currentInterestAmount ;
                 $endBalance = $currentOccurrenceAvgAmount - $currentSchedulePaymentAmount;
                 $totalNetPresentValue += $currentNetPresetValue;
+				// dd($currentOccurrenceAvgAmount,$currentSchedulePaymentAmount);
                 $portfolioMortgageLoanSchedulePayments[$currentOccurrenceMonthIndex]['beginning'][$i+$currentOccurrenceMonthIndex] = $currentOccurrenceAvgAmount ;
                 $portfolioMortgageLoanSchedulePayments[$currentOccurrenceMonthIndex]['interestAmount'][$i+$currentOccurrenceMonthIndex] = $currentInterestAmount ;
                 $portfolioInterestAmounts[$currentOccurrenceMonthIndex][$i+$currentOccurrenceMonthIndex] = $currentInterestAmount;
@@ -115,7 +116,9 @@ class PortfolioPresentValue
             'statement'=>$accumulatedMonthsAmountsDueDates,
             'portfolio_mortgage_unearned_interest_statement'=>$currentUnearnedInterestStatement,
         //    'loan_amounts'=>$originalMonthlyAmounts,
-            'total_monthly_amounts_per_years'=>$totalMonthlyAmountsPerYears
+            'total_monthly_amounts_per_years'=>$totalMonthlyAmountsPerYears,
+			'totalSchedulePayments'=>$totalSchedulePayments,
+			'totalBankSchedulePayments'=>$totalBankSchedulePayments
         ];
     
     }

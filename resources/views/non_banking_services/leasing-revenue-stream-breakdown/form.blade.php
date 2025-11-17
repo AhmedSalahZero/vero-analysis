@@ -135,7 +135,7 @@ use App\Models\NonBankingService\LeasingCategory;
                                 $currentMonthNumber = explode('-',$dateAsString)[1];
                                 $currentYear= explode('-',$dateAsString)[0];
                                 @endphp
-                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
+                                <x-tables.repeater-table-th data-column-index="{{ $yearOrMonthAsIndex }}" class=" interval-class header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
                                 @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
                                 <x-tables.repeater-table-th :icon="true" data-column-index="{{ $yearOrMonthAsIndex }}" :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down {{ 'year-repeater-index-'.$currentYearRepeaterIndex }} collapse-before-me exclude-from-collapse" :title="__('Total Yr.').' <br> '. $currentYear"></x-tables.repeater-table-th>
                                 @php
@@ -563,7 +563,7 @@ use App\Models\NonBankingService\LeasingCategory;
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
                                 @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
-                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
+                                <x-tables.repeater-table-th  data-column-index="{{ $yearOrMonthAsIndex }}" class=" interval-class header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
 								
 								 @php
                                 $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];

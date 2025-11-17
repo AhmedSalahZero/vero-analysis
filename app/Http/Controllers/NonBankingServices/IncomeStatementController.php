@@ -136,10 +136,16 @@ class IncomeStatementController extends Controller
         $tableDataFormatted[1]['sub_items']['Existing Portfolio New Portfolio Interest Expense']['options']['title'] = $existingPortfolioInterestExpenseTitle =  __('Existing Portfolio New Portfolio Interest Expense');
         // $tableDataFormatted[1]['sub_items']['Existing Long Term Loans Interest Expense']['options']['title'] = $existingLongTermLoanInterestTitle =  __('Existing Long Term Loans Interest Expense');
         $tableDataFormatted[1]['sub_items']['New Portfolio Interest Expense']['options']['title'] = __('New Portfolio Interest Expense');
+		$incomeStatementReport = $study->incomeStatementReport;
+		 $odaInterestExpenses = $incomeStatementReport ? $incomeStatementReport->oda_interests : [];
+		 $odasInterestExpenseText = __('ODAs Interest Expense') ;
+		 
+		 if(array_sum($odaInterestExpenses)){
+			 $tableDataFormatted[1]['sub_items']['ODAs Interest Expense']['options']['title'] = $odasInterestExpenseText;
+		 }
         $tableDataFormatted[1]['sub_items']['Manpower Salaries']['options']['title'] = __('Manpower Salaries');
         $yearWithItsMonths=$study->getYearIndexWithItsMonths();
         
-			$incomeStatementReport = $study->incomeStatementReport;
 			
 		$totalInterestExpense = $incomeStatementReport ? (array)$incomeStatementReport->existing_interests_expense : [];
         $tableDataFormatted[1]['sub_items'][$existingPortfolioInterestExpenseTitle]['data'] = $totalInterestExpense;
@@ -256,11 +262,13 @@ class IncomeStatementController extends Controller
 						$resultPerRevenueStreamType['all'][$currentYearOrMonthAsString] = isset($resultPerRevenueStreamType['all'][$currentYearOrMonthAsString]) ? $resultPerRevenueStreamType['all'][$currentYearOrMonthAsString] + $interestAmount : $interestAmount;
 
                     } else {
+						// if($interestAmount > 0){
+						// 	dump($interestAmount);
+						// }
 						$formattedResult['interest_cogs'][$currentMonthIndex] = isset($formattedResult['interest_cogs'][$currentMonthIndex]) ? $formattedResult['interest_cogs'][$currentMonthIndex] + $interestAmount : $interestAmount ;
                         $formattedExpenses['cost-of-service']['New Portfolio Interest Expense'][$currentMonthIndex]  = $formattedResult['interest_cogs'][$currentMonthIndex]??0 ;
                         $tableDataFormatted[1]['sub_items']['New Portfolio Interest Expense']['data'][$currentMonthIndex] =$formattedExpenses['cost-of-service']['New Portfolio Interest Expense'][$currentMonthIndex] ;
                     }
-                
             }
             
         }
@@ -278,7 +286,6 @@ class IncomeStatementController extends Controller
 			}
 		}
 
-		
 		// securitaization 
 		$securitizationLoanSchedules = SecuritizationLoanSchedule::where('study_id', $study->id)->get();
 		  $securitizationBankLoanSettlements = [];
@@ -330,7 +337,17 @@ class IncomeStatementController extends Controller
         
         $tableDataFormatted[0]['sub_items']['monthly-admin-fees']['data'] = $monthAdminFees;
         $tableDataFormatted[0]['sub_items']['monthly-admin-fees']['options']['title'] = __('Monthly Admin Fees');
-        // $tableDataFormatted[0]['sub_items']['monthly-admin-fees']['year_total'] = HArr::sumPerYearIndex($monthAdminFees, $yearWithItsMonths);
+		
+		
+        $interestCashSurplusAmounts =$incomeStatementReport? $incomeStatementReport->interest_cash_surplus : [];
+		
+        
+        $title = __('Cash Surplus Interest');
+        $tableDataFormatted[0]['sub_items'][$title]['options'] =array_merge([
+            'title'=>$title
+        ], $defaultNumericInputClasses);
+        $tableDataFormatted[0]['sub_items'][$title]['data'] = $interestCashSurplusAmounts;
+        $tableDataFormatted[0]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($interestCashSurplusAmounts, $yearWithItsMonths);
   
 		
 		
@@ -352,7 +369,13 @@ class IncomeStatementController extends Controller
                
    
     
-        
+       
+		if(array_sum($odaInterestExpenses)){
+			// ddddddddddddd
+			$tableDataFormatted[1]['sub_items'][$odasInterestExpenseText]['data'] = $odaInterestExpenses;
+			$tableDataFormatted[1]['sub_items'][$odasInterestExpenseText]['year_total'] = HArr::sumPerYearIndex($odaInterestExpenses, $yearWithItsMonths);
+		}
+		
         $expenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses')->where('study_id',$study->id)->join('expense_names', 'expense_names.id', '=', 'expenses.expense_name_id')->selectRaw('expenses.expense_category,expense_names.name as name,expenses.relation_name,expenses.monthly_repeating_amounts,expenses.total_after_vat,payload')->where('expenses.model_id', $study->id)->where('expenses.model_name', 'Study')->get()->toArray();
         $columnPerTypes = Expense::getColumnMapping();
         $salaryExpensesForCategories = Manpower::getSalaryExpensesPerCategory($monthsWithItsYear, $study->id, $company->id);
@@ -368,7 +391,7 @@ class IncomeStatementController extends Controller
 		
 		
 		if (count($securitizationBankEarlySettlements)) {
-            $title = __('Securitization Bank Settlement Expense');
+            $title = __('Securitization Bank Early Settlement Expense');
             $tableDataFormatted[1]['sub_items'][$title]['options'] =array_merge([
                'title'=>$title
             ], $defaultNumericInputClasses);
@@ -416,7 +439,14 @@ class IncomeStatementController extends Controller
 	
         $tableDataFormatted[1]['main_items']['% Of Revenue']['year_total'] = HArr::calculatePercentageOf($totalSalesRevenuesPerYears, $totalCostOfServicePerYear);
 	
-               
+        
+		
+		
+
+		
+
+		
+		// ddddddddddddddddddddddddddddddddddd
 		
 		
 		foreach($tableDataFormatted[1]['sub_items']?? [] as $id => $subItemArr){
@@ -632,16 +662,19 @@ class IncomeStatementController extends Controller
         /**
         * * Start Nine Item
         */
-        $corporateTaxesRate = $study->corporate_taxes_rate/100;
-        $annuallyCorporateTaxes =  HArr::MultiplyWithNumberIfPositiveAndZeroOtherValues($ebt, $corporateTaxesRate);
-        $annuallyCorporateTaxes = HArr::sumPerYearIndex($annuallyCorporateTaxes, $yearWithItsMonths);
+        // $corporateTaxesRate = $study->corporate_taxes_rate/100;
+		$annuallyCorporateTaxes = $incomeStatementReport ? $incomeStatementReport->corporate_taxes: [];
+        // $annuallyCorporateTaxes =  HArr::MultiplyWithNumberIfPositiveAndZeroOtherValues($ebt, $corporateTaxesRate);
+        // $annuallyCorporateTaxes = HArr::sumPerYearIndex($annuallyCorporateTaxes, $yearWithItsMonths);
         $tableDataFormatted[$corporateTaxesOrderIndex]['main_items']['corporate-taxes']['options']['title'] = __('Corporate Taxes');
         $tableDataFormatted[$corporateTaxesOrderIndex]['main_items']['corporate-taxes']['data'] = $annuallyCorporateTaxes;
         $tableDataFormatted[$corporateTaxesOrderIndex]['main_items']['corporate-taxes']['year_total'] = $annuallyCorporateTaxes;
         $tableDataFormatted[$corporateTaxesOrderIndex]['main_items']['% Of Revenue']['options']['title'] = __('% Of Revenue');
         $tableDataFormatted[$corporateTaxesOrderIndex]['main_items']['% Of Revenue']['data']=  [];
         $tableDataFormatted[$corporateTaxesOrderIndex]['main_items']['% Of Revenue']['year_total'] = $corporateTaxesRevenuePercentage=HArr::calculatePercentageOf($totalSalesExpensesPerYear, $annuallyCorporateTaxes);
-        
+		$study->incomeStatementReport->update([
+			'corporate_taxes'=>$annuallyCorporateTaxes
+		]);
         $totalProductsWithholdAmounts = [];
         
         $dateIndexWithDate = $study->getDateIndexWithDate();

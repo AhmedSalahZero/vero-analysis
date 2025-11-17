@@ -1293,3 +1293,6 @@ td > .kt-radio.kt-radio--single {
 	min-width:5% !important;
 	width:5% !important;
 }
+.btn-lg-width{
+	width:130px !important;
+}

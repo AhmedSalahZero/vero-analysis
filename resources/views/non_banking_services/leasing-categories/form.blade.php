@@ -52,13 +52,10 @@ use App\Models\NonBankingService\LeasingCategory;
                                         <div data-repeater-list="leasingCategories" class="col-lg-8">
 
                                             @include('non_banking_services.leasing-categories._repeater' , [
-
-                                            'tableId'=>'leasingCategories',
-                                            'isRepeater'=>true ,
-                                            'canAddNewItem'=>true ,
-                                            'model'=>$model
-
-
+													'tableId'=>'leasingCategories',
+													'isRepeater'=>true ,
+													'canAddNewItem'=>true ,
+													'model'=>$model
                                             ])
 
 

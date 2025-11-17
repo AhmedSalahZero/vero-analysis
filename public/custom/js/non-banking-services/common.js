@@ -1,12 +1,12 @@
 $(document).on('click', '.repeat-to-right', function () {
-	// console.log('from 1')
-	
 	let columnIndex = parseInt($(this).attr('data-column-index'))
+	let groupIndex = $(this).attr('data-group-index')
 	let parent = $(this).closest('tr')
 	let name = $(this).attr('data-name')
 	let numberFormatDecimalsForCurrentRow = parent.attr('data-repeat-formatting-decimals')
 	numberFormatDecimalsForCurrentRow = numberFormatDecimalsForCurrentRow ? numberFormatDecimalsForCurrentRow : 0
 	let input = parent.find('.repeat-to-right-input-formatted[data-column-index="' + columnIndex + '"][data-name="' + name + '"]')
+	// console.log(input);
 	let numberOfDecimalsForCurrentInput = $(input).attr('data-number-of-decimals')
 	numberOfDecimalsForCurrentInput = numberOfDecimalsForCurrentInput == undefined ? numberFormatDecimalsForCurrentRow : numberOfDecimalsForCurrentInput
 	let inputValue = input.val()
@@ -14,7 +14,9 @@ $(document).on('click', '.repeat-to-right', function () {
 	let totalPerYear = 0
 	$(this).closest('tr').find('.repeat-to-right-input-formatted[data-name="' + name + '"]').each(function (index, inputFormatted) {
 		let currentColumnIndex = $(inputFormatted).attr('data-column-index')
-		if (currentColumnIndex >= columnIndex) {
+		let currentGroupIndex = $(inputFormatted).attr('data-gro-index')
+	//	console.log(currentGroupIndex ,groupIndex)
+		if (currentColumnIndex >= columnIndex && currentGroupIndex == groupIndex) {
 			totalPerYear += parseFloat(inputValue)
 			$(inputFormatted).val(number_format(inputValue, numberOfDecimalsForCurrentInput)).trigger('change')
 		}
@@ -214,7 +216,10 @@ $(document).on('click', '.collapse-before-me', function () {
 				return
 			}
 		}
-		$(this).closest('table').find('[data-column-index="' + columnIndex + '"]:not(.exclude-from-collapse):not(.total-td):not(.total-td-formatted)').closest('td,th').toggle()
+		$(this).closest('table').find('[data-column-index="' + columnIndex + '"]:not(.exclude-from-collapse):not(.total-td):not(.total-td-formatted)').closest('th,td').toggle();
+		// console.log($(this).closest('table').find('th[data-column-index="' + columnIndex + '"]:not(.exclude-from-collapse):not(.total-td):not(.total-td-formatted)').toggle());
+		// $(this).closest('table').find('[data-column-index="' + columnIndex + '"]:not(.exclude-from-collapse):not(.total-td):not(.total-td-formatted)').toggle()
+
 
 		columnIndex--
 		counter++
