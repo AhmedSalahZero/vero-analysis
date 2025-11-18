@@ -29,15 +29,32 @@ class ExpenseStartDateAndEndDateRule implements ImplicitRule
      * @return bool
      */
     public function passes($attribute, $value)
-    {
-        
+    {	
+		$tableIds = Request()->get('tableIds',[]);
+		if(!in_array('expense_per_employee',$tableIds)){
+			return true;
+		}
+		
         try {
             $studyStartDate=  $this->study->study_start_date;
             $studyStartDateAsIndex = $this->study->convertDateStringToDateIndex($studyStartDate);
 			
             foreach ((array)$value as $arr) {
+				$expenseNameId = $arr['expense_name_id']??null;
+				$positionIds = $arr['position_ids']??[];
+				if(is_null($expenseNameId)){
+					  $this->failedMessage = __('Please Choose Expense Item');
+					return false ;
+				}
+				if(!count($positionIds)){
+							  $this->failedMessage = __('Please Choose Position');
+					return false ;
+				}
+				
+				
 				$amount = $arr[$this->amountFieldName]??0;
                 if ($amount  <= 0) {
+					
 					continue ;
                 }
                 $startDate = $arr['start_date'].'-01';

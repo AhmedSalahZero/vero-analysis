@@ -41,14 +41,16 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
                     <div class="row">
 
-                        <div class="col-md-10">
+                        <div class="col-md-11">
                             <div class="d-flex align-items-center ">
                                 <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
                                     {{ __('Portfolio Mortgage Revenue Projection - Please Choose Duration ') }}
+									
+									 {{-- {{ getThreeDotsHint() }} --}}
                                 </h3>
-                                <div class="form-group mb-0 d-flex w-10" style="margin-right:auto;gap:20px;">
+                                <div class="form-group mb-0 d-flex w-10 mr-2" style="gap:20px;">
                                     <input type="hidden" name="portfolioMortgageRevenueProjectionByCategories[{{ $currentIndex }}][id]" value="{{ $portfolioMortgageRevenueProjectionByCategory ? $portfolioMortgageRevenueProjectionByCategory->id :0 }}">
-                                    <select name="portfolioMortgageRevenueProjectionByCategories[{{ $currentIndex }}][portfolio_mortgage_duration]" class="form-control blue-select  seasonlity-select main-seasonality-select">
+                                    <select name="portfolioMortgageRevenueProjectionByCategories[{{ $currentIndex }}][portfolio_mortgage_duration]" class="form-control  border-red seasonlity-select main-seasonality-select">
                                         @for($i = 5 ; $i <= 10 ; $i++) <option value="{{ $i }}" @if($portfolioMortgageRevenueProjectionByCategory && $portfolioMortgageRevenueProjectionByCategory->portfolio_mortgage_duration == $i )
                                             selected
                                             @endif
@@ -60,13 +62,15 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
 
                                 </div>
-
+ <h3 class="font-weight-bold form-label kt-subheader__title small-caps " style="">
+                                   {{ getThreeDotsHint() }}
+                                </h3>
                             </div>
 
-
+     
 
                         </div>
-                        <div class="col-md-2 text-right">
+                        <div class="col-md-1 text-right">
                             <x-show-hide-btn :query="'.revenue-projection-by-category'"></x-show-hide-btn>
                         </div>
                     </div>
@@ -362,14 +366,18 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     <td></td>
                                     <td></td>
                       
-                                    <td>
+                                    
+									
+									              <td></td>
+												  
+												  <td>
 
                                         @if($countCategories > 1)
                                         <div class="row">
                                             <div class="col-md-12">
 
                                                 <div class="text-center">
-                                                    <a href="{{ route('delete.portfolio.mortgage.category',['company'=>$company->id,'study'=>$study->id,'portfolioMortgageCategory'=>$portfolioMortgageRevenueProjectionByCategory->id]) }}" class="btn btn-danger text-white " value="">{{ __('Delete') }}</a>
+                                                    <a href="{{ route('delete.portfolio.mortgage.category',['company'=>$company->id,'study'=>$study->id,'portfolioMortgageCategory'=>$portfolioMortgageRevenueProjectionByCategory->id]) }}" class="btn btn-danger  w-full text-white " value="">{{ __('Delete') }}</a>
                                                 </div>
 
                                             </div>
@@ -377,13 +385,16 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                         </div>
                                         @endif
                                     </td>
-									<td>
+									
+												  <td>
 									<div class="row">
 										<div class="col-md-12">
 										 <input type="submit" name="calculate-portfolio" class="btn bg-green active-style save-form" value="{{  __('Calculate Net Disbursement') }}">
 										</div>
 									</div>
 									</td>
+									
+									
                                     <td>
                                         @if($loop->last)
                                         <div class="row">
@@ -399,9 +410,11 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
                                         </div>
                                         @endif
+										
+										
 
                                     </td>
-									              <td></td>
+									
                                 </tr>
 
 
@@ -574,7 +587,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
 
             {{-- start of Factoring New Portfolio Funding Structure   --}}
-            <div class="kt-portlet">
+            <div class="kt-portlet" id="loan-portfolio">
                 <div class="kt-portlet__body">
                     <div class="row">
 

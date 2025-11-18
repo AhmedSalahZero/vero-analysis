@@ -147,7 +147,7 @@ $months = $study->getMicrofinanceMonths() ;
                                         <th class=" form-label font-weight-bold text-center align-middle  header-border-down">{!! __('Product <br> Name') !!}</th>
                                         <th class=" form-label font-weight-bold text-center align-middle  header-border-down">{!! __('Tenor <br> (Months)') !!} </th>
                                         <th class=" form-label font-weight-bold text-center align-middle  header-border-down">{!! __('Avg <br> Amount') !!}</th>
-                                        @if(!$model->isMonthlyStudy())
+                                        @if(!$model->durationIsLessThanOneOrEqualYear())
                                         <th class=" form-label font-weight-bold text-center align-middle  header-border-down">{!! __('Annual <br> Increase %') !!}</th>
                                         @endif
                                         <th class="min-w-90 form-label font-weight-bold text-center align-middle   header-border-down">{!! __('Funded <br> By') !!}</th>
@@ -197,7 +197,7 @@ $months = $study->getMicrofinanceMonths() ;
                                             <x-repeat-right-dot-inputs :removeThreeDots="true" :removeCurrency="true" :currentVal="$currentVal" :classes="'only-greater-than-zero-allowed'" :is-percentage="false" :name="'microfinanceProductSalesProjects['.$product->id.'][avg_amount]'" :columnIndex="-1"></x-repeat-right-dot-inputs>
                                         </td>
 
-                                        @if(!$model->isMonthlyStudy())
+                                        @if(!$model->durationIsLessThanOneOrEqualYear())
                                         <td>
                                             <div class="d-flex align-items-center increase-rate-parent">
                                                 <button class="btn btn-primary btn-md text-nowrap increase-rate-trigger-btn" type="button" data-toggle="modal">{{ __('Increase Rates') }}</button>
@@ -243,13 +243,13 @@ $months = $study->getMicrofinanceMonths() ;
                                                 <input value="{{ __('Total') }}" disabled class="form-control text-left mt-2 " type="text">
                                             </div>
                                         </td>
-
+ @if(!$model->durationIsLessThanOneOrEqualYear())
                                         <td>
                                             <div class="text-center">
                                                 -
                                             </div>
                                         </td>
-
+@endif
                                         <td>
                                             <div class="text-center">
                                                 -
@@ -327,7 +327,7 @@ $months = $study->getMicrofinanceMonths() ;
 
 
             {{-- start of Product Mix Seasonality  --}}
-            @if(!$model->isMonthlyStudy())
+            {{-- @if(!$model->isMonthlyStudy())
             <div class="kt-portlet">
                 <div class="kt-portlet__body">
                     <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
@@ -402,7 +402,6 @@ $months = $study->getMicrofinanceMonths() ;
                                                             <div class="input-hidden-parent">
                                                                 <input readonly class="form-control copy-value-to-his-input-hidden sum-total-column  expandable-percentage-input  repeat-to-right-input-formatted  " type="text" value="{{ number_format($totalSeasonality,1)  }}" data-column-index="{{ $columnIndex }}">
                                                                 <span style="visibility:hidden">..</span>
-                                                                {{-- <input type="hidden" class="repeat-to-right-input-hidden input-hidden-with-name  " value="{{  0 }}" > --}}
 
                                                             </div>
 
@@ -435,7 +434,7 @@ $months = $study->getMicrofinanceMonths() ;
 
                 </div>
             </div>
-            @endif
+            @endif --}}
             {{-- end of Product Mix Seasonality  --}}
 
 
@@ -1004,7 +1003,7 @@ $months = $study->getMicrofinanceMonths() ;
             <x-tables.repeater-table-th class="col-md-1 header-border-down" :title="__('Payment <br> Terms')" :helperTitle="__('You can either choose one of the system default terms (cash, quarterly, semi-annually, or annually), if else please choose Customize to insert your payment terms')"></x-tables.repeater-table-th>
             <x-tables.repeater-table-th class="col-md-1 header-border-down rate-class" :title="__('VAT <br> Rate')"></x-tables.repeater-table-th>
             <x-tables.repeater-table-th class="col-md-1 header-border-down rate-class" :title="__('Withhold <br> Tax Rate')" :helperTitle="__('Withhold Tax rate will be calculated based on Monthly Amount excluding VAT')"></x-tables.repeater-table-th>
-            @if(!$model->isMonthlyStudy())
+            @if(!$model->durationIsLessThanOneOrEqualYear())
             <x-tables.repeater-table-th class="col-md-1 header-border-down rate-class" :title="__('Annual <br> Increase%')"></x-tables.repeater-table-th>
             @endif
         </x-slot>
@@ -1086,7 +1085,7 @@ $months = $study->getMicrofinanceMonths() ;
                         <input type="hidden" value="{{ (isset($subModel) ? $subModel->getWithholdTaxRate() : 0) }}" @if($isRepeater) name="withhold_tax_rate" @else name="{{ $tableId }}[0][withhold_tax_rate]" @endif>
                     </div>
                 </td>
-                @if(!$model->isMonthlyStudy())
+                @if(!$model->durationIsLessThanOneOrEqualYear())
                 <td>
                     <div class="d-flex align-items-center increase-rate-parent">
                         <button class="btn btn-primary btn-md text-nowrap increase-rate-trigger-btn" type="button" data-toggle="modal">{{ __('Increase Rates') }}</button>

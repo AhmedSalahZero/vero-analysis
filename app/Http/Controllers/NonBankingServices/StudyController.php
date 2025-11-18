@@ -73,12 +73,22 @@ class StudyController extends Controller
 		$studies = $company->studies ;
 	//	$studies =  $studies->filterByDateColumn('study_start_date',$startDate,$endDate) ;
 		$studies =  $currentType == Study::STUDY ? $this->applyFilter($request,$studies):$studies ;
+		
 		$monthlyStudies = $studies->filter(function($study){
-			return !$study->isMonthlyStudy();
+			return $study->duration_in_years > 1;
+			// return !$study->isMonthlyStudy();
 		}); 
 		$yearlyStudies = $studies->filter(function($study){
-			return $study->isMonthlyStudy();
+			return $study->duration_in_years <= 1;
 		}); 
+		
+		// $monthlyStudies = $studies->filter(function($study){
+		// 	return !$study->isMonthlyStudy();
+		// 	// return !$study->isMonthlyStudy();
+		// }); 
+		// $yearlyStudies = $studies->filter(function($study){
+		// 	return $study->isMonthlyStudy();
+		// }); 
 		/**
 		 * * end of bank to safe internal money transfer 
 		 */
@@ -132,7 +142,7 @@ class StudyController extends Controller
 	{
 		$studyStartDate = $request->get('study_start_date').'-01';
 		$operationStartDate = $request->get('operation_start_date') . '-01';
-		
+		// dd($studyStartDate,$request->get('study_end_date'));
 		$request->merge([
 			'study_start_date'=>Carbon::make($studyStartDate)->format('Y-m-d'),
 			'study_end_date'=>Carbon::make($request->get('study_end_date'))->format('Y-m-d'),

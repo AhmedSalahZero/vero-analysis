@@ -38,7 +38,7 @@
                                                 <label>{{__('Expense Type')}}<span class="astric">*</span></label>
                                                 <div class="m-form__group m-form__group--inline">
                                                     <div class="m-form__control">
-                                                        <select name="expense_type" class="form-control">
+                                                        <select name="expense_type" class="form-control ">
                                                             @foreach( $expenseTypes as $id => $name )
                                                             <option value="{{$id  }}" @if(isset($model )? $id==$model->expense_type :false ) selected @endif >{{$name}}</option>
                                                             @endforeach

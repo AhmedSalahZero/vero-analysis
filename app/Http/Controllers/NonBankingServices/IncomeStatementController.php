@@ -20,7 +20,6 @@ class IncomeStatementController extends Controller
     public function index(Company $company, Study $study,$onlyViewVars = false )
     {
 		$study->recalculateCashflowStatement();
-		
         // $start = microtime(true);
         $dateIndexWithDate = app('dateIndexWithDate');
         $formattedExpenses = [];
@@ -262,9 +261,6 @@ class IncomeStatementController extends Controller
 						$resultPerRevenueStreamType['all'][$currentYearOrMonthAsString] = isset($resultPerRevenueStreamType['all'][$currentYearOrMonthAsString]) ? $resultPerRevenueStreamType['all'][$currentYearOrMonthAsString] + $interestAmount : $interestAmount;
 
                     } else {
-						// if($interestAmount > 0){
-						// 	dump($interestAmount);
-						// }
 						$formattedResult['interest_cogs'][$currentMonthIndex] = isset($formattedResult['interest_cogs'][$currentMonthIndex]) ? $formattedResult['interest_cogs'][$currentMonthIndex] + $interestAmount : $interestAmount ;
                         $formattedExpenses['cost-of-service']['New Portfolio Interest Expense'][$currentMonthIndex]  = $formattedResult['interest_cogs'][$currentMonthIndex]??0 ;
                         $tableDataFormatted[1]['sub_items']['New Portfolio Interest Expense']['data'][$currentMonthIndex] =$formattedExpenses['cost-of-service']['New Portfolio Interest Expense'][$currentMonthIndex] ;
@@ -644,7 +640,7 @@ class IncomeStatementController extends Controller
          * * Start Eight Item
          */
         
-        
+        // dd($ebit,$totalFinanceExpense);
         $ebt = HArr::subtractAtDates([$ebit,$totalFinanceExpense], $sumKeys);
         $tableDataFormatted[$ebtOrderIndex]['main_items']['ebt']['options']['title'] = __('EBT');
         $tableDataFormatted[$ebtOrderIndex]['main_items']['ebt']['data'] = $ebt;
@@ -668,7 +664,7 @@ class IncomeStatementController extends Controller
         // $annuallyCorporateTaxes = HArr::sumPerYearIndex($annuallyCorporateTaxes, $yearWithItsMonths);
         $tableDataFormatted[$corporateTaxesOrderIndex]['main_items']['corporate-taxes']['options']['title'] = __('Corporate Taxes');
         $tableDataFormatted[$corporateTaxesOrderIndex]['main_items']['corporate-taxes']['data'] = $annuallyCorporateTaxes;
-        $tableDataFormatted[$corporateTaxesOrderIndex]['main_items']['corporate-taxes']['year_total'] = $annuallyCorporateTaxes;
+        $tableDataFormatted[$corporateTaxesOrderIndex]['main_items']['corporate-taxes']['year_total'] = HArr::sumPerYearIndex($annuallyCorporateTaxes,$yearWithItsMonths);
         $tableDataFormatted[$corporateTaxesOrderIndex]['main_items']['% Of Revenue']['options']['title'] = __('% Of Revenue');
         $tableDataFormatted[$corporateTaxesOrderIndex]['main_items']['% Of Revenue']['data']=  [];
         $tableDataFormatted[$corporateTaxesOrderIndex]['main_items']['% Of Revenue']['year_total'] = $corporateTaxesRevenuePercentage=HArr::calculatePercentageOf($totalSalesExpensesPerYear, $annuallyCorporateTaxes);

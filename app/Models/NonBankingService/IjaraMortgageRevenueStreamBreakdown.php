@@ -20,7 +20,7 @@ class  IjaraMortgageRevenueStreamBreakdown extends Model
 			'model'=>$study ,
 			'ijaraMortgageEclAndNewPortfolioFundingRate'=>$ijaraMortgageEclAndNewPortfolioFundingRate,
 			'title'=>__('Ijara Mortgage Revenue Stream Breakdown'),
-			'storeRoute'=>route('store.ijara.mortgage.revenue.stream.breakdown',['company'=>$company->id , 'study'=>$study->id]),
+			'storeRoute'=>routeWithQueryParam(route('store.ijara.mortgage.revenue.stream.breakdown',['company'=>$company->id , 'study'=>$study->id])),
 			'yearsWithItsMonths' => $yearsWithItsMonths,
 			'yearOrMonthsIndexes'=>$yearOrMonthsIndexes,
 			'isYearsStudy'=>$isYearsStudy

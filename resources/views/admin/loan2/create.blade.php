@@ -38,6 +38,7 @@ tbody td{
     </div>
     @endif
 </div>
+<h3 class="font-weight-bold text-white form-label kt-subheader__title small-caps mr-5 text-nowrap" style="">{{ $title }}</h3>
 
 <form class="kt-form kt-form--label-right" id="create-form" method="POST" action="{{ route('loan2.store',['company' => $company->id]) }}">
     {{ csrf_field() }}
@@ -1459,7 +1460,6 @@ tbody td{
                             <th class="text-center">{{__("Payment No.")}}</th>
                             <th class="text-center">{{__("Date")}}</th>
                             <th class="text-center">{{__("Days Count")}}</th>
-                            <th class="text-center">{{__("Interest Factor")}}</th>
                             <th class="text-center">{{__("Begining Balance")}}</th>
                             <th class="text-center">{{__("Schedule Payment")}}</th>
                             <th class="text-center">{{__("Interest Amount")}}</th>
@@ -1479,19 +1479,17 @@ tbody td{
         let dataToAjax = [];
         for (let i = 0; i < data.length; i++) {
             table += `<tr>
-            <td>
+            <td class="text-center"> 
                 ${ order++ }
             </td>
-            <td>
+            <td class="text-center">
             ${formatDate(new Date(data[i].date))}
             </td>            
 
-            <td>
+            <td class="text-center"> 
                 ${data[i].val.daysCount}
             </td>    
-			<td>
-                ${data[i].val.interestFactor}
-            </td>
+			
 			
 			`
             i == 0 ? (Begining = loanAmount) : Begining = endBalance;
@@ -1501,14 +1499,14 @@ tbody td{
              
             table += `
             
-            <td> 
+            <td class="text-center"> 
             
             
             ` ;
             table +=`
                ${numberFormat(Begining)}
             </td>
-            <td>`
+            <td class="text-center">`
             let withoutCapitalization = loanType.split('_').includes('without') && loanType.split('_').includes('capitalization')
 
             schedulePayment = (withoutCapitalization) && data[i].val.InstallmentAmount == 0 ? intresetAmount : data[i].val.InstallmentAmount;
@@ -1523,11 +1521,11 @@ tbody td{
 
             table +=
                 `
-            <td>
+            <td class="text-center">
             
             ${number_format(intresetAmount,2)}
             </td>
-            <td> `;
+            <td class="text-center"> `;
             // alert(schedulePayment)
             // alert(intresetAmount)
             principleAmout = parseFloat(schedulePayment) - intresetAmount;
@@ -1539,7 +1537,7 @@ tbody td{
                 ${(number_format(principleAmout,2)) }
             </td>
 
-            <td>`;
+            <td class="text-center">`;
             endBalance = Begining + intresetAmount - schedulePayment;
             dataToAjax.push({
                 'date':formatDate(new Date(data[i].date)) , 
@@ -1559,40 +1557,38 @@ tbody td{
 
         table += `
         <tr class="custom-color-for-last-tr">
-        <th>
+        <th class="text-center">
         
         {{ __('Total') }}
         </th>
-        <th>
-        -
-        </th>
+       
 
-        <th>
+        <th class="text-center">
         -
         </th>
  <th>
         -
-        </th>
+        </th >
 
-        <th>
+        <th class="text-center">
         -
         </th>
 
 
-                <th>
+                <th class="text-center">
         
         ${number_format(totalSchedulePayment,2)}
         
         </th>
-        <th>
+        <th class="text-center">
         ${number_format(totalInterestAmount,2)}
         </th>
 
-        <th>
+        <th class="text-center">
         ${number_format(totalPrincpleAmount,2)}
         </th>
 
-        <th>
+        <th class="text-center">
 
         -
         

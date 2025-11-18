@@ -513,7 +513,14 @@ input.form-control[readonly] {
 .min-w-300 {
     min-width: 300px !important;
 }
-
+.min-w-380{
+	min-width: 380px !important;
+}
+.percentage-style{
+	border-color: white !important;
+    background: #4d9afa;
+    color: white !important;
+}
 .min-w-400 {
     min-width: 400px !important;
 }
@@ -1295,4 +1302,14 @@ td > .kt-radio.kt-radio--single {
 }
 .btn-lg-width{
 	width:130px !important;
+}
+.font-size-20{
+	font-size:1.25rem !important;
+}
+.border-blue{
+	border-color: #4d9afa !important;
+}
+.border-blue .dropdown-toggle
+{
+		border-color: #4d9afa !important;
 }

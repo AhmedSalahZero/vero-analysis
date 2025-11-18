@@ -212,7 +212,7 @@ use MathPHP\Statistics\Correlation ;
                                     <div class="col-md-6 ">
                                         <select js-refresh-three-line-chart class="form-control">
                                             @foreach($lineChart as $id => $arr)
-                                            <option value="{{ $id }}"> {{ $titlesMapping[$id] }} </option>
+                                            <option value="{{ $id }}"> {{ $titlesMapping[$id]['title'] }} </option>
                                             @endforeach
                                         </select>
                                     </div>

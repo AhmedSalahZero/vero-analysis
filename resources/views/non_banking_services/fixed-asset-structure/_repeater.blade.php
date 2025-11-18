@@ -51,9 +51,9 @@
                                                     <span></span>
                                                 </label>
 
-                                                <label class="kt-radio kt-radio--danger text-black font-size-16px font-weight-bold">
+                                                <label class="kt-radio kt-radio--danger text-black font-size-16px  font-weight-bold">
                                                     <input type="checkbox" value="1" name="is_branch_asset" @if(isset($subModel) && $subModel->isBranchAsset()) checked @endisset
-                                                    > {{ __('Is Branch Expense') }}
+                                                    > {{ __('Is Branch Asset') }}
                                                     <span></span>
                                                 </label>
 

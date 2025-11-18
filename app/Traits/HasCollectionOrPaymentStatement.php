@@ -222,39 +222,34 @@ trait HasCollectionOrPaymentStatement {
         
     }
 	
-	
+	/**
+	 * * هنا الحسبه الشهريه للضاريب اللي هي اصلا غلط
+	 */
 	 public static function calculateCorporateTaxesStatement(array $dates,array $additions  ,array $calculatedCorporateTaxesPerYear , float $initialBeginningBalance  , array $dateIndexWithDate , string $studyStartDateAsMonthNumber)
     {
 	
-	//	$financialYearStartMonth = 'january';
         $additionsForIntervals = [
             'monthly'=>$additions,
-            // 'quarterly'=>sumIntervalsIndexes($additions, 'quarterly', $financialYearStartMonth, $dateIndexWithDate),
-            // 'semi-annually'=>sumIntervalsIndexes($additions, 'semi-annually', $financialYearStartMonth, $dateIndexWithDate),
-            // 'annually'=>sumIntervalsIndexes($additions, 'annually', $financialYearStartMonth, $dateIndexWithDate),
         ];
 		$corporateTaxesForIntervals = [
             'monthly'=>$calculatedCorporateTaxesPerYear,
-            // 'quarterly'=>sumIntervalsIndexes($calculatedCorporateTaxesPerYear, 'quarterly', $financialYearStartMonth, $dateIndexWithDate),
-            // 'semi-annually'=>sumIntervalsIndexes($calculatedCorporateTaxesPerYear, 'semi-annually', $financialYearStartMonth, $dateIndexWithDate),
-            // 'annually'=>sumIntervalsIndexes($calculatedCorporateTaxesPerYear, 'annually', $financialYearStartMonth, $dateIndexWithDate),
         ];
         $result = [];
-		
-		$lastMonthsInYearKeys = array_keys($calculatedCorporateTaxesPerYear);
+		// $lastMonthsInYearKeys = array_keys($calculatedCorporateTaxesPerYear);
+	
         foreach (['monthly'=>__('Monthly')] as $intervalName=>$intervalNameFormatted) {
             $beginningBalance = $initialBeginningBalance;
 			$settlements = [];
 			$isFirstLoop = true ; 
 			$isStudyDateIsJan = $studyStartDateAsMonthNumber == '01';
             foreach ( $dates as $dateIndex=>$dateAsString) {
+				 $isLastMonthInYear =  explode('-', $dateAsString)[1] == 12;
 				$corporateTaxesAtDate = $corporateTaxesForIntervals[$intervalName][$dateIndex]??0;
                 $dateIndex;
 				$additionAtDate =$additionsForIntervals[$intervalName][$dateIndex]??0;
                 $result[$intervalName]['beginning_balance'][$dateIndex] = $beginningBalance;
-				$isLastMonthInYear = in_array($dateIndex,$lastMonthsInYearKeys);
+				// $isLastMonthInYear = in_array($dateIndex,$lastMonthsInYearKeys);
                 $totalDue[$dateIndex] =  $beginningBalance-$additionAtDate + $corporateTaxesAtDate;
-				// dump($corporateTaxesAtDate,$dateIndex,'-----------');
 				if($isStudyDateIsJan && $isFirstLoop){
 					$settlements[$dateIndex+4] = $initialBeginningBalance;
 				}
@@ -264,9 +259,7 @@ trait HasCollectionOrPaymentStatement {
 						$settlements[$dateIndex+4]=0;
 					}else{
 						$settlements[$dateIndex+4]= $totalDue[$dateIndex];
-						// dd($dateIndex+4,$settlements[$dateIndex+4],$totalDue);
 					}
-					// dd($settlements);
 				}
 				$settlementAtDate = $settlements[$dateIndex]??0;
 				
@@ -279,11 +272,61 @@ trait HasCollectionOrPaymentStatement {
 				$isFirstLoop=false ;
             }
         }
-	//	dump($result[$intervalName]['payment']);
         return $result;
-    
-        
     }
+	
+	/**
+	 * * هنا بنحسبها في اخر الشهر وندفعها في اربعه اللي بعده
+	 */
+	// public static function calculateCorporateTaxesStatement(array $dates,array $additions  ,array $calculatedCorporateTaxesPerYear , float $initialBeginningBalance  , array $dateIndexWithDate , string $studyStartDateAsMonthNumber)
+    // {
+	
+    //     $additionsForIntervals = [
+    //         'monthly'=>$additions,
+    //     ];
+	// 	$corporateTaxesForIntervals = [
+    //         'monthly'=>$calculatedCorporateTaxesPerYear,
+    //     ];
+    //     $result = [];
+		
+	// 	$lastMonthsInYearKeys = array_keys($calculatedCorporateTaxesPerYear);
+    //     foreach (['monthly'=>__('Monthly')] as $intervalName=>$intervalNameFormatted) {
+    //         $beginningBalance = $initialBeginningBalance;
+	// 		$settlements = [];
+	// 		$isFirstLoop = true ; 
+	// 		$isStudyDateIsJan = $studyStartDateAsMonthNumber == '01';
+    //         foreach ( $dates as $dateIndex=>$dateAsString) {
+	// 			$corporateTaxesAtDate = $corporateTaxesForIntervals[$intervalName][$dateIndex]??0;
+    //             $dateIndex;
+	// 			$additionAtDate =$additionsForIntervals[$intervalName][$dateIndex]??0;
+    //             $result[$intervalName]['beginning_balance'][$dateIndex] = $beginningBalance;
+	// 			$isLastMonthInYear = in_array($dateIndex,$lastMonthsInYearKeys);
+    //             $totalDue[$dateIndex] =  $beginningBalance-$additionAtDate + $corporateTaxesAtDate;
+	// 			if($isStudyDateIsJan && $isFirstLoop){
+	// 				$settlements[$dateIndex+4] = $initialBeginningBalance;
+	// 			}
+			
+	// 			if($isLastMonthInYear){
+	// 				if($totalDue[$dateIndex] <0 ){
+	// 					$settlements[$dateIndex+4]=0;
+	// 				}else{
+	// 					$settlements[$dateIndex+4]= $totalDue[$dateIndex];
+	// 				}
+	// 			}
+	// 			$settlementAtDate = $settlements[$dateIndex]??0;
+				
+    //             $endBalance[$dateIndex] = $totalDue[$dateIndex] - $settlementAtDate   ;
+    //             $beginningBalance = $endBalance[$dateIndex] ;
+    //             $result[$intervalName]['addition'][$dateIndex] =  $additionAtDate ;
+    //             $result[$intervalName]['total_due'][$dateIndex] = $totalDue[$dateIndex];
+    //             $result[$intervalName]['payment'][$dateIndex] = $settlementAtDate;
+    //             $result[$intervalName]['end_balance'][$dateIndex] =$endBalance[$dateIndex];
+	// 			$isFirstLoop=false ;
+    //         }
+    //     }
+    //     return $result;
+    // }
+	
 	
 	 public static function fixedAssetStatementFromOpening(array $dates,array $settlements ,array $additions = [] , float $initialBeginningBalance = 0 , array $dateIndexWithDate , bool $notUpdateBeginning =false , $onlyMonthly = false  )
     {

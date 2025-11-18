@@ -1222,7 +1222,6 @@
                             <th class="text-center">{{__("Payment No.")}}</th>
                             <th class="text-center">{{__("Date")}}</th>
                             <th class="text-center">{{__("Days Count")}}</th>
-                            <th class="text-center">{{__("Interest Factor")}}</th>
                             <th class="text-center">{{__("Begining Balance")}}</th>
                             <th class="text-center">{{__("Schedule Payment")}}</th>
                             <th class="text-center">{{__("Interest Amount")}}</th>
@@ -1252,9 +1251,7 @@
             <td>
                 ${data[i].val.daysCount}
             </td>    
-			<td>
-                ${data[i].val.interestFactor}
-            </td>
+			
 			
 			`
             i == 0 ? (Begining = loanAmount) : Begining = endBalance;

@@ -1,3 +1,8 @@
+<style>
+.modal-body{
+	overflow:scroll !important;
+}
+</style>
 <div class="modal fade " id="{{ $currentModalId }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered" role="document" style="width:95%;min-width:95%">
         <form action="#" class="modal-content" method="post">
@@ -44,7 +49,7 @@
                                 <td class="w-20-percentage">
                                     <div class="kt-input-icon ">
                                         <div class="input-group">
-                                            <input disabled type="text" step="0.1" class="form-control ignore-global-style" value="{{ $expenseName }}">
+                                            <input disabled type="text" step="0.1" class="form-control min-w-380 ignore-global-style" value="{{ $expenseName }}">
                                         </div>
                                     </div>
                                 </td>
@@ -76,7 +81,14 @@
                                 <td class="w-20-percentage">
                                     <div class="kt-input-icon ">
                                         <div class="input-group">
-                                            <input disabled type="text" step="0.1" class="form-control ignore-global-style" value="{{ __(' % / REV') }}">
+                                            <input 
+											style="
+											border-color: white !important;
+    background: #4d9afa;
+    color: white !important;
+	
+											"
+											 disabled type="text" step="0.1" class="form-control  ignore-global-style" value="{{ __(' % / REV') }}">
                                         </div>
                                     </div>
                                 </td>
@@ -91,7 +103,11 @@
                                     <div class="d-flex align-items-center ">
 									 <div class="kt-input-icon  ">
                                         <div class="input-group justify-content-center">
-                                            <input style="border-color:green !important" disabled type="text" class="form-control expandable-amount-input text-center ignore-global-style" value="{{  number_format($currentPercentageOfSales,2) . ' %' }}">
+                                            <input style="border-color: white !important;
+    background: #4d9afa;
+    color: white !important;
+	
+	" disabled type="text" class="form-control  expandable-amount-input text-center ignore-global-style" value="{{  number_format($currentPercentageOfSales,2) . ' %' }}">
                                         </div>
                                     </div>
 									

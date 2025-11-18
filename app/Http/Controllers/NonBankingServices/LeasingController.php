@@ -25,6 +25,10 @@ class LeasingController extends Controller
         $yearsWithItsMonths =  $study->getOperationDurationPerYearFromIndexes() ;
         $yearOrMonthsIndexes = $study->getYearOrMonthIndexes();
         $isYearsStudy = !$study->isMonthlyStudy();
+		// $additionalQueryParams = Request()->query();
+
+		// $storeRoute =  ;
+		// dd($additionalQueryParams);
 		// dd($studyMonthsForViews = );
         return [
             'company'=>$company ,
@@ -32,7 +36,7 @@ class LeasingController extends Controller
             'model'=>$study ,
             'eclAndNewPortfolioFundingRate'=>$eclAndNewPortfolioFundingRate,
             'title'=>__('Leasing Revenue Stream Breakdown'),
-            'storeRoute'=>route('store.leasing.revenue.stream.breakdown', ['company'=>$company->id , 'study'=>$study->id]),
+            'storeRoute'=>routeWithQueryParam(route('store.leasing.revenue.stream.breakdown', ['company'=>$company->id , 'study'=>$study->id])),
             'yearsWithItsMonths' =>$yearsWithItsMonths,
             'yearOrMonthsIndexes'=>$yearOrMonthsIndexes,
             'isYearsStudy'=>$isYearsStudy
@@ -41,6 +45,7 @@ class LeasingController extends Controller
 
     public function store(Company $company, StoreLeasingRevenueStreamRequest $request, Study $study)
     {
+		// dd(Request()->all());
         if (count($request->get('leasingRevenueStreamBreakdown', []))) {
             $study->storeRepeaterRelations($request, ['leasingRevenueStreamBreakdown'], $company);
         }
@@ -68,6 +73,13 @@ class LeasingController extends Controller
             ]);
         }
         $study->updateExpensesPercentageAndCostPerUnitsOfSales();
+		
+		// $redirectRoute = $study->runIncomeStatementIfFromCashflow();
+		// if($redirectRoute)
+		// {
+		// 	return $redirectRoute;
+		// }
+		
         
         return response()->json([
             'redirectTo'=>$study->getRevenueRoute(Study::DIRECT_FACTORING)

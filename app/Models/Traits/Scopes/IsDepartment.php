@@ -20,6 +20,10 @@ trait IsDepartment
 	}
 	public function getExpenseTypeName():string 
 	{
+		if(is_null($this->getExpenseTypeId())){
+			return '';
+		}
+		
 		return getExpenseTypes()[$this->getExpenseTypeId()];
 	}
 } 

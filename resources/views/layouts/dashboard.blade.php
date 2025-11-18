@@ -786,7 +786,7 @@
         }
 
         .border-red {
-            background-color: green;
+            border: 1px solid red !important;
         }
 
         .arrow-nav {
@@ -1879,8 +1879,16 @@
             }
 
 
-
-            let reportName = $('.kt-subheader__title').html().trim() || $('.kt-portlet__head-title').html().trim();
+			let title = $('.kt-subheader__title').html();
+			reportName = '';
+			if(title){
+				reportName = title.trim()
+			}else{
+				title = $('.kt-portlet__head-title').html() ;
+				if(title){
+					reportName =  title.trim() ;
+				}
+			}
             if ($('#report__title_for_labeling').length) {
                 companyName += ' (' + $('#report__title_for_labeling').val() + ' )';
             } else if (reportName) {

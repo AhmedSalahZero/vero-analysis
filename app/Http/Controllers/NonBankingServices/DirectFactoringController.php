@@ -26,7 +26,7 @@ class DirectFactoringController extends Controller
 			'model'=>$study ,
 			'directFactoringEclAndNewPortfolioFundingRate'=>$directFactoringEclAndNewPortfolioFundingRate,
 			'title'=>__('Direct Factoring Revenue Stream Breakdown'),
-			'storeRoute'=>route('store.direct.factoring.revenue.stream.breakdown',['company'=>$company->id , 'study'=>$study->id]),
+			'storeRoute'=>routeWithQueryParam(route('store.direct.factoring.revenue.stream.breakdown',['company'=>$company->id , 'study'=>$study->id])),
 			'yearsWithItsMonths' => $yearsWithItsMonths,
 			'yearOrMonthsIndexes'=>$yearOrMonthsIndexes,
 			'isYearsStudy'=>$isYearsStudy

@@ -48,7 +48,7 @@
                                 <td class="w-40-percentage">
                                     <div class="kt-input-icon ">
                                         <div class="input-group">
-                                            <input disabled type="text" step="0.1" class="form-control ignore-global-style" value="{{$detailItem['financial_institution_name'] }}">
+                                            <input disabled type="text" step="0.1" class="form-control  ignore-global-style" value="{{$detailItem['financial_institution_name'] }}">
                                         </div>
                                     </div>
                                 </td>

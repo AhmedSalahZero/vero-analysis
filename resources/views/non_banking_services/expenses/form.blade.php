@@ -74,7 +74,7 @@ use App\Models\NonBankingService\Expense;
                                 <x-tables.repeater-table-th class="col-md-1 header-border-down rate-class" :title="__('VAT <br> Rate')"></x-tables.repeater-table-th>
                                 {{-- <x-tables.repeater-table-th class="col-md-1 header-border-down" :title="__('Is <br> Deductible')"></x-tables.repeater-table-th> --}}
                                 <x-tables.repeater-table-th class="col-md-1 header-border-down rate-class" :title="__('Withhold <br> Tax Rate')" :helperTitle="__('Withhold Tax rate will be calculated based on Monthly Amount excluding VAT')"></x-tables.repeater-table-th>
-                                @if(!$model->isMonthlyStudy())
+                                @if(!$model->durationIsLessThanOneOrEqualYear())
                                 <x-tables.repeater-table-th class="col-md-1 header-border-down rate-class" :title="__('Annual <br> Increase%')"></x-tables.repeater-table-th>
                                 @endif
 								@if($study->hasMicrofinance())
@@ -170,7 +170,7 @@ use App\Models\NonBankingService\Expense;
                         </div>
                     </td>
 
-                    @if(!$model->isMonthlyStudy())
+                    @if(!$model->durationIsLessThanOneOrEqualYear())
                     <td>
                         <div class="d-flex align-items-center increase-rate-parent">
                             {{-- <input class="form-control only-percentage-allowed text-center" value="{{ isset($subModel) ? number_format($subModel->getIncreaseRate(),PERCENTAGE_DECIMALS) : "0.00" }}" type="text"> --}}
@@ -686,7 +686,7 @@ use App\Models\NonBankingService\Expense;
                     <x-tables.repeater-table-th class="col-md-1 header-border-down rate-class" :title="__('VAT <br> Rate')"></x-tables.repeater-table-th>
                     {{-- <x-tables.repeater-table-th class="col-md-1 header-border-down" :title="__('Is <br> Deductible')"></x-tables.repeater-table-th> --}}
                     <x-tables.repeater-table-th class="col-md-1 header-border-down" :title="__('Withhold <br> Tax Rate')" :helperTitle="__('Withhold Tax rate will be calculated based on Monthly Amount excluding VAT')"></x-tables.repeater-table-th>
-                    @if(!$model->isMonthlyStudy())
+                    @if(!$model->durationIsLessThanOneOrEqualYear())
                     <x-tables.repeater-table-th class="col-md-1 header-border-down" :title="__('Annual <br> Increase%')"></x-tables.repeater-table-th>
                     @endif
 					
@@ -813,7 +813,7 @@ use App\Models\NonBankingService\Expense;
         </div>
     </td>
 
-    @if(!$model->isMonthlyStudy())
+    @if(!$model->durationIsLessThanOneOrEqualYear())
     <td>
         <div class="d-flex align-items-center increase-rate-parent">
             <button class="btn btn-primary btn-md text-nowrap increase-rate-trigger-btn" type="button" data-toggle="modal">{{ __('Increase Rates') }}</button>

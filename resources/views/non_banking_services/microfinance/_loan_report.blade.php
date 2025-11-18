@@ -343,7 +343,7 @@ $currentYearRepeaterIndex ++;
 
 @if(!isset($hideFundingStructure))
 
-<div class="kt-portlet ">
+<div class="kt-portlet  " id="loan-portfolio"> 
     <div class="kt-portlet__body">
         <div class="row">
 

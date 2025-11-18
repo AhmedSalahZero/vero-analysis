@@ -82,7 +82,7 @@ class  FixedAssetsFundingStructure extends Model
 	}
 	public function getMarginRateAtMonthIndex($dateAsIndex)
 	{
-		return $this->new_loans_funding_rates[$dateAsIndex]??0;
+		return $this->interest_rates[$dateAsIndex]??0;
 	}
 	public function getPricing()
 	{

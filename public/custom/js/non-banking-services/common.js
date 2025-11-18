@@ -22,7 +22,7 @@ $(document).on('click', '.repeat-to-right', function () {
 		}
 	})
 })
-$('.repeat-to-right-input-hidden').on('change', function (event) {
+$(document).on('change','.repeat-to-right-input-hidden', function (event) {
 		// console.log('from2');
 		const val = $(this).val()
 		const columnIndex = $(this).attr('data-column-index')
@@ -206,7 +206,7 @@ $(document).on('click', '.collapse-before-me', function () {
 	// console.log('from 11')
 	let columnIndex = $(this).attr('data-column-index')
 	hide = true
-	console.log(columnIndex)
+//	console.log(columnIndex)
 	let counter = 0
 	while (hide) {
 		if (counter != 0) {
@@ -217,10 +217,6 @@ $(document).on('click', '.collapse-before-me', function () {
 			}
 		}
 		$(this).closest('table').find('[data-column-index="' + columnIndex + '"]:not(.exclude-from-collapse):not(.total-td):not(.total-td-formatted)').closest('th,td').toggle();
-		// console.log($(this).closest('table').find('th[data-column-index="' + columnIndex + '"]:not(.exclude-from-collapse):not(.total-td):not(.total-td-formatted)').toggle());
-		// $(this).closest('table').find('[data-column-index="' + columnIndex + '"]:not(.exclude-from-collapse):not(.total-td):not(.total-td-formatted)').toggle()
-
-
 		columnIndex--
 		counter++
 		if (counter == 12) {
@@ -235,6 +231,7 @@ $(document).on('change', '.repeater-with-collapse-input', function () {
 	$(this).closest('tr').find('input[data-group-index="' + groupIndex + '"]').each(function (index, element) {
 		total += parseFloat($(element).val())
 	})
+	// console.log($(this).closest('tr').find('.year-repeater-index-' + groupIndex))
 	$(this).closest('tr').find('.year-repeater-index-' + groupIndex).val(number_format(total)).trigger('change')
 })
 $('input[type="hidden"].exclude-from-collapse').on('change', function () {
@@ -348,7 +345,7 @@ $(document).on('click', '#enable-editing-btn', function (e) {
 		// console.log('else')
 		$(this).closest('form').find('input').prop('disabled', true)
 		$(this).closest('form').find('[data-repeater-create]').hide()
-		$(this).closest('form').find('[data-repeater-delete]').hide()
+	//	$(this).closest('form').find('[data-repeater-delete]').hide()
 		$(this).closest('form').find('select').prop('disabled', true).selectpicker('refresh')
 
 		var enableText = $(this).attr('data-enable-edit-text')

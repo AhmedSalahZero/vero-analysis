@@ -59,7 +59,7 @@ class  ReverseFactoringRevenueStreamBreakdown extends Model
 			'model'=>$study ,
 			'reverseFactoringEclAndNewPortfolioFundingRate'=>$reverseFactoringEclAndNewPortfolioFundingRate,
 			'title'=>__('Reverse Factoring Revenue Stream Breakdown'),
-			'storeRoute'=>route('store.reverse.factoring.revenue.stream.breakdown',['company'=>$company->id , 'study'=>$study->id]),
+			'storeRoute'=>routeWithQueryParam(route('store.reverse.factoring.revenue.stream.breakdown',['company'=>$company->id , 'study'=>$study->id])),
 			'yearsWithItsMonths' => $yearsWithItsMonths,
 			'yearOrMonthsIndexes'=>$yearOrMonthsIndexes,
 			'isYearsStudy'=>$isYearsStudy

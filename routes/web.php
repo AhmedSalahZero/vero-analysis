@@ -119,7 +119,7 @@ Route::middleware([])->group(function () {
                 Route::post('save-loan-dates', 'SaveLoanDatesController@__invoke')->name('save.loan.dates');
                 Route::get('fixed-payments-at-end', 'Loans2Controller@create')->name('fixed.loan.fixed.at.end');
                 Route::get('calculate-loan-amount', 'Loans2Controller@create')->name('calc.loan.amount');
-                Route::get('calculate-interest-percentage', 'Loans2Controller@create')->name('calc.interest.percentage');
+                Route::get('calculate-interest-rate', 'Loans2Controller@create')->name('calc.interest.percentage');
                 Route::get('fixed-payments-at-beginning', 'Loans2Controller@create')->name('fixed.loan.fixed.at.beginning');
                 Route::get('variable-payments', 'Loans2Controller@create')->name('variable.payments');
                 
@@ -319,235 +319,245 @@ Route::middleware([])->group(function () {
                 /**
                  * * non banking services
                  */
-                Route::group(['prefix'=>NON_BANKING_SERVICE_URL_PREFIX,'namespace'=>'NonBankingServices','middleware'=>'isNonBankingService'], function () {
+                Route::group(['prefix'=>NON_BANKING_SERVICE_URL_PREFIX,'middleware'=>'isNonBankingService'], function () {
+                    Route::get('fixed-payments-at-end/{study}', 'Loans2Controller@create')->name('non.banking.fixed.loan.fixed.at.end');
+                    Route::get('fixed-payments-at-beginning/{study}', 'Loans2Controller@create')->name('non.banking.fixed.loan.fixed.at.beginning');
+                    Route::get('calculate-loan-amount/{study}', 'Loans2Controller@create')->name('non.banking.calc.loan.amount');
+                    Route::get('calculate-interest-rate/{study}', 'Loans2Controller@create')->name('non.banking.calc.interest.percentage');
+                    Route::get('variable-payments/{study}', 'Loans2Controller@create')->name('non.banking.variable.payments');
+                    Route::group(['namespace'=>'NonBankingServices'], function () {
+                        
+                        route::get('study', 'StudyController@index')->name('view.study');
+                        route::get('study/create', 'StudyController@create')->name('create.study');
+                        Route::get('study/{study}/edit', 'StudyController@edit')->name('edit.study');
+                        Route::put('study/{study}/update', 'StudyController@update')->name('update.study');
+                        route::post('study', 'StudyController@store')->name('store.non.banking.services');
+                        route::delete('study/{study}/delete', 'StudyController@destroy')->name('study.destroy');
+                        Route::post('/copy/{study}', 'CopyStudyController@index')->name('copy.study');
                     
-                    /**
-                     * * Study Info
-                    */
-                    route::get('study', 'StudyController@index')->name('view.study');
-                    route::get('study/create', 'StudyController@create')->name('create.study');
-                    Route::get('study/{study}/edit', 'StudyController@edit')->name('edit.study');
-                    Route::put('study/{study}/update', 'StudyController@update')->name('update.study');
-                    route::post('study', 'StudyController@store')->name('store.non.banking.services');
-                    route::delete('study/{study}/delete', 'StudyController@destroy')->name('study.destroy');
-                    Route::post('/copy/{study}', 'CopyStudyController@index')->name('copy.study');
-                    
-                    // route::get('leasing-categories','LeasingCategoriesController@index')->name('view.leasing.categories');
-                    route::get('leasing-products/create', 'LeasingCategoriesController@create')->name('create.leasing.categories');
-                    route::post('leasing-products/create', 'LeasingCategoriesController@store')->name('store.leasing.categories');
-                    
-                    
-                    route::get('existing-branches/create', 'ExistingBranchesController@create')->name('create.existing.branches');
-                    route::post('existing-branches/create', 'ExistingBranchesController@store')->name('store.existing.branches');
-                    
-                    
-                    route::get('departments', 'DepartmentController@index')->name('view.departments');
-                    route::get('departments/create/{type}', 'DepartmentController@create')->name('create.departments');
-                    route::post('departments/create/{type}', 'DepartmentController@store')->name('store.departments');
-                    route::get('departments/{department}/edit/{type}', 'DepartmentController@edit')->name('edit.departments');
-                    route::put('departments/{department}/update/{type}', 'DepartmentController@update')->name('update.departments');
-                    route::delete('departments/{department}/destroy', 'DepartmentController@destroy')->name('departments.destroy');
-                    
-                    // route::get('microfinance-departments/create','MicrofinanceDepartmentController@create')->name('create.microfinance-departments');
-                    // route::post('microfinance-departments/create', 'MicrofinanceDepartmentController@store')->name('store.microfinance-departments');
-                    // route::get('microfinance-departments/{microfinanceDepartment}/edit', 'MicrofinanceDepartmentController@edit')->name('edit.microfinance-departments');
-                    // route::put('microfinance-departments/{microfinanceDepartment}/update', 'MicrofinanceDepartmentController@update')->name('update.microfinance-departments');
-                    
-                    route::get('expense-names', 'ExpenseController@index')->name('view.expense.names');
-                    route::get('expense-names/create', 'ExpenseController@create')->name('create.expense.names');
-                    route::post('expense-names/create', 'ExpenseController@store')->name('store.expense.names');
-                    route::get('expense-names/{expenseType}/edit', 'ExpenseController@edit')->name('edit.expense.names');
-                    route::put('expense-names/{expenseType}/update', 'ExpenseController@update')->name('update.expense.names');
-                    route::delete('expense-names/{expenseType}/destroy', 'ExpenseController@destroy')->name('expense.names.destroy');
+                        // route::get('leasing-categories','LeasingCategoriesController@index')->name('view.leasing.categories');
+                        route::get('leasing-products/create', 'LeasingCategoriesController@create')->name('create.leasing.categories');
+                        route::post('leasing-products/create', 'LeasingCategoriesController@store')->name('store.leasing.categories');
                     
                     
-                    route::get('fixed-assets-names', 'FixedAssetController@index')->name('view.fixed.asset.names');
-                    route::get('fixed-assets-names/create', 'FixedAssetController@create')->name('create.fixed.asset.names');
-                    route::post('fixed-assets-names/create', 'FixedAssetController@store')->name('store.fixed.asset.names');
-                    route::get('fixed-assets-names/{fixedAssetName}/edit', 'FixedAssetController@edit')->name('edit.fixed.asset.names');
-                    route::put('fixed-assets-names/{fixedAssetName}/update', 'FixedAssetController@update')->name('update.fixed.asset.names');
-                    route::delete('fixed-assets-names/{fixedAssetName}/destroy', 'FixedAssetController@destroy')->name('fixed.asset.names.destroy');
+                        route::get('existing-branches/create', 'ExistingBranchesController@create')->name('create.existing.branches');
+                        route::post('existing-branches/create', 'ExistingBranchesController@store')->name('store.existing.branches');
                     
                     
-                    route::post('consolidations', 'ConsolidationController@create')->name('view.consolidations');
-                    route::post('consolidations', 'ConsolidationController@store')->name('store.consolidations');
-                    route::get('expense-per-employees/{study}/create', 'ExpensePerEmployeeController@create')->name('create.expense.per.employees');
+                        route::get('departments', 'DepartmentController@index')->name('view.departments');
+                        route::get('departments/create/{type}', 'DepartmentController@create')->name('create.departments');
+                        route::post('departments/create/{type}', 'DepartmentController@store')->name('store.departments');
+                        route::get('departments/{department}/edit/{type}', 'DepartmentController@edit')->name('edit.departments');
+                        route::put('departments/{department}/update/{type}', 'DepartmentController@update')->name('update.departments');
+                        route::delete('departments/{department}/destroy', 'DepartmentController@destroy')->name('departments.destroy');
                     
-                    // route::get('leasing-categories/edit/{leasingCategory}','LeasingCategoriesController@edit')->name('edit.leasing.categories');
-                    // route::delete('leasing-categories/destroy/{leasingCategory}','LeasingCategoriesController@destroy')->name('destroy.leasing.categories');
+                        // route::get('microfinance-departments/create','MicrofinanceDepartmentController@create')->name('create.microfinance-departments');
+                        // route::post('microfinance-departments/create', 'MicrofinanceDepartmentController@store')->name('store.microfinance-departments');
+                        // route::get('microfinance-departments/{microfinanceDepartment}/edit', 'MicrofinanceDepartmentController@edit')->name('edit.microfinance-departments');
+                        // route::put('microfinance-departments/{microfinanceDepartment}/update', 'MicrofinanceDepartmentController@update')->name('update.microfinance-departments');
+                    
+                        route::get('expense-names', 'ExpenseController@index')->name('view.expense.names');
+                        route::get('expense-names/create', 'ExpenseController@create')->name('create.expense.names');
+                        route::post('expense-names/create', 'ExpenseController@store')->name('store.expense.names');
+                        route::get('expense-names/{expenseType}/edit', 'ExpenseController@edit')->name('edit.expense.names');
+                        route::put('expense-names/{expenseType}/update', 'ExpenseController@update')->name('update.expense.names');
+                        route::delete('expense-names/{expenseType}/destroy', 'ExpenseController@destroy')->name('expense.names.destroy');
+                    
+                    
+                        route::get('fixed-assets-names', 'FixedAssetController@index')->name('view.fixed.asset.names');
+                        route::get('fixed-assets-names/create', 'FixedAssetController@create')->name('create.fixed.asset.names');
+                        route::post('fixed-assets-names/create', 'FixedAssetController@store')->name('store.fixed.asset.names');
+                        route::get('fixed-assets-names/{fixedAssetName}/edit', 'FixedAssetController@edit')->name('edit.fixed.asset.names');
+                        route::put('fixed-assets-names/{fixedAssetName}/update', 'FixedAssetController@update')->name('update.fixed.asset.names');
+                        route::delete('fixed-assets-names/{fixedAssetName}/destroy', 'FixedAssetController@destroy')->name('fixed.asset.names.destroy');
+                    
+                    
+                        route::post('consolidations', 'ConsolidationController@create')->name('view.consolidations');
+                        route::post('consolidations', 'ConsolidationController@store')->name('store.consolidations');
+                        route::get('expense-per-employees/{study}/create', 'ExpensePerEmployeeController@create')->name('create.expense.per.employees');
+                    
+                        // route::get('leasing-categories/edit/{leasingCategory}','LeasingCategoriesController@edit')->name('edit.leasing.categories');
+                        // route::delete('leasing-categories/destroy/{leasingCategory}','LeasingCategoriesController@destroy')->name('destroy.leasing.categories');
 
-                    route::get('microfinance-products/create', 'MicrofinanceProductsController@create')->name('create.microfinance.products');
-                    route::post('microfinance-products/create', 'MicrofinanceProductsController@store')->name('store.microfinance.products');
+                        route::get('microfinance-products/create', 'MicrofinanceProductsController@create')->name('create.microfinance.products');
+                        route::post('microfinance-products/create', 'MicrofinanceProductsController@store')->name('store.microfinance.products');
                     
-                    route::get('consumerfinance-products/create', 'ConsumerfinanceProductsController@create')->name('create.consumerfinance.products');
-                    route::post('consumerfinance-products/create', 'ConsumerfinanceProductsController@store')->name('store.consumerfinance.products');
-                    
-                    /**
-                     * * Start General Assumption
-                     */
-                    Route::group(['prefix'=>'study/{study}'], function () {
-                        /**
-                         * * General Assumption
-                         */
-                        
-                        route::get('general-and-reserve-assumption', 'GeneralAndReservationAssumptionController@create')->name('create.general.assumption');
-                        route::post('general-and-reserve-assumption', 'GeneralAndReservationAssumptionController@store')->name('store.general.assumption');
-                        
-                        // route::get('microfinance-branches-assumption', 'MicrofinanceBranchAssumptionsController@create')->name('create.microfinance.branches.assumption');
-                        // route::post('microfinance-branches-assumption', 'MicrofinanceBranchAssumptionsController@store')->name('store.microfinance.branches.assumption');
-                        
-                        /**
-                         * * End General Assumption
-                         */
+                        route::get('consumerfinance-products/create', 'ConsumerfinanceProductsController@create')->name('create.consumerfinance.products');
+                        route::post('consumerfinance-products/create', 'ConsumerfinanceProductsController@store')->name('store.consumerfinance.products');
                     
                         /**
-                         * * Start Leasing Revenue Streams Breakdown
+                         * * Start General Assumption
                          */
-                        route::get('revenue-streams-breakdown/leasing', 'LeasingController@create')->name('create.leasing.revenue.stream.breakdown');
-                        route::post('revenue-streams-breakdown/leasing', 'LeasingController@store')->name('store.leasing.revenue.stream.breakdown');
-                        /**
-                         * * End Leasing Revenue Streams Breakdown
-                         */
+                        Route::group(['prefix'=>'study/{study}'], function () {
+                            /**
+                             * * General Assumption
+                             */
+                        
+                            route::get('general-and-reserve-assumption', 'GeneralAndReservationAssumptionController@create')->name('create.general.assumption');
+                            route::post('general-and-reserve-assumption', 'GeneralAndReservationAssumptionController@store')->name('store.general.assumption');
+                        
+                            // route::get('microfinance-branches-assumption', 'MicrofinanceBranchAssumptionsController@create')->name('create.microfinance.branches.assumption');
+                            // route::post('microfinance-branches-assumption', 'MicrofinanceBranchAssumptionsController@store')->name('store.microfinance.branches.assumption');
+                        
+                            /**
+                             * * End General Assumption
+                             */
+                    
+                            /**
+                             * * Start Leasing Revenue Streams Breakdown
+                             */
+                            route::get('revenue-streams-breakdown/leasing', 'LeasingController@create')->name('create.leasing.revenue.stream.breakdown');
+                            route::post('revenue-streams-breakdown/leasing', 'LeasingController@store')->name('store.leasing.revenue.stream.breakdown');
+                            /**
+                             * * End Leasing Revenue Streams Breakdown
+                             */
                         
                          
-                        /**
-                        * * Start Direct Factoring Revenue Streams Breakdown
-                        */
-                        route::get('revenue-streams-breakdown/direct-factoring', 'DirectFactoringController@create')->name('create.direct.factoring.revenue.stream.breakdown');
-                        route::post('revenue-streams-breakdown/direct-factoring', 'DirectFactoringController@store')->name('store.direct.factoring.revenue.stream.breakdown');
+                            /**
+                            * * Start Direct Factoring Revenue Streams Breakdown
+                            */
+                            route::get('revenue-streams-breakdown/direct-factoring', 'DirectFactoringController@create')->name('create.direct.factoring.revenue.stream.breakdown');
+                            route::post('revenue-streams-breakdown/direct-factoring', 'DirectFactoringController@store')->name('store.direct.factoring.revenue.stream.breakdown');
                         
-                        // route::get('revenue-streams-breakdown/direct-factoring-vue','VueDirectFactoringController@create')->name('create.direct.factoring.revenue.stream.breakdown.vue');
-                        // route::post('revenue-streams-breakdown/direct-factoring-vue','VueDirectFactoringController@store')->name('store.direct.factoring.revenue.stream.breakdown.vue');
+                            // route::get('revenue-streams-breakdown/direct-factoring-vue','VueDirectFactoringController@create')->name('create.direct.factoring.revenue.stream.breakdown.vue');
+                            // route::post('revenue-streams-breakdown/direct-factoring-vue','VueDirectFactoringController@store')->name('store.direct.factoring.revenue.stream.breakdown.vue');
                         
-                        /**
-                         * * End Direct Factoring Revenue Streams Breakdown
-                         */
-                        
-                         
-                         
-                        /**
-                         * * Start Reverse Factoring Revenue Streams Breakdown
-                         */
-                        route::get('revenue-streams-breakdown/reverse-factoring', 'ReverseFactoringController@create')->name('create.reverse.factoring.revenue.stream.breakdown');
-                        route::post('revenue-streams-breakdown/reverse-factoring', 'ReverseFactoringController@store')->name('store.reverse.factoring.revenue.stream.breakdown');
-                        /**
-                         * * End Reverse Factoring Revenue Streams Breakdown
-                         */
+                            /**
+                             * * End Direct Factoring Revenue Streams Breakdown
+                             */
                         
                          
-                        /**
-                         * * Start Ijara Mortgage Revenue Streams Breakdown
-                         */
-                        route::get('revenue-streams-breakdown/ijara', 'IjaraMortgageController@create')->name('create.ijara.mortgage.revenue.stream.breakdown');
-                        route::post('revenue-streams-breakdown/ijara', 'IjaraMortgageController@store')->name('store.ijara.mortgage.revenue.stream.breakdown');
+                         
+                            /**
+                             * * Start Reverse Factoring Revenue Streams Breakdown
+                             */
+                            route::get('revenue-streams-breakdown/reverse-factoring', 'ReverseFactoringController@create')->name('create.reverse.factoring.revenue.stream.breakdown');
+                            route::post('revenue-streams-breakdown/reverse-factoring', 'ReverseFactoringController@store')->name('store.reverse.factoring.revenue.stream.breakdown');
+                            /**
+                             * * End Reverse Factoring Revenue Streams Breakdown
+                             */
                         
-						 route::get('securitization', 'SecuritizationController@create')->name('create.securitization');
-                        route::post('securitization', 'SecuritizationController@store')->name('store.securitization');
-						
-						
-                        route::get('microfinance/all-branches/{branch_id?}', 'AllBranchesMicrofinanceControllerController@create')->name('create.all-branches.microfinance');
-                        route::post('microfinance/all-branches/{branch_id?}', 'AllBranchesMicrofinanceControllerController@store')->name('store.all-branches.microfinance');
-						
-                        route::get('get-decrease-rate-based-on-flat-rate', 'AllBranchesMicrofinanceControllerController@getDecreaseRateBasedOnFlatRate'); // ajax ;
+                         
+                            /**
+                             * * Start Ijara Mortgage Revenue Streams Breakdown
+                             */
+                            route::get('revenue-streams-breakdown/ijara', 'IjaraMortgageController@create')->name('create.ijara.mortgage.revenue.stream.breakdown');
+                            route::post('revenue-streams-breakdown/ijara', 'IjaraMortgageController@store')->name('store.ijara.mortgage.revenue.stream.breakdown');
+                        
+                            route::get('securitization', 'SecuritizationController@create')->name('create.securitization');
+                            route::post('securitization', 'SecuritizationController@store')->name('store.securitization');
+                        
+                        
+                            route::get('microfinance/all-branches/{branch_id?}', 'AllBranchesMicrofinanceControllerController@create')->name('create.all-branches.microfinance');
+                            route::post('microfinance/all-branches/{branch_id?}', 'AllBranchesMicrofinanceControllerController@store')->name('store.all-branches.microfinance');
+                        
+                            route::get('get-decrease-rate-based-on-flat-rate', 'AllBranchesMicrofinanceControllerController@getDecreaseRateBasedOnFlatRate'); // ajax ;
 
-						
-						// route::get('microfinance/by-branches', 'ByBranchesMicrofinanceControllerController@create')->name('create.by-branches.microfinance');
-                        // route::post('microfinance/by-branches', 'ByBranchesMicrofinanceControllerController@store')->name('store.by-branches.microfinance');
-						
-						route::get('microfinance/planning-by-branch', 'ByBranchesMicrofinanceControllerController@create')->name('create.by-branch.microfinance');
-                        // route::post('microfinance/allocate-by-branch', 'ByBranchesMicrofinanceControllerController@store')->name('store.by-branch.microfinance');
                         
-						
-                        route::get('microfinance/new-branches', 'NewBranchesMicrofinanceControllerController@create')->name('create.new-branches.microfinance');
-                        route::post('microfinance/new-branches', 'NewBranchesMicrofinanceControllerController@store')->name('store.new-branches.microfinance');
+                            // route::get('microfinance/by-branches', 'ByBranchesMicrofinanceControllerController@create')->name('create.by-branches.microfinance');
+                            // route::post('microfinance/by-branches', 'ByBranchesMicrofinanceControllerController@store')->name('store.by-branches.microfinance');
                         
-						 route::get('microfinance/loans', 'MicrofinanceLoanController@create')->name('create.loan.microfinance');
-						 route::post('microfinance/loans', 'MicrofinanceLoanController@store')->name('store.loan.microfinance');
-						 route::get('microfinance/loan-report/{branchId}', 'MicrofinanceLoanReportController@create')->name('view.loan.report.microfinance');
+                            route::get('microfinance/planning-by-branch', 'ByBranchesMicrofinanceControllerController@create')->name('create.by-branch.microfinance');
+                            // route::post('microfinance/allocate-by-branch', 'ByBranchesMicrofinanceControllerController@store')->name('store.by-branch.microfinance');
                         
-						
-                        route::get('microfinance-products-mix', 'MicrofinanceProductMixControllerController@create')->name('create.microfinance.product.mix');
-                        route::post('microfinance-products-mix', 'MicrofinanceProductMixControllerController@store')->name('store.microfinance.product.mix');
                         
-                        // route::get('revenue-streams-breakdown/microfinance', 'MicrofinanceRevenueStreamBreakdownController@create')->name('create.microfinance.revenue.stream.breakdown');
-                        // route::post('revenue-streams-breakdown/microfinance', 'MicrofinanceRevenueStreamBreakdownController@store')->name('store.microfinance.revenue.stream.breakdown');
+                            route::get('microfinance/new-branches', 'NewBranchesMicrofinanceControllerController@create')->name('create.new-branches.microfinance');
+                            route::post('microfinance/new-branches', 'NewBranchesMicrofinanceControllerController@store')->name('store.new-branches.microfinance');
                         
-                        /**
-                         * * End Ijara Mortgage Revenue Streams Breakdown
-                         */
+                            route::get('microfinance/loans', 'MicrofinanceLoanController@create')->name('create.loan.microfinance');
+                            route::post('microfinance/loans', 'MicrofinanceLoanController@store')->name('store.loan.microfinance');
+                            route::get('microfinance/loan-report/{branchId}', 'MicrofinanceLoanReportController@create')->name('view.loan.report.microfinance');
                         
-                        /**
-                        * * Start Portfolio Mortgage Revenue Streams Breakdown
-                        */
-                        route::get('revenue-streams-breakdown/portfolio-mortgage', 'PortfolioMortgageController@create')->name('create.portfolio.mortgage.revenue.stream.breakdown');
-                        route::post('revenue-streams-breakdown/portfolio-mortgage', 'PortfolioMortgageController@store')->name('store.portfolio.mortgage.revenue.stream.breakdown');
-                        Route::get('add-new-portfolio-mortgage-category', 'PortfolioMortgageController@addNewCategory')->name('add.new.portfolio.mortgage.category');
-                        Route::get('delete-portfolio-mortgage-category/{portfolioMortgageCategory}', 'PortfolioMortgageController@deleteCategory')->name('delete.portfolio.mortgage.category');
-                        /**
-                         * * End Portfolio Mortgage Revenue Streams Breakdown
-                         */
                         
-                        route::get('dashboard', 'DashboardController@view')->name('view.results.dashboard');
-                        route::get('dashboard-with-sensitivity', 'CashInOutFlowController@view')->name('view.results.dashboard.with.sensitivity');
+                            route::get('microfinance-products-mix', 'MicrofinanceProductMixControllerController@create')->name('create.microfinance.product.mix');
+                            route::post('microfinance-products-mix', 'MicrofinanceProductMixControllerController@store')->name('store.microfinance.product.mix');
+                        
+                            // route::get('revenue-streams-breakdown/microfinance', 'MicrofinanceRevenueStreamBreakdownController@create')->name('create.microfinance.revenue.stream.breakdown');
+                            // route::post('revenue-streams-breakdown/microfinance', 'MicrofinanceRevenueStreamBreakdownController@store')->name('store.microfinance.revenue.stream.breakdown');
+                        
+                            /**
+                             * * End Ijara Mortgage Revenue Streams Breakdown
+                             */
+                        
+                            /**
+                            * * Start Portfolio Mortgage Revenue Streams Breakdown
+                            */
+                            route::get('revenue-streams-breakdown/portfolio-mortgage', 'PortfolioMortgageController@create')->name('create.portfolio.mortgage.revenue.stream.breakdown');
+                            route::post('revenue-streams-breakdown/portfolio-mortgage', 'PortfolioMortgageController@store')->name('store.portfolio.mortgage.revenue.stream.breakdown');
+                            Route::get('add-new-portfolio-mortgage-category', 'PortfolioMortgageController@addNewCategory')->name('add.new.portfolio.mortgage.category');
+                            Route::get('delete-portfolio-mortgage-category/{portfolioMortgageCategory}', 'PortfolioMortgageController@deleteCategory')->name('delete.portfolio.mortgage.category');
+                            /**
+                             * * End Portfolio Mortgage Revenue Streams Breakdown
+                             */
+                        
+                            route::get('dashboard', 'DashboardController@view')->name('view.results.dashboard');
+                            route::get('dashboard-with-sensitivity', 'CashInOutFlowController@view')->name('view.results.dashboard.with.sensitivity');
                          
-                        Route::get('cash-in-out-flow', 'CashInOutFlowController@view')->name('cash.in.out.flow.result');
-                        Route::post('save-manual-equity-injection', 'CashInOutFlowController@saveManualEquityInjection')->name('save.manual.equity.injection');
-                        Route::get('balance-sheet', 'BalanceSheetController@view')->name('balance.sheet.result');
+                            Route::get('cash-in-out-flow', 'CashInOutFlowController@view')->name('cash.in.out.flow.result');
+                            Route::post('save-manual-equity-injection', 'CashInOutFlowController@saveManualEquityInjection')->name('save.manual.equity.injection');
+                            Route::get('balance-sheet', 'BalanceSheetController@view')->name('balance.sheet.result');
                          
-                        route::post('recalculate-spread-rates-sensitivity', 'RecalculateSpreadRateSensitivityController@recalculate')->name('calculate.spread.rate.sensitivity');
-                        route::get('income-statement', 'IncomeStatementController@index')->name('view.non.banking.forecast.income.statement');
+                            route::post('recalculate-spread-rates-sensitivity', 'RecalculateSpreadRateSensitivityController@recalculate')->name('calculate.spread.rate.sensitivity');
+                            route::get('income-statement', 'IncomeStatementController@index')->name('view.non.banking.forecast.income.statement');
                        
-                        route::get('valuation', 'ValuationController@index')->name('view.non.banking.valuation');
-                        route::get('expense-statement-reports', 'ExpenseStatementReportController@index')->name('view.expense.statement.reports');
-                        route::post('expense-statement-reports', 'ExpenseStatementReportController@result')->name('result.expense.statement.reports');
+                            route::get('valuation', 'ValuationController@index')->name('view.non.banking.valuation');
+                            route::get('expense-statement-reports', 'ExpenseStatementReportController@index')->name('view.expense.statement.reports');
+                            route::post('expense-statement-reports', 'ExpenseStatementReportController@result')->name('result.expense.statement.reports');
                         
                         
             
+                            /**
+                             * * Non Banking Expenses
+                             */
+                            route::get('expenses', 'ExpensesController@create')->name('create.expenses');
+                            route::post('expenses', 'ExpensesController@store')->name('store.expenses');
+                            route::get('expense-name-from-category', 'ExpensesController@getExpenseNamesForCategory')->name('get.expense.name.for.category');
+                            route::get('expense-name-from-category-only-employees', 'ExpensesController@getExpenseNamesForCategoryOnlyEmployees')->name('get.expense.name.for.category.only.in.employee');
+                            route::get('expense-name-from-category-only-branch', 'ExpensesController@getExpenseNamesForCategoryOnlyBranches')->name('get.expense.name.for.category.only.in.branch');
+                            route::get('fixed-assets/ffe', 'FfeFixedAssetsController@create')->name('create.ffe.fixed.assets');
+                            route::post('fixed-assets/ffe', 'FfeFixedAssetsController@store')->name('store.ffe.fixed.assets');
+                            route::get('fixed-assets/ffe/funding-structure', 'FfeFixedAssetsController@createFundingStructure')->name('create.ffe.funding.structure.fixed.assets');
+                            route::post('fixed-assets/ffe/funding-structure', 'FfeFixedAssetsController@storeFunding')->name('store.ffe.funding.structure.fixed.assets');
+                        
+                            route::get('fixed-assets/new-branches', 'NewBranchFixedAssetsController@create')->name('create.new.branch.fixed.assets');
+                        
+                            route::post('fixed-assets/new-branches', 'NewBranchFixedAssetsController@store')->name('store.new.branch.fixed.assets');
+                        
+                            route::get('fixed-assets/per-employee', 'PerEmployeeFixedAssetsController@create')->name('create.per.employee.fixed.assets');
+                            route::post('fixed-assets/per-employee', 'PerEmployeeFixedAssetsController@store')->name('store.per.employee.fixed.assets');
+                        
+                            // route::get('fixed-assets/employee', 'EmployeeFixedAssetsController@create')->name('create.per.employee.fixed.assets');
+                            // route::post('fixed-assets/employee', 'EmployeeFixedAssetsController@store')->name('store.per.employee.fixed.assets');
+                            route::post('fixed-assets/per-employee/funding-structure', 'NewBranchFixedAssetsController@storeFunding')->name('store.per.employee.funding.structure.fixed.assets');
+                        
+                        
+                            route::post('departments', 'ManpowerExpensesController@storeDepartmentPositions')->name('store.department.positions.for.non.banking');
+                            route::get('manpower', 'ManpowerExpensesController@create')->name('view.manpower.for.non.banking');
+                            route::post('manpower', 'ManpowerExpensesController@store')->name('store.manpower.for.non.banking');
+                        
+                        
+                            route::get('opening-balances', 'OpeningBalancesController@create')->name('view.opening.balances.for.non.banking');
+                            route::post('opening-balances', 'OpeningBalancesController@store')->name('store.opening.balances.for.non.banking');
+                        
+                        
+                            // route::get('delete/{position}/manpower','ManpowerExpensesController@deleteSinglePosition')->name('delete.single.position.for.non.banking');
+                            // route::get('delete-department/{department}/manpower','ManpowerExpensesController@deleteSingleDepartment')->name('delete.single.department.for.non.banking');
+                            route::get('get-positions-based-on-department', 'ManpowerExpensesController@getPositionsBasedOnDepartment'); // ajax ;
+                            route::get('get-stream-category-based-on-revenue-stream-id', 'AjaxController@getStreamCategoryBasedOnRevenueStream');
+                        
+                            // Route::post('get-stream-category-based-on-revenue-stream','AjaxController@getStreamCategoryBasedOnRevenueStream');
+                            Route::get('get-positions-based-on-departments', 'AjaxController@getPositionsBasedOnDepartments');
+                        
+                            /**
+                             * * End expenses table
+                             */
+                        
+                        
+                        });
                         /**
-                         * * Non Banking Expenses
-                         */
-                        route::get('expenses', 'ExpensesController@create')->name('create.expenses');
-                        route::post('expenses', 'ExpensesController@store')->name('store.expenses');
-                        route::get('expense-name-from-category', 'ExpensesController@getExpenseNamesForCategory')->name('get.expense.name.for.category');
-                        route::get('expense-name-from-category-only-employees', 'ExpensesController@getExpenseNamesForCategoryOnlyEmployees')->name('get.expense.name.for.category.only.in.employee');
-                        route::get('expense-name-from-category-only-branch', 'ExpensesController@getExpenseNamesForCategoryOnlyBranches')->name('get.expense.name.for.category.only.in.branch');
-                        route::get('fixed-assets/ffe', 'FfeFixedAssetsController@create')->name('create.ffe.fixed.assets');
-                        route::post('fixed-assets/ffe', 'FfeFixedAssetsController@store')->name('store.ffe.fixed.assets');
-                        route::get('fixed-assets/ffe/funding-structure', 'FfeFixedAssetsController@createFundingStructure')->name('create.ffe.funding.structure.fixed.assets');
-                        route::post('fixed-assets/ffe/funding-structure', 'FfeFixedAssetsController@storeFunding')->name('store.ffe.funding.structure.fixed.assets');
-                        
-                        route::get('fixed-assets/new-branches', 'NewBranchFixedAssetsController@create')->name('create.new.branch.fixed.assets');
-                        
-                        route::post('fixed-assets/new-branches', 'NewBranchFixedAssetsController@store')->name('store.new.branch.fixed.assets');
-                        
-                        route::get('fixed-assets/per-employee', 'PerEmployeeFixedAssetsController@create')->name('create.per.employee.fixed.assets');
-                        route::post('fixed-assets/per-employee', 'PerEmployeeFixedAssetsController@store')->name('store.per.employee.fixed.assets');
-						
-                        // route::get('fixed-assets/employee', 'EmployeeFixedAssetsController@create')->name('create.per.employee.fixed.assets');
-                        // route::post('fixed-assets/employee', 'EmployeeFixedAssetsController@store')->name('store.per.employee.fixed.assets');
-                        route::post('fixed-assets/per-employee/funding-structure', 'NewBranchFixedAssetsController@storeFunding')->name('store.per.employee.funding.structure.fixed.assets');
-                        
-                        
-                        route::post('departments', 'ManpowerExpensesController@storeDepartmentPositions')->name('store.department.positions.for.non.banking');
-                        route::get('manpower', 'ManpowerExpensesController@create')->name('view.manpower.for.non.banking');
-                        route::post('manpower', 'ManpowerExpensesController@store')->name('store.manpower.for.non.banking');
-                        
-                        
-                        route::get('opening-balances', 'OpeningBalancesController@create')->name('view.opening.balances.for.non.banking');
-                        route::post('opening-balances', 'OpeningBalancesController@store')->name('store.opening.balances.for.non.banking');
-                        
-                        
-                        // route::get('delete/{position}/manpower','ManpowerExpensesController@deleteSinglePosition')->name('delete.single.position.for.non.banking');
-                        // route::get('delete-department/{department}/manpower','ManpowerExpensesController@deleteSingleDepartment')->name('delete.single.department.for.non.banking');
-                        route::get('get-positions-based-on-department', 'ManpowerExpensesController@getPositionsBasedOnDepartment'); // ajax ;
-                        route::get('get-stream-category-based-on-revenue-stream-id', 'AjaxController@getStreamCategoryBasedOnRevenueStream');
-                        
-                        // Route::post('get-stream-category-based-on-revenue-stream','AjaxController@getStreamCategoryBasedOnRevenueStream');
-                        Route::get('get-positions-based-on-departments', 'AjaxController@getPositionsBasedOnDepartments');
-                        
-                        /**
-                         * * End expenses table
-                         */
+                         * * Study Info
+                        */
+                    
                         
                          
                          
@@ -1611,12 +1621,12 @@ Route::get('removeSessionForRedirect', function () {
     }
 });
 Route::domain('second.con')->group(function () {
-    Route::get('salah',function () {
+    Route::get('salah', function () {
         return 'good';
     });
 });
 
-Route::get('eee',function () {
+Route::get('eee', function () {
     $migrationOutput = Artisan::call('migrate');
     // $testOutput = Artisan::call('run:test');
     $testOutput = Artisan::call('run:sql');

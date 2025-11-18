@@ -24,7 +24,10 @@ use App\Models\NonBankingService\Expense;
                     @include('non_banking_services.manpower._department_card')
                 </div>
             </div>
-            <div class="row ">
+			
+			       <x-save-or-back />
+				   
+            {{-- <div class="row ">
                 <div class="col-lg-6">
 
                 </div>
@@ -33,7 +36,7 @@ use App\Models\NonBankingService\Expense;
                         {{ __('Save') }}
                     </button>
                 </div>
-            </div>
+            </div> --}}
 
         </form>
     </div>

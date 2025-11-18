@@ -38,7 +38,6 @@ class Loans2Controller extends Controller
      */
     public function create(Request $request , $company_id  )
     {
-        
             $routeName = Request()->route()->getAction()['as'] ; 
         if($request->has('storeByAjax'))
         {
@@ -84,50 +83,48 @@ class Loans2Controller extends Controller
             $loan = null ; 
         }
         // fixed.loan.fixed.at.end
-         if($routeName === 'fixed.loan.fixed.at.end'){
-            $type ='fixed';
-            
-            return view('admin.loan2.create', compact('company' , 'type' ,'storeByAjax','loanType','longTermFunding','loan','triggerClick'
+		if($routeName === 'fixed.loan.fixed.at.end' || $routeName === 'non.banking.fixed.loan.fixed.at.end' ){
+			$type ='fixed';
+			$title = __('Fixed Loan At End');
+            return view('admin.loan2.create', compact('company' ,'title', 'type' ,'storeByAjax','loanType','longTermFunding','loan','triggerClick'
              
-        
          ));       
          }
 
-           if($routeName === 'fixed.loan.fixed.at.beginning'){
-            
+           if($routeName === 'fixed.loan.fixed.at.beginning' || $routeName === 'non.banking.fixed.loan.fixed.at.beginning'){
+            $title = __('Fixed Loan At Beginning');
             $type ='fixed';
             $position = 'at_beginning';
-            return view('admin.loan2.create_at_begining', compact('company' , 'type'
+            return view('admin.loan2.create_at_begining', compact('company' ,'title', 'type'
             ,'position','storeByAjax','loanType','longTermFunding','loan','triggerClick'
         
          ));       
          }
 
 
-         if($routeName === 'calc.loan.amount'){
-            
+         if($routeName === 'calc.loan.amount' || $routeName === 'non.banking.calc.loan.amount'){
+            $title = __('Calculate Loan Amount');
             $type ='fixed';
-            return view('admin.loan2.create_loan_amount', compact('company' , 'type','storeByAjax','loanType','longTermFunding','loan','triggerClick'
+            return view('admin.loan2.create_loan_amount', compact('company' ,'title', 'type','storeByAjax','loanType','longTermFunding','loan','triggerClick'
         
          ));       
          }
 
-         if($routeName === 'calc.interest.percentage'){
-            
+         if($routeName === 'calc.interest.percentage' || $routeName =='non.banking.calc.interest.percentage'){
+              $title = __('Calculate Interest Rate');
             $type ='fixed';
-            return view('admin.loan2.create_interest_percentage', compact('company' , 'type','storeByAjax','loanType','longTermFunding','loan','triggerClick'
-        
+            return view('admin.loan2.create_interest_percentage', compact('company','title' , 'type','storeByAjax','loanType','longTermFunding','loan','triggerClick'
+			
          ));       
          }
 
-         if($routeName === 'variable.payments'){
-
+         if($routeName === 'variable.payments' || $routeName === 'non.banking.variable.payments'){
+  			$title = __('Calculate Variable Payments Loan');
             $type ='variable';
-            return view('admin.loan2.create_variable', compact('company' , 'type','storeByAjax','loanType','longTermFunding','loan','triggerClick'
+            return view('admin.loan2.variable', compact('company' ,'title', 'type','storeByAjax','loanType','longTermFunding','loan','triggerClick'
          ));       
          }
-         
-        return view('admin.loan2.create', compact('company' , 'type','storeByAjax','loanType','longTermFunding','loan','triggerClick'
+        return view('admin.loan2.create', compact('company' ,'title', 'type','storeByAjax','loanType','longTermFunding','loan','triggerClick'
          ));
     }
     /**

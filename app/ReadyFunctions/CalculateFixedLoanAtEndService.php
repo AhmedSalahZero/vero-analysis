@@ -386,6 +386,7 @@ class CalculateFixedLoanAtEndService
             $ffeStepDownRate=0;
             $ffeStepDownIntervalName='annually';
             $ffeGracePeriod=$ffeLoan->getGracePeriodAtMonthIndex($currentDateIndex);
+			// dd($ffeMarginRate,$ffeBaseRate);
             $ffeLoanPricing = $ffeMarginRate + $ffeBaseRate;
             $ffeLoanWithdrawalInterest=$loanWithdrawalService->__calculate($study->replaceIndexWithItsStringDate($ffeLoanWithdrawal['FFE Loan Withdrawal'], $dateIndexWithDate), $ffeBaseRate, $ffeMarginRate, $dateWithDateIndex);
             $ffeLoanWithdrawalInterestAmounts =$ffeLoanWithdrawalInterest['withdrawal_interest_amounts']??[];

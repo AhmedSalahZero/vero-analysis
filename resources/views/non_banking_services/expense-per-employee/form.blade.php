@@ -41,7 +41,7 @@ use App\Models\NonBankingService\Expense;
                     <input type="hidden" name="model_id" value="{{ $study->id }}">
                     <input type="hidden" name="expense_type" value="{{ $tableId }}">
                     <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
-                    <x-tables.repeater-table :font-size-class="'font-14px'" :append-save-or-back-btn="true" :repeater-with-select2="true" :parentClass="'js-toggle-visibility'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+                    <x-tables.repeater-table :font-size-class="'font-14px'" :append-save-or-back-btn="false" :repeater-with-select2="true" :parentClass="'js-toggle-visibility'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                         <x-slot name="ths">
                             <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-2 header-border-down max-w-200" :title="__('Expense <br> Category')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-2 header-border-down" :title="__('Expense <br> Name')"></x-tables.repeater-table-th>
@@ -185,13 +185,13 @@ use App\Models\NonBankingService\Expense;
 
 
                     </x-tables.repeater-table>
-
+<x-save-or-continue-btn />
             </div>
 
         </div>
 
 
-
+{{-- {{ dd('e') }} --}}
 
 
         </form>
@@ -210,7 +210,6 @@ use App\Models\NonBankingService\Expense;
 </div>
 
 </div>
-
 
 
 
@@ -233,78 +232,7 @@ use App\Models\NonBankingService\Expense;
 @section('js')
 <x-js.commons></x-js.commons>
 
-<script>
-    $(document).on('change', '.financial-statement-type', function() {
-        validateDuration();
-    })
-    $(document).on('change', 'select[name="duration_type"]', function() {
-        validateDuration();
-    })
-    $(document).on('change', '#duration', function() {
-        validateDuration();
-    })
 
-    function validateDuration() {
-        let type = $('input[name="type"]:checked').val();
-        let durationType = $('select[name="duration_type"]').val();
-        let duration = $('#duration').val();
-        let isValid = true;
-        let allowedDuration = 24;
-        if (type == 'forecast' && durationType == 'monthly') {
-            allowedDuration = 24;
-            isValid = duration <= allowedDuration;
-        }
-        if (type == 'forecast' && durationType == 'quarterly') {
-            allowedDuration = 8;
-            isValid = duration <= allowedDuration
-        }
-        if (type == 'forecast' && durationType == 'semi-annually') {
-            allowedDuration = 4
-            isValid = duration <= allowedDuration
-        }
-        if (type == 'forecast' && durationType == 'annually') {
-            allowedDuration = 2;
-            isValid = duration <= allowedDuration
-        }
-        if (type == 'actual' && durationType == 'monthly') {
-            allowedDuration = 36;
-            isValid = duration <= allowedDuration;
-        }
-        if (type == 'actual' && durationType == 'quarterly') {
-            allowedDuration = 12
-            isValid = duration <= allowedDuration;
-        }
-        if (type == 'actual' && durationType == 'semi-annually') {
-            allowedDuration = 6;
-            isValid = duration <= allowedDuration
-        }
-        if (type == 'actual' && durationType == 'annually') {
-            allowedDuration = 3
-            isValid = duration <= allowedDuration
-        }
-        let allowedDurationText = "{{ __('Allowed Duration') }}";
-
-        $('#allowed-duration').html(allowedDurationText + '  ' + allowedDuration)
-
-        if (!isValid) {
-            Swal.fire({
-                icon: 'error'
-                , title: 'Invalid Duration. Allowed [ ' + allowedDuration + ' ]'
-            , })
-
-            $('#duration').val(allowedDuration).trigger('change');
-
-        }
-
-
-    }
-
-    $(function() {
-        $('.financial-statement-type').trigger('change')
-
-    })
-
-</script>
 
 <script>
     $(document).on('click', '.save-form', function(e) {

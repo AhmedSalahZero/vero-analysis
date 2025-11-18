@@ -49,7 +49,7 @@ use App\Models\NonBankingService\Department;
                                                 {{ __('Department Name') }}
                                             </h3>
                                             <div class="form-group mb-0 d-flex" style="margin-right:auto;gap:20px;">
-                                                <input class="form-control" name="name" value="{{ isset($department) ? $department->getName():'' }}" placeholder="">
+                                                <input class="form-control border-blue" name="name" value="{{ isset($department) ? $department->getName():'' }}" placeholder="">
                                             </div>
                                         </div>
                                         <div class="col-md-2">
@@ -61,7 +61,7 @@ use App\Models\NonBankingService\Department;
                                             <div class="kt-input-icon">
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select data-live-search="true" data-actions-box="true" name="expense_type" class="form-control select2-select ">
+                                                        <select data-live-search="true" data-actions-box="true" name="expense_type" class="form-control  border-blue select2-select ">
                                                             @foreach(getExpenseTypes() as $id => $title )
                                                             <option @if( isset($department) && $department->getExpenseTypeId() == $id ) selected @endif value="{{ $id }}">{{$title}}</option>
                                                             @endforeach

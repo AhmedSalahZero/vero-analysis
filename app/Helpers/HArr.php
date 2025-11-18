@@ -1219,5 +1219,21 @@ class HArr
 	}
 	return $result ; 
 }
-
+	public static function allValuesZeroIfTotalIsLessThanOrEqualZero($calculatedCorporateTaxesPerYear, $ebt):array 
+	{
+		if(array_sum($ebt) <= 0){
+			foreach($calculatedCorporateTaxesPerYear as $dateAsIndex => &$value){
+				$value = 0 ;
+			}
+		}
+		return $calculatedCorporateTaxesPerYear;
+		// dd($calculatedCorporateTaxesPerYear , $ebt);
+		
+	}
+// public static function calculateMonthlyCorporateTaxes(array $ebt, float $corporateTaxesRate)
+// {
+// 	// if
+// 	// dd('d',$ebt,$corporateTaxesRate);
+// 	// return 
+// }
 }

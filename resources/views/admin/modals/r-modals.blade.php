@@ -87,7 +87,7 @@
                                 <td class="w-15-percentage">
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input disabled type="text" class="form-control ignore-global-style text-left" value="{{ $currentTextBasedOnCorrelationValue }}">
+                                            <input disabled type="text" class="form-control  ignore-global-style text-left" value="{{ $currentTextBasedOnCorrelationValue }}">
                                         </div>
                                     </div>
                                 </td>

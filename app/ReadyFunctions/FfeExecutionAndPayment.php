@@ -101,8 +101,6 @@ class FfeExecutionAndPayment
 		if (array_sum($ffeLoanWithdrawal) > -1 && array_sum($ffeLoanWithdrawal) < 1) {
 			return [];
 		}
-	//	$ffeLoanWithdrawal  = [0=>1000,2=>3000];
-		// $ffeLoanWithdrawal  = [];
 		$firstKey = array_key_first($ffeLoanWithdrawal);
 		$lastKey = array_key_last($ffeLoanWithdrawal);
 		if($firstKey !== null){
@@ -112,8 +110,7 @@ class FfeExecutionAndPayment
 					$ffeLoanWithdrawal[$currentDateAsIndex] = 0;
 				}
 			}
-			
-			// foreach($ffeLoanWithdrawal as $dateAsIndex)
+
 		}
 		ksort($ffeLoanWithdrawal);
 		return $ffeLoanWithdrawal;

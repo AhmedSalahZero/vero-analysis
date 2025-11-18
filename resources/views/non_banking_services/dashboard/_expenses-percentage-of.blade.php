@@ -60,7 +60,7 @@
             @endphp
             <td>
                 <div class="max-w-255">
-                    <input value="{{ __('Cost Of Service % / REV') }}" disabled class="form-control   text-left " type="text">
+                    <input value="{{ __('Cost Of Service % / REV') }}" disabled class="form-control    text-left " type="text">
                 </div>
 
 

@@ -32,7 +32,7 @@ class MicrofinanceLoanController extends Controller
         $salesProjectsPerProducts= [];
         $salesProjectsPerFundedBy= [];
         $salesProjectsPerTypes= [];
-		$isMonthlyIndex = $study->isMonthlyStudy();
+	//	$isMonthlyIndex = $study->isMonthlyStudy();
         foreach ($salesProjects as $salesProject) {
             $productId = $salesProject-> microfinance_product_id;
             $fundedBy = $salesProject->funded_by;
@@ -62,7 +62,7 @@ class MicrofinanceLoanController extends Controller
             'study'=>$study,
             'products'=>$company->getActiveMicrofinanceProducts(),
             'title'=>$branchId ? $branchName. ' '.   __('Loans') : __('Microfinance Loans'),
-            'storeRoute'=>route('store.loan.microfinance', ['company'=>$company->id , 'study'=>$study->id]),
+            'storeRoute'=>routeWithQueryParam(route('store.loan.microfinance', ['company'=>$company->id , 'study'=>$study->id])),
             'yearsWithItsMonths' =>$yearsWithItsMonths,
             'yearOrMonthsIndexes'=>$yearOrMonthsIndexes,
             'isYearsStudy'=>$isYearsStudy,

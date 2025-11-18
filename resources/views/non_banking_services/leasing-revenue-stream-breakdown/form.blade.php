@@ -41,9 +41,7 @@ use App\Models\NonBankingService\LeasingCategory;
 
                     <div class="form-group row" style="flex:1;">
                         <div class="col-md-12 mt-3" data-repeater-row=".leasing-revenue-stream-category">
-
-                            <form id="{{ LeasingCategory::LEASING_CATEGORY_FORM_ID }}" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="{{  isset($disabled) && $disabled ? '#' :  $storeRoute  }}">
-
+                            <form id="{{ LeasingCategory::LEASING_CATEGORY_FORM_ID }}" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="{{  $storeRoute  }}">
                                 <input type="hidden" name="company_id" value="{{ getCurrentCompanyId()  }}">
                                 <input type="hidden" name="creator_id" value="{{ \Auth::id()  }}">
                                 <input type="hidden" name="study_id" value="{{ $study->id }}">
@@ -107,7 +105,7 @@ use App\Models\NonBankingService\LeasingCategory;
                         <div class="col-md-10">
                             <div class="d-flex align-items-center ">
                                 <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
-                                    {{ __('Leasing Revenue Projection By Category') }}
+                                    {{ __('Leasing Revenue Projection By Category') }} {{ getThreeDotsHint() }}
                                 </h3>
                             </div>
                         </div>
@@ -534,7 +532,7 @@ use App\Models\NonBankingService\LeasingCategory;
 
 
             {{-- start of Leasing New Portfolio Funding Structure   --}}
-            <div class="kt-portlet">
+            <div class="kt-portlet" id="loan-portfolio">
                 <div class="kt-portlet__body">
                     <div class="row">
 

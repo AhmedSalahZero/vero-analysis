@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\NonBankingServices;
 
+use App\Rules\ReverseFactoringBreakdownRule;
 use App\Rules\TotalBreakdownMustBeHundredRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -29,7 +30,8 @@ class StoreReverseFactoringRevenueStreamRequest extends FormRequest
     public function rules()
     {
          return [
-            'total_must_be_hundred'=>[new TotalBreakdownMustBeHundredRule('reverseFactoringBreakdowns')]
+            'total_must_be_hundred'=>[new TotalBreakdownMustBeHundredRule('reverseFactoringBreakdowns')],
+			'category'=>[new ReverseFactoringBreakdownRule()]
         ];
     }
 }

@@ -23,7 +23,7 @@ class  PortfolioMortgageRevenueStreamBreakdown extends Model
 			'model'=>$study ,
 	//		'portfolioMortgageEclAndNewPortfolioFundingRate'=>$portfolioMortgageEclAndNewPortfolioFundingRate,
 			'title'=>__('Portfolio Mortgage Revenue Stream Breakdown'),
-			'storeRoute'=>route('store.portfolio.mortgage.revenue.stream.breakdown',['company'=>$company->id , 'study'=>$study->id]),
+			'storeRoute'=>routeWithQueryParam(route('store.portfolio.mortgage.revenue.stream.breakdown',['company'=>$company->id , 'study'=>$study->id])),
 			'yearsWithItsMonths' => $yearsWithItsMonths,
 			'yearOrMonthsIndexes'=>$yearOrMonthsIndexes,
 			'isYearsStudy'=>$isYearsStudy

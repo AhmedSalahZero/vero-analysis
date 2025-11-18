@@ -9,7 +9,6 @@ use App\Models\NonBankingService\ExistingBranch;
 use App\Models\NonBankingService\ExpenseName;
 use App\Models\NonBankingService\FixedAssetName;
 use App\Models\NonBankingService\LeasingCategory;
-use App\Models\NonBankingService\MicrofinanceDepartment;
 use App\Models\NonBankingService\MicrofinanceProduct;
 use App\Models\NonBankingService\Study;
 use App\NotificationSetting;
@@ -768,4 +767,25 @@ class Company extends Model implements HasMedia
 	{
 		return $this->hasMany(LetterOfGuaranteeFacility::class,'company_id','id');
 	}
+	public function hasAtLeastOneOfEachMainModels():bool 
+	{
+		$numberOfGeneralDepartments = $this->generalDepartments->count();
+		$numberOfExpenseNames = $this->expenseNames->count();
+		$numberOfFixedAssetNames = $this->fixedAssetNames->count();
+		return $numberOfGeneralDepartments && $numberOfExpenseNames && $numberOfFixedAssetNames;
+	
+		
+	}
+	public function hasMicrofinanceProducts()
+	{
+		// return 0;
+		return $this->microfinanceProducts->count();
+	}
+	
+	public function hasAtLeastOneExistingBranch()
+	{
+		// return 0;
+		return $this->existingBranches->count();
+	}
+	
 }

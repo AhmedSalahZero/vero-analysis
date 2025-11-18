@@ -40,7 +40,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
                         <div class="col-md-10">
                             <div class="d-flex align-items-center ">
                                 <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
-                                    {{ __('Ijara Mortgage Revenue Projection By Category') }}
+                                    {{ __('Ijara Mortgage Revenue Projection By Category') }}  {{ getThreeDotsHint() }}
                                 </h3>
                             </div>
                         </div>
@@ -402,7 +402,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
                                     <td>
                                         <x-repeat-right-dot-inputs :multiple="true" :currentVal="isset($subModel) ? $subModel->getPercentageAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed recalculate-factoring factoring-rate exclude-from-total'" :is-percentage="true" :name="'percentage_payload'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
-                                        <x-repeat-right-dot-inputs data-group-index="{{ $currentYearRepeaterIndex }}" :multiple="true" :number-format-decimals="0" :currentVal="isset($subModel) ? $subModel->getLoanAmountPayloadAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed repeater-with-collapse-input current-loan-input factoring-value'" :is-percentage="false" :name="'loan_amounts'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                        <x-repeat-right-dot-inputs :removeThreeDots="true" data-group-index="{{ $currentYearRepeaterIndex }}" :multiple="true" :number-format-decimals="0" :currentVal="isset($subModel) ? $subModel->getLoanAmountPayloadAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed repeater-with-collapse-input current-loan-input factoring-value'" :is-percentage="false" :name="'loan_amounts'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                     </td>
 
                                     @php
@@ -581,7 +581,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
 
 
             {{-- start of Factoring New Portfolio Funding Structure   --}}
-            <div class="kt-portlet">
+            <div class="kt-portlet" id="loan-portfolio">
                 <div class="kt-portlet__body">
                     <div class="row">
 

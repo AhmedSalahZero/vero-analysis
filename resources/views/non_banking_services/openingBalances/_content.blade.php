@@ -117,7 +117,7 @@ $hiringPopModels[] =$repeaterId;
 
 
 <div class="div-title">
-    {{ __('Cash And Banks') }}
+    {{ __('Cash And Banks & Customers Outstandings') }}
 </div>
 @php
 $repeaterId = 'cashAndBankOpeningBalances';

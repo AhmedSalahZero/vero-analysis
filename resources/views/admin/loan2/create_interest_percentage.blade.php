@@ -1,10 +1,11 @@
 @extends('layouts.dashboard')
 @section('Title')
 <style>
-tbody td{
-	font-weight:bold;
-	color:black !important ;
-}
+    tbody td {
+        font-weight: bold;
+        color: black !important;
+    }
+
 </style>
 <span class="kt-portlet__head-icon">
     <i class="kt-font-brand flaticon2-line-chart fa-fw flaticon-house-sketch pull-{{__('left')}}"></i>
@@ -24,7 +25,7 @@ tbody td{
     </div>
     @endif
 </div>
-
+<h3 class="font-weight-bold text-white form-label kt-subheader__title small-caps mr-5 text-nowrap" style="">{{ $title }}</h3>
 <form class="kt-form kt-form--label-right" id="create-form" method="POST" action="{{ route('loan2.store',['company' => $company->id]) }}">
     {{ csrf_field() }}
 
@@ -402,21 +403,30 @@ tbody td{
     @endif
 
 
-   <div class="kt-portlet">
+    <div class="kt-portlet">
         <div class="kt-portlet__foot">
             <div class="kt-form__actions">
                 <div class="row">
-                    <div class="col-12">
+				
+						<div class="col-6">
+								<div class="d-flex gap-x-px">
+								<h2 class="d-inline-block" style="margin-right:4px;">{{ __('Interest Rate = ') }}</h2>
+								<h2 id="calc-loan-amount-val">--</h2>
+								</div>
+						</div>
+						
+                    <div class="col-6 ">
                         <div class="{{__('right')}} text-right">
                             <input id="submit---id" type="submit" onclick="return false;" name="submit" value="{{__('Calculate')}}" class="btn active-style submit">
                         </div>
-                           @if(isset($longTermFunding->financial_id))
-                         <div class="{{__('left')}}">
-                            <a href="{{route('fundingPlans.index',['company_id'=>$company->id , 'financial_id'=>$longTermFunding->financial_id])}}" class="btn btn-success  btn-sm" > {{__('Return To Funding Plan')}} </a>
-                        </div>
-                        @endif 
-                        
                     </div>
+					
+						
+
+
+
+
+
                 </div>
             </div>
         </div>
@@ -450,13 +460,13 @@ tbody td{
     var type = "{{$type}}";
 
     if (type == 'variable') {
-        $('#interest_label').html('{{__('Interest Margin')}}');
+        $('#interest_label').html('{{__('Interest Margin ')}}');
         $('#view_min_interest').css('display', 'block');
         $('#view_borrowing_rate').css('display', 'block');
         $('#view_interest').css('display', 'block');
         $('#view_loan_interest').css('display', 'block');
 
-        $('#loan_choosen_type').html('{{__('Variable Installment Loan')}}');
+        $('#loan_choosen_type').html('{{__('Variable Installment Loan ')}}');
         $('#view_interest_interval').css('display', 'block');
         $('#view_grace_period').css('display', 'block');
         $('#viwe_installment_amount').css('display', 'block');
@@ -498,7 +508,7 @@ tbody td{
     //installment_interval
     function installmentIntervalChange() {
         var interval = $('#installment_interval').val();
-		var select = '';
+        var select = '';
         if (interval != '') {
             $('#interest_interval option:not(:first)').remove();
             var loan_amount = +$('#loan_amount').val();
@@ -533,45 +543,7 @@ tbody td{
         }
     }
 
-    function installmentIntervalOld(loan_interval) {
-        var interval = $('#installment_interval').val();
-        var select = '';
-        if (interval != '') {
-            if (interval == 'monthly') {
 
-                select = '<option value="monthly" selected >{{__("Monthly")}}</option>\n';
-
-
-            } else if (interval == 'quarterly') {
-                if (loan_interval == 'monthly') {
-                    select = '<option value="monthly" selected>{{__("Monthly")}}</option>\n' +
-                        '<option value="quarterly" >{{__("Quarterly")}}</option>\n';
-                } else {
-                    select = '<option value="monthly">{{__("Monthly")}}</option>\n' +
-                        '<option value="quarterly" selected>{{__("Quarterly")}}</option>\n';
-                }
-
-
-            } else if (interval == 'semi annually') {
-                if (loan_interval == 'monthly') {
-                    select = '<option value="monthly" selected>{{__("Monthly")}}</option>\n' +
-                        '<option value="quarterly">{{__("Quarterly")}}</option>\n' +
-                        '<option value="semi annually">{{__("Semi-annually")}}</option>\n';
-                } else if (loan_interval == 'quarterly') {
-                    select = '<option value="monthly">{{__("Monthly")}}</option>\n' +
-                        '<option value="quarterly" selected>{{__("Quarterly")}}</option>\n' +
-                        '<option value="semi annually">Semi-{{__("Annually")}}</option>\n';
-                } else {
-                    select = '<option value="monthly">{{__("Monthly")}}</option>\n' +
-                        '<option value="quarterly">{{__("Quarterly")}}</option>\n' +
-                        '<option value="semi annually" selected>{{__("Semi-annually")}}</option>\n';
-                }
-
-            }
-
-            $('#interest_interval').append(select);
-        }
-    }
     $(document).on('change', '#installment_interval', function() {
         installmentIntervalChange();
 
@@ -609,7 +581,7 @@ tbody td{
         instalmentAmount();
     });
 
-   
+
 
 
 
@@ -662,7 +634,7 @@ tbody td{
 
         if (loanType != 'normal' && loanType != 'step-down' && loanType != 'step-up') {
             $('#grace_periodid').val(0).closest('.item-main-parent').fadeIn(300);
-         
+
             $('#capitalization_type').val(0).closest('.item-main-parent').fadeIn(300);
             if (loanType == 'grace_step-up_with_capitalization' || loanType == 'grace_period_with_capitalization' ||
                 loanType == 'grace_step-down_with_capitalization'
@@ -823,10 +795,14 @@ tbody td{
 
         getLoanVal = 0;
         let operation = '+';
-
-        while (!(givenLoanAmount == getLoanVal) && !(getLoanVal >= (0.99999 * givenLoanAmount) && (getLoanVal <= (1.00001 * givenLoanAmount))))
-        {
-
+		let maxNumberOfLoops = 0;
+		let maxHasReached = false;
+        while (!(givenLoanAmount == getLoanVal) && !(getLoanVal >= (0.99999 * givenLoanAmount) && (getLoanVal <= (1.00001 * givenLoanAmount)))) {
+			maxNumberOfLoops++;
+			if(maxNumberOfLoops === 2000){
+				maxHasReached = true ;
+				break;
+			}
             stepFactor = calcStepFactor(period, interval, new Date(installmentStartDate.getTime()), addMonths(new Date(start_date_formatted.getTime()), (period ? period : 0))); // object
             daysCount = calDaysCount(new Date(start_date_formatted.getTime()), period, installment_payment_interval);
             TrialInterest = calcTrialInterest(gracePeriod, installment_payment_interval, period, stepRate, installmentAmount, givenLoanAmount, interval)
@@ -866,7 +842,11 @@ tbody td{
 
         $('#calc-loan-amount').fadeIn(300);
         //  return  
-
+		if(maxHasReached){
+        $('#calc-loan-amount-val').html('N/A');
+		$('#append-table-id').hide();
+			return;
+		}
         $('#calc-loan-amount-val').html(getPercentageFormatted(pricing * 100, 2));
 
 
@@ -1052,13 +1032,13 @@ tbody td{
 
 
     function getDifferenceBetweenTwoDatesInDays(a, b) {
-  const _MS_PER_DAY = 1000 * 60 * 60 * 24;
-  // Discard the time and time-zone information.
-  const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
-  const utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+        const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+        // Discard the time and time-zone information.
+        const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+        const utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
 
-  return Math.floor((utc2 - utc1) / _MS_PER_DAY);
-}
+        return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+    }
 
     function calcStepFactor(period, interval, installmentStartDate, end_date) {
         counter = 0;
@@ -1326,7 +1306,7 @@ tbody td{
             </td>`
             i == 0 ? (Begining = LoanVal) : Begining = endBalance;
             // $('#calc-loan-amount').fadeIn(300);
-            // $('#calc-loan-amount-val').html(numberFormat(LoanVal))
+            //          $('#calc-loan-amount-val').html(numberFormat(LoanVal))
             intresetAmount = Begining * data[i].val.interestFactor;
             totalInterestAmount += intresetAmount
 

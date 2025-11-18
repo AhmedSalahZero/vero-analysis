@@ -41,7 +41,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                         <div class="col-md-10">
                             <div class="d-flex align-items-center ">
                                 <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
-                                    {{ __('Direct Factoring Revenue Projection By Category') }}
+                                    {{ __('Direct Factoring Revenue Projection By Category') }} {{ getThreeDotsHint() }}
                                 </h3>
                             </div>
                         </div>
@@ -408,7 +408,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                                     <td>
                                         <x-repeat-right-dot-inputs :multiple="true" :currentVal="isset($subModel) ? $subModel->getPercentageAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed recalculate-factoring factoring-rate is-percentage-from-total exclude-from-total'" data-common-percentage-of-class="percentage-of-total-target" :is-percentage="true" :name="'percentage_payload'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
-                                        <x-repeat-right-dot-inputs data-group-index="{{ $currentYearRepeaterIndex }}" :multiple="true" :number-format-decimals="0" :currentVal="isset($subModel) ? $subModel->getLoanAmountPayloadAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed current-loan-input factoring-value is-result-total-of repeater-with-collapse-input'" data-common-percentage-of-class="percentage-of-total-target" :is-percentage="false" :name="'loan_amounts'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                        <x-repeat-right-dot-inputs :removeThreeDots="true" data-group-index="{{ $currentYearRepeaterIndex }}" :multiple="true" :number-format-decimals="0" :currentVal="isset($subModel) ? $subModel->getLoanAmountPayloadAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed current-loan-input factoring-value is-result-total-of repeater-with-collapse-input'" data-common-percentage-of-class="percentage-of-total-target" :is-percentage="false" :name="'loan_amounts'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
 
 
@@ -593,14 +593,14 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                 <div class="kt-portlet__body">
                     <div class="row">
                         <div class="col-md-12 text-right">
-                            <input type="submit" name="calculate-net-disbursement" class="btn active-style save-form" value="{{  __('Calculate Net Disbursement') }}">
+                            <input type="submit" name="calculate-net-disbursement" class="btn btn-danger text-white font-weight-bold save-form" value="{{  __('Calculate Net Disbursement') }}">
                         </div>
                     </div>
                 </div>
             </div>
             @if(count($study->directFactoringBreakdowns))
             {{-- start of Factoring New Portfolio Funding Structure   --}}
-            <div class="kt-portlet " id="direct-factoring-funding">
+            <div class="kt-portlet " id="loan-portfolio">
                 <div class="kt-portlet__body">
                     <div class="row">
 

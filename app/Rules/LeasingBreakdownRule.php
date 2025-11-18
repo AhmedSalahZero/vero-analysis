@@ -4,7 +4,7 @@ namespace App\Rules;
 
 use Illuminate\Contracts\Validation\ImplicitRule;
 
-class DirectFactoringBreakdownRule implements ImplicitRule
+class LeasingBreakdownRule implements ImplicitRule
 {
     /**
      * Create a new rule instance.
@@ -25,8 +25,8 @@ class DirectFactoringBreakdownRule implements ImplicitRule
      */
     public function passes($attribute, $value)
     {
-		foreach(request()->get('directFactoringBreakdowns',[]) as $breakdownArr){
-			$currentCategory = $breakdownArr['category']??null;
+		foreach(request()->get('leasingRevenueStreamBreakdown',[]) as $breakdownArr){
+			$currentCategory = $breakdownArr['category_id']??null;
 			if(is_null($currentCategory)){
 				return false ;
 			}
@@ -41,6 +41,6 @@ class DirectFactoringBreakdownRule implements ImplicitRule
      */
     public function message()
     {
-        return __('Please Choose Direct Factoring Category');
+        return __('Please Choose Leasing Category');
     }
 }

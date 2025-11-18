@@ -67,8 +67,8 @@ class CashInOutFlowController extends Controller
 			'has_manual_equity_injection'=>$request->boolean('has_manual_equity_injection'),
 			'manual_equity_injection'=>$request->get('manual_equity_injection')
 		]);
-		
-		$study->recalculateCashflowStatement();
+		(new IncomeStatementController)->index($company,$study);
+		// $study->recalculateCashflowStatement();
 			
 		return redirect()->back()->with('success',__('Successfully Recalculated'));
 		// dd('good');

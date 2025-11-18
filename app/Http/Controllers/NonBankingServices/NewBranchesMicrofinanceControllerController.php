@@ -61,7 +61,7 @@ class NewBranchesMicrofinanceControllerController extends Controller
     public function store(Company $company, StoreNewBranchesMicrofinanceRequest $request, Study $study )
     {
 		$newBranchesHiringCounts=[];
-		$positions = $request->get('manpowers');
+		$positions = $request->get('manpowers',[]);
 		$openingProjects = $request->get('newBranchMicrofinanceOpeningProjections');
 		foreach($positions as $positionId => $positionArr){
 			foreach($openingProjects as $currentLoopIndex=>$openingProjectArr){
@@ -71,7 +71,7 @@ class NewBranchesMicrofinanceControllerController extends Controller
 				foreach($positionArr['hiring_counts'] as $hiringIndex => $hiringCount){
 					$currentIndex = $hiringIndex+$startDateAsIndex;
 					$currentCount = $hiringCount * $openingProjectArr['counts'];
-					$newBranchesHiringCounts[$positionId][$currentIndex] = isset($result[$positionId][$currentIndex]) ? $result[$positionId][$currentIndex] +  $currentCount:$currentCount ;
+					$newBranchesHiringCounts[$positionId][$currentIndex] = isset($newBranchesHiringCounts[$positionId][$currentIndex]) ? $newBranchesHiringCounts[$positionId][$currentIndex] +  $currentCount:$currentCount ;
 				}
 			}
 		}

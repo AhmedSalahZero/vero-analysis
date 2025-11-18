@@ -7,9 +7,9 @@ use App\Models\NonBankingService\Study;
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="/custom/css/financial-planning/common.css">
 <style>
-.header-border {
-    border-bottom: 1px solid #007bff;
-}
+    .header-border {
+        border-bottom: 1px solid #007bff;
+    }
 
     .w-200px {
         width: 200px !important;
@@ -104,7 +104,7 @@ use App\Models\NonBankingService\Study;
                         <div class="modal-content">
 
                             <div class="modal-header header-border">
-							{{-- btn-3-bg --}}
+                                {{-- btn-3-bg --}}
                                 <h5 class="modal-title" style="color:#0741A5 !important" id="exampleModalLongTitle"> {{ __('Business Consolidation') }} </h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
@@ -146,13 +146,13 @@ use App\Models\NonBankingService\Study;
                     </div>
                 </div>
             </form>
-			
-			
-			
-			
-			
-			
-			   <form action="{{ route('store.consolidations',['company'=>$company->id]) }}" method="POST">
+
+
+
+
+
+
+            <form action="{{ route('store.consolidations',['company'=>$company->id]) }}" method="POST">
                 <div class="modal fade " id="modal-id-2" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                         @csrf
@@ -205,6 +205,16 @@ use App\Models\NonBankingService\Study;
             {{-- @if(auth()->user()->can('create study info')) --}}
             <div class="multi-flex-tabs">
                 <div class="flex-tabs">
+                   
+                    <a href="{{ route('create.study',['company'=>$company->id,'is_business_plan'=>0]) }}" class="btn 
+					 @if(!$company->hasAtLeastOneOfEachMainModels())
+					 visibility-hidden 
+                    @endif
+					w-200px btn-2-bg bg-white-hover new-study-item rounded btn-icon-sm align-self-center">
+                        <i class="fas fa-plus white-icon exclude-icon "></i>
+                        {{ __('New Financial Plan') }}
+                    </a>
+
 
                     <a href="#" data-toggle="modal" data-target="#modal-id-1" class="btn w-200px btn-3-bg bg-white-hover new-study-item rounded btn-icon-sm align-self-center">
                         {{-- <i class="fas fa-plus white-icon exclude-icon "></i> --}}
@@ -217,10 +227,11 @@ use App\Models\NonBankingService\Study;
 
 
 
-                    <a href="{{ route('create.study',['company'=>$company->id,'is_business_plan'=>1]) }}" class="btn w-200px btn-2-bg bg-white-hover new-study-item rounded btn-icon-sm align-self-center">
-                        <i class="fas fa-plus white-icon exclude-icon "></i>
-                        {{ __('New Business Plan') }}
-                    </a>
+
+                    {{-- <a href="{{ route('create.study',['company'=>$company->id,'is_business_plan'=>1]) }}" class="btn w-200px btn-2-bg bg-white-hover new-study-item rounded btn-icon-sm align-self-center">
+                    <i class="fas fa-plus white-icon exclude-icon "></i>
+                    {{ __('New Business Plan') }}
+                    </a> --}}
                     <a href="{{ route('create.existing.branches',['company'=>$company->id]) }}" class="btn w-200px new-record-class new-study-item rounded btn-icon-sm align-self-center">
                         <i class="fas fa-plus white-icon exclude-icon"></i>
                         {{ __('Existing Branches') }}
@@ -253,20 +264,23 @@ use App\Models\NonBankingService\Study;
                 </div>
                 <div class="flex-tabs">
 
+                    <a href="{{ route('create.study',['company'=>$company->id,'is_business_plan'=>0]) }}" class="btn w-200px btn-2-bg visibility-hidden bg-white-hover new-study-item rounded btn-icon-sm align-self-center">
+                        <i class="fas fa-plus white-icon exclude-icon "></i>
+                        {{ __('New Annual Plan') }}
+                    </a>
+
+
                     <a href="#" data-toggle="modal" data-target="#modal-id-2" class="btn w-200px btn-3-bg bg-white-hover new-study-item rounded btn-icon-sm align-self-center">
                         {{-- <i class="fas fa-plus white-icon exclude-icon "></i> --}}
                         {{ __('Annual Consolidations') }}
                     </a>
 
 
-                    <a href="{{ route('create.study',['company'=>$company->id,'is_business_plan'=>0]) }}" class="btn w-200px btn-2-bg bg-white-hover new-study-item rounded btn-icon-sm align-self-center">
-                        <i class="fas fa-plus white-icon exclude-icon "></i>
-                        {{ __('New Annual Plan') }}
-                    </a>
+
 
                     <a href="{{ route('view.departments',['company'=>$company->id]) }}" class="btn w-200px new-record-class new-study-item rounded btn-icon-sm align-self-center">
                         <i class="fas fa-plus white-icon exclude-icon"></i>
-                        {{ __('Departments') }}
+                        {{ __('Manpower Structure') }}
                     </a>
                     <a href="{{ route('view.expense.names',['company'=>$company->id]) }}" class="btn w-200px new-record-class new-study-item rounded btn-icon-sm align-self-center">
                         <i class="fas fa-plus white-icon exclude-icon"></i>
@@ -326,13 +340,11 @@ use App\Models\NonBankingService\Study;
                                 <td>
                                     <div class="d-flex align-items-center justify-content-center">
                                         <x-repeat-right-dot-inputs :removeThreeDots="true" :removeCurrency="true" :mark="' '" :is-number="false" :removeThreeDotsClass="true" :number-format-decimals="0" :currentVal="$model->getStudyStartDateFormattedForView()" :classes="''" :is-percentage="false" :name="''" :columnIndex="0"></x-repeat-right-dot-inputs>
-
                                     </div>
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center justify-content-center">
                                         <x-repeat-right-dot-inputs :removeThreeDots="true" :removeCurrency="true" :mark="' '" :is-number="false" :removeThreeDotsClass="true" :number-format-decimals="0" :currentVal="$model->getStudyEndDateFormattedForView()" :classes="''" :is-percentage="false" :name="''" :columnIndex="0"></x-repeat-right-dot-inputs>
-
                                     </div>
                                 </td>
                                 <td>
@@ -346,9 +358,7 @@ use App\Models\NonBankingService\Study;
                                             <a href="#" class="btn btn-md-width btn-4-bg btn-sm btn-brand btn-pill">{{ __('Ratio Analysis') }}</a>
                                         </div>
                                     </div>
-
                                 </td>
-
                                 <td>
                                     <div class="d-flex mr-auto" style="gap:10px;">
                                         <a href="{{ route('view.results.dashboard',['company'=>$company->id,'study'=>$model->id]) }}" class="btn btn-sm-width btn-1-bg btn-sm btn-brand btn-pill">{{ __('Result') }}</a>
@@ -620,29 +630,6 @@ use App\Models\NonBankingService\Study;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             @php
             $currentType = Study::CONSOLIDATION ;
             @endphp
@@ -802,8 +789,44 @@ use App\Models\NonBankingService\Study;
 
         <!--End:: Tab Content-->
     </div>
+
 </div>
+
+
 </div>
+
+
+@if(!$company->hasAtLeastOneOfEachMainModels())
+<div class="kt-portlet">
+    <div class="kt-portlet__body">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="text-red">
+                    Heads up!!!
+                </h1>
+                <h4>
+                    Before you can create a new financial plan, please make sure you’ve added:
+                </h4>
+                <ul>
+                    @foreach([
+                    'At least one manpower department and position (click Manpower Structure Button).',
+                    'At least one expense item (click Cost & Expense Button).',
+                    'At least one fixed asset (click Fixed Asset Button).'
+                    ] as $text)
+                    <li>
+                        <h5 class="text-green mb-4 mt-4">{{ $text }}</h5>
+                    </li>
+                    @endforeach
+                </ul>
+                <h4>
+                    Once these are set, you’re all ready to go! 😊
+
+                </h4>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
 
 @endsection
 @section('js')

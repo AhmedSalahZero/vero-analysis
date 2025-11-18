@@ -169,7 +169,7 @@ $months = $study->getMicrofinanceMonths() ;
                                                 <label class="mr-3">
 
                                                 </label>
-                                                <label class="kt-radio kt-radio--success text-black font-size-14px font-weight-bold mb-0">
+                                                <label class="kt-radio kt-radio--success text-red font-size-14px font-weight-bold mb-0">
 
                                                     <input type="checkbox" value="1" name="has_manual_equity_injection" @if(  $cashflowStatementReport->hasManualEquityInjection()) checked @endisset
                                                     > {{ __('Apply') }}
@@ -220,12 +220,14 @@ $months = $study->getMicrofinanceMonths() ;
 
 
                         </tr>
-                        @foreach($study->getRevenuesTypesWithTitles() as $revenueTypeId => $revenueTitle)
+						{{-- {{ dd($study->getRevenuesTypesWithTitles()) }} --}}
+                        @foreach($study->getRevenuesTypesWithTitles() as $revenueTypeId => $revenueOptionArr)
                         @php
                         $leasingEclAndNewPortfolioFundingRate = $leasingEclAndNewPortfolioFundingRates[$revenueTypeId]??null;
                         if(is_null($leasingEclAndNewPortfolioFundingRate)){
                         continue;
                         }
+						$routeName = $revenueOptionArr['routeName'];
                         @endphp
 
                         <tr data-repeat-formatting-decimals="2" data-repeater-style>
@@ -241,12 +243,14 @@ $months = $study->getMicrofinanceMonths() ;
 							
 							
                             <td>
-                                <input disabled value="{{'[ '.$revenueTitle.' ] '. __('New Loans Funding Rate (%)') }}" class="form-control  text-left" type="text">
+                                <input disabled value="{{'[ '.$revenueOptionArr['title'].' ] '. __('New Loans Funding Rate (%)') }}" class="form-control  text-left" type="text">
                             </td>
-							
+							@php
+								
+							@endphp
 							{{-- <td> --}}
 							  <td>
-							      <a href="{{ route('cash.in.out.flow.result',['company'=>$company->id,'study'=>$study->id]) }}" class="btn btn-lg-width btn-2-bg btn-sm btn-brand btn-pill">{{ __('Adjust') }}</a>
+							      <a href="{{ route($routeName,['company'=>$company->id,'study'=>$study->id,'redirect-to-cashflow'=>1]) }}#loan-portfolio" class="btn btn-lg-width btn-2-bg btn-sm btn-brand btn-pill">{{ __('Adjust') }}</a>
                                 </td>
 							
 
@@ -276,7 +280,7 @@ $months = $study->getMicrofinanceMonths() ;
 		
 	    @if(isset($nextButton))
         <div class="text-right mt-4 cash-flow-btn mr-2">
-		   <button type="submit" name="recalculate-cashflow" href="{{ $nextButton['link'] }}" class="btn text-white bg-green ">{{ __('Recalculate Cashflow') }}</button>
+		   <button type="submit" name="recalculate-cashflow" href="{{ $nextButton['link'] }}" class="btn text-white bg-danger ">{{ __('Recalculate Cashflow') }}</button>
             <a href="{{ $nextButton['link'] }}" class="btn btn-primary ">{{ $nextButton['title'] }}</a>
         </div>
         @endif

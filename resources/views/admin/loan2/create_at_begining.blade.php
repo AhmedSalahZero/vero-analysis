@@ -39,6 +39,7 @@ tbody td{
     </div>
     @endif
 </div>
+<h3 class="font-weight-bold text-white form-label kt-subheader__title small-caps mr-5 text-nowrap" style="">{{ $title }}</h3>
 
 <form class="kt-form kt-form--label-right" id="create-form" method="POST" action="{{ route('loan2.store',['company' => $company->id]) }}">
     {{ csrf_field() }}
@@ -1489,14 +1490,14 @@ tbody td{
 
         for (let i = 0; i < data.length; i++) {
             table += `<tr>
-            <td>
+            <td class="text-center">
                 ${ order++ }
             </td>
             <td>
             ${formatDate(new Date(data[i].date))}
             </td>            
 
-            <td>
+            <td class="text-center">
                 ${data[i].val.daysCount}
             </td>`
             let isAtBeginning = getIsFixedAtBeginning();
@@ -1524,10 +1525,10 @@ tbody td{
             }
 
             table += `
-            <td>
+            <td class="text-center">
                ${numberFormat(Begining)}
             </td>
-            <td>`
+            <td class="text-center">`
 
             schedulePayment = (withoutCapitalization) && data[i].val.InstallmentAmount == 0 ? intresetAmount : data[i].val.InstallmentAmount;
             totalSchedulePayment = totalSchedulePayment + schedulePayment
@@ -1541,11 +1542,11 @@ tbody td{
 
             table +=
                 `
-            <td>
+            <td class="text-center">
             
             ${numberFormat(intresetAmount) == '-0' ? 0 : number_format(intresetAmount,2) }
             </td>
-            <td> `;
+            <td class="text-center"> `;
             principleAmout = parseFloat(schedulePayment) - intresetAmount;
             // principleAmout = data[i].val.InstallmentAmount - intresetAmount ;
             totalPrincpleAmount = totalPrincpleAmount + principleAmout;
@@ -1554,7 +1555,7 @@ tbody td{
                 ${ (number_format(principleAmout,2)) }
             </td>
 
-            <td>`;
+            <td class="text-center">`;
             endBalance = Begining + intresetAmount - schedulePayment;
 
                dataToAjax.push({
@@ -1577,37 +1578,37 @@ tbody td{
 
         table += `
         <tr class="custom-color-for-last-tr">
-        <th>
+        <th class="text-center">
         
         {{ __('Total') }}
         </th>
-        <th>
+        <th class="text-center">
         -
         </th>
 
-        <th>
+        <th class="text-center">
         -
         </th>
 
-        <th>
+        <th class="text-center">
         -
         </th>
 
 
-                <th>
+                <th class="text-center">
         
         ${number_format(totalSchedulePayment,2)}
         
         </th>
-        <th>
+        <th class="text-center">
         ${number_format(totalInterestAmount,2)}
         </th>
 
-        <th>
+        <th class="text-center">
         ${number_format(totalPrincpleAmount,2)}
         </th>
 
-        <th>
+        <th class="text-center">
 
         -
         

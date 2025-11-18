@@ -3,6 +3,7 @@
 namespace App\Http\Requests\NonBankingServices;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Rules\LeasingBreakdownRule;
 
 class StoreLeasingRevenueStreamRequest extends FormRequest
 {
@@ -23,8 +24,11 @@ class StoreLeasingRevenueStreamRequest extends FormRequest
      */
 	public function prepareForValidation()
 	{
+
 		$items = [];
 		foreach($this->get('leasingRevenueStreamBreakdown',[]) as $index=>$item){
+			
+			
 			$item['company_id']= $this->get('company_id');
 			$item['study_id']= $this->get('study_id');
 			$item['step_up'] =isset($item['step_rate']) && $item['step_rate'] >= 0? $item['step_rate'] : 0 ;
@@ -39,8 +43,9 @@ class StoreLeasingRevenueStreamRequest extends FormRequest
 	}
     public function rules()
     {
+	
         return [
-            //
+            'category'=>[new LeasingBreakdownRule]
         ];
     }
 }

@@ -131,7 +131,7 @@ function spaceAfterCapitalLetters($string)
     ;
 }
 
-function getDeadRepeatingCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, string $type,string $month)
+function getDeadRepeatingCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, string $type, string $month)
 {
     return 'dead_repeating_reactivated_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type.'_'.$month;
 }
@@ -182,7 +182,7 @@ function array_unique_value(array $array, string $key)
 
     return $uniqueItems;
 }
-function getDeadRepeatingCustomersCacheNameForCompanyInYear(Company $companyId, string $year,string $month)
+function getDeadRepeatingCustomersCacheNameForCompanyInYear(Company $companyId, string $year, string $month)
 {
     return 'dead_repeating_reactivated_customers_for_company_' . $companyId->id . 'for_year_' . $year.'_for_month'.$month;
 }
@@ -439,11 +439,11 @@ function canViewCustomersDashboard(array $exportables)
     return in_array('Customer Name', $exportables) || in_array('Customer Code', $exportables);
 }
 // 1- customers dashboard
-function getNewCustomersCacheNameForCompanyInYear(Company $companyId, string $year,string $month)
+function getNewCustomersCacheNameForCompanyInYear(Company $companyId, string $year, string $month)
 {
     return 'new_customers_for_company_' . $companyId->id . '_for_year_' . $year.'_for_month'.$month;
 }
-function getNewCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, string $type,string $month)
+function getNewCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, string $type, string $month)
 {
     return 'new_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type.'_'.$month;
 }
@@ -464,83 +464,83 @@ function getBreakdownSimpleLinearRegressionDatesCacheNameForCompanyAndDatesAndTy
     return 'breakdown_simple_linear_regression_dates_start_date'. $start_date .'end_date' . $endDate . 'company_id'. $companyId->id . 'for_type_' . $type;
 }
 
-function getTotalCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, $type,string $month)
+function getTotalCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, $type, string $month)
 {
     return 'total_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type.'_'.$month;
 }
 
 
 
-function getRepeatingCustomersCacheNameForCompanyInYear(Company $companyId, string $year,string $month)
+function getRepeatingCustomersCacheNameForCompanyInYear(Company $companyId, string $year, string $month)
 {
     return 'repeating_customers_for_company_' . $companyId->id . '_for_year_' . $year.'month'.$month;
 }
 
-function getRepeatingCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, string $type,string $month)
+function getRepeatingCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, string $type, string $month)
 {
     return 'repeating_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type .'_'.$month;
 }
 
-function getActiveCustomersCacheNameForCompanyInYear(Company $companyId, string $year,string $month)
+function getActiveCustomersCacheNameForCompanyInYear(Company $companyId, string $year, string $month)
 {
     return 'active_customers_for_company_' . $companyId->id . '_for_year_' . $year.'_for_month'.$month;
 }
 
-function getActiveCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, string $type,string $month)
+function getActiveCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, string $type, string $month)
 {
     return 'active_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type.'_'.$month;
 }
 
 
 
-function getStopReactivatedCustomersCacheNameForCompanyInYear(Company $companyId, string $year,string $month)
+function getStopReactivatedCustomersCacheNameForCompanyInYear(Company $companyId, string $year, string $month)
 {
     return 'stop_reactivated_customers_for_company_' . $companyId->id . '_for_year_' . $year.'_for_month'.$month;
 }
-function getStopReactivatedCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, string $type , string $month)
+function getStopReactivatedCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, string $type, string $month)
 {
     return 'stop_reactivated_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type.'_'.$month;
 }
-function getDeadReactivatedCustomersCacheNameForCompanyInYear(Company $companyId, string $year,string $month)
+function getDeadReactivatedCustomersCacheNameForCompanyInYear(Company $companyId, string $year, string $month)
 {
     return 'dead_reactivated_customers_for_company_' . $companyId->id . '_for_year_' . $year . '_for_month'.$month;
 }
 
-function getDeadReactiveCacheNameForCompanyInYearForType(Company $companyId, string $year, string $type,string $month)
+function getDeadReactiveCacheNameForCompanyInYearForType(Company $companyId, string $year, string $type, string $month)
 {
     return 'dead_reactivated_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type.'_'.$month;
 }
 // getStopRepeatingCacheNameForCompanyInYearForType
 // getDeadReactiveCacheNameForCompanyInYearForType
-function getStopRepeatingCustomersCacheNameForCompanyInYear(Company $companyId, string $year,string $month)
+function getStopRepeatingCustomersCacheNameForCompanyInYear(Company $companyId, string $year, string $month)
 {
     return 'stop_repeating_reactivated_customers_for_company_' . $companyId->id . 'for_year_' . $year.'_for_month'.$month;
 }
-function getStopRepeatingCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, string $type , string $month)
+function getStopRepeatingCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, string $type, string $month)
 {
     return 'stop_repeating_reactivated_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type.'_'.$month;
 }
-function getStopCustomersCacheNameForCompanyInYear(Company $companyId, string $year,string $month)
+function getStopCustomersCacheNameForCompanyInYear(Company $companyId, string $year, string $month)
 {
     return 'stop_customers_for_company_' . $companyId->id . '_for_year_' . $year.'_for_month'.$month;
 }
 
-function getStopCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, string $type , string $month)
+function getStopCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, string $type, string $month)
 {
     return 'stop_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type.'_'.$month;
 }
 
 
-function getDeadCustomersCacheNameForCompanyInYear(Company $companyId, string $year,string $month)
+function getDeadCustomersCacheNameForCompanyInYear(Company $companyId, string $year, string $month)
 {
     return 'dead_customers_for_company_' . $companyId->id . '_for_year_' . $year.'_for_month'.$month;
 }
-function getDeadCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, string $type , string $month)
+function getDeadCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, string $type, string $month)
 {
     return 'dead_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type.'_'.$month;
 }
 
-function getTotalCustomersCacheNameForCompanyInYear(Company $companyId, string $year,string $month)
+function getTotalCustomersCacheNameForCompanyInYear(Company $companyId, string $year, string $month)
 {
     return 'total_customers_dashboard_for_company_' . $companyId->id . '_for_year_' . $year.'and_month'.$month;
 }
@@ -606,12 +606,12 @@ function sortReportForTotals(&$report_data)
     );
 }
 
-function sortSubItems(&$sales_channel_channels_data,$type = null)
+function sortSubItems(&$sales_channel_channels_data, $type = null)
 {
-	if($type == 'day_name'){
-		HArr::orderByDayNameForOneDimension($sales_channel_channels_data);
-		return ;
-	}
+    if ($type == 'day_name') {
+        HArr::orderByDayNameForOneDimension($sales_channel_channels_data);
+        return ;
+    }
     (
         uasort(
             $sales_channel_channels_data,
@@ -680,16 +680,16 @@ function sortTwoDimensionalExcept(array &$arr, array $exceptKeys)
     });
 }
 
-function getTypeFor($type, $companyId, $formatted = false, $date = false, $start_date = null, $end_date = null,$tableName=null)
+function getTypeFor($type, $companyId, $formatted = false, $date = false, $start_date = null, $end_date = null, $tableName=null)
 {
-	$tableName = $tableName ? $tableName : 'sales_gathering';
-	$netValueColumn = $tableName == 'expense_analysis' ? 'total_cost' : 'net_sales_value';
+    $tableName = $tableName ? $tableName : 'sales_gathering';
+    $netValueColumn = $tableName == 'expense_analysis' ? 'total_cost' : 'net_sales_value';
     if ($formatted) {
         // 2022-03-22
         // start 01-01-2021
         // end 01-01-2022
 
-		
+        
         return  DB::table($tableName)->where('company_id', $companyId)
             ->when($date && $start_date, function (Builder $builder) use ($start_date) {
                 $builder->where('date', '>=', $start_date);
@@ -961,7 +961,7 @@ function maxOptionsForOneSelector(): int
 
 function isCustomerExceptionalCase($type, $name_of_selector_label)
 {
-    $conditionOne = (($type == 'category' ) && ($name_of_selector_label == 'Customers Against Categories' ||  $name_of_selector_label == 'Categories'));
+    $conditionOne = (($type == 'category') && ($name_of_selector_label == 'Customers Against Categories' ||  $name_of_selector_label == 'Categories'));
     return $conditionOne;
 }
 
@@ -1063,7 +1063,7 @@ function getTypeSalesAnalysisData(Request $request, Company $company, $type)
 
     $sales_channels = is_array(json_decode(($request->sales_channels[0]))) ? json_decode(($request->sales_channels[0])) : $request->sales_channels;
 
-    foreach ($sales_channels as  $sales_channel) {
+    foreach ($sales_channels as $sales_channel) {
         $sales_channel = str_replace("'", "\'", $sales_channel);
         $sales_channels_data = collect(DB::select(DB::raw(
             "
@@ -1092,7 +1092,7 @@ function getTypeSalesAnalysisData(Request $request, Company $company, $type)
 
     $final_report_data = [];
     $sales_channels_names = [];
-    foreach ($sales_channels as  $sales_channel) {
+    foreach ($sales_channels as $sales_channel) {
         $final_report_data[$sales_channel]['Sales Values'] = ($report_data[$sales_channel] ?? []);
         $final_report_data[$sales_channel]['Growth Rate %'] = ($growth_rate_data[$sales_channel] ?? []);
         $sales_channels_names[] = (str_replace(' ', '_', $sales_channel));
@@ -1486,7 +1486,7 @@ function formatExistingFormNewAllocation($newAllocation)
         }
         $sums = [];
         foreach ($data as $productItem => $newData) {
-            foreach ($newData as  $branchName => $values) {
+            foreach ($newData as $branchName => $values) {
                 $sums[$branchName] = ($sums[$branchName] ?? 0) + ($values['actual_value'] ?? 0);
             }
         }
@@ -1534,7 +1534,7 @@ function formatDateVariable($dates, $start_date, $end_date)
 function getTotalsOfTotal($reportArray)
 {
     $totalForEachItem = [];
-    foreach ($reportArray  as $itemName => $data) {
+    foreach ($reportArray as $itemName => $data) {
         foreach ($data as $reportKey => $valueArr) {
             if ($reportKey != 'Growth Rate %' && $reportKey != 'Total' && $itemName != 'Total' && $itemName != 'Growth Rate %') {
                 $totalForEachItem[$itemName][$reportKey] = 0;
@@ -1626,12 +1626,12 @@ function getCanReloadUploadPageCachingForCompany($companyId, $modelName)
     return 'can_reload_caching_page_for_company_' . $companyId.$modelName;
 }
 
-function getComparingReportForAnalysis($request, $report_data, $secondReport, $company, $dates, $view_name, $Items_names, $modelType,$forMinMaxReport = false)
+function getComparingReportForAnalysis($request, $report_data, $secondReport, $company, $dates, $view_name, $Items_names, $modelType, $forMinMaxReport = false)
 {
     if ($request->report_type == 'comparing' && $secondReport == true) {
-		if($forMinMaxReport){
-			$firstReportData = $report_data;
-		}
+        if ($forMinMaxReport) {
+            $firstReportData = $report_data;
+        }
         $firstReportData['first_report']  =   $dates;
         $firstReportData['first_report_date']  =   Carbon::make($request->start_date)->format('d M Y') . ' ' . __('To') . ' ' . Carbon::make($request->end_date)->format('d M Y');
         $firstReportData['report_data'] =  $report_data;
@@ -1662,45 +1662,42 @@ function getComparingReportForAnalysis($request, $report_data, $secondReport, $c
         } elseif ($modelType == 'sales_person') {
             $secondReportDataResult = (new SalesPersonsAgainstAnalysisReport())->result($request, $company, false);
             $type = __('Business Sector');
-        } 
-		elseif(isset((new ExportTable)->customizedTableField($company, 'ExportAnalysis', 'selected_fields')[$modelType])) {
+        } elseif (isset((new ExportTable)->customizedTableField($company, 'ExportAnalysis', 'selected_fields')[$modelType])) {
             $secondReportDataResult = (new ExportAgainstAnalysisReport())->result($request, $company, 'view', false);
             $type = __($modelType);
-        }
-		elseif(isset((new ExportTable)->customizedTableField($company, 'ExpenseAnalysis', 'selected_fields')[$modelType])) {
-			if($forMinMaxReport){
-				$secondReportDataResult = (new ExpenseAgainstAnalysisReport())->AvgMinMaxReportResult($request, $company, 'view', false);
-				
-			}else{
-				$secondReportDataResult = (new ExpenseAgainstAnalysisReport())->twoSelectorAndThreeSelectorAndComparingResult($request, $company, 'view', false);
-				
-			}
+        } elseif (isset((new ExportTable)->customizedTableField($company, 'ExpenseAnalysis', 'selected_fields')[$modelType])) {
+            if ($forMinMaxReport) {
+                $secondReportDataResult = (new ExpenseAgainstAnalysisReport())->AvgMinMaxReportResult($request, $company, 'view', false);
+                
+            } else {
+                $secondReportDataResult = (new ExpenseAgainstAnalysisReport())->twoSelectorAndThreeSelectorAndComparingResult($request, $company, 'view', false);
+                
+            }
             $type = __($modelType);
-        }
-		 else {
-			return [];
+        } else {
+            return [];
             throw new \Exception('custom exception .. not supported type ' . $modelType);
         }
 
         $secondReportData = $secondReportDataResult['report_data'] ?? [];
-		
+        
         $secondReportData['full_date'] = $secondReportDataResult['full_date'] ?? [];
         $report_data = getTotalsOfTotal($report_data);
         $secondReportData['report_data'] = getTotalsOfTotal($secondReportDataResult['report_data']);
-		if($forMinMaxReport){
-			$secondReportData['report_data'] = $secondReportDataResult['report_data'];
-		}
-		
+        if ($forMinMaxReport) {
+            $secondReportData['report_data'] = $secondReportDataResult['report_data'];
+        }
+        
         $secondItemsName = getLopeItemsFromEachReport($report_data, $secondReportData['report_data']);
-		$isDayNameReport=$request->get('type') == 'day_name';
-		$secondItemsName = $isDayNameReport ? HArr::orderByDayNameForOneDimension($secondItemsName) : $secondItemsName;
+        $isDayNameReport=$request->get('type') == 'day_name';
+        $secondItemsName = $isDayNameReport ? HArr::orderByDayNameForOneDimension($secondItemsName) : $secondItemsName;
         $secondReportData['report_data']  = addFirstReportKeysToSendReport($secondItemsName, $secondReportData['report_data']);
         $mainItems = getMainItemsNameFromEachInterval($report_data, $secondReportData['report_data']);
-		$viewName = 'client_view.reports.sales_gathering_analysis.second_comparing_analysis';
-		if($forMinMaxReport){
-			$viewName = 'client_view.reports.sales_gathering_analysis.avg_comparing_analysis';
-		}
-        return view($viewName, compact('company','isDayNameReport', 'view_name', 'firstReportData', 'Items_names', 'dates', 'report_data', 'secondReportData', 'secondItemsName', 'mainItems', 'type'));
+        $viewName = 'client_view.reports.sales_gathering_analysis.second_comparing_analysis';
+        if ($forMinMaxReport) {
+            $viewName = 'client_view.reports.sales_gathering_analysis.avg_comparing_analysis';
+        }
+        return view($viewName, compact('company', 'isDayNameReport', 'view_name', 'firstReportData', 'Items_names', 'dates', 'report_data', 'secondReportData', 'secondItemsName', 'mainItems', 'type'));
     }
 }
 function addFirstReportKeysToSendReport($keys, $secondReport)
@@ -1791,12 +1788,13 @@ function generateDatesBetweenTwoDatesWithoutOverflow(Carbon $start_date, Carbon 
     }
     return $dates;
 }
-function generateDatesBetweenTwoIndexedDates(int $startDateAsIndex , int $endDateAsIndex):array {
-	$result = [];
-	for($i =$startDateAsIndex ; $i <=$endDateAsIndex ; $i++  ){
-		$result[] = $i;
-	}
-	return $result;
+function generateDatesBetweenTwoIndexedDates(int $startDateAsIndex, int $endDateAsIndex):array
+{
+    $result = [];
+    for ($i =$startDateAsIndex ; $i <=$endDateAsIndex ; $i++) {
+        $result[] = $i;
+    }
+    return $result;
 }
 function formatDateFromString(string $date): string
 {
@@ -1832,12 +1830,12 @@ function formatReportDataForDashBoard(string $incomeStatementDurationType, strin
             $newData[$mainItemName]['data'][$dateAsString] = getTotalInPivotDate($incomeStatementDurationType, $incomeStatementStartDate, $mainItem->withSubItemsFor(
                 $mainItem->pivot->financial_statement_able_id,
                 $mainItem->pivot->sub_item_type
-            )->get()->pluck('pivot'), $dateAsIndex,$dateAsString, $dates);
+            )->get()->pluck('pivot'), $dateAsIndex, $dateAsString, $dates);
         }
-		
+        
         if (isset($mainItemName)) {
 
-			$newData[$mainItemName]['sub_items'] = getSubItemsFormatted($mainItem->withSubItemsFor(
+            $newData[$mainItemName]['sub_items'] = getSubItemsFormatted($mainItem->withSubItemsFor(
                 $mainItem->pivot->financial_statement_able_id,
                 $mainItem->pivot->sub_item_type
             )->get()->pluck('pivot'), $dates, $incomeStatementStartDate, $incomeStatementDurationType);
@@ -1878,7 +1876,7 @@ function yearAndMonthInArray(string $date, array $dates)
     $year = explode('-', $date)[0];
     $month = explode('-', $date)[1];
     foreach ($dates as $newDate) {
-		if (explode('-', $newDate)[0] == $year && $month == explode('-', $newDate)[1]) {
+        if (explode('-', $newDate)[0] == $year && $month == explode('-', $newDate)[1]) {
             return true;
         }
     }
@@ -1888,16 +1886,16 @@ function yearAndMonthInArray(string $date, array $dates)
 function array_sum_conditional($data, $dates, $incomeStatementStartDate, $incomeStatementDurationType)
 {
     $incomeStatementStartDate = Carbon::make($incomeStatementStartDate);
-	// $incomeStatementDurationType='annually';
+    // $incomeStatementDurationType='annually';
     $total = 0;
     foreach ($data as $date => $value) {
-		if ($incomeStatementDurationType == 'annually') {
+        if ($incomeStatementDurationType == 'annually') {
             if (isset($dates[$date]) && yearInArray($dates[$date], $dates)) {
-				$total += $value;
+                $total += $value;
             }
         } else {
-            if (array_key_exists($date,$dates)) {
-            // if (yearAndMonthInArray($date, $dates)) {
+            if (array_key_exists($date, $dates)) {
+                // if (yearAndMonthInArray($date, $dates)) {
                 $total += $value;
             }
         }
@@ -1912,7 +1910,7 @@ function inDurationDate(string $date, $dates, $incomeStatementDurationType)
     }
     return yearAndMonthInArray($date, $dates);
 }
-function getTotalInPivotDate(string $incomeStatementDurationType, string $incomeStatementStartDate, $pivot, int $dateAsIndex,string $dateAsString, $dates): array
+function getTotalInPivotDate(string $incomeStatementDurationType, string $incomeStatementStartDate, $pivot, int $dateAsIndex, string $dateAsString, $dates): array
 {
     // 1-1-2021
 
@@ -2339,7 +2337,7 @@ function getDatedOf(array $first, array $second): array
 
     return $dates;
 }
-function combineNoneZeroValuesBasedOnComingDates(array $actualDatesAsIndexAndBooleans ,array $first, array $second): array
+function combineNoneZeroValuesBasedOnComingDates(array $actualDatesAsIndexAndBooleans, array $first, array $second): array
 {
     $combined = [];
     $dates = getDatedOf($first, $second);
@@ -2414,10 +2412,10 @@ function getExportDateTime(): string
 }
 function getExportUserName()
 {
-	/**
-	 * @var User $user
-	 */
-	$user = Auth()->user() ;
+    /**
+     * @var User $user
+     */
+    $user = Auth()->user() ;
     return  $user ? $user->getName() : null;
 }
 
@@ -2511,7 +2509,7 @@ function getIndexesLargerThanOrEqualIndex(array $items, string $item): array
 }
 function isActualDate(string $dateString): bool
 {
-	
+    
     $year = explode('-', $dateString)[0];
     $month = explode('-', $dateString)[1];
 
@@ -2669,7 +2667,7 @@ function extractMainItemsAndSubItemsFrom(array $array): array
     $mainItemsAndSubitems = [];
     foreach ($array as $mainItemName => $values) {
         foreach ($values as $reportType => $reportValues) {
-            foreach ($reportValues as  $subItemName => $subItemValue) {
+            foreach ($reportValues as $subItemName => $subItemValue) {
                 if (!isset($mainItemsAndSubitems[$mainItemName]) || !in_array($subItemName, $mainItemsAndSubitems[$mainItemName])) {
                     $mainItemsAndSubitems[$mainItemName][] = $subItemName;
                 }
@@ -2868,7 +2866,7 @@ function formatDataForDonutChart(array $array)
         ];
     }
 
-    return $formattedData;	
+    return $formattedData;
 }
 function isQuantitySubItem($subItemName): bool
 {
@@ -2938,47 +2936,47 @@ function getTotalOfSalesRevenueFor(int $incomeStatementId, string $subItemType, 
 
     return $totalOfSalesRevenue ? $totalOfRow / $totalOfSalesRevenue * 100 : 0;
 }
-function getMonthNames(int $startFromIndex):array 
+function getMonthNames(int $startFromIndex):array
 {
-	return  [
-       	[
-			'title'=>'January',
-			'value'=>$startFromIndex 
-		],
-		[
-			'title'=>'February',
-			'value'=>++$startFromIndex
-		],[
-			'title'=>'March',
-			'value'=>++$startFromIndex
-		],[
-			'title'=>'April',
-			'value'=>++$startFromIndex
-		],[
-			'title'=>'May',
-			'value'=>++$startFromIndex
-		],[
-			'title'=>'June',
-			'value'=>++$startFromIndex
-		],[
-			'title'=>'July',
-			'value'=>++$startFromIndex
-		],[
-			'title'=>'August',
-			'value'=>++$startFromIndex
-		],[
-			'title'=>'September',
-			'value'=>++$startFromIndex
-		],[
-			'title'=>'October',
-			'value'=>++$startFromIndex
-		],[
-			'title'=>'November',
-			'value'=>++$startFromIndex
-		],[
-			'title'=>'December',
-			'value'=>++$startFromIndex
-		],
+    return  [
+           [
+            'title'=>'January',
+            'value'=>$startFromIndex
+        ],
+        [
+            'title'=>'February',
+            'value'=>++$startFromIndex
+        ],[
+            'title'=>'March',
+            'value'=>++$startFromIndex
+        ],[
+            'title'=>'April',
+            'value'=>++$startFromIndex
+        ],[
+            'title'=>'May',
+            'value'=>++$startFromIndex
+        ],[
+            'title'=>'June',
+            'value'=>++$startFromIndex
+        ],[
+            'title'=>'July',
+            'value'=>++$startFromIndex
+        ],[
+            'title'=>'August',
+            'value'=>++$startFromIndex
+        ],[
+            'title'=>'September',
+            'value'=>++$startFromIndex
+        ],[
+            'title'=>'October',
+            'value'=>++$startFromIndex
+        ],[
+            'title'=>'November',
+            'value'=>++$startFromIndex
+        ],[
+            'title'=>'December',
+            'value'=>++$startFromIndex
+        ],
     ];
 }
 function sortMonthsByItsNames(array $array): array
@@ -3033,10 +3031,10 @@ function replaceArr($mainIdsWithItsValues, $equation)
     return str_replace('--', '+', $result);
 }
 
-    function isActualDateInModifiedOrAdjusted($date, $subItemType,$actualDatesAsIndexAndBooleans)
-    {
-        return ($subItemType == 'adjusted' || $subItemType == 'modified') && $actualDatesAsIndexAndBooleans[$date];
-    }
+function isActualDateInModifiedOrAdjusted($date, $subItemType, $actualDatesAsIndexAndBooleans)
+{
+    return ($subItemType == 'adjusted' || $subItemType == 'modified') && $actualDatesAsIndexAndBooleans[$date];
+}
 function isQuantity(array $options): bool
 {
     return isset($options['is_quantity']) && $options['is_quantity'] != 'value';
@@ -3066,1783 +3064,1783 @@ function getPermissions(array $systemsNames  = []):array
     $permissions =  [
         [
             'name'=>'view home',
-			'systems'=>[VERO,CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'home',
-			'view-name'=>'view'
+            'systems'=>[VERO,CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'home',
+            'view-name'=>'view'
         ],
-		[
+        [
             'name'=>'update permissions',
-			'systems'=>[VERO,CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER],
-			'group'=>'permissions',
-			'view-name'=>'update'
+            'systems'=>[VERO,CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER],
+            'group'=>'permissions',
+            'view-name'=>'update'
         ],
-		
-		[
+        
+        [
             'name'=>'view sales dashboard',
-			'systems'=>[VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'sales dashboard',
-			'view-name'=>'view'
+            'systems'=>[VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'sales dashboard',
+            'view-name'=>'view'
         ],
         [
             'name'=>'view breakdown dashboard',
-			'systems'=>[VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'breakdown dashboard',
-			'view-name'=>'view'
+            'systems'=>[VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'breakdown dashboard',
+            'view-name'=>'view'
         ],
         [
             'name'=>'view customer dashboard',
-			'systems'=>[VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'customer dashboard',
-			'view-name'=>'view'
+            'systems'=>[VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'customer dashboard',
+            'view-name'=>'view'
         ],
         [
             'name'=>'view sales person dashboard',
-			'systems'=>[VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'sales person dashboard',
-			'view-name'=>'view'
+            'systems'=>[VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'sales person dashboard',
+            'view-name'=>'view'
         ],
         [
             'name'=>'view discount dashboard',
-			'systems'=>[VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'discount dashboard',
-			'view-name'=>'view'
+            'systems'=>[VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'discount dashboard',
+            'view-name'=>'view'
         ],
         [
             'name'=>'view interval comparing dashboard',
-			'systems'=>[VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'interval comparing dashboard',
-			'view-name'=>'view'
+            'systems'=>[VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'interval comparing dashboard',
+            'view-name'=>'view'
         ],[
             'name'=>'view expense analysis dashboard',
-			'systems'=>[EXPENSE_ANALYSIS],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'expense analysis dashboard',
-			'view-name'=>'view'
+            'systems'=>[EXPENSE_ANALYSIS],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'expense analysis dashboard',
+            'view-name'=>'view'
         ],
         [
             'name'=>'view income statement dashboard',
-			'systems'=>[VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'income statement dashboard',
-			'view-name'=>'view'
+            'systems'=>[VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'income statement dashboard',
+            'view-name'=>'view'
         ],
         [
             'name'=>'view forecast income statement dashboard',
-			'systems'=>[VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'forecast income statement dashboard',
-			'view-name'=>'view'
+            'systems'=>[VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'forecast income statement dashboard',
+            'view-name'=>'view'
         ],
         [
             'name'=>'view actual income statement dashboard',
-			'systems'=>[VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'actual income statement dashboard',
-			'view-name'=>'view'
+            'systems'=>[VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'actual income statement dashboard',
+            'view-name'=>'view'
         ],
         [
             'name'=>'view adjusted income statement dashboard',
-			'systems'=>[VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'adjusted income statement dashboard',
-			'view-name'=>'view'
+            'systems'=>[VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'adjusted income statement dashboard',
+            'view-name'=>'view'
         ],
         [
             'name'=>'view modified income statement dashboard',
-			'systems'=>[VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'modified income statement dashboard',
-			'view-name'=>'view'
+            'systems'=>[VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'modified income statement dashboard',
+            'view-name'=>'view'
         ],
         [
             'name'=>'view income statement comparing dashboard',
-			'systems'=>[VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'income statement comparing dashboard',
-			'view-name'=>'view'
+            'systems'=>[VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'income statement comparing dashboard',
+            'view-name'=>'view'
         ],
         [
             'name'=>'view income statement variance dashboard',
-			'systems'=>[VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'income statement variance dashboard',
-			'view-name'=>'view'
+            'systems'=>[VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'income statement variance dashboard',
+            'view-name'=>'view'
         ],
         [
             'name'=>'view sales gathering data',
-			'systems'=>[VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'sales gathering',
-			'view-name'=>'view'
+            'systems'=>[VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'sales gathering',
+            'view-name'=>'view'
         ],
-		[
+        [
             'name'=>'upload sales gathering data',
-			'systems'=>[VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'sales gathering',
-			'view-name'=>'upload'
+            'systems'=>[VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'sales gathering',
+            'view-name'=>'upload'
         ],
-		[
+        [
             'name'=>'export sales gathering data',
-			'systems'=>[VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'sales gathering',
-			'view-name'=>'export'
+            'systems'=>[VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'sales gathering',
+            'view-name'=>'export'
         ],
-	
-		[
+    
+        [
             'name'=>'delete sales gathering data',
-			'systems'=>[VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'sales gathering',
-			'view-name'=>'delete'
+            'systems'=>[VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'sales gathering',
+            'view-name'=>'delete'
         ],
-		
+        
         [
             'name'=>viewExportAnalysisData,
-			'systems'=>[EXPORT_ANALYSIS],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'export analysis',
-			'view-name'=>'view'
+            'systems'=>[EXPORT_ANALYSIS],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'export analysis',
+            'view-name'=>'view'
         ],
        
         [
             //
             'name'=>uploadExportAnalysisData,
-			'systems'=>[EXPORT_ANALYSIS],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'export analysis',
-			'view-name'=>'upload'
+            'systems'=>[EXPORT_ANALYSIS],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'export analysis',
+            'view-name'=>'upload'
         ],
         [
             //
             'name'=>exportExportAnalysisData,
-			'systems'=>[EXPORT_ANALYSIS],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'export analysis',
-			'view-name'=>'export'
+            'systems'=>[EXPORT_ANALYSIS],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'export analysis',
+            'view-name'=>'export'
         ],
 
         
         [
             'name'=>deleteExportAnalysisData,
-			'systems'=>[EXPORT_ANALYSIS],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'export analysis',
-			'view-name'=>'delete'
+            'systems'=>[EXPORT_ANALYSIS],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'export analysis',
+            'view-name'=>'delete'
         ],
-		
-		
-		
-		
-		[
+        
+        
+        
+        
+        [
             'name'=>viewExpenseAnalysisData,
-			'systems'=>[EXPENSE_ANALYSIS],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'expense analysis',
-			'view-name'=>'view'
+            'systems'=>[EXPENSE_ANALYSIS],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'expense analysis',
+            'view-name'=>'view'
         ],
        
         [
             //
             'name'=>uploadExpenseAnalysisData,
-			'systems'=>[EXPORT_ANALYSIS],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'expense analysis',
-			'view-name'=>'upload'
+            'systems'=>[EXPORT_ANALYSIS],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'expense analysis',
+            'view-name'=>'upload'
         ],
         [
             //
             'name'=>exportExpenseAnalysisData,
-			'systems'=>[EXPENSE_ANALYSIS],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'expense analysis',
-			'view-name'=>'export'
+            'systems'=>[EXPENSE_ANALYSIS],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'expense analysis',
+            'view-name'=>'export'
         ],
 
         
         [
             'name'=>deleteExpenseAnalysisData,
-			'systems'=>[EXPENSE_ANALYSIS],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'expense analysis',
-			'view-name'=>'delete'
+            'systems'=>[EXPENSE_ANALYSIS],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'expense analysis',
+            'view-name'=>'delete'
         ],
-		
+        
 
         [
             'name'=>viewCustomerInvoiceData,
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'customer invoices',
-			'view-name'=>'view'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'customer invoices',
+            'view-name'=>'view'
         ],
         [
             'name'=>uploadCustomerInvoiceData,
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'customer invoices',
-			'view-name'=>'upload'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'customer invoices',
+            'view-name'=>'upload'
         ],
         [
             'name'=>exportCustomerInvoiceData,
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'customer invoices',
-			'view-name'=>'export'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'customer invoices',
+            'view-name'=>'export'
         ],
 
         [
             'name'=>deleteCustomerInvoiceData,
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'customer invoices',
-			'view-name'=>'delete'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'customer invoices',
+            'view-name'=>'delete'
         ],
 
-		[
+        [
             'name'=>viewSupplierInvoiceData,
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'supplier invoices',
-			'view-name'=>'view'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'supplier invoices',
+            'view-name'=>'view'
         ],
         [
             'name'=>uploadSupplierInvoiceData,
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'supplier invoices',
-			'view-name'=>'upload'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'supplier invoices',
+            'view-name'=>'upload'
         ],
         [
             'name'=>exportSupplierInvoiceData,
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'supplier invoices',
-			'view-name'=>'export'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'supplier invoices',
+            'view-name'=>'export'
         ],
 
         [
             'name'=>deleteSupplierInvoiceData,
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'supplier invoices',
-			'view-name'=>'delete'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'supplier invoices',
+            'view-name'=>'delete'
         ],
-	
-		[
+    
+        [
             'name'=>viewLoanScheduleData,
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'loan schedule',
-			'view-name'=>'view'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'loan schedule',
+            'view-name'=>'view'
         ],
         [
             'name'=>uploadLoanScheduleData,
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'loan schedule',
-			'view-name'=>'upload'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'loan schedule',
+            'view-name'=>'upload'
         ],
         [
             'name'=>exportLoanScheduleData,
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'loan schedule',
-			'view-name'=>'export'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'loan schedule',
+            'view-name'=>'export'
         ],
 
         [
             'name'=>deleteLoanScheduleData,
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'loan schedule',
-			'view-name'=>'delete'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'loan schedule',
+            'view-name'=>'delete'
         ],
         // [
         //     'name'=>'view sales forecast quantity base',
-		// 	'systems'=>[VERO],
-		// 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-		// 	'group'=>'sales forecast ',
-		// 	'view-name'=>'view quantity base'
+        // 	'systems'=>[VERO],
+        // 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+        // 	'group'=>'sales forecast ',
+        // 	'view-name'=>'view quantity base'
         // ],
         [
             'name'=>'view sales forecast value',
-			'systems'=>[SALES_FORECAST],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'sales forecast',
-			'view-name'=>'view value base'
+            'systems'=>[SALES_FORECAST],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'sales forecast',
+            'view-name'=>'view value base'
         ],
-		[
+        [
             'name'=>'view sales forecast quantity',
-			'systems'=>[SALES_FORECAST],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'sales forecast',
-			'view-name'=>'view quantity base'
+            'systems'=>[SALES_FORECAST],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'sales forecast',
+            'view-name'=>'view quantity base'
         ],
         [
             'name'=>'view sales breakdown analysis report',
-			'systems'=>[VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'sales analysis',
-			'view-name'=>'view breakdown analysis report'
+            'systems'=>[VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'sales analysis',
+            'view-name'=>'view breakdown analysis report'
         ],
         [
             'name'=>'view sales trend analysis',
-			'systems'=>[VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'sales analysis',
-			'view-name'=>'view trend analysis report'
+            'systems'=>[VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'sales analysis',
+            'view-name'=>'view trend analysis report'
         ],
-		[
+        [
             'name'=>'view sales report',
-			'systems'=>[VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'sales analysis',
-			'view-name'=>'view sales report'
+            'systems'=>[VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'sales analysis',
+            'view-name'=>'view sales report'
         ],
         [
             'name'=>'view customer aging',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-				'group'=>'aging report',
-			'view-name'=>'view customer aging report'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+                'group'=>'aging report',
+            'view-name'=>'view customer aging report'
         ],
-		[
+        [
             'name'=>'view collections effectiveness index',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'collection effectiveness index',
-			'view-name'=>'view'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'collection effectiveness index',
+            'view-name'=>'view'
         ],
-		
-		[
+        
+        [
             'name'=>'view supplier aging',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-				'group'=>'aging report',
-			'view-name'=>'view supplier aging report'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+                'group'=>'aging report',
+            'view-name'=>'view supplier aging report'
         ],
         [
             'name'=>'view customer balances',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'balance report',
-			'view-name'=>'view customers'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'balance report',
+            'view-name'=>'view customers'
         ],  [
             'name'=>'view supplier balances',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'balance report',
-			'view-name'=>'view suppliers'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'balance report',
+            'view-name'=>'view suppliers'
         ],
-		
-		[
+        
+        [
             'name'=>'view letter of guarantee facility',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'letter of guarantee facility',
-			'view-name'=>'view'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'letter of guarantee facility',
+            'view-name'=>'view'
         ],
-		
-		[
+        
+        [
             'name'=>'create letter of guarantee facility',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'letter of guarantee facility',
-			'view-name'=>'create'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'letter of guarantee facility',
+            'view-name'=>'create'
         ],
-		[
+        [
             'name'=>'update letter of guarantee facility',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'letter of guarantee facility',
-			'view-name'=>'update'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'letter of guarantee facility',
+            'view-name'=>'update'
         ],
-		
-		[
+        
+        [
             'name'=>'delete letter of guarantee facility',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'letter of guarantee facility',
-			'view-name'=>'delete'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'letter of guarantee facility',
+            'view-name'=>'delete'
         ],
-		
-		
-		[
+        
+        
+        [
             'name'=>'view letter of guarantee issuance',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'letter of guarantee issuance',
-			'view-name'=>'view'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'letter of guarantee issuance',
+            'view-name'=>'view'
         ],
-		
-		
-		[
+        
+        
+        [
             'name'=>'create letter of guarantee issuance',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'letter of guarantee issuance',
-			'view-name'=>'create'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'letter of guarantee issuance',
+            'view-name'=>'create'
         ],
-		
-		
-		[
+        
+        
+        [
             'name'=>'update letter of guarantee issuance',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'letter of guarantee issuance',
-			'view-name'=>'update'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'letter of guarantee issuance',
+            'view-name'=>'update'
         ],
-		
-		[
+        
+        [
             'name'=>'delete letter of guarantee issuance',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'letter of guarantee issuance',
-			'view-name'=>'delete'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'letter of guarantee issuance',
+            'view-name'=>'delete'
         ],
-		
-		
-		[
+        
+        
+        [
             'name'=>'view letter of credit issuance',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'letter of credit issuance',
-			'view-name'=>'view'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'letter of credit issuance',
+            'view-name'=>'view'
         ],
-		
-		[
+        
+        [
             'name'=>'create letter of credit issuance',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'letter of credit issuance',
-			'view-name'=>'create'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'letter of credit issuance',
+            'view-name'=>'create'
         ],
-		
-		
-		[
+        
+        
+        [
             'name'=>'update letter of credit issuance',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'letter of credit issuance',
-			'view-name'=>'update'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'letter of credit issuance',
+            'view-name'=>'update'
         ],
-		
-		[
+        
+        [
             'name'=>'delete letter of credit issuance',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'letter of credit issuance',
-			'view-name'=>'delete'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'letter of credit issuance',
+            'view-name'=>'delete'
         ],
-		
-		
-		[
+        
+        
+        [
             'name'=>'view letter of credit facility',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'letter of credit facility',
-			'view-name'=>'view'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'letter of credit facility',
+            'view-name'=>'view'
         ],
-		
-		[
+        
+        [
             'name'=>'create letter of credit facility',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'letter of credit facility',
-			'view-name'=>'create'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'letter of credit facility',
+            'view-name'=>'create'
         ],
-		[
+        [
             'name'=>'update letter of credit facility',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'letter of credit facility',
-			'view-name'=>'update'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'letter of credit facility',
+            'view-name'=>'update'
         ],
-		
-		[
+        
+        [
             'name'=>'delete letter of credit facility',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'letter of credit facility',
-			'view-name'=>'delete'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'letter of credit facility',
+            'view-name'=>'delete'
         ],
-		
-		
-		[
+        
+        
+        [
             'name'=>'view medium term loan',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'medium term loan',
-			'view-name'=>'view'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'medium term loan',
+            'view-name'=>'view'
         ],
-		[
+        [
             'name'=>'create medium term loan',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'medium term loan',
-			'view-name'=>'create'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'medium term loan',
+            'view-name'=>'create'
         ],
-		
-		[
+        
+        [
             'name'=>'update medium term loan',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'medium term loan',
-			'view-name'=>'update'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'medium term loan',
+            'view-name'=>'update'
         ],
-		
-		
-		[
+        
+        
+        [
             'name'=>'delete medium term loan',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'medium term loan',
-			'view-name'=>'delete'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'medium term loan',
+            'view-name'=>'delete'
         ],
-		
-		
-		[
+        
+        
+        [
             'name'=>'view certificate of deposit',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'certificate of deposit',
-			'view-name'=>'view'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'certificate of deposit',
+            'view-name'=>'view'
         ],
-		[
+        [
             'name'=>'create certificate of deposit',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'certificate of deposit',
-			'view-name'=>'create'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'certificate of deposit',
+            'view-name'=>'create'
         ],
-		[
+        [
             'name'=>'update certificate of deposit',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'certificate of deposit',
-			'view-name'=>'update'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'certificate of deposit',
+            'view-name'=>'update'
         ],
-		[
+        [
             'name'=>'delete certificate of deposit',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'certificate of deposit',
-			'view-name'=>'delete'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'certificate of deposit',
+            'view-name'=>'delete'
         ],
-		
-		
-		[
+        
+        
+        [
             'name'=>'view time of deposit',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'time of deposit',
-			'view-name'=>'view'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'time of deposit',
+            'view-name'=>'view'
         ],
-		[
+        [
             'name'=>'create time of deposit',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'time of deposit',
-			'view-name'=>'create'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'time of deposit',
+            'view-name'=>'create'
         ],
-		[
+        [
             'name'=>'update time of deposit',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'time of deposit',
-			'view-name'=>'update'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'time of deposit',
+            'view-name'=>'update'
         ],
-		[
+        [
             'name'=>'delete time of deposit',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'time of deposit',
-			'view-name'=>'delete'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'time of deposit',
+            'view-name'=>'delete'
         ],
-		
-		
-		
-		
-		[
+        
+        
+        
+        
+        [
             'name'=>'view cash status dashboard',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'cash vero dashboard',
-			'view-name'=>'view cash status dashboard'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'cash vero dashboard',
+            'view-name'=>'view cash status dashboard'
         ],
-		
-		[
+        
+        [
             'name'=>'view cash Forecast dashboard',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'cash vero dashboard',
-			'view-name'=>'view cash forecast dashboard'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'cash vero dashboard',
+            'view-name'=>'view cash forecast dashboard'
         ],
-		
-		[
+        
+        [
             'name'=>'view lg & lc dashboard',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'cash vero dashboard',
-			'view-name'=>'view lg & lc forecast dashboard'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'cash vero dashboard',
+            'view-name'=>'view lg & lc forecast dashboard'
         ],
-		
-		
+        
+        
 
-		[
+        [
             'name'=>'view notification settings',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'notification & settings',
-			'view-name'=>'view notification settings'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'notification & settings',
+            'view-name'=>'view notification settings'
         ],
-		[
+        [
             'name'=>'view customers',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'customers',
-			'view-name'=>'view'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'customers',
+            'view-name'=>'view'
         ],
-		[
+        [
             'name'=>'create customers',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'customers',
-			'view-name'=>'create'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'customers',
+            'view-name'=>'create'
         ],
-		[
+        [
             'name'=>'update customers',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'customers',
-			'view-name'=>'update'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'customers',
+            'view-name'=>'update'
         ],
-		// [
+        // [
         //     'name'=>'delete customers',
-		// 	'systems'=>[CASH_VERO],
-		// 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-		// 	'group'=>'customers',
-		// 	'view-name'=>'delete'
+        // 	'systems'=>[CASH_VERO],
+        // 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+        // 	'group'=>'customers',
+        // 	'view-name'=>'delete'
         // ],
-		
-		
-		
-		
-		
-		[
+        
+        
+        
+        
+        
+        [
             'name'=>'view suppliers',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'suppliers',
-			'view-name'=>'view'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'suppliers',
+            'view-name'=>'view'
         ],
-		[
+        [
             'name'=>'create suppliers',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'suppliers',
-			'view-name'=>'create'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'suppliers',
+            'view-name'=>'create'
         ],
-		[
+        [
             'name'=>'update suppliers',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'suppliers',
-			'view-name'=>'update'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'suppliers',
+            'view-name'=>'update'
         ],
-		// [
+        // [
         //     'name'=>'delete suppliers',
-		// 	'systems'=>[CASH_VERO],
-		// 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-		// 	'group'=>'suppliers',
-		// 	'view-name'=>'delete'
+        // 	'systems'=>[CASH_VERO],
+        // 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+        // 	'group'=>'suppliers',
+        // 	'view-name'=>'delete'
         // ],
-		
-		
-		
-		[
+        
+        
+        
+        [
             'name'=>'view employees',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'employees',
-			'view-name'=>'view'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'employees',
+            'view-name'=>'view'
         ],
-		[
+        [
             'name'=>'create employees',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'employees',
-			'view-name'=>'create'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'employees',
+            'view-name'=>'create'
         ],
-		[
+        [
             'name'=>'update employees',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'employees',
-			'view-name'=>'update'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'employees',
+            'view-name'=>'update'
         ],
-		// [
+        // [
         //     'name'=>'delete employees',
-		// 	'systems'=>[CASH_VERO],
-		// 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-		// 	'group'=>'employees',
-		// 	'view-name'=>'delete'
+        // 	'systems'=>[CASH_VERO],
+        // 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+        // 	'group'=>'employees',
+        // 	'view-name'=>'delete'
         // ],
-		
-		
-		[
+        
+        
+        [
             'name'=>'view shareholders',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'shareholders',
-			'view-name'=>'view'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'shareholders',
+            'view-name'=>'view'
         ],
-		[
+        [
             'name'=>'create shareholders',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'shareholders',
-			'view-name'=>'create'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'shareholders',
+            'view-name'=>'create'
         ],
-		[
+        [
             'name'=>'update shareholders',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'shareholders',
-			'view-name'=>'update'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'shareholders',
+            'view-name'=>'update'
         ],
-		// [
+        // [
         //     'name'=>'delete shareholders',
-		// 	'systems'=>[CASH_VERO],
-		// 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-		// 	'group'=>'shareholders',
-		// 	'view-name'=>'delete'
+        // 	'systems'=>[CASH_VERO],
+        // 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+        // 	'group'=>'shareholders',
+        // 	'view-name'=>'delete'
         // ],
-		
-		
-		
-		[
+        
+        
+        
+        [
             'name'=>'view deductions',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'deductions',
-			'view-name'=>'view'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'deductions',
+            'view-name'=>'view'
         ],
-		[
+        [
             'name'=>'create deductions',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'deductions',
-			'view-name'=>'create'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'deductions',
+            'view-name'=>'create'
         ],
-		[
+        [
             'name'=>'update deductions',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'deductions',
-			'view-name'=>'update'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'deductions',
+            'view-name'=>'update'
         ],
-		// [
+        // [
         //     'name'=>'delete deductions',
-		// 	'systems'=>[CASH_VERO],
-		// 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-		// 	'group'=>'deductions',
-		// 	'view-name'=>'delete'
+        // 	'systems'=>[CASH_VERO],
+        // 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+        // 	'group'=>'deductions',
+        // 	'view-name'=>'delete'
         // ],
-		
-		
-		[
+        
+        
+        [
             'name'=>'view subsidiary companies',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'subsidiary companies',
-			'view-name'=>'view'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'subsidiary companies',
+            'view-name'=>'view'
         ],
-		[
+        [
             'name'=>'create subsidiary companies',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'subsidiary companies',
-			'view-name'=>'create'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'subsidiary companies',
+            'view-name'=>'create'
         ],
-		[
+        [
             'name'=>'update subsidiary companies',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'subsidiary companies',
-			'view-name'=>'update'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'subsidiary companies',
+            'view-name'=>'update'
         ],
-		// [
+        // [
         //     'name'=>'delete subsidiary companies',
-		// 	'systems'=>[CASH_VERO],
-		// 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-		// 	'group'=>'subsidiary companies',
-		// 	'view-name'=>'delete'
+        // 	'systems'=>[CASH_VERO],
+        // 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+        // 	'group'=>'subsidiary companies',
+        // 	'view-name'=>'delete'
         // ],
-		
-		[
+        
+        [
             'name'=>'view business sectors',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'business sectors',
-			'view-name'=>'view'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'business sectors',
+            'view-name'=>'view'
         ],
-		[
+        [
             'name'=>'create business sectors',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'business sectors',
-			'view-name'=>'create'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'business sectors',
+            'view-name'=>'create'
         ],
-		[
+        [
             'name'=>'update business sectors',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'business sectors setting',
-			'view-name'=>'update'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'business sectors setting',
+            'view-name'=>'update'
         ],
-		[
+        [
             'name'=>'delete business sectors',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'business sectors',
-			'view-name'=>'delete'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'business sectors',
+            'view-name'=>'delete'
         ],
-		[
+        [
             'name'=>'view other partners',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'other partners',
-			'view-name'=>'view'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'other partners',
+            'view-name'=>'view'
         ],
-		[
+        [
             'name'=>'create other partners',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'other partners',
-			'view-name'=>'create'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'other partners',
+            'view-name'=>'create'
         ],
-		[
+        [
             'name'=>'update other partners',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'other partners',
-			'view-name'=>'update'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'other partners',
+            'view-name'=>'update'
         ],
-		// [
+        // [
         //     'name'=>'delete other partners',
-		// 	'systems'=>[CASH_VERO],
-		// 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-		// 	'group'=>'other partners',
-		// 	'view-name'=>'delete'
+        // 	'systems'=>[CASH_VERO],
+        // 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+        // 	'group'=>'other partners',
+        // 	'view-name'=>'delete'
         // ],
-		
-		[
+        
+        [
             'name'=>'view business units',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'business units',
-			'view-name'=>'view'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'business units',
+            'view-name'=>'view'
         ],
-		[
+        [
             'name'=>'create business units',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'business units',
-			'view-name'=>'create'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'business units',
+            'view-name'=>'create'
         ],
-		[
+        [
             'name'=>'update business units',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'business units setting',
-			'view-name'=>'update'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'business units setting',
+            'view-name'=>'update'
         ],
-		[
+        [
             'name'=>'delete business units',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'business units',
-			'view-name'=>'delete'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'business units',
+            'view-name'=>'delete'
         ],
-	
-		[
+    
+        [
             'name'=>'view sales channels',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'sales channels',
-			'view-name'=>'view'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'sales channels',
+            'view-name'=>'view'
         ],
-		[
+        [
             'name'=>'create sales channels',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'sales channels',
-			'view-name'=>'create'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'sales channels',
+            'view-name'=>'create'
         ],
-		[
+        [
             'name'=>'update sales channels',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'sales channels setting',
-			'view-name'=>'update'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'sales channels setting',
+            'view-name'=>'update'
         ],
-		[
+        [
             'name'=>'delete sales channels',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'sales channels',
-			'view-name'=>'delete'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'sales channels',
+            'view-name'=>'delete'
         ],
-		
-		
-		
-		[
+        
+        
+        
+        [
             'name'=>'view sales persons',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'sales persons',
-			'view-name'=>'view'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'sales persons',
+            'view-name'=>'view'
         ],
-		[
+        [
             'name'=>'create sales persons',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'sales persons',
-			'view-name'=>'create'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'sales persons',
+            'view-name'=>'create'
         ],
-		[
+        [
             'name'=>'update sales persons',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'sales persons setting',
-			'view-name'=>'update'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'sales persons setting',
+            'view-name'=>'update'
         ],
-		[
+        [
             'name'=>'delete sales persons',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'sales persons',
-			'view-name'=>'delete'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'sales persons',
+            'view-name'=>'delete'
         ],
-		
-		
-		[
+        
+        
+        [
             'name'=>'view branches',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'branches',
-			'view-name'=>'view'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'branches',
+            'view-name'=>'view'
         ],
-		[
+        [
             'name'=>'create branches',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'branches',
-			'view-name'=>'create'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'branches',
+            'view-name'=>'create'
         ],
-		[
+        [
             'name'=>'update branches',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'branches setting',
-			'view-name'=>'update'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'branches setting',
+            'view-name'=>'update'
         ],
-		[
+        [
             'name'=>'delete branches',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'branches',
-			'view-name'=>'delete'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'branches',
+            'view-name'=>'delete'
         ],
-		
-		
-		[
+        
+        
+        [
             'name'=>'view cash expense categories',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'notification & settings',
-			'view-name'=>'view cash expense categories'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'notification & settings',
+            'view-name'=>'view cash expense categories'
         ],
-		[
-			'name'=>'view customer invoice past due notification',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'notification & settings',
-			'view-name'=>'view customer invoice past due notification'
-		],
-		[
-			'name'=>'view customer invoice coming due notification',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'customer invoices notifications',
-			'view-name'=>'view customer invoices'
-		],
-		[
-			'name'=>'view customer invoice current due notification',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-					'group'=>'customer invoices notifications',
-			'view-name'=>'view customer invoices current due'
-		],
-		
-		[
-			'name'=>'view supplier invoices past due notifications',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-				'group'=>'supplier invoices notifications',
-			'view-name'=>'view supplier invoices past due'
-		],[
-			'name'=>'view supplier invoices current due notifications',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-				'group'=>'supplier invoices notifications',
-			'view-name'=>'view supplier invoices current due'
-		],[
-			'name'=>'view supplier invoices coming due notifications',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-							'group'=>'supplier invoices notifications',
-			'view-name'=>'view supplier invoices coming due'
-		],[
-			'name'=>'view cheque past due notifications',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+        [
+            'name'=>'view customer invoice past due notification',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'notification & settings',
+            'view-name'=>'view customer invoice past due notification'
+        ],
+        [
+            'name'=>'view customer invoice coming due notification',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'customer invoices notifications',
+            'view-name'=>'view customer invoices'
+        ],
+        [
+            'name'=>'view customer invoice current due notification',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+                    'group'=>'customer invoices notifications',
+            'view-name'=>'view customer invoices current due'
+        ],
+        
+        [
+            'name'=>'view supplier invoices past due notifications',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+                'group'=>'supplier invoices notifications',
+            'view-name'=>'view supplier invoices past due'
+        ],[
+            'name'=>'view supplier invoices current due notifications',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+                'group'=>'supplier invoices notifications',
+            'view-name'=>'view supplier invoices current due'
+        ],[
+            'name'=>'view supplier invoices coming due notifications',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+                            'group'=>'supplier invoices notifications',
+            'view-name'=>'view supplier invoices coming due'
+        ],[
+            'name'=>'view cheque past due notifications',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
             'group'=>'receivable cheques notifications',
-			'view-name'=>'view cheque past due'
-		],
-		[
-			'name'=>'view cheque current due notifications',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			   'group'=>'receivable cheques notifications',
-			'view-name'=>'view cheque current due'
-		],
-		[
-			'name'=>'view cheque under collection today notifications',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			 'group'=>'receivable cheques notifications',
-			'view-name'=>'view cheque under collection today'
-		],[
-			'name'=>'view cheque under collection since days notifications',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'receivable cheques notifications',
-			'view-name'=>'view cheque under collection since days'
-		],
-		[
-			'name'=>'view current payable cheques notifications',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'current payable cheques notifications',
-			'view-name'=>'view current payable cheques'
-		],
-		[
-			'name'=>'view coming payable cheques notifications',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'coming payable cheques notifications',
-			'view-name'=>'view coming payable cheques'
-		],
-		[
+            'view-name'=>'view cheque past due'
+        ],
+        [
+            'name'=>'view cheque current due notifications',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+               'group'=>'receivable cheques notifications',
+            'view-name'=>'view cheque current due'
+        ],
+        [
+            'name'=>'view cheque under collection today notifications',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+             'group'=>'receivable cheques notifications',
+            'view-name'=>'view cheque under collection today'
+        ],[
+            'name'=>'view cheque under collection since days notifications',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'receivable cheques notifications',
+            'view-name'=>'view cheque under collection since days'
+        ],
+        [
+            'name'=>'view current payable cheques notifications',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'current payable cheques notifications',
+            'view-name'=>'view current payable cheques'
+        ],
+        [
+            'name'=>'view coming payable cheques notifications',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'coming payable cheques notifications',
+            'view-name'=>'view coming payable cheques'
+        ],
+        [
             'name'=>'update cash & cheques opening balances',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'opening-balances',
-			'view-name'=>'update cash & cheques'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'opening-balances',
+            'view-name'=>'update cash & cheques'
         ],
-		// [
+        // [
         //     'name'=>'update lg opening balances',
-		// 	'systems'=>[CASH_VERO],
-		// 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-		// 	'group'=>'opening-balances',
-		// 	'view-name'=>'update lg opening balances'
-		// ],
-		// [
+        // 	'systems'=>[CASH_VERO],
+        // 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+        // 	'group'=>'opening-balances',
+        // 	'view-name'=>'update lg opening balances'
+        // ],
+        // [
         //     'name'=>'update lc opening balances',
-		// 	'systems'=>[CASH_VERO],
-		// 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-		// 	'group'=>'opening-balances',
-		// 	'view-name'=>'update lc opening balances'
+        // 	'systems'=>[CASH_VERO],
+        // 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+        // 	'group'=>'opening-balances',
+        // 	'view-name'=>'update lc opening balances'
         // ]
-		// ,
-		[
+        // ,
+        [
             'name'=>'view customers contracts',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'customer contracts',
-			'view-name'=>'view'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'customer contracts',
+            'view-name'=>'view'
         ],
-		[
+        [
             'name'=>'create customers contracts',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'customer contracts',
-			'view-name'=>'create'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'customer contracts',
+            'view-name'=>'create'
         ],
-		[
+        [
             'name'=>'update customers contracts',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'customer contracts',
-			'view-name'=>'update'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'customer contracts',
+            'view-name'=>'update'
         ],
-		[
+        [
             'name'=>'delete customers contracts',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'customer contracts',
-			'view-name'=>'delete'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'customer contracts',
+            'view-name'=>'delete'
         ],
-		[
-			'name'=>'view suppliers contracts',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'supplier contracts',
-			'view-name'=>'view'
-		],
-		[
-			'name'=>'create suppliers contracts',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'supplier contracts',
-			'view-name'=>'create'
-		],
-		[
-			'name'=>'update suppliers contracts',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'supplier contracts',
-			'view-name'=>'update'
-		],
-		[
-			'name'=>'delete suppliers contracts',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'supplier contracts',
-			'view-name'=>'delete'
-		],
-		[
-			'name'=>'view safe statement report',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-				'group'=>'reports',
-			'view-name'=>'safe statement'
-		],
-		[
-			'name'=>'view cash expense report',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'reports',
-			'view-name'=>'cash expense'
-		],
-		[
-			'name'=>'view partners statement report',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-				'group'=>'reports',
-			'view-name'=>'partners statement'
-		],
-		[
-			'name'=>'view bank statement report',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-				'group'=>'reports',
-			'view-name'=>'bank statement'
-		],[
-			'name'=>'view lg by beneficiary name report',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-				'group'=>'reports',
-			'view-name'=>'lg by beneficiary name report'
-		],
-		[
-			'name'=>'view lg by bank name report',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-				'group'=>'reports',
-			'view-name'=>'lg by bank name report'
-		],
-		[
-			'name'=>'view lc & lg statement report',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-				'group'=>'reports',
-			'view-name'=>'lc & lg statement'
-		],
+        [
+            'name'=>'view suppliers contracts',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'supplier contracts',
+            'view-name'=>'view'
+        ],
+        [
+            'name'=>'create suppliers contracts',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'supplier contracts',
+            'view-name'=>'create'
+        ],
+        [
+            'name'=>'update suppliers contracts',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'supplier contracts',
+            'view-name'=>'update'
+        ],
+        [
+            'name'=>'delete suppliers contracts',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'supplier contracts',
+            'view-name'=>'delete'
+        ],
+        [
+            'name'=>'view safe statement report',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+                'group'=>'reports',
+            'view-name'=>'safe statement'
+        ],
+        [
+            'name'=>'view cash expense report',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'reports',
+            'view-name'=>'cash expense'
+        ],
+        [
+            'name'=>'view partners statement report',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+                'group'=>'reports',
+            'view-name'=>'partners statement'
+        ],
+        [
+            'name'=>'view bank statement report',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+                'group'=>'reports',
+            'view-name'=>'bank statement'
+        ],[
+            'name'=>'view lg by beneficiary name report',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+                'group'=>'reports',
+            'view-name'=>'lg by beneficiary name report'
+        ],
+        [
+            'name'=>'view lg by bank name report',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+                'group'=>'reports',
+            'view-name'=>'lg by bank name report'
+        ],
+        [
+            'name'=>'view lc & lg statement report',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+                'group'=>'reports',
+            'view-name'=>'lc & lg statement'
+        ],
         [
             'name'=>'view cash flow report',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'reports',
-			'view-name'=>'cash flow'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'reports',
+            'view-name'=>'cash flow'
         ],
-		[
+        [
             'name'=>'view contract cash flow report',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'reports',
-			'view-name'=>'contract cash flow'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'reports',
+            'view-name'=>'contract cash flow'
         ],
-		[
-			'name'=>'view withdrawals settlement report',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'reports',
-			'view-name'=>'withdrawals settlement'
-		],
+        [
+            'name'=>'view withdrawals settlement report',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'reports',
+            'view-name'=>'withdrawals settlement'
+        ],
         [
             'name'=>'view money received',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'money received',
-			'view-name'=>'view'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'money received',
+            'view-name'=>'view'
         ],
-		[
+        [
             'name'=>'review money received',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER],
-			'group'=>'money received',
-			'view-name'=>'review'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER],
+            'group'=>'money received',
+            'view-name'=>'review'
         ],
-		[
+        [
             'name'=>'create money received',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'money received',
-			'view-name'=>'create'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'money received',
+            'view-name'=>'create'
         ],
-		[
+        [
             'name'=>'update money received',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'money received',
-			'view-name'=>'update'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'money received',
+            'view-name'=>'update'
         ],
-		[
+        [
             'name'=>'delete money received',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'money received',
-			'view-name'=>'delete'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'money received',
+            'view-name'=>'delete'
         ],
-		[
+        [
             'name'=>'view supplier payment',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'supplier payment',
-			'view-name'=>'view'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'supplier payment',
+            'view-name'=>'view'
         ],
-		[
+        [
             'name'=>'review supplier payments',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER],
-			'group'=>'supplier payment',
-			'view-name'=>'review'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER],
+            'group'=>'supplier payment',
+            'view-name'=>'review'
         ],
-		[
+        [
             'name'=>'create supplier payment',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'supplier payment',
-			'view-name'=>'create'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'supplier payment',
+            'view-name'=>'create'
         ],
-		[
+        [
             'name'=>'update supplier payment',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'supplier payment',
-			'view-name'=>'update'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'supplier payment',
+            'view-name'=>'update'
         ],
-		[
+        [
             'name'=>'delete supplier payment',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'supplier payment',
-			'view-name'=>'delete'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'supplier payment',
+            'view-name'=>'delete'
         ],
-		[
+        [
             'name'=>'view cash expenses',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-				'group'=>'cash expenses',
-			'view-name'=>'view'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+                'group'=>'cash expenses',
+            'view-name'=>'view'
         ],
-		[
+        [
             'name'=>'review cash expenses',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER],
-				'group'=>'cash expenses',
-			'view-name'=>'review'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER],
+                'group'=>'cash expenses',
+            'view-name'=>'review'
         ],
-		[
+        [
             'name'=>'create cash expenses',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-				'group'=>'cash expenses',
-			'view-name'=>'create'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+                'group'=>'cash expenses',
+            'view-name'=>'create'
         ],
-		
-		[
+        
+        [
             'name'=>'update cash expenses',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'cash expenses',
-			'view-name'=>'update'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'cash expenses',
+            'view-name'=>'update'
         ],
-		
-		[
+        
+        [
             'name'=>'delete cash expenses',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'cash expenses',
-			'view-name'=>'delete'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'cash expenses',
+            'view-name'=>'delete'
         ],
-		
-		[
+        
+        [
             'name'=>'view internal money transfer',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'internal money transfer',
-			'view-name'=>'view'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'internal money transfer',
+            'view-name'=>'view'
         ],
-		
-		[
+        
+        [
             'name'=>'create internal money transfer',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'internal money transfer',
-			'view-name'=>'create'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'internal money transfer',
+            'view-name'=>'create'
         ],
-		
-		
-		[
+        
+        
+        [
             'name'=>'update internal money transfer',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'internal money transfer',
-			'view-name'=>'update'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'internal money transfer',
+            'view-name'=>'update'
         ],
-		
-		[
+        
+        [
             'name'=>'delete internal money transfer',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'internal money transfer',
-			'view-name'=>'delete'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'internal money transfer',
+            'view-name'=>'delete'
         ],
-		
-		[
+        
+        [
             'name'=>'view lc settlement internal transfer',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'lc settlement internal money transfer',
-			'view-name'=>'view'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'lc settlement internal money transfer',
+            'view-name'=>'view'
         ],
-		
-		[
+        
+        [
             'name'=>'create lc settlement internal transfer',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'lc settlement internal money transfer',
-			'view-name'=>'create'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'lc settlement internal money transfer',
+            'view-name'=>'create'
         ],
-		
-		
-		[
+        
+        
+        [
             'name'=>'update lc settlement internal transfer',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'lc settlement internal money transfer',
-			'view-name'=>'update'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'lc settlement internal money transfer',
+            'view-name'=>'update'
         ],
-		
-		[
+        
+        [
             'name'=>'delete lc settlement internal transfer',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'lc settlement internal money transfer',
-			'view-name'=>'delete'
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'lc settlement internal money transfer',
+            'view-name'=>'delete'
         ],
-		
-		[
-			'name'=>'view buy or sell currency',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'buy or sell currency',
-			'view-name'=>'view'
-		],
-		
-		[
-			'name'=>'create buy or sell currency',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'buy or sell currency',
-			'view-name'=>'create'
-		],
-		
-		[
-			'name'=>'update buy or sell currency',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'buy or sell currency',
-			'view-name'=>'update'
-		],
-		[
-			'name'=>'delete buy or sell currency',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'buy or sell currency',
-			'view-name'=>'delete'
-		],
-		[
-			'name'=>'view foreign exchange rate',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'foreign exchange rate',
-			'view-name'=>'view'
-		],
-		
-		[
-			'name'=>'create foreign exchange rate',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'foreign exchange rate',
-			'view-name'=>'create'
-		],
-		
-		
-		[
-			'name'=>'update foreign exchange rate',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'foreign exchange rate',
-			'view-name'=>'update'
-		],
-		[
-			'name'=>'delete foreign exchange rate',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'foreign exchange rate',
-			'view-name'=>'delete'
-		],
-		
-		[
-			'name'=>'view income statement planning',
-			'systems'=>[INCOME_STATEMENT_PLANNING],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'income statement planning',
-			'view-name'=>'view'
-		],
-		[
-			'name'=>'view financial institutions',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'financial institutions',
-			'view-name'=>'view'
-		],
-		[
-			'name'=>'create financial institutions',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'financial institutions',
-			'view-name'=>'create'
-		],
-		[
-			'name'=>'update financial institutions',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'financial institutions',
-			'view-name'=>'update'
-		],
-		
-		[
-			'name'=>'delete financial institutions',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'financial institutions',
-			'view-name'=>'delete'
-		],
-		/////////
-		
-		
-		[
-			'name'=>'view fully secured overdraft',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'fully secured overdraft',
-			'view-name'=>'view'
-		],
-		
-		[
-			'name'=>'create fully secured overdraft',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'fully secured overdraft',
-			'view-name'=>'create'
-		],
-		
-		[
-			'name'=>'update fully secured overdraft',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'fully secured overdraft',
-			'view-name'=>'update'
-		],
-		
-		[
-			'name'=>'delete fully secured overdraft',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'fully secured overdraft',
-			'view-name'=>'delete'
-		],
-		[
-			'name'=>'view clean overdraft',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'clean overdraft',
-			'view-name'=>'view'
-		],
-		
-		[
-			'name'=>'create clean overdraft',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'clean overdraft',
-			'view-name'=>'create'
-		],
-		[
-			'name'=>'update clean overdraft',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'clean overdraft',
-			'view-name'=>'update'
-		],
-		[
-			'name'=>'delete clean overdraft',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'clean overdraft',
-			'view-name'=>'delete'
-		],
-		
-		
-		
-		[
-			'name'=>'view overdraft against commercial paper',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'overdraft against commercial paper',
-			'view-name'=>'view'
-		],
-		
-		[
-			'name'=>'update overdraft against commercial paper',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'overdraft against commercial paper',
-			'view-name'=>'update'
-		],
-		[
-			'name'=>'delete overdraft against commercial paper',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'overdraft against commercial paper',
-			'view-name'=>'delete'
-		],
-		
-		
-		[
-			'name'=>'view overdraft against assignment of contract',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'overdraft against assignment of contract',
-			'view-name'=>'view'
-		],
-		
-		[
-			'name'=>'create overdraft against assignment of contract',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'overdraft against assignment of contract',
-			'view-name'=>'create'
-		],
-		
-		[
-			'name'=>'update overdraft against assignment of contract',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'overdraft against assignment of contract',
-			'view-name'=>'update'
-		],
-		[
-			'name'=>'delete overdraft against assignment of contract',
-			'systems'=>[CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'overdraft against assignment of contract',
-			'view-name'=>'delete'
-		],
-		////
-		[
-			'name'=>'view quick price',
-			'systems'=>[PRICING_CALCULATOR],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-				'group'=>'quick price',
-			'view-name'=>'view'
-		],
-		[
-			'name'=>'view pricing plans',
-			'systems'=>[PRICING_CALCULATOR],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'pricing price',
-			'view-name'=>'view'
-		],
-		[
-			'name'=>'view quick price calculator',
-			'systems'=>[PRICING_CALCULATOR],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'quick price calculator',
-			'view-name'=>'view'
-		],
-		[
-			'name'=>'view quick price setting',
-			'systems'=>[PRICING_CALCULATOR],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'quick price calculator',
-			'view-name'=>'setting'
-		],
-		[
-			'name'=>'view revenue business line',
-			'systems'=>[PRICING_CALCULATOR],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-				'group'=>'revenue business line',
-			'view-name'=>'view'
-		],
-		[
-			'name'=>'view positions',
-			'systems'=>[PRICING_CALCULATOR],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'positions',
-			'view-name'=>'view'
-		],
-		[
-			'name'=>'view expenses',
-			'systems'=>[PRICING_CALCULATOR],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-				'group'=>'expenses',
-			'view-name'=>'view'
-		],
-		[
-			'name'=>'view labeling items',
-			'systems'=>[LABELING],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'labeling',
-			'view-name'=>'view'
-		],
-		[
-			'name'=>'view create labeling items',
-			'systems'=>[LABELING],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'labeling',
-			'view-name'=>'create'
-		],
-		[
-			'name'=>viewLabelingItemData,
-			'systems'=>[LABELING],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-				'group'=>'labeling',
-			'view-name'=>'view export'
-		],
-		[
-			'name'=>uploadLabelingItemData,
-			'systems'=>[LABELING],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'labeling',
-			'view-name'=>'upload'
-		],[
-			'name'=>exportLabelingItemData,
-			'systems'=>[LABELING],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'labeling',
-			'view-name'=>'export'
-		],
-		[
-			'name'=>deleteLabelingItemData,
-			'systems'=>[LABELING],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'labeling',
-			'view-name'=>'delete'
-		],
-		[
-			'name'=>'view super admin',
-			'systems'=>[VERO,CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN],
-			'group'=>'super admin permissions',
-			'view-name'=>'view'
-		],
-		[
-			'name'=>'view company admin',
-			'systems'=>[VERO,CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN],
-			'group'=>'company admin permissions',
-			'view-name'=>'view'
-		],
-		[
-			'name'=>'create company admin',
-			'systems'=>[VERO,CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN],
+        
+        [
+            'name'=>'view buy or sell currency',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'buy or sell currency',
+            'view-name'=>'view'
+        ],
+        
+        [
+            'name'=>'create buy or sell currency',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'buy or sell currency',
+            'view-name'=>'create'
+        ],
+        
+        [
+            'name'=>'update buy or sell currency',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'buy or sell currency',
+            'view-name'=>'update'
+        ],
+        [
+            'name'=>'delete buy or sell currency',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'buy or sell currency',
+            'view-name'=>'delete'
+        ],
+        [
+            'name'=>'view foreign exchange rate',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'foreign exchange rate',
+            'view-name'=>'view'
+        ],
+        
+        [
+            'name'=>'create foreign exchange rate',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'foreign exchange rate',
+            'view-name'=>'create'
+        ],
+        
+        
+        [
+            'name'=>'update foreign exchange rate',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'foreign exchange rate',
+            'view-name'=>'update'
+        ],
+        [
+            'name'=>'delete foreign exchange rate',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'foreign exchange rate',
+            'view-name'=>'delete'
+        ],
+        
+        [
+            'name'=>'view income statement planning',
+            'systems'=>[INCOME_STATEMENT_PLANNING],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'income statement planning',
+            'view-name'=>'view'
+        ],
+        [
+            'name'=>'view financial institutions',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'financial institutions',
+            'view-name'=>'view'
+        ],
+        [
+            'name'=>'create financial institutions',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'financial institutions',
+            'view-name'=>'create'
+        ],
+        [
+            'name'=>'update financial institutions',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'financial institutions',
+            'view-name'=>'update'
+        ],
+        
+        [
+            'name'=>'delete financial institutions',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'financial institutions',
+            'view-name'=>'delete'
+        ],
+        /////////
+        
+        
+        [
+            'name'=>'view fully secured overdraft',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'fully secured overdraft',
+            'view-name'=>'view'
+        ],
+        
+        [
+            'name'=>'create fully secured overdraft',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'fully secured overdraft',
+            'view-name'=>'create'
+        ],
+        
+        [
+            'name'=>'update fully secured overdraft',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'fully secured overdraft',
+            'view-name'=>'update'
+        ],
+        
+        [
+            'name'=>'delete fully secured overdraft',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'fully secured overdraft',
+            'view-name'=>'delete'
+        ],
+        [
+            'name'=>'view clean overdraft',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'clean overdraft',
+            'view-name'=>'view'
+        ],
+        
+        [
+            'name'=>'create clean overdraft',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'clean overdraft',
+            'view-name'=>'create'
+        ],
+        [
+            'name'=>'update clean overdraft',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'clean overdraft',
+            'view-name'=>'update'
+        ],
+        [
+            'name'=>'delete clean overdraft',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'clean overdraft',
+            'view-name'=>'delete'
+        ],
+        
+        
+        
+        [
+            'name'=>'view overdraft against commercial paper',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'overdraft against commercial paper',
+            'view-name'=>'view'
+        ],
+        
+        [
+            'name'=>'update overdraft against commercial paper',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'overdraft against commercial paper',
+            'view-name'=>'update'
+        ],
+        [
+            'name'=>'delete overdraft against commercial paper',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'overdraft against commercial paper',
+            'view-name'=>'delete'
+        ],
+        
+        
+        [
+            'name'=>'view overdraft against assignment of contract',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'overdraft against assignment of contract',
+            'view-name'=>'view'
+        ],
+        
+        [
+            'name'=>'create overdraft against assignment of contract',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'overdraft against assignment of contract',
+            'view-name'=>'create'
+        ],
+        
+        [
+            'name'=>'update overdraft against assignment of contract',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'overdraft against assignment of contract',
+            'view-name'=>'update'
+        ],
+        [
+            'name'=>'delete overdraft against assignment of contract',
+            'systems'=>[CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'overdraft against assignment of contract',
+            'view-name'=>'delete'
+        ],
+        ////
+        [
+            'name'=>'view quick price',
+            'systems'=>[PRICING_CALCULATOR],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+                'group'=>'quick price',
+            'view-name'=>'view'
+        ],
+        [
+            'name'=>'view pricing plans',
+            'systems'=>[PRICING_CALCULATOR],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'pricing price',
+            'view-name'=>'view'
+        ],
+        [
+            'name'=>'view quick price calculator',
+            'systems'=>[PRICING_CALCULATOR],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'quick price calculator',
+            'view-name'=>'view'
+        ],
+        [
+            'name'=>'view quick price setting',
+            'systems'=>[PRICING_CALCULATOR],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'quick price calculator',
+            'view-name'=>'setting'
+        ],
+        [
+            'name'=>'view revenue business line',
+            'systems'=>[PRICING_CALCULATOR],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+                'group'=>'revenue business line',
+            'view-name'=>'view'
+        ],
+        [
+            'name'=>'view positions',
+            'systems'=>[PRICING_CALCULATOR],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'positions',
+            'view-name'=>'view'
+        ],
+        [
+            'name'=>'view expenses',
+            'systems'=>[PRICING_CALCULATOR],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+                'group'=>'expenses',
+            'view-name'=>'view'
+        ],
+        [
+            'name'=>'view labeling items',
+            'systems'=>[LABELING],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'labeling',
+            'view-name'=>'view'
+        ],
+        [
+            'name'=>'view create labeling items',
+            'systems'=>[LABELING],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'labeling',
+            'view-name'=>'create'
+        ],
+        [
+            'name'=>viewLabelingItemData,
+            'systems'=>[LABELING],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+                'group'=>'labeling',
+            'view-name'=>'view export'
+        ],
+        [
+            'name'=>uploadLabelingItemData,
+            'systems'=>[LABELING],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'labeling',
+            'view-name'=>'upload'
+        ],[
+            'name'=>exportLabelingItemData,
+            'systems'=>[LABELING],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'labeling',
+            'view-name'=>'export'
+        ],
+        [
+            'name'=>deleteLabelingItemData,
+            'systems'=>[LABELING],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>'labeling',
+            'view-name'=>'delete'
+        ],
+        [
+            'name'=>'view super admin',
+            'systems'=>[VERO,CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN],
+            'group'=>'super admin permissions',
+            'view-name'=>'view'
+        ],
+        [
+            'name'=>'view company admin',
+            'systems'=>[VERO,CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN],
             'group'=>'company admin permissions',
-			'view-name'=>'create'
-		],
-		[
-			'name'=>'view managers',
-			'systems'=>[VERO,CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN],
-			 'group'=>'managers permissions',
-			'view-name'=>'view'
-		],
-		[
-			'name'=>'create manager',
-			'systems'=>[VERO,CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN],
-					 'group'=>'managers permissions',
-			'view-name'=>'create'
-		],
-		[
-			'name'=>'view users',
-			'systems'=>[VERO,CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN],
-					 'group'=>'users permissions',
-			'view-name'=>'view'
-		],
-		[
-			'name'=>'create user',
-			'systems'=>[VERO,CASH_VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN],
-			 'group'=>'users permissions',
-			'view-name'=>'create'
-		]
+            'view-name'=>'view'
+        ],
+        [
+            'name'=>'create company admin',
+            'systems'=>[VERO,CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN],
+            'group'=>'company admin permissions',
+            'view-name'=>'create'
+        ],
+        [
+            'name'=>'view managers',
+            'systems'=>[VERO,CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN],
+             'group'=>'managers permissions',
+            'view-name'=>'view'
+        ],
+        [
+            'name'=>'create manager',
+            'systems'=>[VERO,CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN],
+                     'group'=>'managers permissions',
+            'view-name'=>'create'
+        ],
+        [
+            'name'=>'view users',
+            'systems'=>[VERO,CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN],
+                     'group'=>'users permissions',
+            'view-name'=>'view'
+        ],
+        [
+            'name'=>'create user',
+            'systems'=>[VERO,CASH_VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN],
+             'group'=>'users permissions',
+            'view-name'=>'create'
+        ]
     ];
 
-    foreach (Arr::except(reportNames(), ['product items', 'products / service'])  as $reportName) {
+    foreach (Arr::except(reportNames(), ['product items', 'products / service']) as $reportName) {
         $permissions[] = [
             'name'=>generateReportName($reportName),
-			'systems'=>[VERO],
-			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>$reportName,
-			'view-name'=>'view ' .$reportName 
+            'systems'=>[VERO],
+            'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+            'group'=>$reportName,
+            'view-name'=>'view ' .$reportName
         ];
     }
 
@@ -4850,27 +4848,28 @@ function getPermissions(array $systemsNames  = []):array
         foreach (['income statement', 'balance sheet', 'cash flow statement'] as $statementName) {
             $permissions[] = [
                 'name'=>'edit ' . $reportType . ' ' . $statementName,
-				'systems'=>[VERO],
-				'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-				 'group'=>$statementName,
-				'view-name'=>'view ' .$reportType . ' ' . $statementName
+                'systems'=>[VERO],
+                'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+                 'group'=>$statementName,
+                'view-name'=>'view ' .$reportType . ' ' . $statementName
             ];
         }
     }
-	if(count($systemsNames)){
-		return filterPermissionForSystemName($permissions,$systemsNames);
-	}
+    if (count($systemsNames)) {
+        return filterPermissionForSystemName($permissions, $systemsNames);
+    }
     return $permissions;
 }
-function filterPermissionForSystemName($permissions,array $systemsNames):array{
-	$result =[];
-	foreach($permissions as $permissionArr){
-		if(HArr::atLeastOneValueExistInArray($systemsNames , $permissionArr['systems'])){
-			$result[] = $permissionArr;
-		}
-		
-	}
-	return $result ;
+function filterPermissionForSystemName($permissions, array $systemsNames):array
+{
+    $result =[];
+    foreach ($permissions as $permissionArr) {
+        if (HArr::atLeastOneValueExistInArray($systemsNames, $permissionArr['systems'])) {
+            $result[] = $permissionArr;
+        }
+        
+    }
+    return $result ;
 }
 function generateReportName($reportName)
 {
@@ -4909,7 +4908,7 @@ function reportNames()
 }
 function str_plural($str)
 {
-	return Str::plural($str);
+    return Str::plural($str);
 }
 function searchWordInstr(array $words, string $sentence)
 {
@@ -4955,18 +4954,18 @@ function checkIfAllDates(array $dates):array
 
 function number_unformat($number, $force_number = true, $dec_point = '.', $thousands_sep = ',')
 {
-	$isNegativeNumber = str_starts_with($number,'-');
+    $isNegativeNumber = str_starts_with($number, '-');
     if ($force_number) {
-		$number = preg_replace('/^[^\d]+/', '', $number);
+        $number = preg_replace('/^[^\d]+/', '', $number);
     } elseif (preg_match('/^[^\d]+/', $number)) {
         return false;
     }
     $type = (strpos($number, $dec_point) === false) ? 'int' : 'float';
     $number = str_replace([$dec_point, $thousands_sep], ['.', ''], $number);
     settype($number, $type);
-	if($isNegativeNumber){
-		$number  = $number * -1 ;
-	}
+    if ($isNegativeNumber) {
+        $number  = $number * -1 ;
+    }
     return $number;
 }
 function hasUploadData($company_id)
@@ -5165,16 +5164,16 @@ function getTypesForValuesForFinancialPlanning():array
 }
 function twoArrayIsEqualValues(array $firstItems, array $secondItems)
 {
-    if(count($firstItems) != count($secondItems)) {
+    if (count($firstItems) != count($secondItems)) {
         return false ;
     }
-    foreach($firstItems as $date =>$val) {
+    foreach ($firstItems as $date =>$val) {
         $secondVal = $secondItems[$date] ?? 0;
-        if($secondVal == 0) {
-            if($val !=0) {
+        if ($secondVal == 0) {
+            if ($val !=0) {
                 return false ;
             }
-        } elseif(!(abs(($val-$secondVal)/$secondVal) < 0.00001)) {
+        } elseif (!(abs(($val-$secondVal)/$secondVal) < 0.00001)) {
             return false ;
         }
     }
@@ -5187,10 +5186,10 @@ function array_first($array)
 function array_sum_at_date($items, $date)
 {
     $total = 0 ;
-    foreach($items as$keys=> $vals) {
-        foreach($vals as $key => $val) {
+    foreach ($items as $keys=> $vals) {
+        foreach ($vals as $key => $val) {
 
-            if($key == $date) {
+            if ($key == $date) {
                 $total += $val ;
             }
         }
@@ -5201,11 +5200,11 @@ function get_total_with_preserve_key($items)
 {
 
     $result = [];
-    if(!count($items)) {
+    if (!count($items)) {
         return [];
     }
-    foreach(array_keys(Arr::first($items)) as $date) {
-        foreach($items as $key => $values) {
+    foreach (array_keys(Arr::first($items)) as $date) {
+        foreach ($items as $key => $values) {
             $currentValue = $values[$date] ?? 0 ;
             $result[$key] = isset($result[$key]) ? $result[$key] + $currentValue : $currentValue ;
         }
@@ -5235,7 +5234,7 @@ function getRevenueStreamTypes(): array
 function getPaymentIntervals(): array
 {
     $elements = [];
-    for($i = 2  ; $i<=12 ; $i++) {
+    for ($i = 2  ; $i<=12 ; $i++) {
         $elements[]=[
             'value' => $i,
             'title' => __('Every').' ' . $i  . ' ' . __('Months')
@@ -5278,9 +5277,9 @@ function sumIntervals(array $dateValues, string $intervalName)
 function getMonthsLessThanOrEqual($limitMonth, $months)
 {
     $result = [];
-    foreach($months as $month) {
+    foreach ($months as $month) {
         $currentMonthNumber = explode('-', $month)[1];
-        if($currentMonthNumber <= $limitMonth) {
+        if ($currentMonthNumber <= $limitMonth) {
             $result[] = '01-'.$currentMonthNumber;
         }
     }
@@ -5288,23 +5287,23 @@ function getMonthsLessThanOrEqual($limitMonth, $months)
 }
 function getMonthsForQuarterly($limitMonth, $quarters)
 {
-    if($limitMonth <=3) {
+    if ($limitMonth <=3) {
         return ['01-'.$limitMonth];
     }
-    if($limitMonth <=6) {
-        return collect([$quarters[0]??null,'01-'.$limitMonth])->filter(function($item){
-			return $item ;
-		})->toArray();
+    if ($limitMonth <=6) {
+        return collect([$quarters[0]??null,'01-'.$limitMonth])->filter(function ($item) {
+            return $item ;
+        })->toArray();
     }
-    if($limitMonth <=9) {
-        return collect([$quarters[0]??null,$quarters[1]??null,'01-'.$limitMonth])->filter(function($item){
-			return $item ;
-		})->toArray(); 
+    if ($limitMonth <=9) {
+        return collect([$quarters[0]??null,$quarters[1]??null,'01-'.$limitMonth])->filter(function ($item) {
+            return $item ;
+        })->toArray();
     }
-    if($limitMonth <=12) {
-        return collect([$quarters[0]??null,$quarters[1]??null,$quarters[2]??null,'01-'.$limitMonth])->filter(function($item){
-			return $item ;
-		})->toArray();
+    if ($limitMonth <=12) {
+        return collect([$quarters[0]??null,$quarters[1]??null,$quarters[2]??null,'01-'.$limitMonth])->filter(function ($item) {
+            return $item ;
+        })->toArray();
     }
 
 }
@@ -5312,10 +5311,10 @@ function getMonthsForQuarterly($limitMonth, $quarters)
 
 function getMonthsForSemiAnnually($limitMonth, $quarters)
 {
-    if($limitMonth <=6) {
+    if ($limitMonth <=6) {
         return ['01-'.$limitMonth];
     }
-    if($limitMonth <=12) {
+    if ($limitMonth <=12) {
         return [$quarters[0],'01-'.$limitMonth];
     }
 
@@ -5399,32 +5398,32 @@ function dueInDays()
         [
             'value'=> 180 ,
             'title'=>180 . ' ' . __('Days')
-		],
-		[
+        ],
+        [
             'value'=> 210 ,
             'title'=>210 . ' ' . __('Days')
-		],
-		[
+        ],
+        [
             'value'=>240 ,
             'title'=>240 . ' ' . __('Days')
-		],
-		[
+        ],
+        [
             'value'=>270 ,
             'title'=>270 . ' ' . __('Days')
-		],
+        ],
 
-		[
+        [
             'value'=>300 ,
             'title'=>300 . ' ' . __('Days')
-		],
-		[
+        ],
+        [
             'value'=>330 ,
             'title'=>330 . ' ' . __('Days')
-		],
-		[
+        ],
+        [
             'value'=> 360 ,
             'title'=>360 . ' ' . __('Days')
-		],
+        ],
     ];
 }
 
@@ -5436,7 +5435,7 @@ function factoringDueInDays():array
             'value'=>30,
             'title'=>30 . ' ' . __('Days Factoring')
         ],
-		[
+        [
             'value'=>45,
             'title'=>45 . ' ' . __('Days Factoring')
         ],
@@ -5444,7 +5443,7 @@ function factoringDueInDays():array
             'value'=>60,
             'title'=>60 . ' ' . __('Days Factoring')
         ],
-		[
+        [
             'value'=>75,
             'title'=>75 . ' ' . __('Days Factoring')
         ],
@@ -5463,32 +5462,32 @@ function factoringDueInDays():array
         [
             'value'=> 180 ,
             'title'=>180 . ' ' . __('Days Factoring')
-		],
-		[
+        ],
+        [
             'value'=> 210 ,
             'title'=>210 . ' ' . __('Days Factoring')
-		],
-		[
+        ],
+        [
             'value'=>240 ,
             'title'=>240 . ' ' . __('Days Factoring')
-		],
-		[
+        ],
+        [
             'value'=>270 ,
             'title'=>270 . ' ' . __('Days Factoring')
-		],
+        ],
 
-		[
+        [
             'value'=>300 ,
             'title'=>300 . ' ' . __('Days Factoring')
-		],
-		[
+        ],
+        [
             'value'=>330 ,
             'title'=>330 . ' ' . __('Days Factoring')
-		],
-		[
+        ],
+        [
             'value'=> 360 ,
             'title'=>360 . ' ' . __('Days Factoring')
-		],
+        ],
     ];
 }
 
@@ -5501,11 +5500,11 @@ function reverseFactoringSelector():array
             'value'=>'monthly-interest-and-principle',
             'title'=>__('Monthly Interest & Principle')
         ],
-		[
+        [
             'value'=>'monthly-interest-and-quarterly-principle',
             'title'=>__('Monthly Interest & Quarterly Principle')
         ],
-		[
+        [
             'value'=>'quarterly-interest-and-principle',
             'title'=>__('Quarterly Interest & Principle')
         ],
@@ -5555,8 +5554,8 @@ function generateCacheKeyForValidationRow($company_id, $modelName)
 function arrayMergeTwoDimArray(...$args)
 {
     $mergedArray = [];
-    foreach($args as $index=>$array) {
-        foreach($array as $key=>$values) {
+    foreach ($args as $index=>$array) {
+        foreach ($array as $key=>$values) {
             $mergedArray[$key] = $values;
         }
     }
@@ -5570,7 +5569,7 @@ function hasFailedRow($companyId, string $modelName)
 function convertIdsToNames(array $elements)
 {
     $newItems = [];
-    foreach($elements as $element) {
+    foreach ($elements as $element) {
         $newItems[] =snakeToCamel($element);
     }
     return $newItems ;
@@ -5582,7 +5581,7 @@ function snakeToCamel($input)
 function sumDueDayWithPayment($paymentRate, $dueDays)
 {
     $items = [];
-    foreach($dueDays as $index=>$dueDay) {
+    foreach ($dueDays as $index=>$dueDay) {
         $currentPaymentRate = $paymentRate[$index]??0 ;
         $items[$dueDay] = isset($items[$dueDay]) ? $items[$dueDay] + $currentPaymentRate : $currentPaymentRate;
     }
@@ -5621,7 +5620,7 @@ function getUploadParamsFromType(string $type = null):array
             'deletePermissionName'=>deleteExportAnalysisData,// important:add this also into permission function names[getPermissions()]
             'importHeaderText'=>__('Export Analysis Import'),
         ],
-		'ExpenseAnalysis'=>[
+        'ExpenseAnalysis'=>[
             'fullModel'=>'\App\Models\ExpenseAnalysis',
             'dbName'=>'expense_analysis',
             'typePrefixName'=>__('Expense'),
@@ -5632,7 +5631,7 @@ function getUploadParamsFromType(string $type = null):array
             'deletePermissionName'=>deleteExpenseAnalysisData,// important:add this also into permission function names[getPermissions()]
             'importHeaderText'=>__('Expense Analysis Import'),
         ],
-		'LabelingItem'=>[
+        'LabelingItem'=>[
             'fullModel'=>'\App\Models\LabelingItem',
             'dbName'=>'labeling_items',
             'typePrefixName'=>__('Labeling Item'),
@@ -5653,9 +5652,9 @@ function getUploadParamsFromType(string $type = null):array
             'exportPermissionName'=>exportCustomerInvoiceData,// important:add this also into permission function names[getPermissions()]
             'deletePermissionName'=>deleteCustomerInvoiceData,// important:add this also into permission function names[getPermissions()]
             'importHeaderText'=>__('Customer Invoice Import'),
-		],
+        ],
 
-		'SupplierInvoice'=>[
+        'SupplierInvoice'=>[
             'fullModel'=>'\App\Models\SupplierInvoice',
             'dbName'=>'supplier_invoices',
             'typePrefixName'=>__('Supplier Invoice'),
@@ -5666,7 +5665,7 @@ function getUploadParamsFromType(string $type = null):array
             'deletePermissionName'=>deleteSupplierInvoiceData,// important:add this also into permission function names[getPermissions()]
             'importHeaderText'=>__('Supplier Invoice Import'),
         ],
-		'LoanSchedule'=>[
+        'LoanSchedule'=>[
             'fullModel'=>'\App\Models\LoanSchedule',
             'dbName'=>'loan_schedules',
             'typePrefixName'=>__('Loan Schedule'),
@@ -5679,7 +5678,7 @@ function getUploadParamsFromType(string $type = null):array
         ]
 
     ] ;
-    if($type) {
+    if ($type) {
         return $params[$type];
     }
     return $params ;
@@ -5698,7 +5697,7 @@ function getUploadDataText($typePrefixName)
 }
 function convertArrayToSqlString($items)
 {
-    if(!is_array($items)) {
+    if (!is_array($items)) {
 
         return "'".$items."'";
         ;
@@ -5706,7 +5705,7 @@ function convertArrayToSqlString($items)
     }
     $sqlString = "";
 
-    foreach($items as $item) {
+    foreach ($items as $item) {
         $sqlString .= "'".$item."',";
     }
     return trim($sqlString, ',');
@@ -5716,11 +5715,11 @@ function convertDateToFormatIfDate($strOrDate)
     $view = '';
 
     try {
-        if(!Carbon::make($strOrDate)) {
+        if (!Carbon::make($strOrDate)) {
             return $strOrDate;
         }
         $view = Carbon::make($strOrDate)->format('d-m-Y');
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
         $view = $strOrDate ;
     }
     return $view;
@@ -5728,7 +5727,7 @@ function convertDateToFormatIfDate($strOrDate)
 function changeDateFormatOfArrTo(array $dateValue, string $format)
 {
     $newItems = [];
-    foreach($dateValue as $date=>$value) {
+    foreach ($dateValue as $date=>$value) {
         $newItems[Carbon::make($date)->format($format)] = $value ;
     }
     return $newItems ;
@@ -5736,8 +5735,8 @@ function changeDateFormatOfArrTo(array $dateValue, string $format)
 function removeMinusFromArr(array $items)
 {
     $result = [];
-    foreach($items as $date=>$value) {
-        if($value <0) {
+    foreach ($items as $date=>$value) {
+        if ($value <0) {
             $value = $value  * -1 ;
         }
         $result[$date] = $value ;
@@ -5747,8 +5746,8 @@ function removeMinusFromArr(array $items)
 function getTotalOf(array $items):array
 {
     $total = [];
-    foreach($items as $name=>$dateAndValues) {
-        foreach($dateAndValues as $date=>$value) {
+    foreach ($items as $name=>$dateAndValues) {
+        foreach ($dateAndValues as $date=>$value) {
             $total[$date] = isset($total[$date]) ? $total[$date]  + $value  : $value ;
         }
     }
@@ -5803,7 +5802,7 @@ function getWeeksForCurrentDate()
     $dtStart = date_create('2 jan '.$year)->modify('last Monday');
     $dtEnd = date_create('last monday of Dec '.$year);
 
-    for($weeks = [];$dtStart <= $dtEnd;$dtStart->modify('+1 week')) {
+    for ($weeks = [];$dtStart <= $dtEnd;$dtStart->modify('+1 week')) {
         $key = $dtStart->format('W-Y');
         $from = $dtStart->format('d/m/Y');
         $to = (clone $dtStart)->modify('+6 Days')->format('d/m/Y');
@@ -5819,8 +5818,8 @@ function getDayNumberBetweenDates(int $firstDateYear, Carbon $secondDate)
     $weeks = [];
     $day  =1 ;
 
-    foreach($dates as $index =>$dateAsString) {
-        if(Carbon::make($dateAsString)->month == '01' && Carbon::make($dateAsString)->day == '01') {
+    foreach ($dates as $index =>$dateAsString) {
+        if (Carbon::make($dateAsString)->month == '01' && Carbon::make($dateAsString)->day == '01') {
             $day = 1 ;
             $week = 1;
         }
@@ -5829,7 +5828,7 @@ function getDayNumberBetweenDates(int $firstDateYear, Carbon $secondDate)
         // }
         $weeks[$dateAsString] = $week ;
         // if($day % 7 == 0) {
-            $week ++ ;
+        $week ++ ;
         // }
         $day++;
     }
@@ -5837,12 +5836,12 @@ function getDayNumberBetweenDates(int $firstDateYear, Carbon $secondDate)
 }
 function getMonthNumberBetweenDates(int $firstDateYear, Carbon $secondDate)
 {
-	$datesFormatted = [];
-	$dates = generateDatesBetweenTwoDates(Carbon::make('01-01-'.$firstDateYear), $secondDate, 'addDay');
-	foreach($dates as $date){
-		$datesFormatted[$date] = Carbon::make($date)->month ;
-	}
-	return $datesFormatted;
+    $datesFormatted = [];
+    $dates = generateDatesBetweenTwoDates(Carbon::make('01-01-'.$firstDateYear), $secondDate, 'addDay');
+    foreach ($dates as $date) {
+        $datesFormatted[$date] = Carbon::make($date)->month ;
+    }
+    return $datesFormatted;
 }
 function getWeekNumberBetweenDates(int $firstDateYear, Carbon $secondDate)
 {
@@ -5852,16 +5851,16 @@ function getWeekNumberBetweenDates(int $firstDateYear, Carbon $secondDate)
     $weeks = [];
     $day  =1 ;
 
-    foreach($dates as $index =>$dateAsString) {
-        if(Carbon::make($dateAsString)->month == '01' && Carbon::make($dateAsString)->day == '01') {
+    foreach ($dates as $index =>$dateAsString) {
+        if (Carbon::make($dateAsString)->month == '01' && Carbon::make($dateAsString)->day == '01') {
             $day = 1 ;
             $week = 1;
         }
-        if(Carbon::make($dateAsString)->month == '12' && Carbon::make($dateAsString)->day == '31' || Carbon::make($dateAsString)->month == '12' && Carbon::make($dateAsString)->day == '30') {
+        if (Carbon::make($dateAsString)->month == '12' && Carbon::make($dateAsString)->day == '31' || Carbon::make($dateAsString)->month == '12' && Carbon::make($dateAsString)->day == '30') {
             $week = 52;
         }
         $weeks[$dateAsString] = $week ;
-        if($day % 7 == 0) {
+        if ($day % 7 == 0) {
             $week ++ ;
         }
         $day++;
@@ -5872,9 +5871,9 @@ function getWeekNumberBetweenDates(int $firstDateYear, Carbon $secondDate)
 function getMinDateOfWeek(array $dateAndWeek, int $weekNo, int $year)
 {
     $items = [];
-    foreach($dateAndWeek as $date => $currentWeek) {
+    foreach ($dateAndWeek as $date => $currentWeek) {
         $currentYear = Carbon::make($date)->year ;
-        if($weekNo == $currentWeek && $currentYear == $year) {
+        if ($weekNo == $currentWeek && $currentYear == $year) {
             $items[$date]=$currentWeek ;
         }
     }
@@ -5885,62 +5884,62 @@ function getMinDateOfWeek(array $dateAndWeek, int $weekNo, int $year)
 }
 function getFieldTypeAndClassFromTitle(string $title):array
 {
-    if(Str::contains($title, 'Customer Name') ) {
-		return [
-			'type'=>'select',
-			'class'=>'',
-			'default_value'=>'',
-			'name'=>'customer_id',
-			'options'=>Partner::where('company_id',getCurrentCompanyId())->where('is_customer',1)->pluck('name','id')->toArray(),
-		]; 
-	}
-	 if(Str::contains($title, 'Sales Order Number') ) {
-		return [
-			'type'=>'select',
-			'class'=>'',
-			'default_value'=>'',
-			'name'=>'sales_order_id',
-			'options'=>[],
-		]; 
-	}
-	 if(Str::contains($title, 'Project Name') ) {
-		return [
-			'type'=>'select',
-			'class'=>'',
-			'default_value'=>'',
-			
-			'name'=>'contract_id',
-			'options'=>[],
-		]; 
-	}
-	   if(Str::contains($title, 'Supplier Name') ) {
-		return [
-			'type'=>'select',
-			'class'=>'',
-			'default_value'=>'',
-			'name'=>'supplier_id',
-			'options'=>Partner::where('company_id',getCurrentCompanyId())->where('is_supplier',1)->pluck('name','id')->toArray(),
-		]; 
-	}
-	if(Str::contains($title, 'Business Sector') ) {
-		return [
-			'type'=>'select',
-			'class'=>'',
-			'default_value'=>'',
-			'name'=>'business_sector',
-			'options'=>CashVeroBusinessSector::where('company_id',getCurrentCompanyId())->pluck('name','name')->toArray(),
-		]; 
-	}
-	
-	// if(Str::contains($title, 'Supplier Name') ) {
-	// 	return [
-	// 		'type'=>'select',
-	// 		'class'=>'',
-	// 		'default_value'=>'',
-	// 		'options'=>Partner::where('company_id',getCurrentCompanyId())->where('is_customer',1)->get()
-	// 	]; 
-	// }
-    if(Str::contains($title, 'date') || Str::contains($title, 'Date') || Str::contains($title, 'Estimated')) {
+    if (Str::contains($title, 'Customer Name')) {
+        return [
+            'type'=>'select',
+            'class'=>'',
+            'default_value'=>'',
+            'name'=>'customer_id',
+            'options'=>Partner::where('company_id', getCurrentCompanyId())->where('is_customer', 1)->pluck('name', 'id')->toArray(),
+        ];
+    }
+    if (Str::contains($title, 'Sales Order Number')) {
+        return [
+            'type'=>'select',
+            'class'=>'',
+            'default_value'=>'',
+            'name'=>'sales_order_id',
+            'options'=>[],
+        ];
+    }
+    if (Str::contains($title, 'Project Name')) {
+        return [
+            'type'=>'select',
+            'class'=>'',
+            'default_value'=>'',
+            
+            'name'=>'contract_id',
+            'options'=>[],
+        ];
+    }
+    if (Str::contains($title, 'Supplier Name')) {
+        return [
+            'type'=>'select',
+            'class'=>'',
+            'default_value'=>'',
+            'name'=>'supplier_id',
+            'options'=>Partner::where('company_id', getCurrentCompanyId())->where('is_supplier', 1)->pluck('name', 'id')->toArray(),
+        ];
+    }
+    if (Str::contains($title, 'Business Sector')) {
+        return [
+            'type'=>'select',
+            'class'=>'',
+            'default_value'=>'',
+            'name'=>'business_sector',
+            'options'=>CashVeroBusinessSector::where('company_id', getCurrentCompanyId())->pluck('name', 'name')->toArray(),
+        ];
+    }
+    
+    // if(Str::contains($title, 'Supplier Name') ) {
+    // 	return [
+    // 		'type'=>'select',
+    // 		'class'=>'',
+    // 		'default_value'=>'',
+    // 		'options'=>Partner::where('company_id',getCurrentCompanyId())->where('is_customer',1)->get()
+    // 	];
+    // }
+    if (Str::contains($title, 'date') || Str::contains($title, 'Date') || Str::contains($title, 'Estimated')) {
         return [
             'type'=>'date',
             'class'=>'',
@@ -5948,21 +5947,21 @@ function getFieldTypeAndClassFromTitle(string $title):array
         ];
 
     }
-    if(Str::contains($title, getNumericExportFields())) {
+    if (Str::contains($title, getNumericExportFields())) {
         return [
             'type'=>'numeric',
             'class'=>'only-greater-than-or-equal-zero-allowed',
             'default_value'=>0
         ];
     }
-	if(Str::contains($title, getNumericWithNegativeAllowedExportFields())) {
+    if (Str::contains($title, getNumericWithNegativeAllowedExportFields())) {
         return [
             'type'=>'numeric',
             'class'=>'only-numeric-allowed',
             'default_value'=>0
         ];
     }
-	
+    
     return [
         'type'=>'text',
         'class'=>'',
@@ -5972,18 +5971,18 @@ function getFieldTypeAndClassFromTitle(string $title):array
 function getNonEmptyFields():array
 {
     return [
-		'Supplier Name' , __('Supplier Name'),
-		'Invoice Date' , __('Invoice Date'),
-		'Invoice Number',__('Invoice Number'),
-		'Currency',__('Currency'),
-		'Exchange Rate',__('Exchange Rate'),
-		'Invoice Amount',__('Invoice Amount'),
-		'Total Invoice Amount',__('Total Invoice Amount'),
-		'Net Invoice Amount',__('Net Invoice Amount'),
-		'Contracted Payment Days',__('Contracted Payment Days'),
-		'Contracted Collection Days',__('Contracted Collection Days'),
-		'Invoice Due Date',__('Invoice Due Date')
-	];
+        'Supplier Name' , __('Supplier Name'),
+        'Invoice Date' , __('Invoice Date'),
+        'Invoice Number',__('Invoice Number'),
+        'Currency',__('Currency'),
+        'Exchange Rate',__('Exchange Rate'),
+        'Invoice Amount',__('Invoice Amount'),
+        'Total Invoice Amount',__('Total Invoice Amount'),
+        'Net Invoice Amount',__('Net Invoice Amount'),
+        'Contracted Payment Days',__('Contracted Payment Days'),
+        'Contracted Collection Days',__('Contracted Collection Days'),
+        'Invoice Due Date',__('Invoice Due Date')
+    ];
 }
 function getNumericExportFields():array
 {
@@ -5992,8 +5991,8 @@ function getNumericExportFields():array
 function getNumericWithNegativeAllowedExportFields():array
 {
     return [
-		'Invoice Amount',__('Invoice Amount'),
-		'Invoice Amount'=>__('Invoice Amount')
+        'Invoice Amount',__('Invoice Amount'),
+        'Invoice Amount'=>__('Invoice Amount')
 ];
 }
 function convertModelToTableName(string $modelName)
@@ -6008,7 +6007,7 @@ function getBanksCurrencies():array
 }
 function getDiffBetweenTwoDatesInDays(?Carbon $firstDate, ?Carbon $secondDate)
 {
-    if($firstDate && $secondDate) {
+    if ($firstDate && $secondDate) {
         return $firstDate->diffInDays($secondDate);
     }
     return 0 ;
@@ -6016,7 +6015,7 @@ function getDiffBetweenTwoDatesInDays(?Carbon $firstDate, ?Carbon $secondDate)
 function getEndYearMonthFrom(int $month, int $year)
 {
     $monthAndYear = [];
-    foreach(range($month, 12) as $month => $year) {
+    foreach (range($month, 12) as $month => $year) {
         $monthAndYear[sprintf("%02d", $month)] = $year ;
     }
     return $monthAndYear ;
@@ -6025,13 +6024,13 @@ function getEndYearMonthFrom(int $month, int $year)
 }
 function getCurrenciesForSuppliersAndCustomers(int $companyId):array
 {
-	$currencyFromBranch = Branch::where('company_id',$companyId)->pluck('currency','currency')->toArray();
-	$currencyFromAccounts = FinancialInstitutionAccount::where('company_id',$companyId)->pluck('currency','currency')->toArray() ;
-	return array_merge($currencyFromBranch,$currencyFromAccounts);
-	// return array_merge(
-	// 	CustomerInvoice::getCurrencies(),
-	// 	SupplierInvoice::getCurrencies()
-	// );
+    $currencyFromBranch = Branch::where('company_id', $companyId)->pluck('currency', 'currency')->toArray();
+    $currencyFromAccounts = FinancialInstitutionAccount::where('company_id', $companyId)->pluck('currency', 'currency')->toArray() ;
+    return array_merge($currencyFromBranch, $currencyFromAccounts);
+    // return array_merge(
+    // 	CustomerInvoice::getCurrencies(),
+    // 	SupplierInvoice::getCurrencies()
+    // );
 }
 function getCurrencies()
 {
@@ -6042,12 +6041,12 @@ function getCurrencies()
         'SAR' => __('SAR'),
         'AED' => __('AED'),
         'GBP' => __('GBP'),
-		'OMR'=> __('OMR')
+        'OMR'=> __('OMR')
     ];
 }
 function formatDateForDatePicker(?string $date)
 {
-    if(!$date) {
+    if (!$date) {
         return null ;
     }
     return $date ? Carbon::make($date)->format('m/d/Y') : null;
@@ -6059,7 +6058,7 @@ function stdToArray($items)
 }
 function getColorFromIndex(int $index)
 {
-    if($index % 2 == 0) {
+    if ($index % 2 == 0) {
         return 'brand';
     }
     return 'warning';
@@ -6090,13 +6089,13 @@ function getIncomeStatementSubmenu($user, $company)
 }
 function getSalesAnalysisReportSubmenu($user, int $companyId):array
 {
-	$canViewSalesBreakdownAnalysis  = $user->can('view sales breakdown analysis report') ;
-	$canViewSalesTrendAnalysis = $user->can('view sales trend analysis') ;
-	$canViewSalesReport = $user->can('view sales report') ;
-	$canViewAny =  $canViewSalesBreakdownAnalysis|| $canViewSalesTrendAnalysis || $canViewSalesReport;
-	if(!$canViewAny){
-		return [];
-	}
+    $canViewSalesBreakdownAnalysis  = $user->can('view sales breakdown analysis report') ;
+    $canViewSalesTrendAnalysis = $user->can('view sales trend analysis') ;
+    $canViewSalesReport = $user->can('view sales report') ;
+    $canViewAny =  $canViewSalesBreakdownAnalysis|| $canViewSalesTrendAnalysis || $canViewSalesReport;
+    if (!$canViewAny) {
+        return [];
+    }
     return [
         'sales-breakdown-analysis-report'=>[
         'title'=>__('Sales Breakdown Analysis Report'),
@@ -6106,847 +6105,764 @@ function getSalesAnalysisReportSubmenu($user, int $companyId):array
     'sales-trend-analysis'=>[
         'title'=>__('Sales Trend Analysis'),
         'link'=>route('sales.trend.analysis', ['company'=>$companyId]),
-        'show'=>$canViewSalesTrendAnalysis 
+        'show'=>$canViewSalesTrendAnalysis
     ],
     'sales-report'=>[
         'title'=>__('Sales Report'),
         'link'=>route('salesReport.view', ['company'=>$companyId]),
-        'show'=>$canViewSalesReport 
+        'show'=>$canViewSalesReport
     ]
 ];
 
 }
 
-function getSalesForecastValueBaseSubmenu(User $user , int $companyId)
+function getSalesForecastValueBaseSubmenu(User $user, int $companyId)
 {
-	$canViewSalesForecastFactSheet = $user->can('view sales forecast value') ;
-	$salesForecast = SalesForecast::where('company_id',$companyId)->first() ;
-	$modified_seasonality = ModifiedSeasonality::where('company_id', $companyId)->first() && $salesForecast;
-	$canViewProductSalesTargetReport = $modified_seasonality ;
-	$canViewFirstAllocation = isset($modified_seasonality) && ExistingProductAllocationBase::where('company_id', $companyId)->first() !== null && $salesForecast ;
-	$canViewSecondAllocation = isset($modified_seasonality) && SecondExistingProductAllocationBase::where('company_id', $companyId)->first() !== null && $salesForecast;
-	$canViewCollectionReport = isset($modified_seasonality) && CollectionSetting::where('company_id', $companyId)->first() !== null && $salesForecast;
-	$viewSummaryReport = isset($modified_seasonality) && $salesForecast;
-	$canViewSalesForecastValueBase = $canViewSalesForecastFactSheet || $canViewProductSalesTargetReport || $canViewFirstAllocation || $canViewSecondAllocation || $canViewCollectionReport || $viewSummaryReport;
-	if(!$canViewSalesForecastValueBase){
-		return [];
-	}
-	return [
-		'sales-forecast-fact-sheet'=>[
-			'title'=>__('Sales forecast Fact Sheet'),
-			'show'=>$canViewSalesForecastFactSheet,
-			'link'=>route('sales.forecast',['company'=>$companyId]),
-		],
-		'product-sales-target-report'=>[
-			'title'=>__('Product Sales Target Report'),
-			'show'=>$canViewProductSalesTargetReport,
-			'link'=>route('products.allocations',['company'=>$companyId]),
-		],
-		'first-allocation'=>[
-			'title'=>__('First Allocation'),
-			'show'=> $canViewFirstAllocation ,
-			'link'=>route('new.product.seasonality',['company'=>$companyId]),
-		],
-		'second-allocation'=>[
-			'title'=>__('Second Allocation'),
-			'show'=> $canViewSecondAllocation,
-			'link'=>route('second.new.product.seasonality',['company'=>$companyId]),
-		],
-		'collection-report'=>[
-			'title'=>__('Collection Report'),
-			'show'=> $canViewCollectionReport,
-			'link'=>route('collection.report',['company'=>$companyId]),
-		],
-		'summary-report'=>[
-			'title'=>__('Summary Report'),
-			'show'=> $viewSummaryReport  ,
-			'link'=>route('forecast.report',['company'=>$companyId]),
-		],
+    $canViewSalesForecastFactSheet = $user->can('view sales forecast value') ;
+    $salesForecast = SalesForecast::where('company_id', $companyId)->first() ;
+    $modified_seasonality = ModifiedSeasonality::where('company_id', $companyId)->first() && $salesForecast;
+    $canViewProductSalesTargetReport = $modified_seasonality ;
+    $canViewFirstAllocation = isset($modified_seasonality) && ExistingProductAllocationBase::where('company_id', $companyId)->first() !== null && $salesForecast ;
+    $canViewSecondAllocation = isset($modified_seasonality) && SecondExistingProductAllocationBase::where('company_id', $companyId)->first() !== null && $salesForecast;
+    $canViewCollectionReport = isset($modified_seasonality) && CollectionSetting::where('company_id', $companyId)->first() !== null && $salesForecast;
+    $viewSummaryReport = isset($modified_seasonality) && $salesForecast;
+    $canViewSalesForecastValueBase = $canViewSalesForecastFactSheet || $canViewProductSalesTargetReport || $canViewFirstAllocation || $canViewSecondAllocation || $canViewCollectionReport || $viewSummaryReport;
+    if (!$canViewSalesForecastValueBase) {
+        return [];
+    }
+    return [
+        'sales-forecast-fact-sheet'=>[
+            'title'=>__('Sales forecast Fact Sheet'),
+            'show'=>$canViewSalesForecastFactSheet,
+            'link'=>route('sales.forecast', ['company'=>$companyId]),
+        ],
+        'product-sales-target-report'=>[
+            'title'=>__('Product Sales Target Report'),
+            'show'=>$canViewProductSalesTargetReport,
+            'link'=>route('products.allocations', ['company'=>$companyId]),
+        ],
+        'first-allocation'=>[
+            'title'=>__('First Allocation'),
+            'show'=> $canViewFirstAllocation ,
+            'link'=>route('new.product.seasonality', ['company'=>$companyId]),
+        ],
+        'second-allocation'=>[
+            'title'=>__('Second Allocation'),
+            'show'=> $canViewSecondAllocation,
+            'link'=>route('second.new.product.seasonality', ['company'=>$companyId]),
+        ],
+        'collection-report'=>[
+            'title'=>__('Collection Report'),
+            'show'=> $canViewCollectionReport,
+            'link'=>route('collection.report', ['company'=>$companyId]),
+        ],
+        'summary-report'=>[
+            'title'=>__('Summary Report'),
+            'show'=> $viewSummaryReport  ,
+            'link'=>route('forecast.report', ['company'=>$companyId]),
+        ],
 
-	];
+    ];
 }
-function getSalesForecastQuantityBaseSubmenu(User $user , int $companyId):array 
+function getSalesForecastQuantityBaseSubmenu(User $user, int $companyId):array
 {
-		$canViewFactSheet = $user->can('view sales forecast quantity') ;
-		$sales_forecast = QuantitySalesForecast::where('company_id',$companyId)->first();
-		$canViewProductSalesTargetReport = $modified_seasonality = QuantityModifiedSeasonality::where('company_id', $companyId)->first() && $sales_forecast ;
-		$canViewFirstAllocation = isset($modified_seasonality) && QuantityExistingProductAllocationBase::where('company_id', $companyId)->first() !== null && $sales_forecast;
-		$canViewSecondAllocation = isset($modified_seasonality) && QuantitySecondExistingProductAllocationBase::where('company_id', $companyId)->first() !== null && $sales_forecast;
-		$canViewCollectionReport = isset($modified_seasonality) && CollectionSetting::where('company_id', $companyId)->first() !== null && $sales_forecast;
-		$canViewSummaryReport   = isset($modified_seasonality) && $sales_forecast;
-		$canViewSalesForecastQuantityBase =  $canViewFactSheet || $canViewProductSalesTargetReport || $canViewFirstAllocation || $canViewSecondAllocation || $canViewCollectionReport || $canViewSummaryReport;
-		if(!$canViewSalesForecastQuantityBase){
-			return [];
-		}
-	return [
-		'sales-forecast-fact-sheet'=>[
-			'title'=>__('Sales Forecast Fact Sheet'),
-			'link'=>route('sales.forecast.quantity',['company'=>$companyId]),
-			'show'=> $canViewFactSheet,
-		],
-		'product-sales-target-report'=>[
-			'title'=>__('Product Sales Target Report'),
-			'show'=>$canViewProductSalesTargetReport,
-			'link'=>route('products.allocations.quantity',['company'=>$companyId]),
-		],
-		'first-allocation'=>[
-			'title'=>__('First Allocation'),
-			'show'=> $canViewFirstAllocation,
-			'link'=>route('new.product.seasonality.quantity',['company'=>$companyId]),
-		],
-		'second-allocation'=>[
-			'title'=>__('Second Allocation'),
-			'show'=> $canViewSecondAllocation,
-			'link'=>route('second.new.product.seasonality.quantity',['company'=>$companyId]),
-		],
-		'collection-report'=>[
-			'title'=>__('Collection Report'),
-			'show'=> $canViewCollectionReport,
-			'link'=>route('collection.quantity.report',['company'=>$companyId]),
-		],
-		'summary-report'=>[
-			'title'=>__('Summary Report'),
-			'show'=> $canViewSummaryReport ,
-			'link'=>route('forecast.quantity.report',['company'=>$companyId]),
-		]
-	];
+    $canViewFactSheet = $user->can('view sales forecast quantity') ;
+    $sales_forecast = QuantitySalesForecast::where('company_id', $companyId)->first();
+    $canViewProductSalesTargetReport = $modified_seasonality = QuantityModifiedSeasonality::where('company_id', $companyId)->first() && $sales_forecast ;
+    $canViewFirstAllocation = isset($modified_seasonality) && QuantityExistingProductAllocationBase::where('company_id', $companyId)->first() !== null && $sales_forecast;
+    $canViewSecondAllocation = isset($modified_seasonality) && QuantitySecondExistingProductAllocationBase::where('company_id', $companyId)->first() !== null && $sales_forecast;
+    $canViewCollectionReport = isset($modified_seasonality) && CollectionSetting::where('company_id', $companyId)->first() !== null && $sales_forecast;
+    $canViewSummaryReport   = isset($modified_seasonality) && $sales_forecast;
+    $canViewSalesForecastQuantityBase =  $canViewFactSheet || $canViewProductSalesTargetReport || $canViewFirstAllocation || $canViewSecondAllocation || $canViewCollectionReport || $canViewSummaryReport;
+    if (!$canViewSalesForecastQuantityBase) {
+        return [];
+    }
+    return [
+        'sales-forecast-fact-sheet'=>[
+            'title'=>__('Sales Forecast Fact Sheet'),
+            'link'=>route('sales.forecast.quantity', ['company'=>$companyId]),
+            'show'=> $canViewFactSheet,
+        ],
+        'product-sales-target-report'=>[
+            'title'=>__('Product Sales Target Report'),
+            'show'=>$canViewProductSalesTargetReport,
+            'link'=>route('products.allocations.quantity', ['company'=>$companyId]),
+        ],
+        'first-allocation'=>[
+            'title'=>__('First Allocation'),
+            'show'=> $canViewFirstAllocation,
+            'link'=>route('new.product.seasonality.quantity', ['company'=>$companyId]),
+        ],
+        'second-allocation'=>[
+            'title'=>__('Second Allocation'),
+            'show'=> $canViewSecondAllocation,
+            'link'=>route('second.new.product.seasonality.quantity', ['company'=>$companyId]),
+        ],
+        'collection-report'=>[
+            'title'=>__('Collection Report'),
+            'show'=> $canViewCollectionReport,
+            'link'=>route('collection.quantity.report', ['company'=>$companyId]),
+        ],
+        'summary-report'=>[
+            'title'=>__('Summary Report'),
+            'show'=> $canViewSummaryReport ,
+            'link'=>route('forecast.quantity.report', ['company'=>$companyId]),
+        ]
+    ];
 }
 function getStudyIdFromUrl()
 {
-	return Request()->segment(5);
+    return Request()->segment(5);
 }
-function getNonBankingNavigation(Company $company,User $user):array
+function getNonBankingNavigation(Company $company, User $user):array
 {
-	$studyId = getStudyIdFromUrl();
-	$study = Study::find($studyId);
-	
-	$urls = [
-		'home'=>generateMenuItem(__('Home'), $user->can('view home')  , route('home'), []),
-	
-		'studies'=>[
-			'title'=>__('Studies <br> Table'),
-			'show'=>true ,
-			'link'=>route('view.study',['company'=>$company->id])
-		]
-			
-	];
-	if($study){
-		$isExistingCompany =$study->isExistingCompany(); 
-		$microfinanceFirstPageRoute = $study->getMicrofinanceFirstPage();
-		$urls['study-info']= [
-			'title'=>__('Study <br> Information'),
-			'show'=>true ,
-			'link'=>route('edit.study',['company'=>$company->id , 'study'=>$studyId])
-		];
-		$urls['opening-balances']= [
-			'title'=>__('Opening <br> Balances'),
-			'show'=>$isExistingCompany ,
-			'link'=>'#'
-		];
-		$urls['general-assumption']= [
-			'title'=>__('General <br> Assumptions'),
-			'show'=>true ,
-			'link'=>route('create.general.assumption',['company'=>$company->id , 'study'=>$studyId])
-		];
-		// $urls['branches']= [
-		// 	'title'=>__('Branches <br> Assumptions'),
-		// 	'show'=>true ,
-		// 	'link'=>route('create.microfinance.branches.assumption',['company'=>$company->id , 'study'=>$studyId])
-		// ];
-		$urls['projection'] = [
-			'title'=>__('Projections'),
-			'show'=>true ,
-			'link'=>'#',
-			'submenu'=>[
-				[
-            'title'=>__('Sales Projection'),
+    $studyId = getStudyIdFromUrl();
+    $study = Study::find($studyId);
+    
+    $urls = [
+        'home'=>generateMenuItem(__('Home'), $user->can('view home'), route('home'), []),
+    
+        'studies'=>[
+            'title'=>__('Studies <br> Table'),
             'show'=>true ,
-			'link'=>'#',
-			'submenu'=>[
-				[
-					'title'=>__('Leasing Projection'),
-					'show'=>$study->hasLeasing(),
-					'link'=>route('create.leasing.revenue.stream.breakdown',['company'=>$company->id,'study'=>$studyId]),
-					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				],
-				[
-					'title'=>__('Direct Factoring Projection'),
-					'show'=>$study->hasDirectFactoring(),
-					'link'=>route('create.direct.factoring.revenue.stream.breakdown',['company'=>$company->id,'study'=>$studyId]),
-					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				],
-				[
-					'title'=>__('Reverse Factoring Projection'),
-					'show'=>$study->hasReverseFactoring(),
-					'link'=>route('create.reverse.factoring.revenue.stream.breakdown',['company'=>$company->id,'study'=>$studyId]),
-					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				],
-				[
-					'title'=>__('Ijara Mortgage Projection'),
-					'show'=>$study->hasIjaraMortgage(),
-					'link'=>route('create.ijara.mortgage.revenue.stream.breakdown',['company'=>$company->id,'study'=>$studyId]),
-					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				],
-				[
-					'title'=>__('Portfolio Mortgage Projection'),
-					'show'=>$study->hasPortfolioMortgage(),
-					'link'=>route('create.portfolio.mortgage.revenue.stream.breakdown',['company'=>$company->id,'study'=>$studyId]),
-					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				],
-				[
-					'title'=>__('Microfinance Projection'),
-					'show'=>$study->hasMicroFinance(),
-					'link'=>$microfinanceFirstPageRoute,
-					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				],
-				[
-					'title'=>__('Securitization Projection'),
-					'show'=>$study->hasSecuritization(),
-					'link'=>route('create.securitization',['company'=>$company->id,'study'=>$studyId]),
-					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				],
-				[
-					'title'=>__('Consumer Finance Projection'),
-					'show'=>$study->hasConsumerFinance(),
-					'link'=>'#',
-					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				],
-			]
-			],
-			
-			[
-            'title'=>__('General Manpower Projection'),
-			// 'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+            'link'=>route('view.study', ['company'=>$company->id])
+        ]
+            
+    ];
+    // dd($study);
+    if ($study) {
+        $isExistingCompany =$study->isExistingCompany();
+        $microfinanceFirstPageRoute = $study->getMicrofinanceFirstPage();
+        $urls['study-info']= [
+            'title'=>__('Study <br> Information'),
             'show'=>true ,
-			'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
-			// 'submenu'=>[
-				// [
-				// 	    'title'=>__('General Manpower Projection'),
-				// 		'show'=>true ,
-				// 		'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
-				// 		'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				// ],
-				// 	[
-				// 	    'title'=>__('Microfinance Existing Branches Manpower'),
-				// 		'show'=>$study->hasMicroFinance() ,
-				// 		'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
-				// 		'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				// ],
-				// [
-				// 	    'title'=>__('Microfinance New Branches Manpower'),
-				// 		'show'=>$study->hasMicroFinance() ,
-				// 		'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
-				// 		'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				// ],
-				// 	[
-				// 	    'title'=>__('Consumer Finance Existing Branches Manpower'),
-				// 		'show'=>$study->hasConsumerFinance() ,
-				// 		'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
-				// 		'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				// ],
-				// [
-				// 	    'title'=>__('Consumer Finance New Branches Manpower'),
-				// 		'show'=>$study->hasConsumerFinance() ,
-				// 		'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
-				// 		'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				// ],
-				
-			// ]
-		] ,
-		
-			[
-            'title'=>__('Expenses Projection'),
-			'show'=>true , 
-			'link'=>'#',
-			'submenu'=>[
-				[
-					'title'=>__('Expenses Projection'),
-					'show'=>true ,
-					'link'=>route('create.expenses',['company'=>$company->id , 'study'=>$studyId]),
-					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				],
-				[
-					'title'=>__('Expenses Per Employee'),
-					'show'=>true ,
-					'link'=>route('create.expense.per.employees',['company'=>$company->id , 'study'=>$studyId]),
-					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				],
-				
-				// [
-				// 	    'title'=>__('Microfinance Existing Branches Expenses'),
-				// 		'show'=>$study->hasMicroFinance() ,
-				// 		'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
-				// 		'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				// ],
-				// [
-				// 	    'title'=>__('Microfinance New Branches Expenses'),
-				// 		'show'=>$study->hasMicroFinance() ,
-				// 		'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
-				// 		'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				// ],
-					[
-					    'title'=>__('Consumer Finance Existing Branches Expenses'),
-						'show'=>$study->hasConsumerFinance() ,
-						'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
-						'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				],
-				[
-					    'title'=>__('Consumer Finance New Branches Expenses'),
-						'show'=>$study->hasConsumerFinance() ,
-						'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
-						'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				],
-				
-				
-			]
-		]
-		
-			]
-		];
-
-
-		
-		$urls['fixed-assets'] = [
-			'title'=>__('Fixed Assets'),
-			'show'=>true ,
-			'link'=>'#',
-			'submenu'=>[
-				[
-					'title'=>__('General Fixed Assets'),
-					'show'=>true ,
-					'link'=>route('create.ffe.fixed.assets',['company'=>$company->id , 'study'=>$studyId])
-				],
-				[
-					'title'=>__('New Branches Fixed Assets'),
-					'show'=>$study->hasMicroFinance() ,
-					'link'=>route('create.new.branch.fixed.assets',['company'=>$company->id , 'study'=>$studyId])
-				],
-				[
-					'title'=>__('Fixed Assets Per Employee'),
-					'show'=>true ,
-					'link'=>route('create.per.employee.fixed.assets',['company'=>$company->id , 'study'=>$studyId])
-				]
-			]
-		];
-		$urls['analytical-reports'] = [
-            'title'=>__('Reports'),
-            'show'=>true ,
-			'link'=>'#',
-			'submenu'=>[
-				[
-            'title'=>__('Financial Statements'),
-            'show'=>true ,
-			'link'=>route('view.non.banking.forecast.income.statement',['company'=>$company->id , 'study'=>$study->id]),
-			// 'submenu'=>[
-			// 	[
-			// 		'title'=>__('Cash Flow Statement'),
-			// 		'show'=>true,
-			// 		'link'=>route('cash.in.out.flow.result',['company'=>$company->id,'study'=>$study->id]),
-			// 		'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-			// 	],
-				
-			// 	[
-			// 		'title'=>__('Income Statement'),
-			// 		'show'=>true,
-			// 		'link'=>route('view.non.banking.forecast.income.statement',['company'=>$company->id , 'study'=>$study->id]),
-			// 		'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-			// 	],
-				
-				
-				
-			// 	[
-			// 		'title'=>__('Balance Sheet'),
-			// 		'show'=>true,
-			// 		'link'=>route('balance.sheet.result',['company'=>$company->id,'study'=>$study->id]),
-			// 		'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-			// 	],
-				
-			// ],
-			
-		],
-		[
-			 'title'=>__('Analytical Reports'),
-            'show'=>true ,
-			'link'=>'#',
-			'submenu'=>[
-				[
-					'title'=>__('Expense Statement Report'),
-					'show'=>true ,
-					'link'=>route('view.expense.statement.reports',['company'=>$company->id,'study'=>$study->id]),
-					
-				]
-			]
-			
-		]
-			]
-		];
-
-		// $urls['dashboard'] = [
-        //     'title'=>__('Result <br> Dashboard'),
-        //     'show'=>true ,
-		// 	'link'=>route('view.results.dashboard',['company'=>$company->id , 'study'=>$studyId]),
-			
-		// ];
-		$urls['opening-balances'] = [
+            'link'=>route('edit.study', ['company'=>$company->id , 'study'=>$studyId])
+        ];
+        $urls['opening-balances']= [
             'title'=>__('Opening <br> Balances'),
             'show'=>$isExistingCompany ,
-			'link'=>route('view.opening.balances.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
-			
-		];
-		// $urls['settings']=[
+            'link'=>'#'
+        ];
+        $urls['general-assumption']= [
+            'title'=>__('General <br> Assumptions'),
+            'show'=>true ,
+            'link'=>route('create.general.assumption', ['company'=>$company->id , 'study'=>$studyId])
+        ];
+        // $urls['branches']= [
+        // 	'title'=>__('Branches <br> Assumptions'),
+        // 	'show'=>true ,
+        // 	'link'=>route('create.microfinance.branches.assumption',['company'=>$company->id , 'study'=>$studyId])
+        // ];
+        $urls['sales-projects'] = [
+            'title'=>__('Sales <br> Projections'),
+            'show'=>true ,
+            'link'=>'#',
+            'submenu'=>[
+                [
+                    'title'=>__('Leasing Projection'),
+                    'show'=>$study->hasLeasing(),
+                    'link'=>route('create.leasing.revenue.stream.breakdown', ['company'=>$company->id,'study'=>$studyId]),
+                    'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+                ],
+                [
+                    'title'=>__('Direct Factoring Projection'),
+                    'show'=>$study->hasDirectFactoring(),
+                    'link'=>route('create.direct.factoring.revenue.stream.breakdown', ['company'=>$company->id,'study'=>$studyId]),
+                    'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+                ],
+                [
+                    'title'=>__('Reverse Factoring Projection'),
+                    'show'=>$study->hasReverseFactoring(),
+                    'link'=>route('create.reverse.factoring.revenue.stream.breakdown', ['company'=>$company->id,'study'=>$studyId]),
+                    'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+                ],
+                [
+                    'title'=>__('Ijara Mortgage Projection'),
+                    'show'=>$study->hasIjaraMortgage(),
+                    'link'=>route('create.ijara.mortgage.revenue.stream.breakdown', ['company'=>$company->id,'study'=>$studyId]),
+                    'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+                ],
+                [
+                    'title'=>__('Portfolio Mortgage Projection'),
+                    'show'=>$study->hasPortfolioMortgage(),
+                    'link'=>route('create.portfolio.mortgage.revenue.stream.breakdown', ['company'=>$company->id,'study'=>$studyId]),
+                    'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+                ],
+                [
+                    'title'=>__('Microfinance Projection'),
+                    'show'=>$study->hasMicroFinance(),
+                    'link'=>$microfinanceFirstPageRoute['route'],
+                    'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+                ],
+                [
+                    'title'=>__('Securitization Projection'),
+                    'show'=>$study->hasSecuritization(),
+                    'link'=>route('create.securitization', ['company'=>$company->id,'study'=>$studyId]),
+                    'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+                ],
+                [
+                    'title'=>__('Consumer Finance Projection'),
+                    'show'=>$study->hasConsumerFinance(),
+                    'link'=>'#',
+                    'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+                ],
+                
+            
+            
+            
+        
+            ]
+        ];
+
+        $urls['manpower-projection'] = [
+            'title'=>__('Manpower <br> Projection'),
+            'show'=>true ,
+            'link'=>route('view.manpower.for.non.banking', ['company'=>$company->id , 'study'=>$studyId]),
+        ];
+        
+        $urls['expense-projection'] = [
+            'title'=>__('Expenses <br> Projection'),
+            'show'=>true ,
+            'link'=>'#',
+            'submenu'=>[
+                [
+                    'title'=>__('General Expenses Projection'),
+                    'show'=>true ,
+                    'link'=>route('create.expenses', ['company'=>$company->id , 'study'=>$studyId]),
+                    'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+                ],
+                [
+                    'title'=>__('Expenses Per Employee'),
+                    'show'=>true ,
+                    'link'=>route('create.expense.per.employees', ['company'=>$company->id , 'study'=>$studyId]),
+                    'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+                ],
+                
+                
+                    [
+                        'title'=>__('Consumer Finance Existing Branches Expenses'),
+                        'show'=>$study->hasConsumerFinance() ,
+                        'link'=>route('view.manpower.for.non.banking', ['company'=>$company->id , 'study'=>$studyId]),
+                        'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+                ],
+                [
+                        'title'=>__('Consumer Finance New Branches Expenses'),
+                        'show'=>$study->hasConsumerFinance() ,
+                        'link'=>route('view.manpower.for.non.banking', ['company'=>$company->id , 'study'=>$studyId]),
+                        'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+                ],
+                
+        ]
+        ];
+
+        $urls['fixed-assets'] = [
+            'title'=>__('Fixed <br> Assets'),
+            'show'=>true ,
+            'link'=>'#',
+            'submenu'=>[
+                [
+                    'title'=>__('General Fixed Assets'),
+                    'show'=>true ,
+                    'link'=>route('create.ffe.fixed.assets', ['company'=>$company->id , 'study'=>$studyId])
+                ],
+                [
+                    'title'=>__('New Branches Fixed Assets'),
+                    'show'=>$study->hasMicroFinance() ,
+                    'link'=>route('create.new.branch.fixed.assets', ['company'=>$company->id , 'study'=>$studyId])
+                ],
+                [
+                    'title'=>__('Fixed Assets Per Employee'),
+                    'show'=>true ,
+                    'link'=>route('create.per.employee.fixed.assets', ['company'=>$company->id , 'study'=>$studyId])
+                ]
+            ]
+        ];
+        $urls['financial-results'] = [
+            'title'=>__('Financial <br> Results'),
+            'show'=>true ,
+            'link'=>route('view.non.banking.forecast.income.statement', ['company'=>$company->id , 'study'=>$study->id]),
+        ];
+        $urls['analytical-reports'] = [
+            'title'=>__('Reports'),
+            'show'=>true ,
+            'link'=>'#',
+            'submenu'=>[
+            
+        [
+                    'title'=>__('Expense Report'),
+                    'show'=>true ,
+                    'link'=>route('view.expense.statement.reports', ['company'=>$company->id,'study'=>$study->id]),
+                    'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+                ]
+            ]
+        ];
+        
+        $urls['calculators'] = [
+            'title'=>__('Calculators'),
+            'show'=>true ,
+            'link'=>'#',
+            'submenu'=>[
+            
+        [
+                    'title'=>__('Fixed Loan Payments At End'),
+                    'show'=>true ,
+                    'link'=>route('non.banking.fixed.loan.fixed.at.end', ['company'=>$company->id,'study'=>$study->id]),
+                    'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+                ]    , [
+                    'title'=>__('Fixed Loan Payments At Beginning'),
+                    'show'=>true ,
+                    'link'=>route('non.banking.fixed.loan.fixed.at.beginning', ['company'=>$company->id,'study'=>$study->id]),
+                    'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+				],[
+					// Route::get('variable-payments', 'Loans2Controller@create')->name('variable.payments');
+                    'title'=>__('Variable Loans'),
+                    'show'=>true ,
+                    'link'=>route('non.banking.variable.payments', ['company'=>$company->id,'study'=>$study->id]),
+                    'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+				],
+				[
+                    'title'=>__('Calculate Loan Amount'),
+                    'show'=>true ,
+                    'link'=>route('non.banking.calc.loan.amount', ['company'=>$company->id,'study'=>$study->id]),
+                    'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+                ],
+				[
+                    'title'=>__('Calculate Interest Rate'),
+                    'show'=>true ,
+                    'link'=>route('non.banking.calc.interest.percentage', ['company'=>$company->id,'study'=>$study->id]),
+                    'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+                ]
+            ]
+        ];
+        
+
+        // $urls['dashboard'] = [
+        //     'title'=>__('Result <br> Dashboard'),
+        //     'show'=>true ,
+        // 	'link'=>route('view.results.dashboard',['company'=>$company->id , 'study'=>$studyId]),
+            
+        // ];
+        $urls['opening-balances'] = [
+            'title'=>__('Opening <br> Balances'),
+            'show'=>$isExistingCompany ,
+            'link'=>route('view.opening.balances.for.non.banking', ['company'=>$company->id , 'study'=>$studyId]),
+            
+        ];
+        // $urls['settings']=[
         //     'title'=>__('General <br> Settings'),
         //     'show'=>true ,
-		// 	'link'=>'#',
-		// 	'submenu'=>[
-		// 		[
-		// 			'title'=>__('Expenses Settings'),
-		// 			'show'=>true ,
-		// 			'link'=>route('view.expense.names',['company'=>$company->id]),
-		// 			'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-		// 		],
-		// 		[
-		// 			'title'=>__('Manpower Settings'),
-		// 			'show'=>true ,
-		// 			'link'=>route('view.departments',['company'=>$company->id]),
-		// 			'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-		// 		]
-		// 	]
-		// 		];
-	}
-	return $urls;
-	
-	
+        // 	'link'=>'#',
+        // 	'submenu'=>[
+        // 		[
+        // 			'title'=>__('Expenses Settings'),
+        // 			'show'=>true ,
+        // 			'link'=>route('view.expense.names',['company'=>$company->id]),
+        // 			'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+        // 		],
+        // 		[
+        // 			'title'=>__('Manpower Settings'),
+        // 			'show'=>true ,
+        // 			'link'=>route('view.departments',['company'=>$company->id]),
+        // 			'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+        // 		]
+        // 	]
+        // 		];
+    }
+    return $urls;
+    
+
 }
 function getHeaderMenu($currentCompany = null)
 {
     $company = getCurrentCompany() ?: $currentCompany;
-	
-	/**
-	 * @var User $user
-	 */
+    
+    /**
+     * @var User $user
+     */
     $user = auth()->user();
-    if(!$company) {
+    if (!$company) {
         return [
             'home'=>generateMenuItem(__('Home'), $user->can('view home'), route('home'), [])
         ];
     }
     $companyId = $company->id ;
-	$isNonBankingService = hasMiddleware('isNonBankingService') ;
-	if($isNonBankingService){
-		return getNonBankingNavigation($company,$user);
-	}
+    $isNonBankingService = hasMiddleware('isNonBankingService') ;
+    if ($isNonBankingService) {
+        return getNonBankingNavigation($company, $user);
+    }
     $exportablesForSalesGathering = (new ExportTable)->customizedTableField($company, 'SalesGathering', 'selected_fields');
     $hasSelectSalesPersonInTemplate = isset($exportablesForSalesGathering['sales_person']);
     $hasSelectCustomerNameInTemplate = isset($exportablesForSalesGathering['customer_name']);
     $hasSalesGatheringDataUploadData = hasUploadData($company->id) ;
-	$canViewSafeStatement = $user->can('view safe statement report');
-	$canViewCashExpenseStatement = $user->can('view cash expense report');
-	$canViewPartnersStatement = $user->can('view partners statement report');
-	$canViewBankStatement = $user->can('view bank statement report') ;
-	$canViewLgByBeneficiaryNameReport = $user->can('view lg by beneficiary name report') ;
-	$canViewLgByBankNameReport = $user->can('view lg by bank name report') ;
-	$canViewLgLcStatement = $user->can('view lc & lg statement report') ;
-	$canViewCashFlow = $user->can('view cash flow report');
-	$canViewContractCashFlow = $user->can('view contract cash flow report');
-	$canViewWithdrawalsSettlementReport = $user->can('view withdrawals settlement report');
-	$canViewNotificationSetting = $user->can('view notification settings');
-	$canViewCashExpenseCategories = $user->can('view cash expense categories');
-	$canViewCustomersSettings = $user->can('view customers');
-	$canViewSubsidiaryCompaniesSettings = $user->can('view subsidiary companies');
-	$canViewOtherPartnersSettings = $user->can('view other partners');
-	$canViewShareholdersSettings = $user->can('view shareholders');
-	$canViewDeductionsSettings = $user->can('view deductions');
-	$canViewEmployeesSettings = $user->can('view employees');
-	$canViewSuppliersSettings = $user->can('view suppliers');
-	$canViewBusinessSectorSettings = $user->can('view business sectors');
-	$canViewBusinessUnitSettings = $user->can('view business units');
-	$canViewSalesChannelsSettings = $user->can('view sales channels');
-	$canViewSalesPersonsSettings = $user->can('view sales persons');
-	$canViewBranchesSettings = $user->can('view branches');
-	$canViewGeneralSetting = $canViewCustomersSettings || $canViewSubsidiaryCompaniesSettings || $canViewOtherPartnersSettings || $canViewShareholdersSettings || $canViewDeductionsSettings || $canViewEmployeesSettings || $canViewSuppliersSettings || $canViewBusinessSectorSettings || $canViewBusinessUnitSettings || $canViewSalesChannelsSettings || $canViewSalesPersonsSettings ||$canViewBranchesSettings || $canViewCashExpenseCategories;
-	
-	$notificationsSubItems[] = [
-		'title'=>__('General Settings'),
-		'link'=>'#',
-		'show'=>$canViewGeneralSetting ,
-		'submenu'=> [
-			[
-				'title'=>__('Cash Expense'),
-			'link'=>route('cash.expense.category.index', ['company'=>$companyId]),
-			'show'=>$canViewCashExpenseCategories,
-			],
-			[
-				'title'=>__('Partners'),
-				'link'=>route('partners.index',['company'=>$companyId]),
-				'show'=>true ,
-				'submenu'=>[
-					[
-						'title'=>__('All Partners'),
-						'link'=>route('partners.index',['company'=>$companyId]),
-						'show'=>true ,
-					],
-					[
-				'title'=>__('Customers'),
-				'link'=>route('customers.index',['company'=>$companyId]),
-				'show'=>$canViewCustomersSettings 
-			],
-					[
-				'title'=>__('Suppliers'),
-				'link'=>route('suppliers.index',['company'=>$companyId]),
-				'show'=>$canViewSuppliersSettings 
-			],
-			[
-				'title'=>__('Employees'),
-				'link'=>route('employees.index',['company'=>$companyId]),
-				'show'=>$canViewEmployeesSettings 
-			],
-			[
-				'title'=>__('Shareholders'),
-				'link'=>route('shareholders.index',['company'=>$companyId]),
-				'show'=>$canViewShareholdersSettings 
-			],
-			[
-				'title'=>__('Other Partners'),
-				'link'=>route('other.partners.index',['company'=>$companyId]),
-				'show'=>$canViewOtherPartnersSettings 
-			],
-			
-			
-				]
-				// 'show'=>$canViewCustomersSettings 
-			],
-			// [
-			// 	'title'=>__('Suppliers'),
-			// 	'link'=>route('suppliers.index',['company'=>$companyId]),
-			// 	'show'=>$canViewSuppliersSettings 
-			// ],
-			
-			[
-				'title'=>__('Subsidiary Companies'),
-				'link'=>route('subsidiary.companies.index',['company'=>$companyId]),
-				'show'=>$canViewSubsidiaryCompaniesSettings 
-			],
-			
-			
-			[
-				'title'=>__('Deductions'),
-				'link'=>route('deductions.index',['company'=>$companyId]),
-				'show'=>$canViewDeductionsSettings 
-			],
-			
-			[
-				'title'=>__('Other Settings'),
-				'link'=>'#',
-				'show'=>true ,
-				'submenu'=>[
-					[
-				'title'=>__('Business Sectors'),
-				'link'=>route('business.sectors.index',['company'=>$companyId]),
-				'show'=>$canViewBusinessSectorSettings 
-			],
-			[
-				'title'=>__('Business Units'),
-				'link'=>route('business.units.index',['company'=>$companyId]),
-				'show'=>$canViewBusinessUnitSettings 
-			]
-			,[
-				'title'=>__('Sales Channels'),
-				'link'=>route('sales.channels.index',['company'=>$companyId]),
-				'show'=>$canViewSalesChannelsSettings 
-			],
-			[
-				'title'=>__('Sales Persons'),
-				'link'=>route('sales.persons.index',['company'=>$companyId]),
-				'show'=>$canViewSalesPersonsSettings 
-			],
-				]
-			],
-			
-			
-			
-		]
-	];
-	$notificationsSubItems2 = \App\Notification::formatForMenuItem($company);
-	$notificationsSubItems = array_merge($notificationsSubItems,$notificationsSubItems2);
-	
-	$notificationsSubItems[]	= [
-		'title'=>__('Notification Settings'),
-	'link'=>route('notifications-settings.index', ['company'=>$companyId]),
-	'show'=>$canViewNotificationSetting,
-	];
+    $canViewSafeStatement = $user->can('view safe statement report');
+    $canViewCashExpenseStatement = $user->can('view cash expense report');
+    $canViewPartnersStatement = $user->can('view partners statement report');
+    $canViewBankStatement = $user->can('view bank statement report') ;
+    $canViewLgByBeneficiaryNameReport = $user->can('view lg by beneficiary name report') ;
+    $canViewLgByBankNameReport = $user->can('view lg by bank name report') ;
+    $canViewLgLcStatement = $user->can('view lc & lg statement report') ;
+    $canViewCashFlow = $user->can('view cash flow report');
+    $canViewContractCashFlow = $user->can('view contract cash flow report');
+    $canViewWithdrawalsSettlementReport = $user->can('view withdrawals settlement report');
+    $canViewNotificationSetting = $user->can('view notification settings');
+    $canViewCashExpenseCategories = $user->can('view cash expense categories');
+    $canViewCustomersSettings = $user->can('view customers');
+    $canViewSubsidiaryCompaniesSettings = $user->can('view subsidiary companies');
+    $canViewOtherPartnersSettings = $user->can('view other partners');
+    $canViewShareholdersSettings = $user->can('view shareholders');
+    $canViewDeductionsSettings = $user->can('view deductions');
+    $canViewEmployeesSettings = $user->can('view employees');
+    $canViewSuppliersSettings = $user->can('view suppliers');
+    $canViewBusinessSectorSettings = $user->can('view business sectors');
+    $canViewBusinessUnitSettings = $user->can('view business units');
+    $canViewSalesChannelsSettings = $user->can('view sales channels');
+    $canViewSalesPersonsSettings = $user->can('view sales persons');
+    $canViewBranchesSettings = $user->can('view branches');
+    $canViewGeneralSetting = $canViewCustomersSettings || $canViewSubsidiaryCompaniesSettings || $canViewOtherPartnersSettings || $canViewShareholdersSettings || $canViewDeductionsSettings || $canViewEmployeesSettings || $canViewSuppliersSettings || $canViewBusinessSectorSettings || $canViewBusinessUnitSettings || $canViewSalesChannelsSettings || $canViewSalesPersonsSettings ||$canViewBranchesSettings || $canViewCashExpenseCategories;
+    
+    $notificationsSubItems[] = [
+        'title'=>__('General Settings'),
+        'link'=>'#',
+        'show'=>$canViewGeneralSetting ,
+        'submenu'=> [
+            [
+                'title'=>__('Cash Expense'),
+            'link'=>route('cash.expense.category.index', ['company'=>$companyId]),
+            'show'=>$canViewCashExpenseCategories,
+            ],
+            [
+                'title'=>__('Partners'),
+                'link'=>route('partners.index', ['company'=>$companyId]),
+                'show'=>true ,
+                'submenu'=>[
+                    [
+                        'title'=>__('All Partners'),
+                        'link'=>route('partners.index', ['company'=>$companyId]),
+                        'show'=>true ,
+                    ],
+                    [
+                'title'=>__('Customers'),
+                'link'=>route('customers.index', ['company'=>$companyId]),
+                'show'=>$canViewCustomersSettings
+            ],
+                    [
+                'title'=>__('Suppliers'),
+                'link'=>route('suppliers.index', ['company'=>$companyId]),
+                'show'=>$canViewSuppliersSettings
+            ],
+            [
+                'title'=>__('Employees'),
+                'link'=>route('employees.index', ['company'=>$companyId]),
+                'show'=>$canViewEmployeesSettings
+            ],
+            [
+                'title'=>__('Shareholders'),
+                'link'=>route('shareholders.index', ['company'=>$companyId]),
+                'show'=>$canViewShareholdersSettings
+            ],
+            [
+                'title'=>__('Other Partners'),
+                'link'=>route('other.partners.index', ['company'=>$companyId]),
+                'show'=>$canViewOtherPartnersSettings
+            ],
+            
+            
+                ]
+                // 'show'=>$canViewCustomersSettings
+            ],
+            // [
+            // 	'title'=>__('Suppliers'),
+            // 	'link'=>route('suppliers.index',['company'=>$companyId]),
+            // 	'show'=>$canViewSuppliersSettings
+            // ],
+            
+            [
+                'title'=>__('Subsidiary Companies'),
+                'link'=>route('subsidiary.companies.index', ['company'=>$companyId]),
+                'show'=>$canViewSubsidiaryCompaniesSettings
+            ],
+            
+            
+            [
+                'title'=>__('Deductions'),
+                'link'=>route('deductions.index', ['company'=>$companyId]),
+                'show'=>$canViewDeductionsSettings
+            ],
+            
+            [
+                'title'=>__('Other Settings'),
+                'link'=>'#',
+                'show'=>true ,
+                'submenu'=>[
+                    [
+                'title'=>__('Business Sectors'),
+                'link'=>route('business.sectors.index', ['company'=>$companyId]),
+                'show'=>$canViewBusinessSectorSettings
+            ],
+            [
+                'title'=>__('Business Units'),
+                'link'=>route('business.units.index', ['company'=>$companyId]),
+                'show'=>$canViewBusinessUnitSettings
+            ]
+            ,[
+                'title'=>__('Sales Channels'),
+                'link'=>route('sales.channels.index', ['company'=>$companyId]),
+                'show'=>$canViewSalesChannelsSettings
+            ],
+            [
+                'title'=>__('Sales Persons'),
+                'link'=>route('sales.persons.index', ['company'=>$companyId]),
+                'show'=>$canViewSalesPersonsSettings
+            ],
+                ]
+            ],
+            
+            
+            
+        ]
+    ];
+    $notificationsSubItems2 = \App\Notification::formatForMenuItem($company);
+    $notificationsSubItems = array_merge($notificationsSubItems, $notificationsSubItems2);
+    
+    $notificationsSubItems[]	= [
+        'title'=>__('Notification Settings'),
+    'link'=>route('notifications-settings.index', ['company'=>$companyId]),
+    'show'=>$canViewNotificationSetting,
+    ];
 
-	$canViewNotificationsSettingAndGeneralSetting = $canViewNotificationSetting || $canViewGeneralSetting;
-	
-	
-	
-	
-	$notificationsSubItems[]	= [
-		'title'=>__('Permissions'),
-		'link'=>route('roles.permissions.edit', ['company'=>$companyId]),
-		'show'=>$user->can('update permissions') && ! $user->isSuperAdmin(),
-	];
-	
-	$notificationsSubItems[]	= [
-		'title'=>__('Users'),
-		'link'=>route('user.index',['company'=>$companyId]),
-		'show'=>$user->can('view users') && ! $user->isSuperAdmin(),
-	];
-	
-	
-	
-	$canViewCashStatusDashboard = $user->can('view cash status dashboard');
-	$canViewCashForecastDashboard = $user->can('view cash Forecast dashboard');
-	$canViewLgAndLcDashboard = $user->can('view lg & lc dashboard');
-	$canViewCashDashboard = $canViewCashStatusDashboard || $canViewCashForecastDashboard ||$canViewLgAndLcDashboard;
-	
-	
-	$canUpdateCashAndChequesOpeningBalances  =$user->can('update cash & cheques opening balances');
-	// $canUpdateLgOpeningBalances  =$user->can('update lg opening balances');
-	// $canUpdateLcOpeningBalances  =$user->can('update lc opening balances');
-	$canViewOpeningBalances =$canUpdateCashAndChequesOpeningBalances 
-	// || $canUpdateLgOpeningBalances || $canUpdateLcOpeningBalances 
-	;
-	$resortedNotificationsSubItems = [];
-	
-	$cashManagementSubItems = [
+    $canViewNotificationsSettingAndGeneralSetting = $canViewNotificationSetting || $canViewGeneralSetting;
+    
+    
+    
+    
+    $notificationsSubItems[]	= [
+        'title'=>__('Permissions'),
+        'link'=>route('roles.permissions.edit', ['company'=>$companyId]),
+        'show'=>$user->can('update permissions') && ! $user->isSuperAdmin(),
+    ];
+    
+    $notificationsSubItems[]	= [
+        'title'=>__('Users'),
+        'link'=>route('user.index', ['company'=>$companyId]),
+        'show'=>$user->can('view users') && ! $user->isSuperAdmin(),
+    ];
+    
+    
+    
+    $canViewCashStatusDashboard = $user->can('view cash status dashboard');
+    $canViewCashForecastDashboard = $user->can('view cash Forecast dashboard');
+    $canViewLgAndLcDashboard = $user->can('view lg & lc dashboard');
+    $canViewCashDashboard = $canViewCashStatusDashboard || $canViewCashForecastDashboard ||$canViewLgAndLcDashboard;
+    
+    
+    $canUpdateCashAndChequesOpeningBalances  =$user->can('update cash & cheques opening balances');
+    // $canUpdateLgOpeningBalances  =$user->can('update lg opening balances');
+    // $canUpdateLcOpeningBalances  =$user->can('update lc opening balances');
+    $canViewOpeningBalances =$canUpdateCashAndChequesOpeningBalances
+    // || $canUpdateLgOpeningBalances || $canUpdateLcOpeningBalances
+    ;
+    $resortedNotificationsSubItems = [];
+    
+    $cashManagementSubItems = [
 
-		'home'=>generateMenuItem(__('Home'), $user->can('view home') && hasMiddleware('isCashManagement') , route('home'), []),
-		'notifications'=>[
-			'title'=>__('Notifications & Settings'),
-			'link'=>'#',
-			'show'=>$canViewNotificationsSettingAndGeneralSetting,
-			'submenu'=>$notificationsSubItems,
-			'is-notification'=>true 
-		],
-		'cash-dashboard'=>[
-			'title'=>__('Cash Dashboard'),
-			'show'=>$canViewCashDashboard ,
-			'link'=>'#',
-			'submenu'=>[
-				[
-					'title'=>__('Cash Status'),
-					'link'=>route('view.customer.invoice.dashboard.cash', ['company'=>$companyId]),
-					'show'=>$canViewCashStatusDashboard,
-					'submenu'=>[]
-				],
-				[
-					'title'=>__('Cash Forecast'),
-					'link'=>route('view.customer.invoice.dashboard.forecast', ['company'=>$companyId]),
-					'show'=>$canViewCashForecastDashboard,
-					'submenu'=>[]
-				],
-				[
-					'title'=>__('LG & LC Dashboard'),
-					'link'=>route('view.lglc.dashboard', ['company'=>$companyId]),
-					'show'=>$canViewLgAndLcDashboard,
-					'submenu'=>[]
-				],
-			]
+        'home'=>generateMenuItem(__('Home'), $user->can('view home') && hasMiddleware('isCashManagement'), route('home'), []),
+        'notifications'=>[
+            'title'=>__('Notifications & Settings'),
+            'link'=>'#',
+            'show'=>$canViewNotificationsSettingAndGeneralSetting,
+            'submenu'=>$notificationsSubItems,
+            'is-notification'=>true
+        ],
+        'cash-dashboard'=>[
+            'title'=>__('Cash Dashboard'),
+            'show'=>$canViewCashDashboard ,
+            'link'=>'#',
+            'submenu'=>[
+                [
+                    'title'=>__('Cash Status'),
+                    'link'=>route('view.customer.invoice.dashboard.cash', ['company'=>$companyId]),
+                    'show'=>$canViewCashStatusDashboard,
+                    'submenu'=>[]
+                ],
+                [
+                    'title'=>__('Cash Forecast'),
+                    'link'=>route('view.customer.invoice.dashboard.forecast', ['company'=>$companyId]),
+                    'show'=>$canViewCashForecastDashboard,
+                    'submenu'=>[]
+                ],
+                [
+                    'title'=>__('LG & LC Dashboard'),
+                    'link'=>route('view.lglc.dashboard', ['company'=>$companyId]),
+                    'show'=>$canViewLgAndLcDashboard,
+                    'submenu'=>[]
+                ],
+            ]
 
-		]
-		,
-		
-		'reports'=>[
-			'title'=>__('Reports'),
-			'show'=>$canViewCashFlow || $canViewContractCashFlow ||  $canViewSafeStatement || $canViewCashExpenseStatement || $canViewPartnersStatement || $canViewBankStatement|| $canViewLgByBeneficiaryNameReport || $canViewLgByBankNameReport || $canViewLgLcStatement || $canViewWithdrawalsSettlementReport ,
-			'link'=>'#',
-			'submenu'=>
-			[
-		
-				[
-					'title'=>__('Safe Statement'),
-					'link'=>route('view.safe.statement',['company'=>$company->id]) ,
-					'show'=>$canViewSafeStatement,
-					'submenu'=>[]
-				],
-				
-				[
-					'title'=>__('Bank Statement'),
-					'link'=>route('view.bank.statement',['company'=>$company->id]),
-					'show'=>$canViewBankStatement,
-					'submenu'=>[]
-				],
-				[
-					'title'=>__('LG By Beneficiary Name Report'),
-					'link'=>route('view.lg.by.beneficiary.name.report',['company'=>$company->id]),
-					'show'=>$canViewLgByBeneficiaryNameReport,
-					'submenu'=>[]
-				],[
-					'title'=>__('LG By Bank Name Report'),
-					'link'=>route('view.lg.by.bank.name.report',['company'=>$company->id]),
-					'show'=>$canViewLgByBankNameReport,
-					'submenu'=>[]
-				]
-				,[
-					'title'=>__('LG & LC Statement'),
-					'link'=>route('view.lg.lc.bank.statement',['company'=>$company->id]),
-					'show'=>$canViewBankStatement,
-					'submenu'=>[]
-				],
-				[
-					'title'=>__('Cash Expense Statement'),
-					'link'=>route('view.cash.expense.statement',['company'=>$company->id]) ,
-					'show'=>$canViewCashExpenseStatement,
-					'submenu'=>[]
-				],
-				[
-					'title'=>__('Partners Statement'),
-					'link'=>route('view.partners.statement',['company'=>$company->id]) ,
-					'show'=>$canViewPartnersStatement,
-					'submenu'=>[]
-				],
-				[
-					'title'=>__('Cash Flow Report'),
-					'link'=>route('view.cashflow.report', ['company'=>$companyId]),
-					'show'=>$canViewCashFlow ,
-					'submenu'=>[]
-				],
-				[
-					'title'=>__('Contract Cash Flow Report'),
-					'link'=>route('view.contract.cashflow.report', ['company'=>$companyId]),
-					'show'=>$canViewContractCashFlow ,
-					'submenu'=>[]
-				],
-				[
-					'title'=>__('Withdrawals Settlement Report'),
-					'link'=>route('view.withdrawals.settlement.report',['company'=>$companyId]),
-					'show'=>$canViewWithdrawalsSettlementReport ,
-					'submenu'=>[]
-				]
-				
-					],	
-		],
-		'bank-and-cash-account'=>[
-			'title'=>__('Cash & Bank Accounts'),
-			'show'=>true ,
-			'submenu'=>[
-				[
-			'title'=>__('Financial Institutions'),
-			'link'=>route('view.financial.institutions',['company'=>$companyId]),
-			'show'=>$user->can('view financial institutions')
-				],
-				[
-				'title'=>__('Safe'),
-				'link'=>route('branches.index',['company'=>$companyId]),
-				'show'=>$canViewBranchesSettings 
-				],
-				[
-					'title'=>__('Opening Balances'),
-					'link'=>'#',
-					'show'=>$canViewOpeningBalances ,
-					'submenu'=>[
-						[
-							'title'=>__('Cash & Cheques Opening Balance'),
-							'link'=>route('opening-balance.index', ['company'=>$companyId]),
-							'show'=>$canUpdateCashAndChequesOpeningBalances,
-						],
-						[
-							'title'=>__('Customers Opening Balance'),
-							'link'=>route('customers-opening-balance.index', ['company'=>$companyId]),
-							'show'=>$canUpdateCashAndChequesOpeningBalances,
-						],
-						[
-							'title'=>__('Suppliers Opening Balance'),
-							'link'=>route('suppliers-opening-balance.index', ['company'=>$companyId]),
-							'show'=>$canUpdateCashAndChequesOpeningBalances,
-						],
-		
-					],
-					
-					
-						],
-						[
-				'title'=>__('Other Odoo Integration Settings'),
-				'link'=>route('odoo-settings.index', ['company'=>$companyId]),
-				'show'=>$company->hasOdooIntegrationCredentials(),
-			],
-				],
-				
-		],
-		// 'financial-institution'=>[
-		// 	'title'=>__('Financial Institutions'),
-		// 	'link'=>route('view.financial.institutions',['company'=>$companyId]),
-		// 	'show'=>$user->can('view financial institutions')
-		// ],
-		'customer-sections'=>[
-			'title'=>__('Customer Sections'),
-			'link'=>'#',
-			'show'=>true,
-			'submenu'=>[
+        ]
+        ,
+        
+        'reports'=>[
+            'title'=>__('Reports'),
+            'show'=>$canViewCashFlow || $canViewContractCashFlow ||  $canViewSafeStatement || $canViewCashExpenseStatement || $canViewPartnersStatement || $canViewBankStatement|| $canViewLgByBeneficiaryNameReport || $canViewLgByBankNameReport || $canViewLgLcStatement || $canViewWithdrawalsSettlementReport ,
+            'link'=>'#',
+            'submenu'=>
+            [
+        
+                [
+                    'title'=>__('Safe Statement'),
+                    'link'=>route('view.safe.statement', ['company'=>$company->id]) ,
+                    'show'=>$canViewSafeStatement,
+                    'submenu'=>[]
+                ],
+                
+                [
+                    'title'=>__('Bank Statement'),
+                    'link'=>route('view.bank.statement', ['company'=>$company->id]),
+                    'show'=>$canViewBankStatement,
+                    'submenu'=>[]
+                ],
+                [
+                    'title'=>__('LG By Beneficiary Name Report'),
+                    'link'=>route('view.lg.by.beneficiary.name.report', ['company'=>$company->id]),
+                    'show'=>$canViewLgByBeneficiaryNameReport,
+                    'submenu'=>[]
+                ],[
+                    'title'=>__('LG By Bank Name Report'),
+                    'link'=>route('view.lg.by.bank.name.report', ['company'=>$company->id]),
+                    'show'=>$canViewLgByBankNameReport,
+                    'submenu'=>[]
+                ]
+                ,[
+                    'title'=>__('LG & LC Statement'),
+                    'link'=>route('view.lg.lc.bank.statement', ['company'=>$company->id]),
+                    'show'=>$canViewBankStatement,
+                    'submenu'=>[]
+                ],
+                [
+                    'title'=>__('Cash Expense Statement'),
+                    'link'=>route('view.cash.expense.statement', ['company'=>$company->id]) ,
+                    'show'=>$canViewCashExpenseStatement,
+                    'submenu'=>[]
+                ],
+                [
+                    'title'=>__('Partners Statement'),
+                    'link'=>route('view.partners.statement', ['company'=>$company->id]) ,
+                    'show'=>$canViewPartnersStatement,
+                    'submenu'=>[]
+                ],
+                [
+                    'title'=>__('Cash Flow Report'),
+                    'link'=>route('view.cashflow.report', ['company'=>$companyId]),
+                    'show'=>$canViewCashFlow ,
+                    'submenu'=>[]
+                ],
+                [
+                    'title'=>__('Contract Cash Flow Report'),
+                    'link'=>route('view.contract.cashflow.report', ['company'=>$companyId]),
+                    'show'=>$canViewContractCashFlow ,
+                    'submenu'=>[]
+                ],
+                [
+                    'title'=>__('Withdrawals Settlement Report'),
+                    'link'=>route('view.withdrawals.settlement.report', ['company'=>$companyId]),
+                    'show'=>$canViewWithdrawalsSettlementReport ,
+                    'submenu'=>[]
+                ]
+                
+                    ],
+        ],
+        'bank-and-cash-account'=>[
+            'title'=>__('Cash & Bank Accounts'),
+            'show'=>true ,
+            'submenu'=>[
+                [
+            'title'=>__('Financial Institutions'),
+            'link'=>route('view.financial.institutions', ['company'=>$companyId]),
+            'show'=>$user->can('view financial institutions')
+                ],
+                [
+                'title'=>__('Safe'),
+                'link'=>route('branches.index', ['company'=>$companyId]),
+                'show'=>$canViewBranchesSettings
+                ],
+                [
+                    'title'=>__('Opening Balances'),
+                    'link'=>'#',
+                    'show'=>$canViewOpeningBalances ,
+                    'submenu'=>[
+                        [
+                            'title'=>__('Cash & Cheques Opening Balance'),
+                            'link'=>route('opening-balance.index', ['company'=>$companyId]),
+                            'show'=>$canUpdateCashAndChequesOpeningBalances,
+                        ],
+                        [
+                            'title'=>__('Customers Opening Balance'),
+                            'link'=>route('customers-opening-balance.index', ['company'=>$companyId]),
+                            'show'=>$canUpdateCashAndChequesOpeningBalances,
+                        ],
+                        [
+                            'title'=>__('Suppliers Opening Balance'),
+                            'link'=>route('suppliers-opening-balance.index', ['company'=>$companyId]),
+                            'show'=>$canUpdateCashAndChequesOpeningBalances,
+                        ],
+        
+                    ],
+                    
+                    
+                        ],
+                        [
+                'title'=>__('Other Odoo Integration Settings'),
+                'link'=>route('odoo-settings.index', ['company'=>$companyId]),
+                'show'=>$company->hasOdooIntegrationCredentials(),
+            ],
+                ],
+                
+        ],
+        // 'financial-institution'=>[
+        // 	'title'=>__('Financial Institutions'),
+        // 	'link'=>route('view.financial.institutions',['company'=>$companyId]),
+        // 	'show'=>$user->can('view financial institutions')
+        // ],
+        'customer-sections'=>[
+            'title'=>__('Customer Sections'),
+            'link'=>'#',
+            'show'=>true,
+            'submenu'=>[
 
-				[
-					'title'=>__('Customer Balances'),
-					'link'=>route('view.balances', ['company'=>$companyId,'modelType'=>'CustomerInvoice']),
-					'show'=>$user->can('view customer balances'),
-					'submenu'=>[]
-				],
-				[
-			'title'=>__('Customer Aging'),
-			'link'=>route('view.aging.analysis', ['company'=>$companyId,'modelType'=>'CustomerInvoice']),
-			'show'=>$user->can('view customer aging'),
-			'submenu'=>[]
-			],
-			
-			[
-				'title'=>__('Collections Effectiveness Index'),
-				'link'=>route('view.collections.effectiveness.index',['company'=>$company->id]) ,
-				'show'=>$user->can('view collections effectiveness index'),
-				'submenu'=>[]
-			],
-			
-			
-			
-			[
-				'title'=>__('Customer Contracts'),
-			'link'=>route('contracts.index', ['company'=>$companyId,'type'=>'Customer']),
-			'show'=>$user->can('view customers contracts'),
+                [
+                    'title'=>__('Customer Balances'),
+                    'link'=>route('view.balances', ['company'=>$companyId,'modelType'=>'CustomerInvoice']),
+                    'show'=>$user->can('view customer balances'),
+                    'submenu'=>[]
+                ],
+                [
+            'title'=>__('Customer Aging'),
+            'link'=>route('view.aging.analysis', ['company'=>$companyId,'modelType'=>'CustomerInvoice']),
+            'show'=>$user->can('view customer aging'),
+            'submenu'=>[]
+            ],
+            
+            [
+                'title'=>__('Collections Effectiveness Index'),
+                'link'=>route('view.collections.effectiveness.index', ['company'=>$company->id]) ,
+                'show'=>$user->can('view collections effectiveness index'),
+                'submenu'=>[]
+            ],
+            
+            
+            
+            [
+                'title'=>__('Customer Contracts'),
+            'link'=>route('contracts.index', ['company'=>$companyId,'type'=>'Customer']),
+            'show'=>$user->can('view customers contracts'),
 
-			],
-			[
-				'title'=>__('Upload New Customer Invoice Data'),
-				'link'=>route('view.uploading', ['company'=>$company->id , 'model'=>'CustomerInvoice']),
-				'show'=>$user->can(uploadCustomerInvoiceData),
-				'submenu'=>[]
-			]
-
-
-
-
-
-
-
-			]
-		],
-		'supplier-sections'=>[
-			'title'=>__('Supplier Sections'),
-			'link'=>'#',
-			'show'=>true,
-			'submenu'=>[
-
-				[
-					'title'=>__('Supplier Balances'),
-					'link'=>route('view.balances', ['company'=>$companyId,'modelType'=>'SupplierInvoice']),
-					'show'=>$user->can('view supplier balances'),
-					'submenu'=>[]
-				],
-				[
-			'title'=>__('Supplier Aging'),
-			'link'=>route('view.aging.analysis', ['company'=>$companyId,'modelType'=>'SupplierInvoice']),
-			'show'=>$user->can('view supplier aging'),
-			'submenu'=>[]
-			],
-			[
-				'title'=>__('Supplier Contracts'),
-			'link'=>route('contracts.index', ['company'=>$companyId,'type'=>'Supplier']),
-			'show'=>$user->can('view suppliers contracts'),
-
-			],
-			[
-				'title'=>__('Upload New Supplier Invoice Data'),
-				'link'=>route('view.uploading', ['company'=>$company->id , 'model'=>'SupplierInvoice']),
-				'show'=>$user->can(uploadSupplierInvoiceData),
-				'submenu'=>[]
-			]
+            ],
+            [
+                'title'=>__('Upload New Customer Invoice Data'),
+                'link'=>route('view.uploading', ['company'=>$company->id , 'model'=>'CustomerInvoice']),
+                'show'=>$user->can(uploadCustomerInvoiceData),
+                'submenu'=>[]
+            ]
 
 
 
@@ -6954,174 +6870,213 @@ function getHeaderMenu($currentCompany = null)
 
 
 
-			]
-		],
-		
-		'money-transactions'=>[
-			'title'=>__('Money Transactions'),
-			'link'=>'#',
-			'show'=>true ,
-			'submenu'=>[
-				[
-					'title'=>__('Money Received'),
-					'link'=>route('view.money.receive', ['company'=>$companyId]),
-					'show'=>$user->can('view money received'),
-					'submenu'=>[]
-				],
-				[
-					'title'=>__('Money Payment'),
-					'link'=>route('view.money.payment', ['company'=>$companyId]),
-					'show'=>$user->can('view supplier payment'),
-					'submenu'=>[]
-				],
-				[
-					'title'=>__('Cash Expenses'),
-					'link'=>route('view.cash.expense', ['company'=>$companyId]),
-					'show'=>$user->can('view cash expenses'),
-					'submenu'=>[]
-				],
-				// [
-				// 	'title'=>__('Approved Expenses'),
-				// 	'link'=>route('odoo-expenses.index', ['company'=>$companyId]),
-				// 	'show'=>$company->hasOdooIntegrationCredentials(),
-				// 	'submenu'=>[]
-				// ],
-				
-				[
-					'title'=>__('LC Settlement Internal Transfer'),
-					'link'=>route('lc-settlement-internal-money-transfers.index', ['company'=>$companyId]),
-					'show'=>$user->can('view lc settlement internal transfer'),
-					'submenu'=>[]
-						],
-				[
-			'title'=>__('Internal Money Transfer'),
-			'link'=>route('internal-money-transfers.index', ['company'=>$companyId]),
-			'show'=>$user->can('view internal money transfer'),
-			'submenu'=>[]
-				],
-				[
-					'title'=>__('Buy Or Sell Currency'),
-					'link'=>route('buy-or-sell-currencies.index',['company'=>$company->id ]),
-					'show'=>$user->can('view buy or sell currency'),
-					'submenu'=>[]
-				],
-				[
-					'title'=>__('Foreign Exchange Rate'),
-					'link'=>route('view.foreign.exchange.rate',['company'=>$company->id]),
-					'show'=>$user->can('view foreign exchange rate'),
-					'submenu'=>[]
-				],
-				
-				[
-					'title'=>__('Odoo Integration'),
-					'link'=>'#',
-					'show'=>$company->hasOdooIntegrationCredentials(),
-					'submenu'=>[
-						[
-							'title'=>__('Read Partners'), 
-						'link'=>'#',
-						'show'=>true,
-						'data-show-notification-modal'=>'read-partners-modal'
-					],
-						[
-							'title'=>__('Read Invoices'), 
-						'link'=>'#',
-						'show'=>true,
-						'data-show-notification-modal'=>'read-invoices-modal'
-					],
-							[
-							'title'=>__('Read Contracts'), 
-						'link'=>'#',
-						'show'=>true,
-						'data-show-notification-modal'=>'read-contracts-modal'
-					],
-						
-					// [
-					// 	'title'=>__('Send Collections Or Payments'),
-					// 	'link'=>'#',
-					// 	'show'=>true,
-					// 	'data-show-notification-modal'=>'send-invoices-modal',
-					// ],
-					// [
-					// 	'title'=>__('Read Approved Expenses'),
-					// 	'link'=>'#',
-					// 	'show'=>true,
-					// 	'data-show-notification-modal'=>'read-expenses-modal',
-					// ],
-					],
-					
-				],
-				
-						
-						
-						
-						
-					
-						
-						
-						
+            ]
+        ],
+        'supplier-sections'=>[
+            'title'=>__('Supplier Sections'),
+            'link'=>'#',
+            'show'=>true,
+            'submenu'=>[
 
-			]
-		]
-		,
-		'view letter of guarantee issuance'=>[
-			'title'=>__('LG & LC Issuance'),
-			'show'=>true ,
-			'submenu'=>[
-				[
-			'title'=>__('Letter Of Guarantee (LG) Issuance'),
-			'link'=>route('view.letter.of.guarantee.issuance', ['company'=>$companyId]),
-			'show'=>$user->can('view letter of guarantee issuance'),
-			'submenu'=>[]
-			],
-			[
-			'title'=>__('Letter Of Credit (LC) Issuance'),
-			'link'=>route('view.letter.of.credit.issuance', ['company'=>$companyId]),
-			'show'=>$user->can('view letter of credit issuance'),
-			'submenu'=>[]
-			]
-			]
-			
-			
-		],
-		
-		];
-		$isCustomerOrSupplierUploading = in_array('CustomerInvoice',Request()->segments()) || in_array('SupplierInvoice',Request()->segments());
-		if( $company->hasCashVero() && (hasMiddleware('isCashManagement') || $isCustomerOrSupplierUploading || in_array('LoanSchedule',Request()->segments())) ){
-			return $cashManagementSubItems ;
-		}
-		
-		$canViewVeroAnalysisDashboard = $user->can('view sales dashboard') || $user->can('view breakdown dashboard') || ($user->can('view customer dashboard')&& $hasSelectCustomerNameInTemplate)
-		|| ($user->can('view sales person dashboard')&&$hasSelectSalesPersonInTemplate) || $user->can('view interval comparing dashboard') || $user->can('view expense analysis dashboard')
-		|| $user->can('view income statement dashboard');
-		
-		
-		$canViewUploadSalesData = $user->can('upload sales gathering data') ;
-		$canViewUploadExportData = $user->can(uploadExportAnalysisData) ;
-		$canViewUploadCustomerInvoiceData = $user->can(uploadCustomerInvoiceData) ;
-		$canViewUploadSupplierInvoiceData = $user->can(uploadSupplierInvoiceData) ;
-		$canViewUploadLabelingData = $user->can(uploadLabelingItemData);
-		$canViewDataGathering = $canViewUploadSalesData || $canViewUploadExportData || $canViewUploadCustomerInvoiceData || $canViewUploadSupplierInvoiceData || $canViewUploadLabelingData;
-		
-		$salesAnalysisSubItems = getSalesAnalysisReportSubmenu($user, $companyId) ;
-		
-		$canViewSalesAnalysisReport = count($salesAnalysisSubItems) ;
-		$canExportAnalysisReport = $user->can(viewExportAnalysisData) ;
-		$canExpenseAnalysisReport = $user->can(viewExpenseAnalysisData) ;
-		$canViewAnalysisReport = $canViewSalesAnalysisReport || $canExportAnalysisReport|| $canExpenseAnalysisReport ;
-		
-		
-		$salesForecastValueBaseSubItems=getSalesForecastValueBaseSubmenu($user,$companyId);
-		$canViewSalesForecastValueBase=count($salesForecastValueBaseSubItems); 
-		// $user->can('view sales forecast value base');
-		$salesForecastQuantityBaseSubItems= getSalesForecastQuantityBaseSubmenu($user,$companyId);
-		$canViewSalesForecastQuantityBase=count($salesForecastQuantityBaseSubItems); 
-		$canViewSalesForecast = ($hasSalesGatheringDataUploadData)  && ($canViewSalesForecastValueBase||$canViewSalesForecastQuantityBase);
-		
-		
-		
+                [
+                    'title'=>__('Supplier Balances'),
+                    'link'=>route('view.balances', ['company'=>$companyId,'modelType'=>'SupplierInvoice']),
+                    'show'=>$user->can('view supplier balances'),
+                    'submenu'=>[]
+                ],
+                [
+            'title'=>__('Supplier Aging'),
+            'link'=>route('view.aging.analysis', ['company'=>$companyId,'modelType'=>'SupplierInvoice']),
+            'show'=>$user->can('view supplier aging'),
+            'submenu'=>[]
+            ],
+            [
+                'title'=>__('Supplier Contracts'),
+            'link'=>route('contracts.index', ['company'=>$companyId,'type'=>'Supplier']),
+            'show'=>$user->can('view suppliers contracts'),
+
+            ],
+            [
+                'title'=>__('Upload New Supplier Invoice Data'),
+                'link'=>route('view.uploading', ['company'=>$company->id , 'model'=>'SupplierInvoice']),
+                'show'=>$user->can(uploadSupplierInvoiceData),
+                'submenu'=>[]
+            ]
+
+
+
+
+
+
+
+            ]
+        ],
+        
+        'money-transactions'=>[
+            'title'=>__('Money Transactions'),
+            'link'=>'#',
+            'show'=>true ,
+            'submenu'=>[
+                [
+                    'title'=>__('Money Received'),
+                    'link'=>route('view.money.receive', ['company'=>$companyId]),
+                    'show'=>$user->can('view money received'),
+                    'submenu'=>[]
+                ],
+                [
+                    'title'=>__('Money Payment'),
+                    'link'=>route('view.money.payment', ['company'=>$companyId]),
+                    'show'=>$user->can('view supplier payment'),
+                    'submenu'=>[]
+                ],
+                [
+                    'title'=>__('Cash Expenses'),
+                    'link'=>route('view.cash.expense', ['company'=>$companyId]),
+                    'show'=>$user->can('view cash expenses'),
+                    'submenu'=>[]
+                ],
+                // [
+                // 	'title'=>__('Approved Expenses'),
+                // 	'link'=>route('odoo-expenses.index', ['company'=>$companyId]),
+                // 	'show'=>$company->hasOdooIntegrationCredentials(),
+                // 	'submenu'=>[]
+                // ],
+                
+                [
+                    'title'=>__('LC Settlement Internal Transfer'),
+                    'link'=>route('lc-settlement-internal-money-transfers.index', ['company'=>$companyId]),
+                    'show'=>$user->can('view lc settlement internal transfer'),
+                    'submenu'=>[]
+                        ],
+                [
+            'title'=>__('Internal Money Transfer'),
+            'link'=>route('internal-money-transfers.index', ['company'=>$companyId]),
+            'show'=>$user->can('view internal money transfer'),
+            'submenu'=>[]
+                ],
+                [
+                    'title'=>__('Buy Or Sell Currency'),
+                    'link'=>route('buy-or-sell-currencies.index', ['company'=>$company->id ]),
+                    'show'=>$user->can('view buy or sell currency'),
+                    'submenu'=>[]
+                ],
+                [
+                    'title'=>__('Foreign Exchange Rate'),
+                    'link'=>route('view.foreign.exchange.rate', ['company'=>$company->id]),
+                    'show'=>$user->can('view foreign exchange rate'),
+                    'submenu'=>[]
+                ],
+                
+                [
+                    'title'=>__('Odoo Integration'),
+                    'link'=>'#',
+                    'show'=>$company->hasOdooIntegrationCredentials(),
+                    'submenu'=>[
+                        [
+                            'title'=>__('Read Partners'),
+                        'link'=>'#',
+                        'show'=>true,
+                        'data-show-notification-modal'=>'read-partners-modal'
+                    ],
+                        [
+                            'title'=>__('Read Invoices'),
+                        'link'=>'#',
+                        'show'=>true,
+                        'data-show-notification-modal'=>'read-invoices-modal'
+                    ],
+                            [
+                            'title'=>__('Read Contracts'),
+                        'link'=>'#',
+                        'show'=>true,
+                        'data-show-notification-modal'=>'read-contracts-modal'
+                    ],
+                        
+                    // [
+                    // 	'title'=>__('Send Collections Or Payments'),
+                    // 	'link'=>'#',
+                    // 	'show'=>true,
+                    // 	'data-show-notification-modal'=>'send-invoices-modal',
+                    // ],
+                    // [
+                    // 	'title'=>__('Read Approved Expenses'),
+                    // 	'link'=>'#',
+                    // 	'show'=>true,
+                    // 	'data-show-notification-modal'=>'read-expenses-modal',
+                    // ],
+                    ],
+                    
+                ],
+                
+                        
+                        
+                        
+                        
+                    
+                        
+                        
+                        
+
+            ]
+        ]
+        ,
+        'view letter of guarantee issuance'=>[
+            'title'=>__('LG & LC Issuance'),
+            'show'=>true ,
+            'submenu'=>[
+                [
+            'title'=>__('Letter Of Guarantee (LG) Issuance'),
+            'link'=>route('view.letter.of.guarantee.issuance', ['company'=>$companyId]),
+            'show'=>$user->can('view letter of guarantee issuance'),
+            'submenu'=>[]
+            ],
+            [
+            'title'=>__('Letter Of Credit (LC) Issuance'),
+            'link'=>route('view.letter.of.credit.issuance', ['company'=>$companyId]),
+            'show'=>$user->can('view letter of credit issuance'),
+            'submenu'=>[]
+            ]
+            ]
+            
+            
+        ],
+        
+        ];
+    $isCustomerOrSupplierUploading = in_array('CustomerInvoice', Request()->segments()) || in_array('SupplierInvoice', Request()->segments());
+    if ($company->hasCashVero() && (hasMiddleware('isCashManagement') || $isCustomerOrSupplierUploading || in_array('LoanSchedule', Request()->segments()))) {
+        return $cashManagementSubItems ;
+    }
+        
+    $canViewVeroAnalysisDashboard = $user->can('view sales dashboard') || $user->can('view breakdown dashboard') || ($user->can('view customer dashboard')&& $hasSelectCustomerNameInTemplate)
+    || ($user->can('view sales person dashboard')&&$hasSelectSalesPersonInTemplate) || $user->can('view interval comparing dashboard') || $user->can('view expense analysis dashboard')
+    || $user->can('view income statement dashboard');
+        
+        
+    $canViewUploadSalesData = $user->can('upload sales gathering data') ;
+    $canViewUploadExportData = $user->can(uploadExportAnalysisData) ;
+    $canViewUploadCustomerInvoiceData = $user->can(uploadCustomerInvoiceData) ;
+    $canViewUploadSupplierInvoiceData = $user->can(uploadSupplierInvoiceData) ;
+    $canViewUploadLabelingData = $user->can(uploadLabelingItemData);
+    $canViewDataGathering = $canViewUploadSalesData || $canViewUploadExportData || $canViewUploadCustomerInvoiceData || $canViewUploadSupplierInvoiceData || $canViewUploadLabelingData;
+        
+    $salesAnalysisSubItems = getSalesAnalysisReportSubmenu($user, $companyId) ;
+        
+    $canViewSalesAnalysisReport = count($salesAnalysisSubItems) ;
+    $canExportAnalysisReport = $user->can(viewExportAnalysisData) ;
+    $canExpenseAnalysisReport = $user->can(viewExpenseAnalysisData) ;
+    $canViewAnalysisReport = $canViewSalesAnalysisReport || $canExportAnalysisReport|| $canExpenseAnalysisReport ;
+        
+        
+    $salesForecastValueBaseSubItems=getSalesForecastValueBaseSubmenu($user, $companyId);
+    $canViewSalesForecastValueBase=count($salesForecastValueBaseSubItems);
+    // $user->can('view sales forecast value base');
+    $salesForecastQuantityBaseSubItems= getSalesForecastQuantityBaseSubmenu($user, $companyId);
+    $canViewSalesForecastQuantityBase=count($salesForecastQuantityBaseSubItems);
+    $canViewSalesForecast = ($hasSalesGatheringDataUploadData)  && ($canViewSalesForecastValueBase||$canViewSalesForecastQuantityBase);
+        
+        
+        
     return [
-        'home'=>generateMenuItem(__('Home'), $user->can('view home'),route('home'), []),
+        'home'=>generateMenuItem(__('Home'), $user->can('view home'), route('home'), []),
         'dashboard'=>[
             'title'=>__('Dashboard'),
             'show'=>$canViewVeroAnalysisDashboard ,
@@ -7152,7 +7107,7 @@ function getHeaderMenu($currentCompany = null)
                             'show'=>$canViewUploadExportData,
                             'submenu'=>[]
                         ],
-						'upload new expense data'=>[
+                        'upload new expense data'=>[
                             'title'=>__('Upload New Expense Data'),
                             'link'=>route('view.uploading', ['company'=>$company->id , 'model'=>'ExpenseAnalysis']),
                             'show'=>$canViewUploadExportData,
@@ -7163,14 +7118,14 @@ function getHeaderMenu($currentCompany = null)
                             'link'=>route('view.uploading', ['company'=>$company->id , 'model'=>'CustomerInvoice']),
                             'show'=>$canViewUploadCustomerInvoiceData,
                             'submenu'=>[]
-						],
-						'upload new supplier invoice data'=>[
+                        ],
+                        'upload new supplier invoice data'=>[
                             'title'=>__('Upload New Supplier Invoice Data'),
                             'link'=>route('view.uploading', ['company'=>$company->id , 'model'=>'SupplierInvoice']),
                             'show'=>$canViewUploadSupplierInvoiceData,
                             'submenu'=>[]
-						],
-						'upload-new-labeling-data'=>[
+                        ],
+                        'upload-new-labeling-data'=>[
                             'title'=>__('Upload New Labeling Data'),
                             'link'=>route('view.uploading', ['company'=>$company->id , 'model'=>'LabelingItem']),
                             'show'=>$canViewUploadLabelingData,
@@ -7187,102 +7142,102 @@ function getHeaderMenu($currentCompany = null)
                                     'title'=>__('Sales Analysis Report'),
                                     'show'=>$canViewSalesAnalysisReport,
                                     'link'=>'#',
-                                    'submenu'=>$salesAnalysisSubItems 
+                                    'submenu'=>$salesAnalysisSubItems
                                 ] ,
-								'export-analysis-report'=>[
-									'title'=>__('Export Analysis Report'),
-									'link'=>route('sales.export.analysis', ['company'=>$companyId]),
-									'show'=>$canExportAnalysisReport
-								],	'expense-analysis-report'=>[
-									'title'=>__('Expense Analysis Report'),
-									'link'=>route('sales.expense.analysis', ['company'=>$companyId]),
-									'show'=>$canExpenseAnalysisReport
-								],
+                                'export-analysis-report'=>[
+                                    'title'=>__('Export Analysis Report'),
+                                    'link'=>route('sales.export.analysis', ['company'=>$companyId]),
+                                    'show'=>$canExportAnalysisReport
+                                ],	'expense-analysis-report'=>[
+                                    'title'=>__('Expense Analysis Report'),
+                                    'link'=>route('sales.expense.analysis', ['company'=>$companyId]),
+                                    'show'=>$canExpenseAnalysisReport
+                                ],
 
 
 
                             ]
 
-								],
-								'sales-forecast'=>[
-									'title'=>__('Sales Forecast'),
-									'link'=>'#',
-									'show'=>$canViewSalesForecast  ,
-									'submenu'=>[
-										'sales-forecast-value-base'=>[
-										'title'=>__('Sales Forecast Value Base'),
-										'link'=>'#',
-										'show'=>$canViewSalesForecastValueBase,
-										'submenu'=>$salesForecastValueBaseSubItems
-										],
-										'sales-forecast-quantity-base'=>[
-											'title'=>__('Sales Forecast Quantity Base'),
-											'link'=>'#',
-											'show'=>$canViewSalesForecastQuantityBase,
-											'submenu'=>getSalesForecastQuantityBaseSubmenu($user,$companyId)
-										]
-									]
-										],
-										'income-statement-planning'=>[
-											'title'=>__('Income Statement Planning'),
-											'link'=>route('admin.view.financial.statement',['company'=>$companyId]),
-											'show'=>$user->can('view income statement planning')
-										],
-										'cash-management'=>[
-											'title'=>__('Cash Management'),
-											'link'=>'#',
-											'show'=>$company->hasCashVero()   ,
-											'submenu'=>$cashManagementSubItems
-												],
+                                ],
+                                'sales-forecast'=>[
+                                    'title'=>__('Sales Forecast'),
+                                    'link'=>'#',
+                                    'show'=>$canViewSalesForecast  ,
+                                    'submenu'=>[
+                                        'sales-forecast-value-base'=>[
+                                        'title'=>__('Sales Forecast Value Base'),
+                                        'link'=>'#',
+                                        'show'=>$canViewSalesForecastValueBase,
+                                        'submenu'=>$salesForecastValueBaseSubItems
+                                        ],
+                                        'sales-forecast-quantity-base'=>[
+                                            'title'=>__('Sales Forecast Quantity Base'),
+                                            'link'=>'#',
+                                            'show'=>$canViewSalesForecastQuantityBase,
+                                            'submenu'=>getSalesForecastQuantityBaseSubmenu($user, $companyId)
+                                        ]
+                                    ]
+                                        ],
+                                        'income-statement-planning'=>[
+                                            'title'=>__('Income Statement Planning'),
+                                            'link'=>route('admin.view.financial.statement', ['company'=>$companyId]),
+                                            'show'=>$user->can('view income statement planning')
+                                        ],
+                                        'cash-management'=>[
+                                            'title'=>__('Cash Management'),
+                                            'link'=>'#',
+                                            'show'=>$company->hasCashVero()   ,
+                                            'submenu'=>$cashManagementSubItems
+                                                ],
 
 
 
 
-												'quick-price'=>[
-													'title'=>__('Quick Price'),
-													'link'=>'#',
-													'show'=>$user->can('view quick price'),
-													'submenu'=>[
-														'pricing-plans'=>[
-															'title'=>__('Pricing Plan'),
-															'link'=>route('admin.view.quick.pricing.calculator',['company'=>$companyId]),
-															'show'=>$user->can('view pricing plans')
-														],
+                                                'quick-price'=>[
+                                                    'title'=>__('Quick Price'),
+                                                    'link'=>'#',
+                                                    'show'=>$user->can('view quick price'),
+                                                    'submenu'=>[
+                                                        'pricing-plans'=>[
+                                                            'title'=>__('Pricing Plan'),
+                                                            'link'=>route('admin.view.quick.pricing.calculator', ['company'=>$companyId]),
+                                                            'show'=>$user->can('view pricing plans')
+                                                        ],
 
-														'quick-price-calculator'=>[
-															'title'=>__('Quick Price Calculator'),
-															'link'=>route('admin.view.quick.pricing.calculator', ['company'=>$companyId]),
-															'show'=>$user->can('view quick price calculator'),
-															'submenu'=>[]
-														],
+                                                        'quick-price-calculator'=>[
+                                                            'title'=>__('Quick Price Calculator'),
+                                                            'link'=>route('admin.view.quick.pricing.calculator', ['company'=>$companyId]),
+                                                            'show'=>$user->can('view quick price calculator'),
+                                                            'submenu'=>[]
+                                                        ],
 
-														'setting'=>[
-															'title'=>__('Setting'),
-															'link'=>'#',
-															'show'=>$user->can('view quick price setting'),
-															'submenu'=>[
-																'revenue-business-line'=>generateMenuItem(__('Revenue Business Line'), $user->can('view revenue business line'), route('admin.view.revenue.business.line', ['company'=>$companyId]), []),
-																'positions'=>generateMenuItem(__('Positions'), $user->can('view positions'), route('positions.index', ['company'=>$companyId]), []),
-																'expenses'=>generateMenuItem(__('Expenses'), $user->can('view expenses'), route('pricing-expenses.index', ['company'=>$companyId]), []),
+                                                        'setting'=>[
+                                                            'title'=>__('Setting'),
+                                                            'link'=>'#',
+                                                            'show'=>$user->can('view quick price setting'),
+                                                            'submenu'=>[
+                                                                'revenue-business-line'=>generateMenuItem(__('Revenue Business Line'), $user->can('view revenue business line'), route('admin.view.revenue.business.line', ['company'=>$companyId]), []),
+                                                                'positions'=>generateMenuItem(__('Positions'), $user->can('view positions'), route('positions.index', ['company'=>$companyId]), []),
+                                                                'expenses'=>generateMenuItem(__('Expenses'), $user->can('view expenses'), route('pricing-expenses.index', ['company'=>$companyId]), []),
 
-															]
-														],
+                                                            ]
+                                                        ],
 
 
-													]
-													],
-													'labeling-items'=>[
-														'title'=>__('Labeling Items'),
-														'link'=>'#',
-														'show'=>$user->can('view labeling items'),
-														'submenu'=>[
-															'create-labeling-items'=>generateMenuItem(__('Create Labeling Items'), $user->can('view create labeling items'), route('create.labeling.items', ['company'=>$companyId]) ),
-															'building lable'=>generateMenuItem(__('Building Label'), $user->can('view create labeling items'), route('show.building.label', ['company'=>$companyId]) ),
-															'FF&E lable'=>generateMenuItem(__('FF&E Label'), $user->can('view create labeling items'), route('show.ffe.label', ['company'=>$companyId]) ),
-															'create-labeling-form'=>generateMenuItem(__('Create Labeling Form'), $user->can('view create labeling items'), route('create.labeling.form', ['company'=>$companyId]) ),
+                                                    ]
+                                                    ],
+                                                    'labeling-items'=>[
+                                                        'title'=>__('Labeling Items'),
+                                                        'link'=>'#',
+                                                        'show'=>$user->can('view labeling items'),
+                                                        'submenu'=>[
+                                                            'create-labeling-items'=>generateMenuItem(__('Create Labeling Items'), $user->can('view create labeling items'), route('create.labeling.items', ['company'=>$companyId])),
+                                                            'building lable'=>generateMenuItem(__('Building Label'), $user->can('view create labeling items'), route('show.building.label', ['company'=>$companyId])),
+                                                            'FF&E lable'=>generateMenuItem(__('FF&E Label'), $user->can('view create labeling items'), route('show.ffe.label', ['company'=>$companyId])),
+                                                            'create-labeling-form'=>generateMenuItem(__('Create Labeling Form'), $user->can('view create labeling items'), route('create.labeling.form', ['company'=>$companyId])),
 
-														]
-													],
+                                                        ]
+                                                    ],
 
 
 
@@ -7290,24 +7245,24 @@ function getHeaderMenu($currentCompany = null)
 }
 function getLgTypes():array
 {
-	return LgTypes::getAll();
+    return LgTypes::getAll();
 }
 
 function getLcTypes():array
 {
-	return LcTypes::getAll();
+    return LcTypes::getAll();
 }
 function getCommissionInterval():array
 {
-	return [
-		'quarterly'=>__('Quarterly'),
-		'annually'=>__('Annually')
-	];
+    return [
+        'quarterly'=>__('Quarterly'),
+        'annually'=>__('Annually')
+    ];
 }
 
 function camelizeWithSpace($input, $separator = '-')
 {
-	return HStr::camelizeWithSpace($input,$separator);
+    return HStr::camelizeWithSpace($input, $separator);
 }
 function unformat_number($money)
 {
@@ -7317,7 +7272,7 @@ function unformat_number($money)
     $separatorsCountToBeErased = strlen($cleanString) - strlen($onlyNumbersString) - 1;
 
     $stringWithCommaOrDot = preg_replace('/([,\.])/', '', $cleanString, $separatorsCountToBeErased);
-    $removedThousandSeparator = preg_replace('/(\.|,)(?=[0-9]{3,}$)/', '',  $stringWithCommaOrDot);
+    $removedThousandSeparator = preg_replace('/(\.|,)(?=[0-9]{3,}$)/', '', $stringWithCommaOrDot);
 
     return (float) str_replace(',', '.', $removedThousandSeparator);
 }
@@ -7326,577 +7281,580 @@ function unformat_number($money)
 function getRevenueBusinessLineOptions(): array
 {
 
-	// used by seeder
+    // used by seeder
 
-	return [
-		'training_service' => __('Training Service'),
-		'consulting_service' => __('Consulting Service'),
-		'internship_service' => __('Internship Service'),
-		'internship_service' => __('Internship Service'),
-		'externship_service' => __('Externship Service'),
-		'observership_service' => __('Observership Service'),
-		'observership_service' => __('Observership Service'),
-		'scholarship_service' => __('Scholarship Service'),
-		'fellowship_service' => __('Fellowship Service'),
+    return [
+        'training_service' => __('Training Service'),
+        'consulting_service' => __('Consulting Service'),
+        'internship_service' => __('Internship Service'),
+        'internship_service' => __('Internship Service'),
+        'externship_service' => __('Externship Service'),
+        'observership_service' => __('Observership Service'),
+        'observership_service' => __('Observership Service'),
+        'scholarship_service' => __('Scholarship Service'),
+        'fellowship_service' => __('Fellowship Service'),
 
-	];
+    ];
 }
 function getServiceCategories(): array
 {
 
-	return [
-		'financial_courses' => __('Financial Courses'),
-		'marketing_courses' => __('Marketing Courses'),
-		'hr_courses' => __('Hr Courses'),
-		'financial_consulting' => __('Financial Consulting'),
-		'marketing_consulting' => __('Marketing Consulting'),
-		'hr_consulting' => __('Hr Consulting'),
-	];
+    return [
+        'financial_courses' => __('Financial Courses'),
+        'marketing_courses' => __('Marketing Courses'),
+        'hr_courses' => __('Hr Courses'),
+        'financial_consulting' => __('Financial Consulting'),
+        'marketing_consulting' => __('Marketing Consulting'),
+        'hr_consulting' => __('Hr Consulting'),
+    ];
 }
 function getServiceName(): array
 {
 
-	return [
-		'accounting' => __('Accounting'),
-		'costing' => __('Costing'),
-		'budget' => __('Budget'),
-		'feasibility_study' => __('Feasibility Study'),
-		'valuation' => __('Valuation'),
-		'performance_analysis' => __('Performance Analysis'),
-	];
+    return [
+        'accounting' => __('Accounting'),
+        'costing' => __('Costing'),
+        'budget' => __('Budget'),
+        'feasibility_study' => __('Feasibility Study'),
+        'valuation' => __('Valuation'),
+        'performance_analysis' => __('Performance Analysis'),
+    ];
 }
 function getServicesNature(): array
 {
-	return [
-		'online' => __('Online'),
-		'physical' => __('Physical')
-	];
+    return [
+        'online' => __('Online'),
+        'physical' => __('Physical')
+    ];
 }
 function getCountries(): array
 {
-	$countries = Country::whereNotIn('name_en', ['United States', 'Kenya'])
-		->get()->pluck('name_' . App()->getLocale(), 'id')->toArray();
-	return $countries;
+    $countries = Country::whereNotIn('name_en', ['United States', 'Kenya'])
+        ->get()->pluck('name_' . App()->getLocale(), 'id')->toArray();
+    return $countries;
 }
 function getPositions(): array
 {
-	return [
-		'executive' => __('Executive'),
-		'senior' => __('Senior'),
-		'officer' => __('Officer')
-	];
+    return [
+        'executive' => __('Executive'),
+        'senior' => __('Senior'),
+        'officer' => __('Officer')
+    ];
 }
 function getCurrency()
 {
-	return getCurrencies();
-	
+    return getCurrencies();
+
 }
 
 function getAddNewFieldRule($fieldName)
 {
-	return Rule::requiredIf(Request()->get($fieldName) == 'Add New');
+    return Rule::requiredIf(Request()->get($fieldName) == 'Add New');
 }
 
 // route('view.uploading',['company'=>$company->id , 'model'=>$elementModelName])
 function getTestBuildingArray()
 {
-	return [
-		[
-			'title'=>__('New Cataract'),
-			'value'=>__('New Cataract'),
-			'data-abb'=>'NECAT',
-			'data-code'=>'01'
-		],
-		[
-			'title'=>__('Old Cataract'),
-			'value'=>__('Old Cataract'),
-			'data-abb'=>'ODCAT',
-			'data-code'=>'02'
-		]
-	];
+    return [
+        [
+            'title'=>__('New Cataract'),
+            'value'=>__('New Cataract'),
+            'data-abb'=>'NECAT',
+            'data-code'=>'01'
+        ],
+        [
+            'title'=>__('Old Cataract'),
+            'value'=>__('Old Cataract'),
+            'data-abb'=>'ODCAT',
+            'data-code'=>'02'
+        ]
+    ];
 }
 function getTestFfeArray()
 {
-	return [
-		[
-			'title'=>__('Furniture'),
-			'value'=>'furniture',
-			'data-abb'=>'FURN',
-			'data-code'=>'01'
-		],
-		[
-			'title'=>__('Equipment'),
-			'value'=>__('Equipment'),
-			'data-abb'=>'EQUIP',
-			'data-code'=>'02'
-		]
-	];
+    return [
+        [
+            'title'=>__('Furniture'),
+            'value'=>'furniture',
+            'data-abb'=>'FURN',
+            'data-code'=>'01'
+        ],
+        [
+            'title'=>__('Equipment'),
+            'value'=>__('Equipment'),
+            'data-abb'=>'EQUIP',
+            'data-code'=>'02'
+        ]
+    ];
 }
 
 function getTestFloors()
 {
-	return [
-		[
-			'title'=>'Floor1',
-			'value'=>'floor1',
-			'data-abb'=>'FO1',
-			'data-code'=>'01'
-		],
-		[
-			'title'=>'Floor2',
-			'value'=>'floor2',
-			'data-abb'=>'FO2',
-			'data-code'=>'02'
-		],
+    return [
+        [
+            'title'=>'Floor1',
+            'value'=>'floor1',
+            'data-abb'=>'FO1',
+            'data-code'=>'01'
+        ],
+        [
+            'title'=>'Floor2',
+            'value'=>'floor2',
+            'data-abb'=>'FO2',
+            'data-code'=>'02'
+        ],
 
-	];
+    ];
 }
 function getTestCategory()
 {
-	return [
-		[
-			'title'=>'Beds',
-			'value'=>'beds',
-			'data-abb'=>'BDs',
-			'data-code'=>'01'
-		],
-		[
-			'title'=>'Chairs',
-			'value'=>'chairs',
-			'data-abb'=>'CHs',
-			'data-code'=>'02'
-		],
+    return [
+        [
+            'title'=>'Beds',
+            'value'=>'beds',
+            'data-abb'=>'BDs',
+            'data-code'=>'01'
+        ],
+        [
+            'title'=>'Chairs',
+            'value'=>'chairs',
+            'data-abb'=>'CHs',
+            'data-code'=>'02'
+        ],
 
-	];
+    ];
 }
 function getTestLabelForm()
 {
-	return [
-		[
-			'value'=>'Building',
-		'title'=>'Building'
-		],
-		[
-			'value'=>'FF&E',
-		'title'=>'FF&E'
-		]
-	];
+    return [
+        [
+            'value'=>'Building',
+        'title'=>'Building'
+        ],
+        [
+            'value'=>'FF&E',
+        'title'=>'FF&E'
+        ]
+    ];
 }
 function getTestBuildNames()
 {
-	return [
-		[
-			'value'=>'New Cataract',
-		'title'=>'New Cataract'
-		],
-		[
-			'value'=>'Old Cataract',
-		'title'=>'Old Cataract'
-		]
-	];
+    return [
+        [
+            'value'=>'New Cataract',
+        'title'=>'New Cataract'
+        ],
+        [
+            'value'=>'Old Cataract',
+        'title'=>'Old Cataract'
+        ]
+    ];
 }
-function filterByColumnName($filterByColumnName){
-	$items = [];
-	foreach($filterByColumnName as $columnValue){
-		$attributes = $columnValue->getAttributes();
+function filterByColumnName($filterByColumnName)
+{
+    $items = [];
+    foreach ($filterByColumnName as $columnValue) {
+        $attributes = $columnValue->getAttributes();
 
-		foreach($attributes as $colName => $colVal){
-				$items[$colName][$colVal] = $colVal ;
-		}
+        foreach ($attributes as $colName => $colVal) {
+            $items[$colName][$colVal] = $colVal ;
+        }
 
-	}
-	$formatted=[];
-	foreach($items as $colName => $arr){
-		foreach($arr as $col => $val){
-			$formatted[$colName][] =[
-				'title'=>$col,
-				'value'=>$val
-			];
-		}
-	}
-	return $formatted ;
+    }
+    $formatted=[];
+    foreach ($items as $colName => $arr) {
+        foreach ($arr as $col => $val) {
+            $formatted[$colName][] =[
+                'title'=>$col,
+                'value'=>$val
+            ];
+        }
+    }
+    return $formatted ;
 }
 function formatColumnName($name)
 {
-	return trim(strtolower(str_replace(' ' , '_',lcfirst($name))));
+    return trim(strtolower(str_replace(' ', '_', lcfirst($name))));
 }
-function FormatKeyAsColumnName($items){
-	$result = [];
-	foreach($items as $key => $val){
-		$result[formatColumnName($key)] =$val;
-	}
-	return $result ;
+function FormatKeyAsColumnName($items)
+{
+    $result = [];
+    foreach ($items as $key => $val) {
+        $result[formatColumnName($key)] =$val;
+    }
+    return $result ;
 }
-function getValuesStartedAfterIndex(array $items , int $index){
-	$result = ['QR Code'];
-	foreach($items as $i => $val){
-		if($i > $index){
-			$result[]=$val ;
-		}
-	}
-	return $result;
+function getValuesStartedAfterIndex(array $items, int $index)
+{
+    $result = ['QR Code'];
+    foreach ($items as $i => $val) {
+        if ($i > $index) {
+            $result[]=$val ;
+        }
+    }
+    return $result;
 }
 function qrcodeSpacing($code)
 {
-	return str_replace(['//','/'],['// ','/ '],$code);
+    return str_replace(['//','/'], ['// ','/ '], $code);
 }
 function getDefaultImage()
 {
-	return asset('custom/images/default-img.png');
+    return asset('custom/images/default-img.png');
 }
 function array_to_upper(array $items)
 {
-	$result = [];
-	foreach($items as $item){
-		$result[] = snakeToCamel($item);
-	}
-	return $result ;
+    $result = [];
+    foreach ($items as $item) {
+        $result[] = snakeToCamel($item);
+    }
+    return $result ;
 }
-function findByKey(array $items , $key , $searchId )
+function findByKey(array $items, $key, $searchId)
 {
-	foreach($items as $item){
-		if(isset($item[$key]) && $item[$key] == $searchId){
-			return $item;
-		}
-	}
-	return [];
+    foreach ($items as $item) {
+        if (isset($item[$key]) && $item[$key] == $searchId) {
+            return $item;
+        }
+    }
+    return [];
 }
-function touppercase($currentName){
-	return Str::upper($currentName);
+function touppercase($currentName)
+{
+    return Str::upper($currentName);
 }
-function toupperfirst($currentName){
-	return ucfirst($currentName);
+function toupperfirst($currentName)
+{
+    return ucfirst($currentName);
 }
 function capitalize($currentName)
 {
-	return toupperfirst($currentName);
+    return toupperfirst($currentName);
 }
 
 function dashesToCamelCase($string)
 {
-	$string = str_replace(['-', '_'], ' ', $string);
+    $string = str_replace(['-', '_'], ' ', $string);
     return lcfirst(str_replace(' ', '', ucwords($string)));
 
 }
-function isAll($percentageOf){
-	if(is_null($percentageOf)){
-		return false ;
-	}
-	$allItems  = is_array($percentageOf) ? $percentageOf : json_decode($percentageOf) ;
-	return in_array('all',$allItems);
+function isAll($percentageOf)
+{
+    if (is_null($percentageOf)) {
+        return false ;
+    }
+    $allItems  = is_array($percentageOf) ? $percentageOf : json_decode($percentageOf) ;
+    return in_array('all', $allItems);
 
 }
-function getAllPercentageOfRevenuesIds(int $incomeStatementId , string $subItemType,int $isQuantity)
+function getAllPercentageOfRevenuesIds(int $incomeStatementId, string $subItemType, int $isQuantity)
 {
 
-	return IncomeStatementSubItem::where('is_quantity',$isQuantity)
-	->where('financial_statement_able_item_id',IncomeStatementItem::SALES_REVENUE_ID)
-	->where('sub_item_type',$subItemType)
-	->where('financial_statement_able_id',$incomeStatementId)
-	->pluck('id')->toArray();
+    return IncomeStatementSubItem::where('is_quantity', $isQuantity)
+    ->where('financial_statement_able_item_id', IncomeStatementItem::SALES_REVENUE_ID)
+    ->where('sub_item_type', $subItemType)
+    ->where('financial_statement_able_id', $incomeStatementId)
+    ->pluck('id')->toArray();
 
 }
-function getMappingFromForecastToAdjustedOrModified($isPercentageOfs,$currentSubItemType)
+function getMappingFromForecastToAdjustedOrModified($isPercentageOfs, $currentSubItemType)
 {
 
-	/**
-	 * @var IncomeStatement $incomeStatement
-	 * *
-	 */
-	$newPercentageOf = [];
+    /**
+     * @var IncomeStatement $incomeStatement
+     * *
+     */
+    $newPercentageOf = [];
 
-	// $isPercentageOfs = $incomeStatement->pivot->{$propertyName} ;
+    // $isPercentageOfs = $incomeStatement->pivot->{$propertyName} ;
 
-	foreach((array)convertStringArrayToArr($isPercentageOfs) as $percentageOfId){
-		$subItem = IncomeStatementSubItem::find($percentageOfId);
-		if($subItem){
-			$item  = IncomeStatementSubItem::where('financial_statement_able_id',$subItem->financial_statement_able_id)
-			// $item  = IncomeStatementSubItem::where('financial_statement_able_id',$incomeStatement->id)
-			->where('financial_statement_able_item_id',$subItem->financial_statement_able_item_id)
-			->where('sub_item_name',$subItem->sub_item_name)
-			->where('sub_item_type',$currentSubItemType)
-			->first();
-			;
-			if($item){
-				$newPercentageOf[] = $item->id;
-			}
-		}
+    foreach ((array)convertStringArrayToArr($isPercentageOfs) as $percentageOfId) {
+        $subItem = IncomeStatementSubItem::find($percentageOfId);
+        if ($subItem) {
+            $item  = IncomeStatementSubItem::where('financial_statement_able_id', $subItem->financial_statement_able_id)
+            // $item  = IncomeStatementSubItem::where('financial_statement_able_id',$incomeStatement->id)
+            ->where('financial_statement_able_item_id', $subItem->financial_statement_able_item_id)
+            ->where('sub_item_name', $subItem->sub_item_name)
+            ->where('sub_item_type', $currentSubItemType)
+            ->first();
+            ;
+            if ($item) {
+                $newPercentageOf[] = $item->id;
+            }
+        }
 
-	}
-	return $newPercentageOf;
+    }
+    return $newPercentageOf;
 }
- function convertStringArrayToArr($arrayAsString):?array
-	{
-		if(is_string($arrayAsString)){
-			return (array)(json_decode($arrayAsString)) ;
-		}
-		return $arrayAsString;
-	}
+function convertStringArrayToArr($arrayAsString):?array
+{
+    if (is_string($arrayAsString)) {
+        return (array)(json_decode($arrayAsString)) ;
+    }
+    return $arrayAsString;
+}
 function hasMiddleware(string $middlewareName)
 {
-	return in_array($middlewareName,array_values(Route::current()->gatherMiddleware()) );
+    return in_array($middlewareName, array_values(Route::current()->gatherMiddleware()));
 }
 function getModelNameWithoutNamespace($object)
 {
-	return HHelpers::getClassNameWithoutNameSpace($object);
+    return HHelpers::getClassNameWithoutNameSpace($object);
 }
 function formatWeeksDatesFromStartDate(string $agingDate, string $format = 'd-m-Y')
-    {
-        return [
-            'past_due' => [
-                '1-7' => [
-                    'start_date' => $startDate = Carbon::make($agingDate)->subDay()->format($format),
-                    'end_date' => $endDate = Carbon::make($startDate)->subDays(6)->format($format)
-                ],
-                '8-15' => [
-                    'start_date' => $startDate = Carbon::make($endDate)->subDay()->format($format),
-                    'end_date' => $endDate = Carbon::make($startDate)->subDays(7)->format($format)
-                ],
-                '16-30' => [
-                    'start_date' => $startDate = Carbon::make($endDate)->subDay()->format($format),
-                    'end_date' => $endDate = Carbon::make($startDate)->subDays(14)->format($format)
-                ],
-                '31-45' => [
-                    'start_date' => $startDate = Carbon::make($endDate)->subDay()->format($format),
-                    'end_date' => $endDate = Carbon::make($startDate)->subDays(14)->format($format)
-                ],
-                '46-60' => [
-                    'start_date' => $startDate = Carbon::make($endDate)->subDay()->format($format),
-                    'end_date' => $endDate = Carbon::make($startDate)->subDays(14)->format($format)
-                ],
-                '61-90' => [
-                    'start_date' => $startDate = Carbon::make($endDate)->subDay()->format($format),
-                    'end_date' => $endDate = Carbon::make($startDate)->subDays(29)->format($format)
-                ],
-                '91-120' => [
-                    'start_date' => $startDate = Carbon::make($endDate)->subDay()->format($format),
-                    'end_date' => $endDate = Carbon::make($startDate)->subDays(29)->format($format)
-                ],
-                '121-150' => [
-                    'start_date' => $startDate = Carbon::make($endDate)->subDay()->format($format),
-                    'end_date' => $endDate = Carbon::make($startDate)->subDays(29)->format($format)
-                ],
+{
+    return [
+        'past_due' => [
+            '1-7' => [
+                'start_date' => $startDate = Carbon::make($agingDate)->subDay()->format($format),
+                'end_date' => $endDate = Carbon::make($startDate)->subDays(6)->format($format)
             ],
+            '8-15' => [
+                'start_date' => $startDate = Carbon::make($endDate)->subDay()->format($format),
+                'end_date' => $endDate = Carbon::make($startDate)->subDays(7)->format($format)
+            ],
+            '16-30' => [
+                'start_date' => $startDate = Carbon::make($endDate)->subDay()->format($format),
+                'end_date' => $endDate = Carbon::make($startDate)->subDays(14)->format($format)
+            ],
+            '31-45' => [
+                'start_date' => $startDate = Carbon::make($endDate)->subDay()->format($format),
+                'end_date' => $endDate = Carbon::make($startDate)->subDays(14)->format($format)
+            ],
+            '46-60' => [
+                'start_date' => $startDate = Carbon::make($endDate)->subDay()->format($format),
+                'end_date' => $endDate = Carbon::make($startDate)->subDays(14)->format($format)
+            ],
+            '61-90' => [
+                'start_date' => $startDate = Carbon::make($endDate)->subDay()->format($format),
+                'end_date' => $endDate = Carbon::make($startDate)->subDays(29)->format($format)
+            ],
+            '91-120' => [
+                'start_date' => $startDate = Carbon::make($endDate)->subDay()->format($format),
+                'end_date' => $endDate = Carbon::make($startDate)->subDays(29)->format($format)
+            ],
+            '121-150' => [
+                'start_date' => $startDate = Carbon::make($endDate)->subDay()->format($format),
+                'end_date' => $endDate = Carbon::make($startDate)->subDays(29)->format($format)
+            ],
+        ],
 
-            'coming_due' => [
-                '1-7' => [
-                    'start_date' => $startDate = Carbon::make($agingDate)->addDay()->format($format),
-                    'end_date' => $endDate = Carbon::make($startDate)->addDays(6)->format($format)
-                ],
-                '8-15' => [
-                    'start_date' => $startDate = Carbon::make($endDate)->addDay()->format($format),
-                    'end_date' => $endDate = Carbon::make($startDate)->addDays(7)->format($format)
-                ],
-                '16-30' => [
-                    'start_date' => $startDate = Carbon::make($endDate)->addDay()->format($format),
-                    'end_date' => $endDate = Carbon::make($startDate)->addDays(14)->format($format)
-                ],
-                '31-45' => [
-                    'start_date' => $startDate = Carbon::make($endDate)->addDay()->format($format),
-                    'end_date' => $endDate = Carbon::make($startDate)->addDays(14)->format($format)
-                ],
-                '46-60' => [
-                    'start_date' => $startDate = Carbon::make($endDate)->addDay()->format($format),
-                    'end_date' => $endDate = Carbon::make($startDate)->addDays(14)->format($format)
-                ],
-                '61-90' => [
-                    'start_date' => $startDate = Carbon::make($endDate)->addDay()->format($format),
-                    'end_date' => $endDate = Carbon::make($startDate)->addDays(29)->format($format)
-                ],
-                '91-120' => [
-                    'start_date' => $startDate = Carbon::make($endDate)->addDay()->format($format),
-                    'end_date' => $endDate = Carbon::make($startDate)->addDays(29)->format($format)
-                ],
-                '121-150' => [
-                    'start_date' => $startDate = Carbon::make($endDate)->addDay()->format($format),
-                    'end_date' => $endDate = Carbon::make($startDate)->addDays(29)->format($format)
-                ],
-            ]
+        'coming_due' => [
+            '1-7' => [
+                'start_date' => $startDate = Carbon::make($agingDate)->addDay()->format($format),
+                'end_date' => $endDate = Carbon::make($startDate)->addDays(6)->format($format)
+            ],
+            '8-15' => [
+                'start_date' => $startDate = Carbon::make($endDate)->addDay()->format($format),
+                'end_date' => $endDate = Carbon::make($startDate)->addDays(7)->format($format)
+            ],
+            '16-30' => [
+                'start_date' => $startDate = Carbon::make($endDate)->addDay()->format($format),
+                'end_date' => $endDate = Carbon::make($startDate)->addDays(14)->format($format)
+            ],
+            '31-45' => [
+                'start_date' => $startDate = Carbon::make($endDate)->addDay()->format($format),
+                'end_date' => $endDate = Carbon::make($startDate)->addDays(14)->format($format)
+            ],
+            '46-60' => [
+                'start_date' => $startDate = Carbon::make($endDate)->addDay()->format($format),
+                'end_date' => $endDate = Carbon::make($startDate)->addDays(14)->format($format)
+            ],
+            '61-90' => [
+                'start_date' => $startDate = Carbon::make($endDate)->addDay()->format($format),
+                'end_date' => $endDate = Carbon::make($startDate)->addDays(29)->format($format)
+            ],
+            '91-120' => [
+                'start_date' => $startDate = Carbon::make($endDate)->addDay()->format($format),
+                'end_date' => $endDate = Carbon::make($startDate)->addDays(29)->format($format)
+            ],
+            '121-150' => [
+                'start_date' => $startDate = Carbon::make($endDate)->addDay()->format($format),
+                'end_date' => $endDate = Carbon::make($startDate)->addDays(29)->format($format)
+            ],
+        ]
 
-        ];
-    }
+    ];
+}
 
 
 
 if (!function_exists('str_to_upper')) {
-	function str_to_upper($str)
-	{
-		return ucwords(str_replace(['_', '-'], ' ', $str));
-	}
+    function str_to_upper($str)
+    {
+        return ucwords(str_replace(['_', '-'], ' ', $str));
+    }
 }
 if (!function_exists('getFixedLoanTypes')) {
-	function getFixedLoanTypes()
-	{
-		return [
-			'normal', 'step-up', 'step-down', 'grace_period_with_capitalization', 'grace_period_without_capitalization', 'grace_step-up_with_capitalization', 'grace_step-up_without_capitalization',
-			'grace_step-down_with_capitalization', 'grace_step-down_without_capitalization',
-		];
-	}
+    function getFixedLoanTypes()
+    {
+        return [
+            'normal', 'step-up', 'step-down', 'grace_period_with_capitalization', 'grace_period_without_capitalization', 'grace_step-up_with_capitalization', 'grace_step-up_without_capitalization',
+            'grace_step-down_with_capitalization', 'grace_step-down_without_capitalization',
+        ];
+    }
 }
-	function getDifferenceBetweenTwoDatesInDays(Carbon $firstDate, Carbon $secondDate)
-	{
-		return $secondDate->diffInDays($firstDate);
-	}
-	function getBankStatementReviewed($stdClass){
-		$tableName = null ;
-		
-		if($id = $stdClass->money_received_id){
-			$tableName = 'money_received';
-		}
-		elseif($id = $stdClass->money_payment_id){
-			$tableName = 'money_payments';
-		}
-		elseif($id = $stdClass->cash_expense_id){
-			$tableName = 'cash_expenses';
-		}
-		elseif($id = $stdClass->buy_or_sell_currency_id){
-			$tableName = 'buy_or_sell_currencies';
-		}
-		elseif($id = $stdClass->internal_money_transfer_id){
-			$tableName = 'internal_money_transfers';
-		}
-		if(is_null($tableName)){
-			return [
-				'can_not_be_reviewed'=>1,
-			];
-		}
-		$raw = DB::table($tableName)->find($id);
-		if($raw && !isset($raw->reviewed_by)){
-			return [
-				'can_not_be_reviewed'=>1,
-			];
-		}
-		return $raw && isset($raw->reviewed_by)  ? ['is_reviewed'=>$raw->is_reviewed,'reviewed_by'=>$raw->reviewed_by] : [];
-	}
-	function getBankStatementComment($stdClass){
-		$lang = app()->getLocale() ;
-		$columnNameWithoutLang = 'comment_';
-		$tableName = null ;
-		if($id = $stdClass->money_received_id){
-			$tableName = 'money_received';
-		}
-		elseif($id = $stdClass->money_payment_id){
-			$tableName = 'money_payments';
-		}
-		elseif($id = $stdClass->cash_expense_id){
-			$tableName = 'cash_expenses';
-		}
-		elseif($id = $stdClass->buy_or_sell_currency_id){
-			$tableName = 'buy_or_sell_currencies';
-			if($stdClass->is_debit){
-				$columnNameWithoutLang = 'buy_comment_';
-			}else{
-				$columnNameWithoutLang = 'sell_comment_';
-			}
-		}
-		elseif($id = $stdClass->internal_money_transfer_id){
-			$tableName = 'internal_money_transfers';
-			if($stdClass->is_debit){
-				$columnNameWithoutLang = 'from_comment_';
-			}else{
-				$columnNameWithoutLang = 'to_comment_';
-			}
-		}
-	
-		if(is_null($tableName)){
-			return __('N/A',[],$lang);
-		}
-		$raw = DB::table($tableName)->find($id);
-		return $raw ? $raw->{$columnNameWithoutLang.$lang} : __('N/A' ,[],$lang);
-	}
-	function getKeysWithSettlementAmount(array $items,string $keyName):string {
-		$result = [];
+function getDifferenceBetweenTwoDatesInDays(Carbon $firstDate, Carbon $secondDate)
+{
+    return $secondDate->diffInDays($firstDate);
+}
+function getBankStatementReviewed($stdClass)
+{
+    $tableName = null ;
+        
+    if ($id = $stdClass->money_received_id) {
+        $tableName = 'money_received';
+    } elseif ($id = $stdClass->money_payment_id) {
+        $tableName = 'money_payments';
+    } elseif ($id = $stdClass->cash_expense_id) {
+        $tableName = 'cash_expenses';
+    } elseif ($id = $stdClass->buy_or_sell_currency_id) {
+        $tableName = 'buy_or_sell_currencies';
+    } elseif ($id = $stdClass->internal_money_transfer_id) {
+        $tableName = 'internal_money_transfers';
+    }
+    if (is_null($tableName)) {
+        return [
+            'can_not_be_reviewed'=>1,
+        ];
+    }
+    $raw = DB::table($tableName)->find($id);
+    if ($raw && !isset($raw->reviewed_by)) {
+        return [
+            'can_not_be_reviewed'=>1,
+        ];
+    }
+    return $raw && isset($raw->reviewed_by)  ? ['is_reviewed'=>$raw->is_reviewed,'reviewed_by'=>$raw->reviewed_by] : [];
+}
+function getBankStatementComment($stdClass)
+{
+    $lang = app()->getLocale() ;
+    $columnNameWithoutLang = 'comment_';
+    $tableName = null ;
+    if ($id = $stdClass->money_received_id) {
+        $tableName = 'money_received';
+    } elseif ($id = $stdClass->money_payment_id) {
+        $tableName = 'money_payments';
+    } elseif ($id = $stdClass->cash_expense_id) {
+        $tableName = 'cash_expenses';
+    } elseif ($id = $stdClass->buy_or_sell_currency_id) {
+        $tableName = 'buy_or_sell_currencies';
+        if ($stdClass->is_debit) {
+            $columnNameWithoutLang = 'buy_comment_';
+        } else {
+            $columnNameWithoutLang = 'sell_comment_';
+        }
+    } elseif ($id = $stdClass->internal_money_transfer_id) {
+        $tableName = 'internal_money_transfers';
+        if ($stdClass->is_debit) {
+            $columnNameWithoutLang = 'from_comment_';
+        } else {
+            $columnNameWithoutLang = 'to_comment_';
+        }
+    }
+    
+    if (is_null($tableName)) {
+        return __('N/A', [], $lang);
+    }
+    $raw = DB::table($tableName)->find($id);
+    return $raw ? $raw->{$columnNameWithoutLang.$lang} : __('N/A', [], $lang);
+}
+function getKeysWithSettlementAmount(array $items, string $keyName):string
+{
+    $result = [];
 
-		foreach($items as $key => $arr){
-			if(isset($arr[$keyName]) && $arr[$keyName] > 0){
-					$result[] =  $arr['invoice_number'] ;
-					// $result[] =  $key ;
-			}
-		}
-		return implode(',',$result) ;
-	}
-	function getAllDataKey(array $items):array 
-	{
-		$result = [];
-		foreach($items as $key => $value){
-			if(Str::startsWith($key,'data-')){
-				$result[$key] = $value ;
-			}
-		}
-		return $result ;
-	}
-	function getTableNames(){
-		return collect(DB::select('show tables'))->map(function ($val) {
-            foreach ($val as $key => $tbl) {
-                return $tbl;
-            }
-        });
-	}
-	 function formatAccumulatedNetCash(array $netCashItems , array $dates)
-	{
-		$formattedResult = [];
-		$netCashItems = HArr::removeKeysFromArray($netCashItems,['total_of_total']);
-		$accumulatedNetCash = 0 ;
-		foreach($dates as  $weekAndYear => $startAndEndDateArray){
-			$endDate = $startAndEndDateArray['end_date'];
-			$currentNetCash = $netCashItems[$weekAndYear] ?? 0 ;
-			$accumulatedNetCash += $currentNetCash ; 
-			$formattedResult[] = ['date'=>$endDate,'value'=>$accumulatedNetCash ];
-	}
-		return $formattedResult ; 
-	}
+    foreach ($items as $key => $arr) {
+        if (isset($arr[$keyName]) && $arr[$keyName] > 0) {
+            $result[] =  $arr['invoice_number'] ;
+            // $result[] =  $key ;
+        }
+    }
+    return implode(',', $result) ;
+}
+function getAllDataKey(array $items):array
+{
+    $result = [];
+    foreach ($items as $key => $value) {
+        if (Str::startsWith($key, 'data-')) {
+            $result[$key] = $value ;
+        }
+    }
+    return $result ;
+}
+function getTableNames()
+{
+    return collect(DB::select('show tables'))->map(function ($val) {
+        foreach ($val as $key => $tbl) {
+            return $tbl;
+        }
+    });
+}
+function formatAccumulatedNetCash(array $netCashItems, array $dates)
+{
+    $formattedResult = [];
+    $netCashItems = HArr::removeKeysFromArray($netCashItems, ['total_of_total']);
+    $accumulatedNetCash = 0 ;
+    foreach ($dates as $weekAndYear => $startAndEndDateArray) {
+        $endDate = $startAndEndDateArray['end_date'];
+        $currentNetCash = $netCashItems[$weekAndYear] ?? 0 ;
+        $accumulatedNetCash += $currentNetCash ;
+        $formattedResult[] = ['date'=>$endDate,'value'=>$accumulatedNetCash ];
+    }
+    return $formattedResult ;
+}
 function hasAuthFor($permissionName)
 {
-	return auth()->user()->can($permissionName);
+    return auth()->user()->can($permissionName);
 }
 function formatArrayAsGroup(array $permissions):array
 {
-	$result = [];
-	foreach($permissions as $permissionArr){
-		$result[$permissionArr['group']][] =$permissionArr; 
-	}
-	return $result;
+    $result = [];
+    foreach ($permissions as $permissionArr) {
+        $result[$permissionArr['group']][] =$permissionArr;
+    }
+    return $result;
 }
-function generateModelData($fieldName , $model, $functionName = null , $defaultValue = null ){
-	$oldFromModel = isset($model) ? $model->{$fieldName} : $defaultValue ;
-	if($functionName){
-		$oldFromModel = isset($model) ? $model->$functionName() : $defaultValue ;
-	}
-		return old($fieldName ,  $oldFromModel);
-}
-function fillObjectFromArray(array $items,$object)
+function generateModelData($fieldName, $model, $functionName = null, $defaultValue = null)
 {
-	$result = [];
-	$isString  = $object;
-	
-	foreach($items as $arrWithItsKeys){
-		if($isString){
-			$object = new $object;
-		}
-		foreach((array)$arrWithItsKeys as $key => $val){
-			$object->{$key}  = $val;
-		}
-		$result[] = $object ;
-	}
+    $oldFromModel = isset($model) ? $model->{$fieldName} : $defaultValue ;
+    if ($functionName) {
+        $oldFromModel = isset($model) ? $model->$functionName() : $defaultValue ;
+    }
+    return old($fieldName, $oldFromModel);
+}
+function fillObjectFromArray(array $items, $object)
+{
+    $result = [];
+    $isString  = $object;
+    
+    foreach ($items as $arrWithItsKeys) {
+        if ($isString) {
+            $object = new $object;
+        }
+        foreach ((array)$arrWithItsKeys as $key => $val) {
+            $object->{$key}  = $val;
+        }
+        $result[] = $object ;
+    }
 
-	return $result ;
+    return $result ;
 }
 function getCashVeroTableNames()
 {
-	return [
-		'cash_expenses',
-		'overdraft_against_commercial_papers',
-		'clean_overdrafts',
-		'overdraft_against_assignment_of_contracts',
-		'fully_secured_overdrafts',
-		'settlement_allocations',
-		'buy_or_sell_currencies',
-		'cash_in_banks','cash_in_safes','cash_in_safe_statements',
-		'cash_payments','certificates_of_deposits','cheques'
-		,'supplier_invoices' ,'clean_overdrafts','customer_invoices','financial_institutions','financial_institution_accounts','fully_secured_overdrafts'
-		,'clean_overdraft_bank_statements','clean_overdraft_withdrawals',
-		'notifications',
-		'current_account_bank_statements','debugging','down_payment_money_payment_settlements','down_payment_settlements','due_date_histories','fully_secured_overdraft_bank_statements','fully_secured_overdraft_withdrawals','incoming_transfers','internal_money_transfers','lc_hundred_percentage_cash_cover_opening_balances'
+    return [
+        'cash_expenses',
+        'overdraft_against_commercial_papers',
+        'clean_overdrafts',
+        'overdraft_against_assignment_of_contracts',
+        'fully_secured_overdrafts',
+        'settlement_allocations',
+        'buy_or_sell_currencies',
+        'cash_in_banks','cash_in_safes','cash_in_safe_statements',
+        'cash_payments','certificates_of_deposits','cheques'
+        ,'supplier_invoices' ,'clean_overdrafts','customer_invoices','financial_institutions','financial_institution_accounts','fully_secured_overdrafts'
+        ,'clean_overdraft_bank_statements','clean_overdraft_withdrawals',
+        'notifications',
+        'current_account_bank_statements','debugging','down_payment_money_payment_settlements','down_payment_settlements','due_date_histories','fully_secured_overdraft_bank_statements','fully_secured_overdraft_withdrawals','incoming_transfers','internal_money_transfers','lc_hundred_percentage_cash_cover_opening_balances'
 , "lc_hundred_percentage_cash_cover_opening_balances"
 , "lending_information"
 , "lending_information_against_assignment_of_contracts"
@@ -7922,170 +7880,175 @@ function getCashVeroTableNames()
 'overdraft_against_commercial_paper_withdrawals','payable_cheques',
 'payment_settlements','settlements','money_received','money_payments','contracts'
 
-	];
+    ];
 }
 function getReviewedText(array $reviewedArr)
 {
-										$reviewedText = '-';
-											if(isset($reviewedArr['can_not_be_reviewed']))
-											$reviewedText = '-';
-											elseif(isset($reviewedArr['is_reviewed']) && $reviewedArr['is_reviewed'] == 1){
-												$reviewedText = __('Yes');
-											}
-											elseif(isset($reviewedArr['is_reviewed']) && $reviewedArr['is_reviewed'] == 0){
-												$reviewedText = __('No');
-											}
-											return $reviewedText ;
+    $reviewedText = '-';
+    if (isset($reviewedArr['can_not_be_reviewed'])) {
+        $reviewedText = '-';
+    } elseif (isset($reviewedArr['is_reviewed']) && $reviewedArr['is_reviewed'] == 1) {
+        $reviewedText = __('Yes');
+    } elseif (isset($reviewedArr['is_reviewed']) && $reviewedArr['is_reviewed'] == 0) {
+        $reviewedText = __('No');
+    }
+    return $reviewedText ;
 }
-function getReviewPermissionName($modelName):string{
-	if($modelName == 'CashExpense'){
-		return 'review cash expenses';
-	}
-	if($modelName =='MoneyReceived'){
-		return 'review money received';
-	}
-	if($modelName=='MoneyPayment'){
-		return 'review supplier payments';
-	}
-	 throw new \Exception('custom exception .. please add permission name here');
-}
-function AtLeastOnKeyIsTrue(array $items , string $key){
-	$show = false ;
-	foreach(array_column($items,$key) as $boolean){
-		if($boolean){
-			$show= true ;	
-		}
-	}
-	return $show ;
-}
-function getAllPartnerTypesForSuppliers():array 
+function getReviewPermissionName($modelName):string
 {
-	return ['is_supplier'=>__('Supplier'),'is_subsidiary_company'=>__('Subsidiary Company') , 'is_shareholder'=>__('Shareholder') , 'is_employee'=>__('Employee'),
-	'is_other_partner'=>__('Other Partner'),
-	'is_tax'=>__('Taxes & Social Insurance')
+    if ($modelName == 'CashExpense') {
+        return 'review cash expenses';
+    }
+    if ($modelName =='MoneyReceived') {
+        return 'review money received';
+    }
+    if ($modelName=='MoneyPayment') {
+        return 'review supplier payments';
+    }
+    throw new \Exception('custom exception .. please add permission name here');
+}
+function AtLeastOnKeyIsTrue(array $items, string $key)
+{
+    $show = false ;
+    foreach (array_column($items, $key) as $boolean) {
+        if ($boolean) {
+            $show= true ;
+        }
+    }
+    return $show ;
+}
+function getAllPartnerTypesForSuppliers():array
+{
+    return ['is_supplier'=>__('Supplier'),'is_subsidiary_company'=>__('Subsidiary Company') , 'is_shareholder'=>__('Shareholder') , 'is_employee'=>__('Employee'),
+    'is_other_partner'=>__('Other Partner'),
+    'is_tax'=>__('Taxes & Social Insurance')
 ];
-	
+
 }
-function getAllPartnerTypesForCustomers():array 
+function getAllPartnerTypesForCustomers():array
 {
-	return ['is_customer'=>__('Customer'),'is_subsidiary_company'=>__('Subsidiary Company') , 'is_shareholder'=>__('Shareholder') , 'is_employee'=>__('Employee'),
+    return ['is_customer'=>__('Customer'),'is_subsidiary_company'=>__('Subsidiary Company') , 'is_shareholder'=>__('Shareholder') , 'is_employee'=>__('Employee'),
 'is_other_partner'=>__('Other Partner')
 ];
-	
+
 }
-function hasExport(array $fields,int $companyId,$modelName='SalesGathering')
+function hasExport(array $fields, int $companyId, $modelName='SalesGathering')
 {
-	$fieldRow = CustomizedFieldsExportation::where('company_id',$companyId)->where('model_name',$modelName)->first();
-	$exportableFields = $fieldRow ? $fieldRow->fields : [];
-	foreach($fields as $field){
-		if(!in_array($field,$exportableFields)){
-			return false ;
-		}
-	}
-	return true ;
+    $fieldRow = CustomizedFieldsExportation::where('company_id', $companyId)->where('model_name', $modelName)->first();
+    $exportableFields = $fieldRow ? $fieldRow->fields : [];
+    foreach ($fields as $field) {
+        if (!in_array($field, $exportableFields)) {
+            return false ;
+        }
+    }
+    return true ;
 }
 function formatTitle($string)
 {
-	return trim(ucwords(capitializeType(str_replace('_',' ',$string))));
+    return trim(ucwords(capitializeType(str_replace('_', ' ', $string))));
 }
 function formatDateForChart(string $date):string
 {
-	return Carbon::make($date)->format('Y-m-d');
+    return Carbon::make($date)->format('Y-m-d');
 }
 function array_get($array, $key, $default = [])
 {
     return Arr::get($array, $key, $default);
 }
-function sort_by_key_date_string($element1, $element2) { 
-    $datetime1 = strtotime($element1); 
-    $datetime2 = strtotime($element2); 
-    return $datetime1 - $datetime2; 
-} 
+function sort_by_key_date_string($element1, $element2)
+{
+    $datetime1 = strtotime($element1);
+    $datetime2 = strtotime($element2);
+    return $datetime1 - $datetime2;
+}
 function getFinancialMonthsForSelect(): array
 {
-	$formattedMonths = [];
-	$months = [
+    $formattedMonths = [];
+    $months = [
 
-		'january' => __('January'), "april" => __('April'), 'july' => __('July')
-	];
-	foreach ($months as $monthName => $monthNameFormatted) {
-		$formattedMonths[$monthName] = ['title' => $monthNameFormatted, 'value' => $monthName];
-	}
-	return $formattedMonths;
+        'january' => __('January'), "april" => __('April'), 'july' => __('July')
+    ];
+    foreach ($months as $monthName => $monthNameFormatted) {
+        $formattedMonths[$monthName] = ['title' => $monthNameFormatted, 'value' => $monthName];
+    }
+    return $formattedMonths;
 }
-function getDayFromDate(string $date){
-	return explode('-',$date)[2];
-}
-function getMonthFromDate(string $date){
-	return explode('-',$date)[1];
-}
-
-function repeatJson($jsonItems )
+function getDayFromDate(string $date)
 {
-	$itemsArray = is_array($jsonItems) ? $jsonItems : convertJsonToArray($jsonItems);
-	if(!count($itemsArray)){
-		return null ;
-	}
-	$lastKey = array_key_last($itemsArray);
-	$loopingKey = $lastKey+1;
-	for($loopingKey ; $loopingKey < MAX_YEARS_COUNT ; $loopingKey++){
-		$itemsArray[$loopingKey] =$itemsArray[$lastKey];  
-	}
-	return json_encode($itemsArray);
+    return explode('-', $date)[2];
+}
+function getMonthFromDate(string $date)
+{
+    return explode('-', $date)[1];
+}
+
+function repeatJson($jsonItems)
+{
+    $itemsArray = is_array($jsonItems) ? $jsonItems : convertJsonToArray($jsonItems);
+    if (!count($itemsArray)) {
+        return null ;
+    }
+    $lastKey = array_key_last($itemsArray);
+    $loopingKey = $lastKey+1;
+    for ($loopingKey ; $loopingKey < MAX_YEARS_COUNT ; $loopingKey++) {
+        $itemsArray[$loopingKey] =$itemsArray[$lastKey];
+    }
+    return json_encode($itemsArray);
 }
 
 
-function repeatLastValueInArrayUntil(array $jsonItems,int $studyEndDate )
+function repeatLastValueInArrayUntil(array $jsonItems, int $studyEndDate)
 {
-	$itemsArray = is_array($jsonItems) ? $jsonItems : convertJsonToArray($jsonItems);
-	if(!count($itemsArray)){
-		return null ;
-	}
-	$lastKey = array_key_last($itemsArray);
-	$loopingKey = $lastKey+1;
-	for($loopingKey ; $loopingKey <= $studyEndDate ; $loopingKey++){
-		$itemsArray[$loopingKey] =$itemsArray[$lastKey];  
-	}
-	return $itemsArray;
+    $itemsArray = is_array($jsonItems) ? $jsonItems : convertJsonToArray($jsonItems);
+    if (!count($itemsArray)) {
+        return null ;
+    }
+    $lastKey = array_key_last($itemsArray);
+    $loopingKey = $lastKey+1;
+    for ($loopingKey ; $loopingKey <= $studyEndDate ; $loopingKey++) {
+        $itemsArray[$loopingKey] =$itemsArray[$lastKey];
+    }
+    return $itemsArray;
 }
 
 
-function sumNumberOfOnes(array $items, int $year,array $datesIndexWithYearIndex)
+function sumNumberOfOnes(array $items, int $year, array $datesIndexWithYearIndex)
 {
-	$counter = [];
-	foreach ($items as $loopYear => $dateAndValues) {
-		foreach ($dateAndValues as $dateIndex => $value) {
-			$loopYear = $datesIndexWithYearIndex[$dateIndex];
-			if ($value == 1) {
-				$counter[$loopYear] = isset($counter[$loopYear]) ? $counter[$loopYear] + 1 : $value;
-			}
-		}
-	}
-	return $counter[$year] ?? 0;
+    $counter = [];
+    foreach ($items as $loopYear => $dateAndValues) {
+        foreach ($dateAndValues as $dateIndex => $value) {
+            $loopYear = $datesIndexWithYearIndex[$dateIndex];
+            if ($value == 1) {
+                $counter[$loopYear] = isset($counter[$loopYear]) ? $counter[$loopYear] + 1 : $value;
+            }
+        }
+    }
+    return $counter[$year] ?? 0;
 }
 function getExpensesPercentageOfForSelect2()
 {
-	return [
-		[
-			'title'=>__('Revenues'), //  interest amount [leasing , ijara]
-			'value'=>'revenue'
-		],
-		[
-			'title'=>__('Contracts'), // monthly loan amount [leasing , mortgage ]
-			'value'=>'contract'
-		],
-		[
-			'title'=>__('Outstanding'), // monthly end balance 
-			'value'=>'outstanding'
-		],
-		[
-			'title'=>__('Collection'), // schedule payment [leasing , ijara]
-			'value'=>'collection'
-		]
-		
-	];
+    return [
+        [
+            'title'=>__('Revenues'), //  interest amount [leasing , ijara]
+            'value'=>'revenue'
+        ],
+        [
+            'title'=>__('Contracts'), // monthly loan amount [leasing , mortgage ]
+            'value'=>'contract'
+        ],
+        [
+            'title'=>__('Outstanding'), // monthly end balance
+            'value'=>'outstanding'
+        ],
+        [
+            'title'=>__('Collection'), // schedule payment [leasing , ijara]
+            'value'=>'collection'
+        ]
+        
+    ];
 }
-function getPreviousValue(array $array, $specificValue) {
+function getPreviousValue(array $array, $specificValue)
+{
     $keys = array_keys($array); // Get all keys from the array
     $values = array_values($array); // Get all values from the array
     $index = array_search($specificValue, $values); // Find the index of the specific value
@@ -8097,226 +8060,225 @@ function getPreviousValue(array $array, $specificValue) {
 
     return $values[$index - 1]; // Return the previous value
 }
-function removeSquareBrackets($input) {
+function removeSquareBrackets($input)
+{
     // Use preg_replace to remove [ ] and text between them
     $result = preg_replace('/\[[^\]]*\]/', '', $input);
     return $result;
 }
-function getExpenseCategoriesForSelect2():array 
+function getExpenseCategoriesForSelect2():array
 {
-	$results = [];
-	$expenseCategories = ExpenseName::getCategories(getCurrentCompany());
-	foreach($expenseCategories as $type => $name){
-		$results[] = [
-			'title'=>HStr::camelizeWithSpace($type) ,
-			'value'=>$type
-		];
-	}
-	return $results;
-	
+    $results = [];
+    $expenseCategories = ExpenseName::getCategories(getCurrentCompany());
+    foreach ($expenseCategories as $type => $name) {
+        $results[] = [
+            'title'=>HStr::camelizeWithSpace($type) ,
+            'value'=>$type
+        ];
+    }
+    return $results;
+
 }
 
-function getMicrofinanceAllocations():array 
+function getMicrofinanceAllocations():array
 {
-	return [
-		[
-			'title'=>__('NON'),
-			'value'=>'non'
-			// 'by-loan-officer-count'=>__('By Loan Officer Count')
-		],
-		[
-			'title'=>__('By Branch Count'),
-			'value'=>'by-branch-count'
-		],[
-			'title'=>__('By Loan Officer Count'),
-			'value'=>'by-loan-officer-count'
-		],
-		
-	];
-	$results = [];
-	$expenseCategories = ExpenseName::getCategories(getCurrentCompany());
-	foreach($expenseCategories as $type => $name){
-		$results[] = [
-			'title'=>HStr::camelizeWithSpace($type) ,
-			'value'=>$type
-		];
-	}
-	return $results;
-	
+    return [
+        [
+            'title'=>__('NON'),
+            'value'=>'non'
+            // 'by-loan-officer-count'=>__('By Loan Officer Count')
+        ],
+        [
+            'title'=>__('By Branch Count'),
+            'value'=>'by-branch-count'
+        ],[
+            'title'=>__('By Loan Officer Count'),
+            'value'=>'by-loan-officer-count'
+        ],
+        
+    ];
+    $results = [];
+    $expenseCategories = ExpenseName::getCategories(getCurrentCompany());
+    foreach ($expenseCategories as $type => $name) {
+        $results[] = [
+            'title'=>HStr::camelizeWithSpace($type) ,
+            'value'=>$type
+        ];
+    }
+    return $results;
+
 }
 
-function getBranchExpenseCategoriesForSelect2():array 
+function getBranchExpenseCategoriesForSelect2():array
 {
-	$results = [];
-	$expenseCategories = ExpenseName::getCategoriesForBranch(getCurrentCompany());
-	foreach($expenseCategories as $type => $name){
-		$results[] = [
-			'title'=>HStr::camelizeWithSpace($type) ,
-			'value'=>$type
-		];
-	}
-	return $results;
-	
+    $results = [];
+    $expenseCategories = ExpenseName::getCategoriesForBranch(getCurrentCompany());
+    foreach ($expenseCategories as $type => $name) {
+        $results[] = [
+            'title'=>HStr::camelizeWithSpace($type) ,
+            'value'=>$type
+        ];
+    }
+    return $results;
+
 }
 
-function getEmployeeExpenseCategoriesForSelect2():array 
+function getEmployeeExpenseCategoriesForSelect2():array
 {
-	$results = [];
-	$expenseCategories = ExpenseName::getCategoriesForEmployee(getCurrentCompany());
-	foreach($expenseCategories as $type => $name){
-		$results[] = [
-			'title'=>HStr::camelizeWithSpace($type) ,
-			'value'=>$type
-		];
-	}
-	return $results;
-	
+    $results = [];
+    $expenseCategories = ExpenseName::getCategoriesForEmployee(getCurrentCompany());
+    foreach ($expenseCategories as $type => $name) {
+        $results[] = [
+            'title'=>HStr::camelizeWithSpace($type) ,
+            'value'=>$type
+        ];
+    }
+    return $results;
+
 }
-function getExpenseTypes():array 
+function getExpenseTypes():array
 {
-	$isNonBanking = hasMiddleware('isNonBankingService') ;
-	$costOfGoodsText = $isNonBanking ? __('Cost Of Service') : __('Cost Of Goods Sold');
-	return [
-		'cost-of-service'=>$costOfGoodsText,
-		'marketing-expense'=>__('Marketing Expense'),
-		'other-operation-expense'=>__('Other Operations Expenses'),
-		'sales-expense'=>__('Sales Expense'),
-		'general-expense'=>__('General Expense')
-	];
+    $isNonBanking = hasMiddleware('isNonBankingService') ;
+    $costOfGoodsText = $isNonBanking ? __('Cost Of Service') : __('Cost Of Goods Sold');
+    return [
+        'cost-of-service'=>$costOfGoodsText,
+        'marketing-expense'=>__('Marketing Expense'),
+        'other-operation-expense'=>__('Other Operations Expenses'),
+        'sales-expense'=>__('Sales Expense'),
+        'general-expense'=>__('General Expense')
+    ];
 }
 
 const SHAREABLE_LINKS = 'sharable-links';
 
 function generateShareableLink($shareableType): string
 {
-	$shareableUrl = SHAREABLE_LINKS;
-	return Request()->root() . '/' . App()->getLocale() . '/' . $shareableUrl . '/' . $shareableType . '/' . generateUniqueStringOfLengthTo(30, 'SharingLink', ['link']);
+    $shareableUrl = SHAREABLE_LINKS;
+    return Request()->root() . '/' . App()->getLocale() . '/' . $shareableUrl . '/' . $shareableType . '/' . generateUniqueStringOfLengthTo(30, 'SharingLink', ['link']);
 }
 function camel2dashed($className)
 {
-	return strtolower(preg_replace('/([a-zA-Z])(?=[A-Z])/', '$1-', $className));
+    return strtolower(preg_replace('/([a-zA-Z])(?=[A-Z])/', '$1-', $className));
 }
 
 function generateUniqueStringOfLengthTo($length, $model = null, $columns = [], $onlyNumeric = false)
 {
-	// modes [string , numeric , string_numeric]
-	if ($onlyNumeric === false) {
-		$randomString = Str::random($length);
-	} else {
-		$randomString = '';
-		for ($i = 0; $i < $length; $i++) {
-			$randomString .= mt_rand(0, 9);
-		}
+    // modes [string , numeric , string_numeric]
+    if ($onlyNumeric === false) {
+        $randomString = Str::random($length);
+    } else {
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= mt_rand(0, 9);
+        }
 
-		return $randomString;
-	}
-	if ($model && $columns) {
-		$query  =  ('App\Models\\' . $model)::query();
-		foreach ($columns as $column) {
-			$query->orWhere($column, $randomString);
-		}
-		if ($query->exists()) {
-			return generateUniqueStringOfLengthTo($length, $model, $columns);
-		}
-		return $randomString;
-	}
+        return $randomString;
+    }
+    if ($model && $columns) {
+        $query  =  ('App\Models\\' . $model)::query();
+        foreach ($columns as $column) {
+            $query->orWhere($column, $randomString);
+        }
+        if ($query->exists()) {
+            return generateUniqueStringOfLengthTo($length, $model, $columns);
+        }
+        return $randomString;
+    }
 
-	return $randomString;
+    return $randomString;
 }
 function getLastWordInString(string $str, $separator = '/')
 {
-	$explodedStr = explode($separator, $str);
-	return $explodedStr[count($explodedStr) - 1];
+    $explodedStr = explode($separator, $str);
+    return $explodedStr[count($explodedStr) - 1];
 }
 function getDepreciationDurations():array
 {
-	$result = [];
-	for($i = 2 ; $i <= 25 ; $i++){
-		$result[] = [
-			'title'=> $i . ' ' . __('Years'),
-			'value'=>$i 
-		];
-	}
-	return $result;
+    $result = [];
+    for ($i = 2 ; $i <= 25 ; $i++) {
+        $result[] = [
+            'title'=> $i . ' ' . __('Years'),
+            'value'=>$i
+        ];
+    }
+    return $result;
 }
 function getReplacementInterval():array
 {
-	$result = [];
-	for($i = 1 ; $i <= 5 ; $i++){
-		$result[] = [
-			'title'=> $i . ' ' . __('Years'),
-			'value'=>$i 
-		];
-	}
-	return $result;
+    $result = [];
+    for ($i = 1 ; $i <= 5 ; $i++) {
+        $result[] = [
+            'title'=> $i . ' ' . __('Years'),
+            'value'=>$i
+        ];
+    }
+    return $result;
 }
 function getSuperAdminSection()
 {
-	if(Auth::user()->hasrole('super-admin')){
-		return Section::where('sub_of',0)->where('section_side','admin')->where('trash',0)->get();
-	}
-	if(Auth::user()->hasrole('company-admin')){
-		return  Section::mainCompanyAdminSections()->get();
-	}
+    if (Auth::user()->hasrole('super-admin')) {
+        return Section::where('sub_of', 0)->where('section_side', 'admin')->where('trash', 0)->get();
+    }
+    if (Auth::user()->hasrole('company-admin')) {
+        return  Section::mainCompanyAdminSections()->get();
+    }
 }
-function isArabic($text) {
+function isArabic($text)
+{
     // التحقق مما إذا كان النص يحتوي على حروف عربية
     return preg_match('/[\p{Arabic}]/u', $text);
 }
 function getUserCommentFromModel($stdClass)
 {
-	$tableName = null ;
-		
-	if($id = $stdClass->money_received_id){
-		$tableName = 'money_received';
-	}
-	elseif($id = $stdClass->money_payment_id){
-		$tableName = 'money_payments';
-	}
-	elseif($id = $stdClass->cash_expense_id){
-		$tableName = 'cash_expenses';
-	}
-	elseif($id = $stdClass->buy_or_sell_currency_id){
-		$tableName = 'buy_or_sell_currencies';
-	}
-	elseif($id = $stdClass->internal_money_transfer_id){
-		$tableName = 'internal_money_transfers';
-	}
-	// elseif($id = $stdClass->letter_of_guarantee_issuance_id){
-	// 	$tableName = 'letter_of_guarantee_issuances';
-	// }
-	// elseif($id = $stdClass->letter_of_credit_issuance_id){
-	// 	$tableName = 'letter_of_credit_issuances';
-	// }
-	if(isset($stdClass->letter_of_guarantee_issuance_id) &&$stdClass->letter_of_guarantee_issuance_id ){
-		$id = $stdClass->letter_of_guarantee_issuance_id ;
-		$tableName = 'letter_of_guarantee_issuances';
-	}
-	if(isset($stdClass->letter_of_credit_issuance_id) &&$stdClass->letter_of_credit_issuance_id ){
-		$id = $stdClass->letter_of_credit_issuance_id ;
-		$tableName = 'letter_of_credit_issuances';
-	}
-	if(is_null($tableName)){
-		return '' ;
-	}
-	$row = DB::table($tableName)->where('id',$id)->first();
-	if($row && $row->user_comment){
-		return '[ '.  $row->user_comment . ' ]' ;
-	}
-	return '';
-	
+    $tableName = null ;
+        
+    if ($id = $stdClass->money_received_id) {
+        $tableName = 'money_received';
+    } elseif ($id = $stdClass->money_payment_id) {
+        $tableName = 'money_payments';
+    } elseif ($id = $stdClass->cash_expense_id) {
+        $tableName = 'cash_expenses';
+    } elseif ($id = $stdClass->buy_or_sell_currency_id) {
+        $tableName = 'buy_or_sell_currencies';
+    } elseif ($id = $stdClass->internal_money_transfer_id) {
+        $tableName = 'internal_money_transfers';
+    }
+    // elseif($id = $stdClass->letter_of_guarantee_issuance_id){
+    // 	$tableName = 'letter_of_guarantee_issuances';
+    // }
+    // elseif($id = $stdClass->letter_of_credit_issuance_id){
+    // 	$tableName = 'letter_of_credit_issuances';
+    // }
+    if (isset($stdClass->letter_of_guarantee_issuance_id) &&$stdClass->letter_of_guarantee_issuance_id) {
+        $id = $stdClass->letter_of_guarantee_issuance_id ;
+        $tableName = 'letter_of_guarantee_issuances';
+    }
+    if (isset($stdClass->letter_of_credit_issuance_id) &&$stdClass->letter_of_credit_issuance_id) {
+        $id = $stdClass->letter_of_credit_issuance_id ;
+        $tableName = 'letter_of_credit_issuances';
+    }
+    if (is_null($tableName)) {
+        return '' ;
+    }
+    $row = DB::table($tableName)->where('id', $id)->first();
+    if ($row && $row->user_comment) {
+        return '[ '.  $row->user_comment . ' ]' ;
+    }
+    return '';
+
 }
-function sliceArrayKeyToEnd($array ,$key )
+function sliceArrayKeyToEnd($array, $key)
 {
-	$keys = array_keys($array);
+    $keys = array_keys($array);
 
-// Find the index of "Total Cash Inflow"
-$totalCashInflowIndex = array_search($key, $keys);
+    // Find the index of "Total Cash Inflow"
+    $totalCashInflowIndex = array_search($key, $keys);
 
-// Get the sub-array starting from the key after "Total Cash Inflow"
-return array_slice($array, $totalCashInflowIndex + 1);
+    // Get the sub-array starting from the key after "Total Cash Inflow"
+    return array_slice($array, $totalCashInflowIndex + 1);
 }
-function sumKeyAcrossArrays($data, $key) {
+function sumKeyAcrossArrays($data, $key)
+{
     $sum = 0;
     foreach ($data as $subArray) {
         if (isset($subArray[$key])) {
@@ -8325,87 +8287,90 @@ function sumKeyAcrossArrays($data, $key) {
     }
     return $sum;
 }
-function newInstanceOf($class , $arrayOfItems)
+function newInstanceOf($class, $arrayOfItems)
 {
-	$collection = collect([]);
-	foreach($arrayOfItems as $index=>$arr){
-		$newClass = new $class ;
-		foreach($arr as $key => $value){
-			$newClass->{$key}  = $value ; 
-		}
-		$collection[$index] = $newClass ;
-	}
-	return $collection;
+    $collection = collect([]);
+    foreach ($arrayOfItems as $index=>$arr) {
+        $newClass = new $class ;
+        foreach ($arr as $key => $value) {
+            $newClass->{$key}  = $value ;
+        }
+        $collection[$index] = $newClass ;
+    }
+    return $collection;
 }
-function generateReceiptNumber(string $code )
+function generateReceiptNumber(string $code)
 {
-	return $code . floor(time()-999999999);
+    return $code . floor(time()-999999999);
 }
-function convertIndexKeysToString(array $items , array $datesAsIndexAndString)
+function convertIndexKeysToString(array $items, array $datesAsIndexAndString)
 {
-	$result = [];
-	foreach($items as $dateAsIndex => $value){
-		$dateAsString = $datesAsIndexAndString[$dateAsIndex];
-		$result[$dateAsString] = $value;
-	}
-	return $result ; 
+    $result = [];
+    foreach ($items as $dateAsIndex => $value) {
+        $dateAsString = $datesAsIndexAndString[$dateAsIndex];
+        $result[$dateAsString] = $value;
+    }
+    return $result ;
 }
-function sumIntervalsIndexes(array $dateValues, string $intervalName,string $financialYearStartMonth,array $dateIndexWithDate){
-	return (new IntervalSummationOperations())->sumForInterval( $dateValues, $intervalName,$financialYearStartMonth,$dateIndexWithDate,true);
-}
-function getIntervalFormatted():array 
+function sumIntervalsIndexes(array $dateValues, string $intervalName, string $financialYearStartMonth, array $dateIndexWithDate)
 {
-	return ['monthly'=>__('Monthly')
-	,'quarterly'=>__('Quarterly'),'semi-annually'=>__('Semi-annually'),'annually'=>__('Annually')
+    return (new IntervalSummationOperations())->sumForInterval($dateValues, $intervalName, $financialYearStartMonth, $dateIndexWithDate, true);
+}
+function getIntervalFormatted():array
+{
+    return ['monthly'=>__('Monthly')
+    ,'quarterly'=>__('Quarterly'),'semi-annually'=>__('Semi-annually'),'annually'=>__('Annually')
 ];
 }
-function removeDateFrom(array $dateIndexWithDate){
-	$result = [];
-	foreach($dateIndexWithDate as $dateAsIndex => $dateAsString){
-		$dateExploded = explode('-',$dateAsString);
-		$month = $dateExploded[1];
-		$year = $dateExploded[0];
-		$dateMonthAndYear =$month.'-'.$year; 
-		$result[$dateMonthAndYear] = $dateAsIndex;
-	}
-	return $result;
-}
-function convertStringKeysToIndexes(array $items , array $datesAsIndexAndString )
+function removeDateFrom(array $dateIndexWithDate)
 {
-	$result = [];
-	foreach($items as $dateAsString => $value){
-		$dateAsIndex = array_search($dateAsString,$datesAsIndexAndString);
-		if($dateAsIndex === false){
-			continue;
-		}
-		$result[$dateAsIndex] = $value ; 
-	}
-	return $result ; 
+    $result = [];
+    foreach ($dateIndexWithDate as $dateAsIndex => $dateAsString) {
+        $dateExploded = explode('-', $dateAsString);
+        $month = $dateExploded[1];
+        $year = $dateExploded[0];
+        $dateMonthAndYear =$month.'-'.$year;
+        $result[$dateMonthAndYear] = $dateAsIndex;
+    }
+    return $result;
 }
-function getValueFromArrayStringAndIndex(array $items  , $dateAsString , $dateAsIndex,$defaultValue = 0)
+function convertStringKeysToIndexes(array $items, array $datesAsIndexAndString)
 {
-	if(isset($items[$dateAsString])){
-		return $items[$dateAsString];
-	}
-	if(isset($items[$dateAsIndex])){
-		return $items[$dateAsIndex];
-	}
-	return $defaultValue ;
+    $result = [];
+    foreach ($items as $dateAsString => $value) {
+        $dateAsIndex = array_search($dateAsString, $datesAsIndexAndString);
+        if ($dateAsIndex === false) {
+            continue;
+        }
+        $result[$dateAsIndex] = $value ;
+    }
+    return $result ;
+}
+function getValueFromArrayStringAndIndex(array $items, $dateAsString, $dateAsIndex, $defaultValue = 0)
+{
+    if (isset($items[$dateAsString])) {
+        return $items[$dateAsString];
+    }
+    if (isset($items[$dateAsIndex])) {
+        return $items[$dateAsIndex];
+    }
+    return $defaultValue ;
 }
 function convertStringWithNumberToNumber(string $value):float
 {
-	$numericString = preg_replace('/[^0-9.,]/', '', $value);
+    $numericString = preg_replace('/[^0-9.,]/', '', $value);
 
-// Remove commas
-$numericString = str_replace(',', '', $numericString);
+    // Remove commas
+    $numericString = str_replace(',', '', $numericString);
 
-// Convert to float
-$number = floatval($numericString);
+    // Convert to float
+    $number = floatval($numericString);
 
-return  $number; // 2496335
+    return  $number; // 2496335
 
 }
-function getNthKeyAfter($array, $specificKey, $n) {
+function getNthKeyAfter($array, $specificKey, $n)
+{
     // Get all keys from the array
     $keys = array_keys($array);
     
@@ -8430,31 +8395,31 @@ function getNthKeyAfter($array, $specificKey, $n) {
 function getExpensesTypes():array
 {
     return [
-		// 'varying_amount',
-		// 'fixed_percentage_of_sales',
-		// 'varying_percentage_of_sales',
-		// 'fixed_cost_per_unit',
-		// 'varying_cost_per_unit',
-		// 'expense_per_employee',
-		// 'intervally_repeating_amount',
-		// 'one_time_expense',
-		'fixed_monthly_repeating_amount',
-		'expense_as_percentage',
+        // 'varying_amount',
+        // 'fixed_percentage_of_sales',
+        // 'varying_percentage_of_sales',
+        // 'fixed_cost_per_unit',
+        // 'varying_cost_per_unit',
+        // 'expense_per_employee',
+        // 'intervally_repeating_amount',
+        // 'one_time_expense',
+        'fixed_monthly_repeating_amount',
+        'expense_as_percentage',
             'cost_per_unit',
             'one_time_expense'
     ];
 }
-function getTableNamesThatHasColumn(string $columnName,string $connectionName = null)
+function getTableNamesThatHasColumn(string $columnName, string $connectionName = null)
 {
-  $database = DB::connection($connectionName)->getDatabaseName();
-  $tableName = env('APP_ENV') == 'local' ? 'TABLE_NAME': 'table_name';
+    $database = DB::connection($connectionName)->getDatabaseName();
+    $tableName = env('APP_ENV') == 'local' ? 'TABLE_NAME': 'table_name';
   
-	return DB::connection($connectionName)->table('information_schema.columns')
+    return DB::connection($connectionName)->table('information_schema.columns')
         ->select($tableName)
         ->where('column_name', $columnName)
         ->where('table_schema', $database)
         ->distinct()->pluck($tableName)->toArray();
-	
+
 }
 
 function calculateAccumulatedDepreciation(array $totalMonthlyDepreciation, array $studyDates)
@@ -8492,7 +8457,7 @@ function sumTwoArray(array $first, array $second)
 }
 
 
-	function getMonthsList(): array
+function getMonthsList(): array
 {
     $months = [];
     for ($i = 1; $i <= 12; $i++) {
@@ -8506,45 +8471,57 @@ function generateOldNameFromFieldName(string $str):string
 
     return $field;
 }
-function getMicrofinanceFundingBySelector():array 
+function getMicrofinanceFundingBySelector():array
 {
-	return [
-		[
-			'title'=>__('By ODAs'),
-			'value'=>'by-odas',
-		],
-		[
-			'title'=>__('By MTLs'),
-			'value'=>'by-mtls'
-		]
-	];
+    return [
+        [
+            'title'=>__('By ODAs'),
+            'value'=>'by-odas',
+        ],
+        [
+            'title'=>__('By MTLs'),
+            'value'=>'by-mtls'
+        ]
+    ];
 }
 
-function getMicrofinanceNewBranchesFixedExpenseSelector():array 
+function getMicrofinanceNewBranchesFixedExpenseSelector():array
 {
-	return [
-		[
-			'title'=>__('Start Date'),
-			'value'=>'start-date',
-		],
-		[
-			'title'=>__('Operation Date'),
-			'value'=>'operation-date'
-		]
-	];
+    return [
+        [
+            'title'=>__('Start Date'),
+            'value'=>'start-date',
+        ],
+        [
+            'title'=>__('Operation Date'),
+            'value'=>'operation-date'
+        ]
+    ];
 }
 function formatMonths($numberOfMonths):array
 {
-	$result =[ ];
-	for($i = 0 ; $i<= $numberOfMonths ; $i++){
-		$result[$i] = __('Mth-').$i;
-	}
-	return $result;
+    $result =[ ];
+    for ($i = 0 ; $i<= $numberOfMonths ; $i++) {
+        $result[$i] = __('Mth-').$i;
+    }
+    return $result;
 }
 function isSecuritized($securitizationDateIndex , $currentMonthIndex):bool
 {
-	return is_numeric($securitizationDateIndex) && $currentMonthIndex>= $securitizationDateIndex;
+    return is_numeric($securitizationDateIndex) && $currentMonthIndex>= $securitizationDateIndex;
 }
-	function getDivisionNumber(){
-	return 1000;
-}	
+function getDivisionNumber()
+{
+    return 1000;
+}
+function routeWithQueryParam(string $route):string
+{
+    foreach (Request()->query() as $queryParam => $value) {
+        return $route.'?'.$queryParam.'='.$value;
+    }
+    return $route;
+}
+function getThreeDotsHint():string 
+{
+	return __('[you can use the three dots to repeat within the same year]');
+}

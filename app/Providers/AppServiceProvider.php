@@ -45,7 +45,6 @@ class AppServiceProvider extends ServiceProvider
 	
 	public function boot()
 	{	
-dd('q');
 		// $cashFlowReport = CashflowReport::first();
 		// $reportData =json_decode($cashFlowReport->report_data,true) ;
 		// extract($reportData);

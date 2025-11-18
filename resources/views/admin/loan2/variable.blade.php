@@ -31,7 +31,7 @@
     </div>
     @endif
 </div>
-
+<h3 class="font-weight-bold text-white form-label kt-subheader__title small-caps mr-5 text-nowrap" style="">{{ $title }}</h3>
 <form class="kt-form kt-form--label-right" id="create-form" method="POST" action="{{ route('calculate.variable.at.end.and.beginning',['company' => $company->id]) }}">
     {{ csrf_field() }}
 
@@ -438,7 +438,7 @@
 </form>
 <div>
 @if(isset($result) && count($result))
-<table class='table table-striped table-bordered table-hover table-checkable'>
+<table class='table table-striped table-bordered table-hover table-checkable' id="dynamic-datatable">
 	<thead>
 		   <th class="text-center font-weight-bold">{{__("Payment No.")}}</th>
                             <th class="text-center font-weight-bold">{{__("Date")}}</th>
@@ -471,6 +471,7 @@
 		@endforeach 
 		<tr class="custom-color-for-last-tr">
 			<th class="text-center">{{ __('Total') }}</th>
+			<th>-</th>
 			<th>-</th>
 			<th>-</th>
 	
@@ -1238,7 +1239,6 @@
                             <th class="text-center">{{__("Payment No.")}}</th>
                             <th class="text-center">{{__("Date")}}</th>
                             <th class="text-center">{{__("Days Count")}}</th>
-                            <th class="text-center">{{__("Interest Factor")}}</th>
                             <th class="text-center">{{__("Begining Balance")}}</th>
                             <th class="text-center">{{__("Schedule Payment")}}</th>
                             <th class="text-center">{{__("Interest Amount")}}</th>
@@ -1258,19 +1258,17 @@
         let dataToAjax = [];
         for (let i = 0; i < data.length; i++) {
             table += `<tr>
-            <td>
+            <td class="text-center">
                 ${ order++ }
             </td>
-            <td>
+            <td class="text-center">
             ${formatDate(new Date(data[i].date))}
             </td>            
 
-            <td>
+            <td class="text-center">
                 ${data[i].val.daysCount}
             </td>    
-			<td>
-                ${data[i].val.interestFactor}
-            </td>
+			
 			
 			`
             i == 0 ? (Begining = loanAmount) : Begining = endBalance;
@@ -1280,14 +1278,14 @@
 
             table += `
             
-            <td> 
+            <td class="text-center"> 
             
             
             `;
             table += `
                ${numberFormat(Begining)}
             </td>
-            <td>`
+            <td class="text-center">`
             let withoutCapitalization = loanType.split('_').includes('without') && loanType.split('_').includes('capitalization')
 
             schedulePayment = (withoutCapitalization) && data[i].val.InstallmentAmount == 0 ? intresetAmount : data[i].val.InstallmentAmount;
@@ -1302,11 +1300,11 @@
 
             table +=
                 `
-            <td>
+            <td class="text-center">
             
             ${number_format(intresetAmount,2)}
             </td>
-            <td> `;
+            <td class="text-center"> `;
             // alert(schedulePayment)
             // alert(intresetAmount)
             principleAmout = parseFloat(schedulePayment) - intresetAmount;
@@ -1318,7 +1316,7 @@
                 ${(number_format(principleAmout,2)) }
             </td>
 
-            <td>`;
+            <td class="text-center">`;
             endBalance = Begining + intresetAmount - schedulePayment;
             dataToAjax.push({
                 'date': formatDate(new Date(data[i].date))
@@ -1342,36 +1340,34 @@
         
         {{ __('Total') }}
         </th>
-        <th>
+        <th class="text-center">
         -
         </th>
 
-        <th>
-        -
-        </th>
- <th>
+    
+ <th class="text-center">
         -
         </th>
 
-        <th>
+        <th class="text-center">
         -
         </th>
 
 
-                <th>
+                <th class="text-center">
         
         ${number_format(totalSchedulePayment,2)}
         
         </th>
-        <th>
+        <th class="text-center">
         ${number_format(totalInterestAmount,2)}
         </th>
 
-        <th>
+        <th class="text-center">
         ${number_format(totalPrincpleAmount,2)}
         </th>
 
-        <th>
+        <th class="text-center">
 
         -
         
@@ -1423,7 +1419,7 @@
         return ("0" + d.getDate()).slice(-2) + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" +
             d.getFullYear()
     }
-
+	
     function numberFormat(number) {
         // num = number.toFixed();
         return number.toLocaleString('en-US').split('.')[0]
@@ -1508,4 +1504,30 @@
 
 </script>
 <script src="/custom/js/loan.js"></script>
+
+<script>
+	$(function(){
+		 $('#dynamic-datatable').DataTable({
+            paginate: false
+            , searching: false
+            , ordering: false
+            , fixedHeader: {
+                header: true
+                , footer: false
+                , headerOffset: 78
+            }
+            , dom: 'Bfrtip'
+            , buttons: ['copy', 'csv', {
+                "extend": "excel"
+                , title: ''
+                , filename: 'Fixed Payments At The End'
+                , customize: function(xlsx) {
+
+                    exportToExcel(xlsx)
+
+                }
+            }, 'pdf', 'print']
+        });
+	})
+</script>
 @endsection

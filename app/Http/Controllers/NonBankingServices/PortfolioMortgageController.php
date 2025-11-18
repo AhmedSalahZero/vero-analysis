@@ -9,7 +9,6 @@ use App\Models\Company;
 use App\Models\NonBankingService\PortfolioMortgageRevenueProjectionByCategory;
 use App\Models\NonBankingService\PortfolioMortgageRevenueStreamBreakdown;
 use App\Models\NonBankingService\Study;
-use App\ReadyFunctions\PortfolioPresentValue;
 use App\Traits\NonBankingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
