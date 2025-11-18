@@ -40,7 +40,6 @@ class DateMustBeGreaterThanOrEqualDate implements Rule
 			return false ;
 		}
 		$boolean = Carbon::make($this->largerOrEqualDate)->greaterThanOrEqualTo(Carbon::make($this->date));
-		
         return $boolean;
     }
 

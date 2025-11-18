@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\AtLeastOneRevenueMustBeSelectedRule;
 use App\Rules\DateMustBeGreaterThanOrEqualDate;
 use Illuminate\Foundation\Http\FormRequest;
-use App\Rules\AtLeastOneRevenueMustBeSelectedRule;
 
 class StoreStudyRequest extends FormRequest
 {
@@ -29,9 +29,8 @@ class StoreStudyRequest extends FormRequest
 		$studyStartDate = $this->get('study_start_date').'-01';
 		
         return [
-           'study_start_date'=>['required',new DateMustBeGreaterThanOrEqualDate($studyStartDate,$operationStartDate,__('Operation Date Must Be Greater Than Or Equal Study Start Date'))],
+           'study_start_date'=>['required',new DateMustBeGreaterThanOrEqualDate($operationStartDate,$studyStartDate,__('Operation Date Must Be Greater Than Or Equal Study Start Date'))],
 		   'at_least_one_revenue_should_be_selected'=>[new AtLeastOneRevenueMustBeSelectedRule()]
-		   
         ];
     }
 }
