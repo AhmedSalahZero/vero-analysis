@@ -48,7 +48,7 @@ class AppServiceProvider extends ServiceProvider
 		// $cashFlowReport = CashflowReport::first();
 		// $reportData =json_decode($cashFlowReport->report_data,true) ;
 		// extract($reportData);
-dd('q');
+dd('qq');
 	//	ini_set('max_execution_time', 6000); //300 seconds = 5 minutes
 		\PhpOffice\PhpSpreadsheet\Shared\Font::setAutoSizeMethod(Font::AUTOSIZE_METHOD_EXACT);
 		require_once storage_path('dompdf/vendor/autoload.php');
