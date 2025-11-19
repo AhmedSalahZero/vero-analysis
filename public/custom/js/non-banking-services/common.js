@@ -15,6 +15,7 @@ $(document).on('click', '.repeat-to-right', function () {
 	$(this).closest('tr').find('.repeat-to-right-input-formatted[data-name="' + name + '"]').each(function (index, inputFormatted) {
 		let currentColumnIndex = $(inputFormatted).attr('data-column-index')
 		let currentGroupIndex = $(inputFormatted).attr('data-gro-index')
+
 		if (currentColumnIndex >= columnIndex && currentGroupIndex == groupIndex) {
 			totalPerYear += parseFloat(inputValue)
 			$(inputFormatted).val(number_format(inputValue, numberOfDecimalsForCurrentInput)).trigger('change')
@@ -182,23 +183,23 @@ $(document).on('change', 'select.js-update-positions-for-department', function (
 })
 $('select.js-update-positions-for-department').trigger('change')
 
-$(document).on('change', '.is-percentage-from-total,.is-percentage-total-of', function () {
-	// console.log('from 10')
-	let commonClass = $(this).attr('data-common-percentage-of-class')
-	let columnIndex = $(this).attr('data-column-index')
+// $(document).on('change', '.is-percentage-from-total,.is-percentage-total-of', function () {
+// 	// console.log('from 10')
+// 	let commonClass = $(this).attr('data-common-percentage-of-class')
+// 	let columnIndex = $(this).attr('data-column-index')
 
 
-	let totalOfAmount = $('.is-percentage-total-of[data-common-percentage-of-class="' + commonClass + '"][data-column-index="' + columnIndex + '"]').val()
-	let currentRow = $(this).closest('tr')
-	let tableRows = $(this).closest('table').find('tbody tr')
-	let rowIndex = $(tableRows).index(currentRow)
-	let percentage = $('.is-percentage-from-total[data-common-percentage-of-class="' + commonClass + '"][data-column-index="' + columnIndex + '"]').eq(rowIndex).val()
-	let result = percentage / 100 * totalOfAmount
-	let resultRow = $('.is-result-total-of[data-common-percentage-of-class="' + commonClass + '"][data-column-index="' + columnIndex + '"]').eq(rowIndex)
-	let numberOfDecimals = resultRow.closest('.input-hidden-parent').find('.copy-value-to-his-input-hidden[data-column-index="' + columnIndex + '"]').attr('data-number-of-decimals')
-	resultRow.closest('.input-hidden-parent').find('.copy-value-to-his-input-hidden[data-column-index="' + columnIndex + '"]').val(number_format(result, numberOfDecimals)).val(result)
-	resultRow.val(result)
-})
+// 	let totalOfAmount = $('.is-percentage-total-of[data-common-percentage-of-class="' + commonClass + '"][data-column-index="' + columnIndex + '"]').val()
+// 	let currentRow = $(this).closest('tr')
+// 	let tableRows = $(this).closest('table').find('tbody tr')
+// 	let rowIndex = $(tableRows).index(currentRow)
+// 	let percentage = $('.is-percentage-from-total[data-common-percentage-of-class="' + commonClass + '"][data-column-index="' + columnIndex + '"]').eq(rowIndex).val()
+// 	let result = percentage / 100 * totalOfAmount
+// 	let resultRow = $('.is-result-total-of[data-common-percentage-of-class="' + commonClass + '"][data-column-index="' + columnIndex + '"]').eq(rowIndex)
+// 	let numberOfDecimals = resultRow.closest('.input-hidden-parent').find('.copy-value-to-his-input-hidden[data-column-index="' + columnIndex + '"]').attr('data-number-of-decimals')
+// 	resultRow.closest('.input-hidden-parent').find('.copy-value-to-his-input-hidden[data-column-index="' + columnIndex + '"]').val(number_format(result, numberOfDecimals)).val(result)
+// 	resultRow.val(result)
+// })
 
 
 $(document).on('click', '.collapse-before-me', function () {
@@ -223,21 +224,21 @@ $(document).on('click', '.collapse-before-me', function () {
 		}
 	}
 })
-// $(document).on('change', '.repeater-with-collapse-input', function () {
-// 	let groupIndex = $(this).attr('data-group-index')
-// 	let total = 0
-// 	$(this).closest('tr').find('input[data-group-index="' + groupIndex + '"]').each(function (index, element) {
-// 		total += parseFloat($(element).val())
-// 	})
-// 	$(this).closest('tr').find('.year-repeater-index-' + groupIndex).val(number_format(total)).trigger('change')
-// })
-// $('input[type="hidden"].exclude-from-collapse').on('change', function () {
-// 	var total = 0
-// 	$(this).closest('tr').find('.repeat-group-year').each(function (index, element) {
-// 		total += parseFloat(number_unformat($(element).val()))
-// 	})
-// 	$(this).closest('tr').find('.total-td').val(number_format(total)).trigger('change')
-// })
+$(document).on('change', '.repeater-with-collapse-input', function () {
+	let groupIndex = $(this).attr('data-group-index')
+	let total = 0
+	$(this).closest('tr').find('input[data-group-index="' + groupIndex + '"]').each(function (index, element) {
+		total += parseFloat($(element).val())
+	})
+	$(this).closest('tr').find('.year-repeater-index-' + groupIndex).val(number_format(total)).trigger('change')
+})
+$('input[type="hidden"].exclude-from-collapse').on('change', function () {
+	var total = 0
+	$(this).closest('tr').find('.repeat-group-year').each(function (index, element) {
+		total += parseFloat(number_unformat($(element).val()))
+	})
+	$(this).closest('tr').find('.total-td').val(number_format(total)).trigger('change')
+})
 $(document).on('click', '.add-btn-js', function (e) {
 	// console.log('from 13')
 	e.preventDefault()
@@ -529,6 +530,7 @@ function recalculateRowTotal($row) {
     let total = 0;
     let $inputs = $row.find('input.input-hidden-with-name:not(.exclude-from-total)');
     let numberOfDecimals = $row.attr('data-repeat-formatting-decimals') || 2;
+
     $inputs.each(function () {
         let val = $(this).val();
         if (val !== '' && val !== null) {
@@ -542,20 +544,20 @@ function recalculateRowTotal($row) {
 // Debounce 100ms فقط
 
 // أو بدون lodash:
-// const debouncedRecalc = function(fn, wait) {
-//     let timeout;
-//     return function($row) {
-//         clearTimeout(timeout);
-//         timeout = setTimeout(() => fn($row), wait);
-//     };
-// }(recalculateRowTotal, 100);
+const debouncedRecalc = function(fn, wait) {
+    let timeout;
+    return function($row) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => fn($row), wait);
+    };
+}(recalculateRowTotal, 100);
 
 // في الـ event
-// $(document).on('change input', '[total-row-tr] input.input-hidden-with-name', function () {
-//     let $row = $(this).closest('tr');
-//     debouncedRecalc($row);
-// });
-// $('[total-row-tr] input.input-hidden-with-name').trigger('change')
+$(document).on('change input', '[total-row-tr] input.input-hidden-with-name', function () {
+    let $row = $(this).closest('tr');
+    debouncedRecalc($row);
+});
+$('[total-row-tr] input.input-hidden-with-name').trigger('change')
 
 
 
