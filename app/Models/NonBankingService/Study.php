@@ -768,7 +768,6 @@ class Study extends Model
                 $result[] = ['title'=>$title,'value'=>$type];
             }
         }
-		// dd($result);
         return $result;
     }
     public function generateRelationDynamically(string $relationName, string $expenseType)
@@ -2472,7 +2471,6 @@ class Study extends Model
     public function getIndexDateFromString(string $dateAsString):int
     {
         $dateWithDateIndex = $this->getDateWithDateIndex();
-		// dd($dateWithDateIndex,$dateAsString);
         return $dateWithDateIndex[$dateAsString];
     }
     public function getDateFromDateIndex(int $dateAsIndex):string
@@ -2603,7 +2601,6 @@ class Study extends Model
             'monthly_new_odas_funding_values'=>$isMicrofinance ? $totalMonthlyLoanPerOdas : $monthlyNewOdasFundingValues,
             'company_id'=>$this->company->id
         ];
-        // dd($totalMonthlyLoanPerMtls);
         if ($eclAndNewPortfolioFundingRate) {
             $eclAndNewPortfolioFundingRate->update($data);
         } else {
@@ -2619,7 +2616,6 @@ class Study extends Model
         $this->eclAndNewPortfolioFundingRates->each(function (EclAndNewPortfolioFundingRate $eclAndNewPortfolioFunding) use ($sumKeys, &$totalAdminFees) {
             $totalAdminFees = HArr::sumAtDates([$totalAdminFees , $eclAndNewPortfolioFunding->monthly_admin_fees_amounts ], $sumKeys);
         });
-        // dd($monthlyNewLoansFundingValues);
         DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('cashflow_statement_reports')->where('study_id', $this->id)->update([
             $revenueStreamType.'_loan_withdrawal_amount'=>$monthlyNewLoansFundingValues,
             'total_admin_fees'=>$totalAdminFees
@@ -2904,10 +2900,7 @@ class Study extends Model
         }
         $securitizationBankLoanSettlements = [];
         $securitizationBankEarlySettlements = [];
-        //  $securitizationGainOrLosses = [];
         $securitizationExpenses = [];
-        // dd('d',$securitizationLoanSchedules);
-        // ddddddddddddddddddddd
         foreach ($securitizationLoanSchedules as $securitizationLoanSchedule) {
             $bankPortfolioEndBalance = $securitizationLoanSchedule->bank_portfolio_end_balance_sum;
             $bankPortfolioEarlySettlement = $securitizationLoanSchedule->early_settlements_expense_amount;
@@ -3319,9 +3312,6 @@ class Study extends Model
             $title = $fixedAssetName->getName();
             $fixedAssetNameId = $fixedAssetName->id;
             $currentFixedAsset = $fixedAssetStatements->where('name_id', $fixedAssetNameId)->first();
-            // if($currentFixedAsset && !isset(json_decode($currentFixedAsset->depreciation_statement, true)['end_balance'])){
-            // 	dd($currentFixedAsset ,$currentFixedAsset->depreciation_statement );
-            // }
             $currentEndBalance = $currentFixedAsset ? (json_decode($currentFixedAsset->depreciation_statement, true)['end_balance']??[]) : [];
             $openingEndBalance = $fixedAssetOpeningBalances[$fixedAssetNameId]??[];
             
@@ -3561,14 +3551,9 @@ class Study extends Model
          */
         
         $totalBankLoanPayable = [];
-        // dd('b');
-        // $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['options']['title'] = __('Portfolio Loans Outstanding');
         $title = 'ODAs Outstanding';
-        // ddddddddddddddd
         $cashflowStatementReport = $this->cashflowStatementReport;
         $odaEndBalances = $cashflowStatementReport->oda_statements['end_balance']??[] ;
-        // $supplierPayableOpeningBalances = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('supplier_payable_opening_balances')->where('study_id', $this->id)->pluck('statement')->toArray();
-        // $supplierPayableOpeningBalances= HArr::formatMultiSubItems($supplierPayableOpeningBalances, $sumKeys, ['monthly','end_balance']);
         if (array_sum($odaEndBalances)) {
             $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['options']['title'] =$title ;
             $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['data'] =$odaEndBalances ;
@@ -3925,7 +3910,6 @@ class Study extends Model
 
         $manualEquityInjections = (array)$cashflowStatementReport->manual_equity_injection ;
         $additionalPaidUpCapital = HArr::accumulateArray(HArr::sumAtDates([$workingCapitalInjection,$manualEquityInjections], $sumKeys)) ;
-        // dd($additionalPaidUpCapital,);
         $currentDataArr =$additionalPaidUpCapital;
         $title = __('Additional Paid Up Capital');
         $currentTabId = $title ;
@@ -4670,6 +4654,7 @@ class Study extends Model
         foreach ($this->securitizations as $securitization) {
             $previousPortfolioAccuredInterest = 0 ;
             $previousAccuredInterest = 0 ;
+            $currentBankBeginningBalance = 0 ;
             $revenueStreamType = $securitization->revenue_stream_type;
             $disbursementDate = $securitization->disbursement_date;
             $securitizationDate = $securitization->securitization_date;
@@ -4679,7 +4664,6 @@ class Study extends Model
             $securitizationExpenseAmount = $securitization->expense_amount?:0;
             $result[$securitization->id]['securitization_expense_amount'] = $securitizationExpenseAmount;
             $loanSchedulePayments = LoanSchedulePayment::where('study_id', $this->id)->where('revenue_stream_type', $revenueStreamType)->where('month_as_index', $disbursementDate)->get();
-                
             foreach ($loanSchedulePayments as $loanSchedulePayment) {
                 $isPortfolio = $loanSchedulePayment->portfolio_loan_type == 'portfolio';
                 $monthAsIndex = $loanSchedulePayment->month_as_index ;
@@ -4713,22 +4697,24 @@ class Study extends Model
                     
                     $currentAccuredInterest = json_decode($loanSchedulePayment->accured_interest, true);
                     $previousAccuredInterest += ($currentAccuredInterest['monthly']['end_balance'][$securitizationDate-1]??0);
-                    
+                    // logger($previousAccuredInterest);
                     
         
                             
                     $bankPortfolioBeginningBalance = json_decode($loanSchedulePayment->beginning, true);
                     
-                    $currentBankBeginningBalance = $bankPortfolioBeginningBalance[$securitizationDate]??0 ;
+                    $currentBankBeginningBalance += $bankPortfolioBeginningBalance[$securitizationDate]??0 ;
 				//	logger('current accured'.$previousAccuredInterest);
-                    $currentBeginningBalance = $currentBankBeginningBalance  + $previousAccuredInterest;
-                    $currentBankPortfolioEndBalance = isset($result[$securitization->id]['bank_portfolio_end_balance_sum'])? $result[$securitization->id]['bank_portfolio_end_balance_sum'] + $currentBeginningBalance : $currentBeginningBalance;
-                    $result[$securitization->id]['bank_portfolio_end_balance_sum'] = $currentBankPortfolioEndBalance ;
-                    $result[$securitization->id]['early_settlements_expense_amount'] = ($earlySettlementExpenseRate * $currentBankPortfolioEndBalance) ;
+                  
+                
                 }
            
             }
-            
+			    $currentBankPortfolioEndBalance =  $currentBankBeginningBalance  + $previousAccuredInterest;
+					
+                    $result[$securitization->id]['bank_portfolio_end_balance_sum'] = $currentBankPortfolioEndBalance ;
+                    $result[$securitization->id]['early_settlements_expense_amount'] = ($earlySettlementExpenseRate * $currentBankPortfolioEndBalance) ;
+					
             $result[$securitization->id]['securitization_id'] = $securitization->id;
             $result[$securitization->id]['study_id'] = $this->id;
             $result[$securitization->id]['company_id'] = $this->company->id;
@@ -4736,7 +4722,8 @@ class Study extends Model
             $netPresetValue = Finance::npv($discountRate, array_values($values)) ;
             $principleAmountSum = $result[$securitization->id]['portfolio_principle_amount_sum']??0;
             $result[$securitization->id]['net_present_value'] = $netPresetValue;
-            $result[$securitization->id]['securitization_profit_or_loss'] = $netPresetValue - $principleAmountSum - $previousPortfolioAccuredInterest
+            $result[$securitization->id]['securitization_profit_or_loss'] = $netPresetValue - $principleAmountSum - $previousPortfolioAccuredInterest;
+            $result[$securitization->id]['test_portfolio'] =$previousPortfolioAccuredInterest;
             // -  $previousPortfolioAccuredInterest - $previousBankPortfolioAccuredInterest
             ;
             // additional data to view
@@ -4849,7 +4836,6 @@ class Study extends Model
         DB::connection('non_banking_service')->table('loan_schedule_payments')->where('study_id', $this->id)->where('revenue_stream_type', Study::MICROFINANCE)->delete();
         $totalInterests = $this->calculateMicrofinanceForType(true);
         $totalBankInterests = $this->calculateMicrofinanceForType(false);
-        // dd($totalBankInterests);
         $totalPortfolioEndBalances =$totalInterests['total_end_balances'];
         $revenueStreamType = Study::MICROFINANCE;
         DB::connection('non_banking_service')->table('income_statement_reports')->where('study_id', $this->id)->update([
