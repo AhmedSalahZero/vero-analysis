@@ -488,7 +488,11 @@
 
 
     <!--begin::Fonts -->
+	<script>
+const isNonBanking = +("<?php echo e(hasMiddleware('isNonBankingService')); ?>");
+</script>
     <script>
+
         function getVisiablFields() {
             let visiableFields = [];
             let EmptyFields = [];

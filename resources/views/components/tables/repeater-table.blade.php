@@ -101,6 +101,7 @@ $canAddNewItem = true;
 </div>
 <input type="hidden" id="initi-empty-{{ $repeaterId }}" value="{{ $initEmpty }}">
 <input type="hidden" id="first-element-deleteable-{{ $repeaterId }}" value="{{ $firstElementDeletable }}">
+
 @if($initialJs)
 @push('js_end')
 <script>
@@ -277,8 +278,9 @@ $canAddNewItem = true;
                 dateFormat: 'yy-mm-dd'
                 , autoclose: true
             })
-
-            $(this).find('input:not(.exclude-from-trigger-change-when-repeat):not([type="hidden"])').trigger('change');
+			if(!isNonBanking){
+				$(this).find('input:not(.exclude-from-trigger-change-when-repeat):not([type="hidden"])').trigger('change');
+			}
             //$('input.equity-funding-formatted-value-class').trigger('change');
             $(this).find('.dropdown-toggle').remove();
             $(this).find('select.repeater-select').selectpicker("refresh");

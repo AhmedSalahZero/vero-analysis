@@ -293,7 +293,7 @@ class IncomeStatementController extends Controller
             $bankPortfolioEndBalance = $securitizationLoanSchedule->bank_portfolio_end_balance_sum;
             $bankPortfolioEarlySettlement = $securitizationLoanSchedule->early_settlements_expense_amount;
             $securitizationGainOrLoss = $securitizationLoanSchedule->securitization_profit_or_loss;
-			$collectionRevenueAmounts = $securitizationLoanSchedule->collection_revenue_amounts;
+			$collectionRevenueAmounts = $securitizationLoanSchedule->collection_revenue_amounts?:[];
             $securitizationExpense = $securitizationLoanSchedule->securitization_expense_amount;
             $securitization = $securitizationLoanSchedule->securitization;
             $securitizationDateAsIndex = $securitization->securitization_date;

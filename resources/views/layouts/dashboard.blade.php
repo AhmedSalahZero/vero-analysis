@@ -488,7 +488,11 @@
 
 
     <!--begin::Fonts -->
+	<script>
+const isNonBanking = +("{{ hasMiddleware('isNonBankingService') }}");
+</script>
     <script>
+
         function getVisiablFields() {
             let visiableFields = [];
             let EmptyFields = [];

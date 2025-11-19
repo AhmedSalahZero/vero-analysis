@@ -2746,12 +2746,13 @@ class Study extends Model
         $tableDataFormatted[0]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($interestCashSurplusAmounts, $yearWithItsMonths);
         
         $securitizationLoanSchedules = SecuritizationLoanSchedule::where('study_id', $this->id)->get();
+		
         $securitizationNetPresentValues = [];
         $securitizationCollectionRevenues = [];
         //	 $securitizationGainOrLosses =[];
         foreach ($securitizationLoanSchedules as $securitizationLoanSchedule) {
             $netPresentValue = $securitizationLoanSchedule->net_present_value;
-            $collectionRevenueAmounts = $securitizationLoanSchedule->collection_revenue_amounts;
+            $collectionRevenueAmounts = $securitizationLoanSchedule->collection_revenue_amounts?:[];
             $securitization = $securitizationLoanSchedule->securitization;
             $securitizationDateAsIndex = $securitization->securitization_date;
             $securitizationNetPresentValues[$securitizationDateAsIndex] = isset($securitizationNetPresentValues[$securitizationDateAsIndex]) ? $securitizationNetPresentValues[$securitizationDateAsIndex] +  $netPresentValue : $netPresentValue;
@@ -2761,8 +2762,8 @@ class Study extends Model
             
         
             //    $securitizationGainOrLoss = $securitizationLoanSchedule->;
-            $securitization = $securitizationLoanSchedule->securitization;
-            $securitizationDateAsIndex = $securitization->securitization_date;
+            // $securitization = $securitizationLoanSchedule->securitization;
+            // $securitizationDateAsIndex = $securitization->securitization_date;
             // if($securitizationGainOrLoss > 0){
             // 	$securitizationGainOrLoss = $securitizationGainOrLoss ;
             // 	$securitizationGainOrLosses[$securitizationDateAsIndex] = isset($securitizationGainOrLosses[$securitizationDateAsIndex]) ? $securitizationGainOrLosses[$securitizationDateAsIndex] +  $securitizationGainOrLoss : $securitizationGainOrLoss;
@@ -2898,7 +2899,7 @@ class Study extends Model
         $securitizationBankEarlySettlements = [];
         //  $securitizationGainOrLosses = [];
         $securitizationExpenses = [];
-        
+        // dd('d',$securitizationLoanSchedules);
         // ddddddddddddddddddddd
         foreach ($securitizationLoanSchedules as $securitizationLoanSchedule) {
             $bankPortfolioEndBalance = $securitizationLoanSchedule->bank_portfolio_end_balance_sum;
@@ -4660,6 +4661,7 @@ class Study extends Model
         SecuritizationLoanSchedule::where('study_id', $this->id)->delete();
         foreach ($this->securitizations as $securitization) {
             $previousPortfolioAccuredInterest = 0 ;
+            $previousAccuredInterest = 0 ;
             $revenueStreamType = $securitization->revenue_stream_type;
             $disbursementDate = $securitization->disbursement_date;
             $securitizationDate = $securitization->securitization_date;
@@ -4683,10 +4685,11 @@ class Study extends Model
                     $beginningBalance = json_decode($loanSchedulePayment->beginning, true);
                     $currentBeginningBalance = $beginningBalance[$monthAsIndex]??0;
                     $result[$securitization->id]['portfolio_disbursement_amount'] = isset($result[$securitization->id]['portfolio_disbursement_amount']) ? $result[$securitization->id]['portfolio_disbursement_amount'] + $currentBeginningBalance : $currentBeginningBalance;
+					 $currentAccuredInterest = json_decode($loanSchedulePayment->accured_interest, true);
+					 $previousPortfolioAccuredInterest += ($currentAccuredInterest['monthly']['end_balance'][$securitizationDate-1]??0);
+					  
                     foreach ($schedulePayments as $dateAsIndex => $value) {
-                        if ($dateAsIndex >=$securitizationDate) {
-                            $currentAccuredInterest = json_decode($loanSchedulePayment->accured_interest, true);
-                            $previousPortfolioAccuredInterest = $currentAccuredInterest['monthly']['end_balance'][$securitizationDate-1]??0;
+                        if ($dateAsIndex >= $securitizationDate) {
                             $currentPrincipleAmount = $principlePayments[$dateAsIndex]??0;
                             $currentPortfolioValue = isset($result[$securitization->id]['portfolio_result'][$dateAsIndex]) ? $result[$securitization->id]['portfolio_result'][$dateAsIndex] + $value : $value ;
                             $result[$securitization->id]['portfolio_result'][$dateAsIndex]=$currentPortfolioValue;
@@ -4704,12 +4707,11 @@ class Study extends Model
                             
                     $bankPortfolioBeginningBalance = json_decode($loanSchedulePayment->beginning, true);
                     $currentAccuredInterest = json_decode($loanSchedulePayment->accured_interest, true);
-                    $previousAccuredInterest = $currentAccuredInterest['monthly']['end_balance'][$securitizationDate-1]??0;
+                    $previousAccuredInterest += ($currentAccuredInterest['monthly']['end_balance'][$securitizationDate-1]??0);
                     $currentBankBeginningBalance = $bankPortfolioBeginningBalance[$securitizationDate]??0 ;
                     $currentBeginningBalance = $currentBankBeginningBalance  + $previousAccuredInterest;
                     $currentBankPortfolioEndBalance = isset($result[$securitization->id]['bank_portfolio_end_balance_sum'])? $result[$securitization->id]['bank_portfolio_end_balance_sum'] + $currentBeginningBalance : $currentBeginningBalance;
-                    $result[$securitization->id]['bank_portfolio_end_balance_sum'] = $currentBankPortfolioEndBalance ;
-                    $result[$securitization->id]['early_settlements_expense_amount'] = ($earlySettlementExpenseRate * $currentBankPortfolioEndBalance) ;
+                  
                 }
            
             }
@@ -4721,6 +4723,11 @@ class Study extends Model
             $netPresetValue = Finance::npv($discountRate, array_values($values)) ;
             $principleAmountSum = $result[$securitization->id]['portfolio_principle_amount_sum']??0;
             $result[$securitization->id]['net_present_value'] = $netPresetValue;
+			
+			  $result[$securitization->id]['bank_portfolio_end_balance_sum'] = $currentBankPortfolioEndBalance ;
+             $result[$securitization->id]['early_settlements_expense_amount'] = ($earlySettlementExpenseRate * $currentBankPortfolioEndBalance) ;
+					
+			// qqqqqqqqqqq
             $result[$securitization->id]['securitization_profit_or_loss'] = $netPresetValue - $principleAmountSum - $previousPortfolioAccuredInterest
             // -  $previousPortfolioAccuredInterest - $previousBankPortfolioAccuredInterest
             ;
@@ -4730,6 +4737,7 @@ class Study extends Model
             $result[$securitization->id]['securitization_date'] =formatDateForView($this->getDateFromDateIndex($securitizationDate)) ;
                 
         }
+		// dd($result);
         foreach ($result as $arr) {
             SecuritizationLoanSchedule::create($arr);
         }
