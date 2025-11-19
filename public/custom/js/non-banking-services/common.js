@@ -223,23 +223,21 @@ $(document).on('click', '.collapse-before-me', function () {
 		}
 	}
 })
-$(document).on('change', '.repeater-with-collapse-input', function () {
-	// console.log('from 12')
-	let groupIndex = $(this).attr('data-group-index')
-	let total = 0
-	$(this).closest('tr').find('input[data-group-index="' + groupIndex + '"]').each(function (index, element) {
-		total += parseFloat($(element).val())
-	})
-	// console.log($(this).closest('tr').find('.year-repeater-index-' + groupIndex))
-	$(this).closest('tr').find('.year-repeater-index-' + groupIndex).val(number_format(total)).trigger('change')
-})
-$('input[type="hidden"].exclude-from-collapse').on('change', function () {
-	var total = 0
-	$(this).closest('tr').find('.repeat-group-year').each(function (index, element) {
-		total += parseFloat(number_unformat($(element).val()))
-	})
-	$(this).closest('tr').find('.total-td').val(number_format(total)).trigger('change')
-})
+// $(document).on('change', '.repeater-with-collapse-input', function () {
+// 	let groupIndex = $(this).attr('data-group-index')
+// 	let total = 0
+// 	$(this).closest('tr').find('input[data-group-index="' + groupIndex + '"]').each(function (index, element) {
+// 		total += parseFloat($(element).val())
+// 	})
+// 	$(this).closest('tr').find('.year-repeater-index-' + groupIndex).val(number_format(total)).trigger('change')
+// })
+// $('input[type="hidden"].exclude-from-collapse').on('change', function () {
+// 	var total = 0
+// 	$(this).closest('tr').find('.repeat-group-year').each(function (index, element) {
+// 		total += parseFloat(number_unformat($(element).val()))
+// 	})
+// 	$(this).closest('tr').find('.total-td').val(number_format(total)).trigger('change')
+// })
 $(document).on('click', '.add-btn-js', function (e) {
 	// console.log('from 13')
 	e.preventDefault()
