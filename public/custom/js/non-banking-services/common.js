@@ -15,7 +15,6 @@ $(document).on('click', '.repeat-to-right', function () {
 	$(this).closest('tr').find('.repeat-to-right-input-formatted[data-name="' + name + '"]').each(function (index, inputFormatted) {
 		let currentColumnIndex = $(inputFormatted).attr('data-column-index')
 		let currentGroupIndex = $(inputFormatted).attr('data-gro-index')
-	//	// console.log(currentGroupIndex ,groupIndex)
 		if (currentColumnIndex >= columnIndex && currentGroupIndex == groupIndex) {
 			totalPerYear += parseFloat(inputValue)
 			$(inputFormatted).val(number_format(inputValue, numberOfDecimalsForCurrentInput)).trigger('change')
@@ -532,7 +531,6 @@ function recalculateRowTotal($row) {
     let total = 0;
     let $inputs = $row.find('input.input-hidden-with-name:not(.exclude-from-total)');
     let numberOfDecimals = $row.attr('data-repeat-formatting-decimals') || 2;
-
     $inputs.each(function () {
         let val = $(this).val();
         if (val !== '' && val !== null) {
@@ -546,20 +544,20 @@ function recalculateRowTotal($row) {
 // Debounce 100ms فقط
 
 // أو بدون lodash:
-const debouncedRecalc = function(fn, wait) {
-    let timeout;
-    return function($row) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => fn($row), wait);
-    };
-}(recalculateRowTotal, 100);
+// const debouncedRecalc = function(fn, wait) {
+//     let timeout;
+//     return function($row) {
+//         clearTimeout(timeout);
+//         timeout = setTimeout(() => fn($row), wait);
+//     };
+// }(recalculateRowTotal, 100);
 
 // في الـ event
-$(document).on('change input', '[total-row-tr] input.input-hidden-with-name', function () {
-    let $row = $(this).closest('tr');
-    debouncedRecalc($row);
-});
-$('[total-row-tr] input.input-hidden-with-name').trigger('change')
+// $(document).on('change input', '[total-row-tr] input.input-hidden-with-name', function () {
+//     let $row = $(this).closest('tr');
+//     debouncedRecalc($row);
+// });
+// $('[total-row-tr] input.input-hidden-with-name').trigger('change')
 
 
 
