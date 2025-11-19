@@ -4658,7 +4658,8 @@ class Study extends Model
     {
         return $this->hasMany(Securitization::class, 'study_id', 'id');
     }
-    public function calculateSecuritizationLoans():array
+
+	 public function calculateSecuritizationLoans():array
     {
         $result = [];
         $result = [];
@@ -4691,12 +4692,15 @@ class Study extends Model
                     $principlePayments = json_decode($loanSchedulePayment->principleAmount, true);
                     $beginningBalance = json_decode($loanSchedulePayment->beginning, true);
                     $currentBeginningBalance = $beginningBalance[$monthAsIndex]??0;
-                    $result[$securitization->id]['portfolio_disbursement_amount'] = isset($result[$securitization->id]['portfolio_disbursement_amount']) ? $result[$securitization->id]['portfolio_disbursement_amount'] + $currentBeginningBalance : $currentBeginningBalance;
-					 $currentAccuredInterest = json_decode($loanSchedulePayment->accured_interest, true);
+					$currentAccuredInterest = json_decode($loanSchedulePayment->accured_interest, true);
 					 $previousPortfolioAccuredInterest += ($currentAccuredInterest['monthly']['end_balance'][$securitizationDate-1]??0);
-					  
+					 
+                    $result[$securitization->id]['portfolio_disbursement_amount'] = isset($result[$securitization->id]['portfolio_disbursement_amount']) ? $result[$securitization->id]['portfolio_disbursement_amount'] + $currentBeginningBalance : $currentBeginningBalance;
                     foreach ($schedulePayments as $dateAsIndex => $value) {
-                        if ($dateAsIndex >= $securitizationDate) {
+                        if ($dateAsIndex >=$securitizationDate) {
+							
+                           
+					//		logger('current accured'.$previousPortfolioAccuredInterest);
                             $currentPrincipleAmount = $principlePayments[$dateAsIndex]??0;
                             $currentPortfolioValue = isset($result[$securitization->id]['portfolio_result'][$dateAsIndex]) ? $result[$securitization->id]['portfolio_result'][$dateAsIndex] + $value : $value ;
                             $result[$securitization->id]['portfolio_result'][$dateAsIndex]=$currentPortfolioValue;
@@ -4707,18 +4711,20 @@ class Study extends Model
                     }
                 } else {
                     
-                    
-                    
                     $currentAccuredInterest = json_decode($loanSchedulePayment->accured_interest, true);
+                    $previousAccuredInterest += ($currentAccuredInterest['monthly']['end_balance'][$securitizationDate-1]??0);
+                    
+                    
         
                             
                     $bankPortfolioBeginningBalance = json_decode($loanSchedulePayment->beginning, true);
-                    $currentAccuredInterest = json_decode($loanSchedulePayment->accured_interest, true);
-                    $previousAccuredInterest += ($currentAccuredInterest['monthly']['end_balance'][$securitizationDate-1]??0);
+                    
                     $currentBankBeginningBalance = $bankPortfolioBeginningBalance[$securitizationDate]??0 ;
+				//	logger('current accured'.$previousAccuredInterest);
                     $currentBeginningBalance = $currentBankBeginningBalance  + $previousAccuredInterest;
                     $currentBankPortfolioEndBalance = isset($result[$securitization->id]['bank_portfolio_end_balance_sum'])? $result[$securitization->id]['bank_portfolio_end_balance_sum'] + $currentBeginningBalance : $currentBeginningBalance;
-                  
+                    $result[$securitization->id]['bank_portfolio_end_balance_sum'] = $currentBankPortfolioEndBalance ;
+                    $result[$securitization->id]['early_settlements_expense_amount'] = ($earlySettlementExpenseRate * $currentBankPortfolioEndBalance) ;
                 }
            
             }
@@ -4730,11 +4736,6 @@ class Study extends Model
             $netPresetValue = Finance::npv($discountRate, array_values($values)) ;
             $principleAmountSum = $result[$securitization->id]['portfolio_principle_amount_sum']??0;
             $result[$securitization->id]['net_present_value'] = $netPresetValue;
-			
-			  $result[$securitization->id]['bank_portfolio_end_balance_sum'] = $currentBankPortfolioEndBalance ;
-             $result[$securitization->id]['early_settlements_expense_amount'] = ($earlySettlementExpenseRate * $currentBankPortfolioEndBalance) ;
-					
-			// qqqqqqqqqqq
             $result[$securitization->id]['securitization_profit_or_loss'] = $netPresetValue - $principleAmountSum - $previousPortfolioAccuredInterest
             // -  $previousPortfolioAccuredInterest - $previousBankPortfolioAccuredInterest
             ;
@@ -4744,7 +4745,6 @@ class Study extends Model
             $result[$securitization->id]['securitization_date'] =formatDateForView($this->getDateFromDateIndex($securitizationDate)) ;
                 
         }
-		// dd($result);
         foreach ($result as $arr) {
             SecuritizationLoanSchedule::create($arr);
         }
@@ -4841,6 +4841,8 @@ class Study extends Model
         // $this->recalculateMonthlyAndAccumulatedEcl();
         return $result;
     }
+	
+	
     public function calculateMicrofinanceLoans()
     {
         

@@ -199,11 +199,12 @@ $canAddNewItem = true;
 
         updateSelected() // Initial call
     }
-	
     $('#' + "{{ $repeaterId }}").repeater({
         initEmpty: initEmpty
         , isFirstItemUndeletable: !firstElementDeleteable
         , defaultValues: {
+			"percentage_payload":0,
+			"loan_amounts":0,
             "is_active": 1
             , "replacement_cost_rate": 0
             , "replacement_interval": 1
@@ -280,7 +281,12 @@ $canAddNewItem = true;
             })
 			if(!isNonBanking){
 				$(this).find('input:not(.exclude-from-trigger-change-when-repeat):not([type="hidden"])').trigger('change');
+			}else{
+			$(this).find('.input-hidden-parent input:not([type="hidden"])').val(0);
 			}
+			
+			
+			
             //$('input.equity-funding-formatted-value-class').trigger('change');
             $(this).find('.dropdown-toggle').remove();
             $(this).find('select.repeater-select').selectpicker("refresh");

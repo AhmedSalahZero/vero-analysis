@@ -228,8 +228,9 @@ $(document).on('change', '.repeater-with-collapse-input', function () {
 	let groupIndex = $(this).attr('data-group-index')
 	let total = 0
 	$(this).closest('tr').find('input[data-group-index="' + groupIndex + '"]').each(function (index, element) {
-		total += parseFloat($(element).val())
+		total += parseFloat(number_unformat($(element).val()))
 	})
+	console.log(total);
 	$(this).closest('tr').find('.year-repeater-index-' + groupIndex).val(number_format(total)).trigger('change')
 })
 $('input[type="hidden"].exclude-from-collapse').on('change', function () {
