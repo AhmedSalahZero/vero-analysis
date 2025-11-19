@@ -35,7 +35,6 @@ class ExpensesController extends Controller
     protected function getViewVars(Company $company, Study $study)
     {
         $selectedRevenueStreams = $study->getSelectedRevenueStreamTypesFormatted();
-        // $revenueStreams = $study->getSelectedRevenueStreamWithCategories($selectedRevenueStreams);
         return [
             'selectedRevenueStreams'=>$selectedRevenueStreams,
             'company'=>$company ,

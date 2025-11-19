@@ -733,6 +733,9 @@ class Study extends Model
         $mainTitleMapping = $this->getRevenueStreamTypes();
         $result = [];
         foreach ($selected as $revenueId) {
+			if($revenueId =='has_securitization'){
+				continue;
+			}
             $result[] = [
                 'value'=>$revenueId,
                 'title'=>$mainTitleMapping[$revenueId]
@@ -758,10 +761,14 @@ class Study extends Model
     {
         $result = [];
         foreach (self::getRevenueStreamTypes() as $type=>$title) {
+			if($type =='has_securitization'){
+				continue;
+			}
             if ($this->{$type}) {
                 $result[] = ['title'=>$title,'value'=>$type];
             }
         }
+		// dd($result);
         return $result;
     }
     public function generateRelationDynamically(string $relationName, string $expenseType)

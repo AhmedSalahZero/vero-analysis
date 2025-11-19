@@ -396,7 +396,6 @@ use App\Models\NonBankingService\Expense;
                                     </div>
 
                                 </td>
-
                                 <td>
                                     <div class="min-w-200">
                                         <x-form.select name="revenue_stream_type" :multiple="true" :selectedValue="isset($subModel) ? $subModel->getRevenueStreamTypes() : ''" :options="$selectedRevenueStreams" :add-new="false" class="select2-select repeater-select update-revenue-category-based-on-revenue-js " :all="false" data-current-selected="{{ json_encode(isset($subModel) ? $subModel->getRevenueStreamTypes():[]) }}"></x-form.select>
