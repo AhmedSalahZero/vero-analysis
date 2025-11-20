@@ -73,6 +73,7 @@ trait IsMoney
 		}
 		foreach($settlements as $settlementArr)
 		{
+			logger('no-from2');
 			$settlementArr['settlement_amount'] = isset($settlementArr['settlement_amount']) ?  unformat_number($settlementArr['settlement_amount']) :  0 ;  
 			if($settlementArr['settlement_amount'] > 0){
 				$settlementArr['company_id'] = $company->id ;
@@ -339,7 +340,7 @@ trait IsMoney
 	}
 	public function fullyIntegratedWithOdoo():bool
 	{
-		return !$this->hasOdooError();
+		return !$this->hasOdooError() && count($this->getOdooReferenceNames());
 	}
 	public function getOdooError()
 	{
@@ -425,11 +426,14 @@ trait IsMoney
 	}
 	public function getChequeJournalId()
 	{
+		$this->refresh();
 		if($cheque = $this->cheque){
-			if($cheque->isInSafe()){
+				if($cheque->isInSafe()){
 					return $cheque->branch->getJournalId();
 				}
+				
 				$financialInstitution = $cheque->drawlBank;
+			
 				$accountTypeId = $cheque->account_type;
 				$accountNumber  = $cheque->account_number;
 				return $financialInstitution->getJournalIdForAccount($accountTypeId,$accountNumber);		
@@ -445,6 +449,22 @@ trait IsMoney
 	
 		return null ;
 	}
+	
+	public function getChequeOdooId():int
+	{
+		if($cheque = $this->cheque){
+				if($cheque->isInSafe()){
+					return $cheque->branch->getOdooId();
+				}
+				dd('lol');
+		}
+		if($payableCheque = $this->payableCheque){
+			return $payableCheque->deliveryBank->getOdooId();
+		}
+	
+		return null ;
+	}
+	
 	public function getTransactionType()
 	{
 		return $this->transaction_type;
@@ -452,5 +472,9 @@ trait IsMoney
 	public function getInvoiceNumber()
 	{
 		return $this->odoo_reference ?: $this->odoo_id ;
+	}
+	public function isChequeAndNotCustomerOrSupplier()
+	{
+		return $this->isCheque() && (!in_array($this->getPartnerType(),['is_customer','is_supplier']));
 	}
 }

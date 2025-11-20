@@ -15,7 +15,6 @@ class CalculateFixedLoanAtBeginningService
     
 	public function __calculateBasedOnDiffBaseRates(array $baseRatesMapping, string $loanType, string $loanStartDate, float $loanAmount, float $marginRate, float $tenor, string $installmentPaymentIntervalName, int $installmentPaymentIntervalValue, float $stepUpRate = 0, string $stepUpIntervalName = null, float $stepDownRate = 0, string $stepDownIntervalName = null, float $gracePeriod  = 0, int $monthIndex = 0, array $datesAsStringAndIndex = [], array $dateWithDateIndex = []):array
     {
-        // dd($baseRatesMapping,$marginRate);
         $currentStartDateAsIndex=$monthIndex ;
         $originalTenor = $tenor;
         if ($loanAmount <= 0) {
@@ -46,39 +45,7 @@ class CalculateFixedLoanAtBeginningService
             $currentResultArr = [];
             if ($tenor >= 1) {
 				
-				// if($i == 1){
-				// 	dd($loanAmount,$currentStartDateAsIndex ,$loanStartDate);
-				// }
-				
-			//	logger('inside base'.$currentBaseRate.'inside margin'.$marginRate.'inside loan start date'.$loanStartDate);
 				$currentResultArr =$this->__calculate($previousResult, $i, $loanType, $loanStartDate, $loanAmount, $currentBaseRate, $marginRate, $tenor, $installmentPaymentIntervalName, $stepUpRate, $stepUpIntervalName, $stepDownRate, $stepDownIntervalName, $gracePeriod, $currentStartDateAsIndex);
-				// if($i == 1){
-				// 	dd($currentResultArr ,$previousResult );
-				// }
-				
-				// $currentStartDateAsIndex = HArr::getNextNonZeroValue($currentResultArr['schedulePayment']??[],$currentBaseRateDateAsIndex,$i);
-				// dd($baseRatesMapping);
-				// $nextBaseRateDate = getNextDate($baseRatesMapping,$currentBaseRateDate);
-				// dd($currentResultArr['result']);
-				// if(!is_null($nextBaseRateDate) && isset($currentResultArr['result'])){
-					// $nextBaseRateDateAsIndex = $datesAsStringAndIndex[$currentBaseRateDate];
-					// $currentStartDateAsIndex = HArr::getNextNonZeroValue($currentResultArr['result']['schedulePayment'],$currentBaseRateDateAsIndex);
-					
-					// $loanAmount = $currentResultArr['result']['beginning'][$currentStartDateAsIndex]??0;
-				
-					// if($loanAmount > 0 ){
-						// unset($currentResultArr['result']['totals']);
-						// $currentResultArr['result'] = HArr::removeIndexesFrom($currentResultArr['result'],$nextBaseRateDateAsIndex);
-						// dd($currentResultArr['final_result']);
-						// $currentResultArr['final_result'] = HArr::removeIndexesFrom($currentResultArr['final_result'],$nextBaseRateDateAsIndex);
-						// dd($currentResultArr['final_result']);
-					// }
-					
-				// }
-				// if($i == 0){
-				// 	dd($currentResultArr['final_result']);
-				// }
-				
                 $previousResult =$currentResultArr['final_result']??[];
                 $fixedAtEndResult['current_result'][]= $currentResultArr['result']??[]  ;
                 $fixedAtEndResult['final_result']= $currentResultArr['final_result']??[]  ;

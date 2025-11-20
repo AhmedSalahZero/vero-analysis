@@ -17,12 +17,10 @@ class CashInOutFlowController extends Controller
 	
 	public function view(Request $request , Company $company,Study $study)
 	{
-		// dd('q');
 		$basicCashflowStatement = $study->getCashInOutFlowViewVars() ;
 		$hasMicrofinanceWithOdas =$basicCashflowStatement['hasMicrofinanceWithOdas']; 
 		$odasTitleStatement = __('ODAs Statement') ; // search for it if you changed it
-		// dd($hasMicrofinanceWithOdas);
-		// if($hasMicrofinanceWithOdas){
+	
 			$netCashBeforeWorkingCapital = $basicCashflowStatement['netCashBeforeWorking'];
 			$tableDataFormattedForOdas = $study->cashFlowForOdas($netCashBeforeWorkingCapital);
 			$tableDataFormatteds = [
@@ -71,8 +69,6 @@ class CashInOutFlowController extends Controller
 		// $study->recalculateCashflowStatement();
 			
 		return redirect()->back()->with('success',__('Successfully Recalculated'));
-		// dd('good');
-		// dd($request->all());
 	}
 	
 }

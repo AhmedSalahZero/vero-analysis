@@ -62,6 +62,7 @@ trait HasDepositAccount
 			
 			$fromJournalId = $fromFinancialInstitution->getJournalIdForAccount($fromAccountTypeId,$fromAccountNumber);
 			 $fromOdooId = $fromFinancialInstitution->getOdooIdForAccount($fromAccountTypeId,$fromAccountNumber);
+			 
 			$toJournalId = $toFinancialInstitution->getJournalIdForAccount($toAccountTypeId,$toAccountNumber);
 			$toOdooId = $toFinancialInstitution->getOdooIdForAccount($toAccountTypeId,$toAccountNumber);
 		

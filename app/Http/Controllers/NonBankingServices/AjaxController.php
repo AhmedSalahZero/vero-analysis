@@ -20,10 +20,7 @@ class AjaxController extends Controller
 			'status'=>true ,
 			'data'=>$result
 		]);
-		// dd($result);
-		// foreach($revenueStreamIds as $revenueStreamId){
-		// }
-		// dd($request->all( ) , $company , $study);
+
 	}
 	public function getPositionsBasedOnDepartments(Request $request)
 	{

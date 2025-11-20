@@ -628,5 +628,36 @@ class CashExpense extends Model
 		}
 		return $result;
 	}
+	public function getCashBranchJournalId()
+	{
+		$cashPayment = $this->cashPayment;
+
+		return $cashPayment ? $cashPayment->getBankJournalId() : null ;
+	}
+	public function getCashBranchOdooId()
+	{
+		$cashPayment = $this->cashPayment;
+
+		return $cashPayment ? $cashPayment->getBankOdooId() : null ;
+	}
+	
+	public function getOdooReferenceNames():array
+	{
+		$references = [];
+		$i = 0;
+		foreach([
+			'odoo_reference'
+		] as $columnName ){
+			if($this->{$columnName}){
+				$i ++;
+				$references[] = $i .'-'.$this->{$columnName};
+			}
+		}
+		return $references ;
+	}
+	public function fullyIntegratedWithOdoo()
+	{
+		return count($this->getOdooReferenceNames());
+	}
 	
 }

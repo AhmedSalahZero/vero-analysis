@@ -470,7 +470,7 @@ class LetterOfGuaranteeIssuance extends Model
             foreach (['journal_entry_id','commission_fees_journal_entry_id','issuance_fees_journal_entry_id','renewal_fees_journal_entry_id'] as $journalColumnName) {
                 $currentJournalEntryId = $this->{$journalColumnName};
                 if ($currentJournalEntryId) {
-                    $odooLetterOfGuaranteeIssuance->unlink($journalColumnName);
+                    $odooLetterOfGuaranteeIssuance->unlink($currentJournalEntryId);
                 }
                 
             }
@@ -631,12 +631,14 @@ class LetterOfGuaranteeIssuance extends Model
         $currency = $this->getLgCurrency();
         $odooCurrencyId = Currency::getOdooId($currency);
         $debitOdooAccountId = $odooSetting->getLetterOfGuaranteeIssuanceFeesId();
+		// $debitOdooAccountId = 614;
         $lgType =$this->getLgTypeFormatted();
         $ref = $lgType . ' Issuance Fees';
         $message = $ref;
         $result = $odooLetterOfGuaranteeIssuance->createLgIssuanceCashCover($issuanceDate, $issuanceFees, $journalId, $odooCurrencyId, $debitOdooAccountId, $accountOdooId, $this->getBeneficiaryOdooId(), $ref, $message);
         $this->issuance_fees_account_bank_statement_odoo_id=$result['account_bank_statement_line_id'];
         $this->issuance_fees_journal_entry_id=$result['journal_entry_id'];
+        $this->odoo_issuance_fees_reference=$result['reference'];
         $commissionFees = $this->getLgCommissionAmount();
         $ref = $lgType . ' Commission Fees';
         $message = $ref;
@@ -644,6 +646,7 @@ class LetterOfGuaranteeIssuance extends Model
         $result = $odooLetterOfGuaranteeIssuance->createLgIssuanceCashCover($issuanceDate, $commissionFees, $journalId, $odooCurrencyId, $debitOdooAccountId, $accountOdooId, $this->getBeneficiaryOdooId(), $ref, $message);
         $this->commission_fees_account_bank_statement_odoo_id=$result['account_bank_statement_line_id'];
         $this->commission_fees_journal_entry_id=$result['journal_entry_id'];
+        $this->odoo_commission_fees_reference=$result['reference'];
         $this->save();
     }
     
@@ -665,18 +668,30 @@ class LetterOfGuaranteeIssuance extends Model
             $cashCoverAmount = $this->getCashCoverAmount();
             $lgDebitOdooAccountId = FinancialInstitutionAccount::getLetterOfGuaranteeOdooIdFromType($lgType, $company->id);
             
-            $ref = $this->generateIssuanceRef();
-            $message = $this->generateIssuanceMessage();
+            $ref = $this->generateCashCoverRef();
+            $message = $this->generateCashCoverMessage();
             $result = $odooLetterOfGuaranteeIssuance->createLgIssuanceCashCover($issuanceDate, $cashCoverAmount, $journalId, $odooCurrencyId, $lgDebitOdooAccountId, $accountOdooId, $this->getBeneficiaryOdooId(), $ref, $message);
             $this->account_bank_statement_odoo_id=$result['account_bank_statement_line_id'];
             $this->journal_entry_id=$result['journal_entry_id'];
+            $this->cash_cover_fees_reference=$result['reference'];
             $this->save();
             
         }
     }
+	
+	 public function generateCashCoverRef():string
+    {
+        return __('Create Cash Cover ') . ' ' . $this->getLgTypeFormatted();
+    }
+    public function generateCashCoverMessage():string
+    {
+        return __('Cash Cover');
+    }
+	
+	
     public function generateIssuanceRef():string
     {
-        return __('Create') . ' ' . $this->getLgTypeFormatted();
+        return __('Create Issuance') . ' ' . $this->getLgTypeFormatted();
     }
     public function generateIssuanceMessage():string
     {
@@ -690,6 +705,25 @@ class LetterOfGuaranteeIssuance extends Model
     {
         return __('Cash Cover');
     }
-	// public 
+	public function getOdooReferenceNames():array
+	{
+		$references = [];
+		$i = 0;
+		foreach([
+			'odoo_commission_fees_reference',
+			'odoo_issuance_fees_reference',
+			'cash_cover_fees_reference'
+		] as $columnName ){
+			if($this->{$columnName}){
+				$i ++;
+				$references[] = $i .'-'.$this->{$columnName};
+			}
+		}
+		return $references ;
+	}
+	public function fullyIntegratedWithOdoo()
+	{
+		return count($this->getOdooReferenceNames());
+	}
 
 }

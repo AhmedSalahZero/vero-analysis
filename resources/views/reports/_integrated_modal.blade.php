@@ -14,7 +14,7 @@
 					{{-- <input type="hidden" name="model_name" value="{{ getModelNameWithoutNamespace($model) }}" >
 					<input type="hidden" name="table_name" value="{{ $model->getTable() }}" > --}}
                  <div class="modal-header blue">
-                     <h5 class="modal-title text-blue " id="exampleModalLongTitle">{{ __('Odoo Payment References') }}</h5>
+                     <h5 class="modal-title text-blue " id="exampleModalLongTitle">{{ __('Odoo References') }}</h5>
 					 {{-- <hr class="text"> --}}
                      <button type="button" class="close  " data-dismiss="modal" aria-label="Close">
                          <span aria-hidden="true">&times;</span>

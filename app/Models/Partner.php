@@ -230,22 +230,30 @@ class Partner extends Model
 			}
 			if($isSupplier){
 				$partner->update([
-					'is_supplier'=>1 
+					'is_supplier'=>1 ,
+					'odoo_id'=>$odooPartnerId,
+					'name'=>$odooPartnerName
 				]);
 			}
 			if($isCustomer){
 				$partner->update([
-					'is_customer'=>1 
+					'is_customer'=>1 ,
+						'odoo_id'=>$odooPartnerId,
+					'name'=>$odooPartnerName
 				]);
 			}
 			if($isEmployee){
 				$partner->update([
-					'is_employee'=>1 
+					'is_employee'=>1 ,
+						'odoo_id'=>$odooPartnerId,
+					'name'=>$odooPartnerName
 				]);
 			}
 			if($isOtherPartner){
 				$partner->update([
-					'is_other_partner'=>1 
+					'is_other_partner'=>1 ,
+						'odoo_id'=>$odooPartnerId,
+					'name'=>$odooPartnerName
 				]);
 			}
 			return $partner->id ;

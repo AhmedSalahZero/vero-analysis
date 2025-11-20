@@ -69,7 +69,7 @@ class InternalMoneyTransferController
 		
 		$bankToBankStartDate = $filterDates[InternalMoneyTransfer::BANK_TO_BANK]['startDate'] ?? null ;
 		$bankToBankEndDate = $filterDates[InternalMoneyTransfer::BANK_TO_BANK]['endDate'] ?? null ;
-		$bankToBankInternalMoneyTransfers = $company->bankToBankInternalMoneyTransfers ;
+		$bankToBankInternalMoneyTransfers = $company->bankToBankInternalMoneyTransfers->sortByDesc('transfer_date') ;
 		$bankToBankInternalMoneyTransfers =  $bankToBankInternalMoneyTransfers->filterByTransferDate($bankToBankStartDate,$bankToBankEndDate) ;
 		$bankToBankInternalMoneyTransfers =  $currentType == InternalMoneyTransfer::BANK_TO_BANK ? $this->applyFilter($request,$bankToBankInternalMoneyTransfers):$bankToBankInternalMoneyTransfers ;
 
@@ -99,7 +99,7 @@ class InternalMoneyTransferController
 		
 		$bankToSafeStartDate = $filterDates[InternalMoneyTransfer::BANK_TO_SAFE]['startDate'] ?? null ;
 		$bankToSafeEndDate = $filterDates[InternalMoneyTransfer::BANK_TO_SAFE]['endDate'] ?? null ;
-		$bankToSafeInternalMoneyTransfers = $company->bankToSafeInternalMoneyTransfers ;
+		$bankToSafeInternalMoneyTransfers = $company->bankToSafeInternalMoneyTransfers->sortByDesc('transfer_date') ;
 		$bankToSafeInternalMoneyTransfers =  $bankToSafeInternalMoneyTransfers->filterByTransferDate($bankToSafeStartDate,$bankToSafeEndDate) ;
 		$bankToSafeInternalMoneyTransfers =  $currentType == InternalMoneyTransfer::BANK_TO_SAFE ? $this->applyFilter($request,$bankToSafeInternalMoneyTransfers):$bankToSafeInternalMoneyTransfers ;
 
@@ -114,7 +114,7 @@ class InternalMoneyTransferController
 		
 		$safeToSafeStartDate = $filterDates[InternalMoneyTransfer::SAFE_TO_SAFE]['startDate'] ?? null ;
 		$safeToSafeEndDate = $filterDates[InternalMoneyTransfer::SAFE_TO_SAFE]['endDate'] ?? null ;
-		$safeToSafeInternalMoneyTransfers = $company->safeToSafeInternalMoneyTransfers ;
+		$safeToSafeInternalMoneyTransfers = $company->safeToSafeInternalMoneyTransfers->sortByDesc('transfer_date') ;
 		$safeToSafeInternalMoneyTransfers =  $safeToSafeInternalMoneyTransfers->filterByTransferDate($safeToSafeStartDate,$safeToSafeEndDate) ;
 		$safeToSafeInternalMoneyTransfers =  $currentType == InternalMoneyTransfer::SAFE_TO_SAFE ? $this->applyFilter($request,$safeToSafeInternalMoneyTransfers):$safeToSafeInternalMoneyTransfers ;
 

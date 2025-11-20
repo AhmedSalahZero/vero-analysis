@@ -1138,5 +1138,13 @@ class MoneyReceived extends Model
 		throw New Exception('Transaction Type ' . $transactionType . ' Does Not Have Account Id');
 		
 	}
-	
+	public function handleOdooDownPayments($OdooPaymentService,$hasOdooIntegration)
+	{
+		if($hasOdooIntegration && $this->isDownPayment()){
+			$OdooPaymentService->reCreateDownPayment($this);
+		}elseif($hasOdooIntegration && $this->isChequeAndNotCustomerOrSupplier()){
+			$OdooPaymentService->reCreateDownPayment($this);
+		}
+		
+	}
 }

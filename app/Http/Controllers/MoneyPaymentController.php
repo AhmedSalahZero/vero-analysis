@@ -76,7 +76,7 @@ class MoneyPaymentController
 		->when($request->get('to') , function($collection) use($dateFieldName,$to){
 			return $collection->where($dateFieldName,'<=',$to);
 		})
-		->sortBy('delivery_date')->values();
+		->sortByDesc('delivery_date')->values();
 		return $collection;
 	}
 	public function index(Company $company,Request $request)
@@ -121,7 +121,7 @@ class MoneyPaymentController
 		
 		$accountTypes = AccountType::onlyCashAccounts()->get();
 		$cashPayments = $moneyType == MoneyPayment::CASH_PAYMENT ? $this->applyFilter($request,$cashPayments) :$cashPayments  ;
-		
+		// dd($moneyType);
 		$outgoingTransfer = $moneyType === MoneyPayment::OUTGOING_TRANSFER ? $this->applyFilter($request,$outgoingTransfer) : $outgoingTransfer  ;
 		
 		$payableCheques = $moneyType == MoneyPayment::PAYABLE_CHEQUE ? $this->applyFilter($request,$payableCheques) : $payableCheques;
@@ -327,7 +327,7 @@ class MoneyPaymentController
 	// ,$accountNumberHasChanged = false
 	){
 		$hasUnappliedAmount = (bool)$request->get('unapplied_amount');
-		$partnerType = $request->get('partner_type');
+		$partnerType = $request->get('partner_type','is_supplier');
 		$moneyType = $request->get('type');
 		$isGeneralDownPaymentOrSettlementOpening = $request->get('down_payment_type') == MoneyPayment::DOWN_PAYMENT_GENERAL || $request->get('down_payment_type') == MoneyPayment::SETTLEMENT_OF_OPENING_BALANCE;
 		$financialInstitutionId = null;
@@ -466,12 +466,12 @@ class MoneyPaymentController
 		/**
 		 * * For Contract Only
 		 */
-		$moneyPayment->storeNewAllocation($request->get('allocations',[]));
 		
+		$moneyPayment->storeNewAllocation($request->get('allocations',[]));
 		
 		if($hasUnappliedOrIsDownPayment){
 			$moneyPayment->storeNewPurchaseOrders($request->get('purchases_orders_amounts',[]),$contractId,$supplierId,$company->id,$amountInPaymentCurrency);
-			if($company->hasOdooIntegrationCredentials()){
+			if($company->hasOdooIntegrationCredentials() && $partnerType == 'is_supplier'){
 				$odooPaymentService = new OdooPayment($company);
 				$odooPaymentService->createDownPayment($moneyPayment);
 			}

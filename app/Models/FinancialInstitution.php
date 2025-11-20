@@ -361,6 +361,7 @@ class FinancialInstitution extends Model
 	}
 	public  function getOdooIdForAccount( int $accountTypeId , string $accountNumber){
 		$accountModel = $this->getAccountFromTypeAndNumber($accountTypeId,$accountNumber);
+		
 		return $accountModel->getOdooId();
 	}
 	

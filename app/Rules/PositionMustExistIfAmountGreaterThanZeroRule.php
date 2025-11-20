@@ -36,7 +36,6 @@ class PositionMustExistIfAmountGreaterThanZeroRule implements ImplicitRule
 			}
 		}
 		return true ;
-		// dd($value,Request()->all());
     }
 
     /**

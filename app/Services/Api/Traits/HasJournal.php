@@ -9,6 +9,7 @@ trait HasJournal
 	{
 		$isChequeOrChequePayment = $moneyModel->isChequeOrChequePayment();
 		if($isChequeOrChequePayment){
+
 			return $moneyModel->getChequeJournalId();
 		}
 		$isCashInSafeOrCashPayment = $moneyModel->isCash();
@@ -17,6 +18,10 @@ trait HasJournal
 	
 	public function getChartOfAccountId($moneyModel):int 
 	{
+		$isChequeOrChequePayment = $moneyModel->isChequeOrChequePayment();
+		if($isChequeOrChequePayment){
+			return $moneyModel->getChequeOdooId() ;
+		}
 		$isCashInSafeOrCashPayment = $moneyModel->isCash();
 		return $isCashInSafeOrCashPayment  ? $moneyModel->getCashBranchOdooId() : $moneyModel->getBankAccountOdooId();
 	}

@@ -70,6 +70,7 @@ class ForeignExchangeRate extends Model
 		$exchangeRate = $exchangeRates->where('company_id',$companyId)->where('from_currency',$fromCurrency)->where('to_currency',$toCurrency)->where('date','<=',$closestDate)
 			->sortByDesc('date')
 			->first();
+	
 		return $exchangeRate ? $exchangeRate->getExchangeRate() : 1 ;
 	}
 	public static function getExchangeRateAt($receivingCurrency,$mainFunctionalCurrency,$receivingDate,$companyId,$foreignExchangeRates)

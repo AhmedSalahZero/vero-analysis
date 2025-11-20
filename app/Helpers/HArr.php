@@ -35,12 +35,7 @@ class HArr
         if (!$itemsCount) {
             return [];
         }
-		// if($debug){
-		// 	dd($items[0]);
-		// }
-		// if($debug){
-		// 	dd($items , 0);
-		// }
+	
         if (!isset($items[0])) {
             throw new Exception('Custom Exception .. First Parameter Must Be Indexes Array That Contains Arrays like [ [] , [] , [] ]');
         }
@@ -1192,8 +1187,7 @@ class HArr
             }
         }
         return $result;
-        // dd($items,$result);
-        // dd($items,$dateAsIndex);
+
     }
 	public static function fillMissedKeysByZero(array $items , array $dates , $value = 0 ){
 		$result = [];
@@ -1227,13 +1221,6 @@ class HArr
 			}
 		}
 		return $calculatedCorporateTaxesPerYear;
-		// dd($calculatedCorporateTaxesPerYear , $ebt);
 		
 	}
-// public static function calculateMonthlyCorporateTaxes(array $ebt, float $corporateTaxesRate)
-// {
-// 	// if
-// 	// dd('d',$ebt,$corporateTaxesRate);
-// 	// return 
-// }
 }

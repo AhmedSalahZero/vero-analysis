@@ -22,7 +22,6 @@ class OpeningBalancesController extends Controller
     
     public function create(Company $company, Request $request, Study $study)
     {
-		// dd('q');
         return view('non_banking_services.openingBalances.form', array_merge($study->getOpeningBalancesViewVars(), ['inEditMode'=>false]));
     }
     

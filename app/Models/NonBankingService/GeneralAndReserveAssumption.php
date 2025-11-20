@@ -110,7 +110,6 @@ class  GeneralAndReserveAssumption extends Model
 		$baseRatesMapping =  $study->isMonthlyStudy() ? $baseRatesPerMonths  : HArr::getFirstOfYear($baseRatesPerMonths);
         $bankLendingMarginRates=$this->getBankLendingMarginRates();
         $baseRatesMapping = HArr::isAllValuesEqual($baseRatesMapping, $bankLendingMarginRates);
-		// dd($baseRatesMapping);
 		
 		return $baseRatesMapping;
 		

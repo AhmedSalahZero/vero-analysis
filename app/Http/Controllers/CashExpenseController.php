@@ -70,7 +70,6 @@ class CashExpenseController
 			return $collection->where($dateFieldName,'<=',$to);
 		})
 		->sortByDesc('payment_date')->values();
-
 		return $collection;
 	}
 	public function index(Company $company,Request $request)
@@ -319,17 +318,18 @@ class CashExpenseController
 		$contracts = $request->get('contracts',[]) ;
 		$cashExpense->saveAllocations($contracts);
 		
-			$analytic_distribution = $cashExpense->formatAnalysisDistribution() ;
+			
 		 if($company->hasOdooIntegrationCredentials() && $isCashPaymentOrOutgoingTransfer 
 		 && $company->withinIntegrationDate($date)
 		//  && !$inUpdateMode
 		 ){
+			$analytic_distribution = $cashExpense->formatAnalysisDistribution() ;
 			$cashExpenseOdooService = new CashExpenseOdooService($company);
-			// $journalId = $isCashExpense ?  $financialInstitutionAccountForCashCover->financialInstitution->getJournalIdForAccount(27,$fromAccountNumber);
 			$journalId = $cashExpenseOdooService->getJournalId($cashExpense) ;
 			$creditOdooAccountId=$cashExpenseOdooService->getChartOfAccountId($cashExpense);
 			$odooCurrencyId = Currency::getOdooId($currencyName);
 			$debitOdooAccountId = $cashExpenseCategoryName->getOdooId();
+			// $debitOdooAccountId = 614;
 			/**
 			 * *
 			 * *  delete unlink
@@ -337,9 +337,9 @@ class CashExpenseController
 			
 
 			$result = $cashExpenseOdooService->createCashExpense($subCategoryName,$date,$amountInCurrency,$amountInMainFunctionalCurrency,$journalId,$odooCurrencyId,$debitOdooAccountId,$creditOdooAccountId,$analytic_distribution);
-			
 			$cashExpense->account_bank_statement_odoo_id=$result['account_bank_statement_line_id'];
 			$cashExpense->journal_entry_id=$result['journal_entry_id'];
+			$cashExpense->odoo_reference=$result['reference'];
 			$cashExpense->save();
 		 }
 		 

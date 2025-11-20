@@ -748,9 +748,7 @@ class CustomerInvoiceDashboardController extends Controller
 					// 'lg'=>array_keys($company->letterOfGuaranteeIssuances->where('status','!=','cancelled')->where('lg_currency',$currencyName)->load('financialInstitutionBank')->pluck('financialInstitutionBank.bank.name_en','financialInstitutionBank.id')->toArray()),
 					// 'lc'=>array_keys($company->letterOfCreditIssuances->where('status','!=','cancelled')->load('financialInstitutionBank')->pluck('financialInstitutionBank.bank.name_en','financialInstitutionBank.id')->toArray()),
 				][$currentLgOrLcType] ??[];
-					// if($currentLgOrLcType == 'lc'){
-					// 	dd($financialInstitutionBankIds);
-					// }
+					
 				$selectedFinancialInstitutionBankIds = $request->ajax() && $request->get('financialInstitutionId') > 0 ? (array)$request->get('financialInstitutionId') : $financialInstitutionBankIds; 
 				
 				$currentLimit = DB::table($letterOfFacilityTableName)
@@ -791,7 +789,6 @@ class CustomerInvoiceDashboardController extends Controller
 						foreach($lastLetterOfGuaranteeOrCreditFacilities as $currentLastLetterOfGuaranteeOrCreditFacility){
 							$debug = false ;
 							if($currentLgOrLcType =='lc' && $currencyName=='USD'){
-								// dd($currentOutstanding);
 								$debug=true;
 								}
 							$details[$currencyName][$currentLgOrLcType][] = [
@@ -802,9 +799,7 @@ class CustomerInvoiceDashboardController extends Controller
 								'financial_institution_name'=>$currentFinancialInstitution->getName()
 							] ;
 							
-							// dd($lastLetterOfGuaranteeOrCreditFacilities,$currentLimit,$currentOutstanding);
-							// dd($currentLimit,$currentOutstanding);
-							// dd($details[$currencyName][$currentLgOrLcType]);
+							
 							$total[$currentLgOrLcType][$currencyName]['limit'] = isset($total[$currentLgOrLcType][$currencyName]['limit']) ? $total[$currentLgOrLcType][$currencyName]['limit'] + $currentLimit  : $currentLimit ;
 							$total[$currentLgOrLcType][$currencyName]['outstanding_balance'] = isset($total[$currentLgOrLcType][$currencyName]['outstanding_balance']) ? $total[$currentLgOrLcType][$currencyName]['outstanding_balance'] + $currentOutstanding  : $currentOutstanding ;
 							// dump($currencyName);
@@ -813,7 +808,6 @@ class CustomerInvoiceDashboardController extends Controller
 							$total[$currentLgOrLcType][$currencyName]['cash_cover'] = isset($total[$currentLgOrLcType][$currencyName]['cash_cover']) ? $total[$currentLgOrLcType][$currencyName]['cash_cover'] + $currentCashCover  : $currentCashCover ;
 				
 						}
-						// dd($total[$currentLgOrLcType][$currencyName]['room']);
 					
 	
 				}

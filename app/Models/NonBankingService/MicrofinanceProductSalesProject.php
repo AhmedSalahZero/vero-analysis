@@ -40,7 +40,6 @@ class MicrofinanceProductSalesProject extends Model
                 $yearsWithItsActiveMonths = $study->getYearIndexWithItsMonthsAsIndexAndString();
                 $model->monthly_seasonality = (new SeasonalityService())->calculateSeasonalityPercentagePerMonth($model->seasonality, $yearsWithItsActiveMonths, $dateIndexWithDate);
                 $model->monthly_product_mixes =$study->convertYearlyArrayToMonthly($model->product_mixes);
-                // dd($model->monthly_product_mixes,$yearsWithItsActiveMonths);
                     
                 $operationStartDateAsIndex = $study->getOperationStartDateAsIndex() ;
                 $operationEndDateAsIndex = $study->getStudyEndDateAsIndex();

@@ -6229,7 +6229,6 @@ function getNonBankingNavigation(Company $company, User $user):array
         ]
             
     ];
-    // dd($study);
     if ($study) {
         $isExistingCompany =$study->isExistingCompany();
         $microfinanceFirstPageRoute = $study->getMicrofinanceFirstPage();

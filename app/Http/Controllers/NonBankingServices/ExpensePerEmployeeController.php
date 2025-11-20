@@ -19,12 +19,8 @@ class ExpensePerEmployeeController extends Controller
 	}
 	protected function getViewVars(Company $company,$model = null){
 		$departmentsFormatted = $company->departments->sortBy('name')->pluck('name','id')->toArray() ;
-		// dd($departmentsFormatted);
 		$departments = [];
-		// $departments[0] = [
-		// 	'title'=>__('All'),
-		// 	'value'=>  0 
-		// ];
+		
 		foreach($departmentsFormatted as $id=>$title){
 			$departments[] = [
 				'value'=>$id,

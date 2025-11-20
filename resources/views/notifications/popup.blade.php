@@ -19,7 +19,7 @@
 
 
 <div class="modal fade notification-modal {{ $notificationMainType }}-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-xl modal-90 modal-dialog-centered" role="document">
         <form action="#" class="modal-content" method="post">
 
 
@@ -36,17 +36,25 @@
                     <table class="table   table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class dataTable no-footer">
                         <thead>
                             <tr class="header-tr">
+                                <th class="view-table-th   bg-lighter header-th  align-middle text-center"> # </th>
 								@foreach($notificationHeaders as $notificationHeader)
                                 <th class="view-table-th   bg-lighter header-th  align-middle text-center"> {!! __($notificationHeader) !!} </th>
 								@endforeach
                             </tr>
                         </thead>
                         <tbody>
-
+							@php
+								$popupSerial = 1 ;
+							@endphp
 
                             @foreach($customerPastDues  as $customerPastDue)
                             <tr>
-							
+								<td>
+									{{ $popupSerial }}
+									@php
+										$popupSerial++;
+									@endphp
+								</td>
 								@foreach($notificationHeaders as $notificationHeader)
                                 <td>
                                     <div class="kt-input-icon">

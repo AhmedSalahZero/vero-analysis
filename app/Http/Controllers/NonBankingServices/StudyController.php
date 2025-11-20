@@ -142,7 +142,6 @@ class StudyController extends Controller
 	{
 		$studyStartDate = $request->get('study_start_date').'-01';
 		$operationStartDate = $request->get('operation_start_date') . '-01';
-		// dd($studyStartDate,$request->get('study_end_date'));
 		$request->merge([
 			'study_start_date'=>Carbon::make($studyStartDate)->format('Y-m-d'),
 			'study_end_date'=>Carbon::make($request->get('study_end_date'))->format('Y-m-d'),

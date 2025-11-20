@@ -376,7 +376,6 @@ class CashFlowReportController
 				}
 				return redirect()->route($redirectRouteName,$routeParams);
 			}
-		// dd($reportData['finalResult']['EGP']['customers']);
 		return view('admin.reports.contract-cash-flow-report',array_merge($reportData,['currencyName'=>$currencyName,'contractCode'=>$contractCode]));
 	}
 	public function formatAccumulatedNetCash(array $netCashes,array $weeks)

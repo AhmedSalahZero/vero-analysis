@@ -17,13 +17,6 @@ class ExpenseAsPercentageEquation
         $hasPortfolioMortgage = in_array('has_portfolio_mortgage', $revenueStreamType) ;
         $hasDirectFactoring = in_array('has_direct_factoring', $revenueStreamType) ;
         $hasMicrofinance = in_array('has_micro_finance', $revenueStreamType) ;
-		// if($hasIjara){
-		// 	dd('w');
-		// }
-		// if(count($revenueStreamType) > 1){
-		// 	dd($hasIjara,$revenueStreamType);
-			
-		// }
 
         $dates = range($startDateAsIndex, $endDateAsIndex);
         $resultArrs = [];

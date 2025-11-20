@@ -25,11 +25,8 @@ class LeasingController extends Controller
         $yearsWithItsMonths =  $study->getOperationDurationPerYearFromIndexes() ;
         $yearOrMonthsIndexes = $study->getYearOrMonthIndexes();
         $isYearsStudy = !$study->isMonthlyStudy();
-		// $additionalQueryParams = Request()->query();
 
-		// $storeRoute =  ;
-		// dd($additionalQueryParams);
-		// dd($studyMonthsForViews = );
+
         return [
             'company'=>$company ,
             'study'=>$study,
@@ -45,7 +42,6 @@ class LeasingController extends Controller
 
     public function store(Company $company, StoreLeasingRevenueStreamRequest $request, Study $study)
     {
-		// dd(Request()->all());
         if (count($request->get('leasingRevenueStreamBreakdown', []))) {
             $study->storeRepeaterRelations($request, ['leasingRevenueStreamBreakdown'], $company);
         }

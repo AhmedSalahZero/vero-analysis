@@ -338,7 +338,6 @@ class LetterOfCreditStatement extends Model
 			->where('currency',$currency)
 			->where('financial_institution_id',$financialInstitutionId)
 			->where('lc_facility_id',$lcFacilityId)
-			// ->where('lc_type',$lcTypeId)
 			->when($type , function(Builder $builder) use ($type){
 				$builder->where('lc_type',$type);
 			})
@@ -347,11 +346,9 @@ class LetterOfCreditStatement extends Model
 			})
 			->orderByRaw('date desc,id desc')
 			->first();
-			// dd($letterOfCreditCashCover);
 			
 			$letterOfCreditCashCoverEndBalance = $letterOfCreditCashCover ? $letterOfCreditCashCover->end_balance : 0 ;
 			$totalLastCashCoverOfFourTypes += $letterOfCreditCashCoverEndBalance;
-		// }
 		return abs($totalLastCashCoverOfFourTypes) ; 
 	}
 	public function getForeignKeyNamesThatUsedInFilter():array 

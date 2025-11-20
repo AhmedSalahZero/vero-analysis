@@ -60,7 +60,6 @@ class ExpenseStartDateAndEndDateRule implements ImplicitRule
                 $startDate = $arr['start_date'].'-01';
                 $startDateAsIndex = $this->study->convertDateStringToDateIndex($startDate);
 				$endDate = $this->study->getEndDate();
-				// dd($endDate);
 				if(isset($arr['end_date'])){
 					$endDate =$arr['end_date'].'-01';
 				}

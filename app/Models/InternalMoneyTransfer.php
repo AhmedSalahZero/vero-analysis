@@ -459,5 +459,29 @@ class InternalMoneyTransfer extends Model
 		return $this->cheque_number ; 
 	}
 	
+	public function hasOdooError():bool
+	{
+		return !$this->synced_with_odoo && $this->odoo_error_message ;
+	}
+	public function fullyIntegratedWithOdoo():bool
+	{
+		return !$this->hasOdooError() && count($this->getOdooReferenceNames()) ;
+	}
+	public function getOdooReferenceNames():array 
+	{
+		$result = [];
+		foreach([
+			'outbound_odoo_reference',
+			'inbound_odoo_reference'
+		] as $referenceColumnName){
+			if($this->{$referenceColumnName}){
+				$result[] = $this->{$referenceColumnName};
+			}
+		}
+		
+		
+		return $result;
+	}	
+	
 	
 }

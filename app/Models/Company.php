@@ -301,15 +301,15 @@ class Company extends Model implements HasMedia
 	}
 	public function getCashExpenseCashPayments(?string $startDate = null , ?string $endDate = null):Collection
 	{
-		return $this->cashExpenses->where('type',CashExpense::CASH_PAYMENT)->whereNull('opening_balance_id')->filterByPaymentDate($startDate,$endDate) ;
+		return $this->cashExpenses->where('type',CashExpense::CASH_PAYMENT)->whereNull('opening_balance_id')->filterByPaymentDate($startDate,$endDate)->sortByDesc('payment_date') ;
 	}
 	public function getCashExpenseOutgoingTransfer(?string $startDate = null ,?string $endDate = null):Collection
 	{
-		return $this->cashExpenses->where('type',CashExpense::OUTGOING_TRANSFER)->filterByPaymentDate($startDate,$endDate) ;
+		return $this->cashExpenses->where('type',CashExpense::OUTGOING_TRANSFER)->filterByPaymentDate($startDate,$endDate)->sortByDesc('payment_date') ;
 	}	
 	public function getCashExpensePayableCheques(?string $startDate = null , ?string $endDate = null):Collection
 	{
-		return $this->cashExpenses->where('type',CashExpense::PAYABLE_CHEQUE)->filterByPaymentDate($startDate,$endDate)->filter(function(CashExpense $cashExpense){
+		return $this->cashExpenses->where('type',CashExpense::PAYABLE_CHEQUE)->filterByPaymentDate($startDate,$endDate)->sortByDesc('payment_date')->filter(function(CashExpense $cashExpense){
 			$payableCheque = $cashExpense->payableCheque ;
 			return $payableCheque && in_array($payableCheque->getStatus(),[PayableCheque::PENDING,PayableCheque::PAID]) ;
 		})->values();
@@ -328,11 +328,11 @@ class Company extends Model implements HasMedia
 	
 	public function getMoneyPaymentCashPayments(?string $startDate = null , ?string $endDate = null):Collection
 	{
-		return $this->moneyPayments->whereNull('advanced_opening_balance_id')->where('type',MoneyPayment::CASH_PAYMENT)->whereNull('opening_balance_id')->filterByDeliveryDate($startDate,$endDate) ;
+		return $this->moneyPayments->whereNull('advanced_opening_balance_id')->where('type',MoneyPayment::CASH_PAYMENT)->whereNull('opening_balance_id')->filterByDeliveryDate($startDate,$endDate)->sortByDesc('delivery_date') ;
 	}
 	public function getMoneyPaymentOutgoingTransfer(?string $startDate = null ,?string $endDate = null):Collection
 	{
-		return $this->moneyPayments->whereNull('advanced_opening_balance_id')->where('type',MoneyPayment::OUTGOING_TRANSFER)->filterByDeliveryDate($startDate,$endDate) ;
+		return $this->moneyPayments->whereNull('advanced_opening_balance_id')->where('type',MoneyPayment::OUTGOING_TRANSFER)->filterByDeliveryDate($startDate,$endDate)->sortByDesc('delivery_date') ;
 	}	
 	public function getMoneyPaymentPayableCheques(?string $startDate = null , ?string $endDate = null):Collection
 	{

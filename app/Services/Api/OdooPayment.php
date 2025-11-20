@@ -28,6 +28,9 @@ class OdooPayment
 			 * * $bankOrSafeId
 			 */
 			$paymentAmount = $moneyModel->isInvoiceSettlementWithDownPayment() ? $moneyModel->downPaymentSettlements->sum('down_payment_amount') : $moneyModel->getAmount()  ;
+			if($moneyModel->isChequeAndNotCustomerOrSupplier()){
+				$paymentAmount=$moneyModel->getAmount();
+			}
 			$currencyName = $moneyModel->getReceivingOrPaymentCurrency();
 			$odooCurrencyId = Currency::getOdooId($currencyName);
 			
@@ -45,7 +48,7 @@ class OdooPayment
                 'active_model' => 'account.move',
            		'active_ids' => [],
             ];
-
+			
             $paymentId = $this->models->execute_kw(
                 $this->db,
                 $this->uid,
@@ -198,7 +201,9 @@ class OdooPayment
 	 public function createPayment($customerInvoiceSettlement )
     {
 		
+		
 		try{
+			
 			$invoice = $customerInvoiceSettlement->invoice;
 			$moneyModel = $customerInvoiceSettlement->getMoney();
 			$amountInInReceivingCurrency = $customerInvoiceSettlement->getAmountInReceivingCurrency();
@@ -227,7 +232,7 @@ class OdooPayment
                 'active_model' => 'account.move',
                 'active_ids' => [$invoiceId],
             ];
-	
+			
             $paymentWizardId = $this->models->execute_kw(
                 $this->db,
                 $this->uid,

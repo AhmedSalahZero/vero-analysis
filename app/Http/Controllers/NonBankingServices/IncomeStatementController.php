@@ -640,7 +640,6 @@ class IncomeStatementController extends Controller
          * * Start Eight Item
          */
         
-        // dd($ebit,$totalFinanceExpense);
         $ebt = HArr::subtractAtDates([$ebit,$totalFinanceExpense], $sumKeys);
         $tableDataFormatted[$ebtOrderIndex]['main_items']['ebt']['options']['title'] = __('EBT');
         $tableDataFormatted[$ebtOrderIndex]['main_items']['ebt']['data'] = $ebt;

@@ -118,15 +118,9 @@ class MicrofinanceLoanController extends Controller
 			 $value = $value * $currentRate ;
 		}
 		
-		// dd($totalMonthlyLoanPerMtls , $totalMonthlyLoanPerOdas);
-		
-    	// $study->microfinanceProductSalesProjects->each(function(MicrofinanceProductSalesProject $microfinanceProductSalesProject){
-			
-		// });
 		$study->storeAdminFeesAndFundingStructureFor($request, Study::MICROFINANCE,[],[],$totalMonthlyLoanPerMtls,$totalMonthlyLoanPerOdas);
        $study->calculateMicrofinanceLoans();
 	   $study->updateExpensesPercentageAndCostPerUnitsOfSales();
-        // dd('good');
         
         return response()->json([
                 'redirectTo'=>$study->getRevenueRoute(Study::SECURITIZATION)

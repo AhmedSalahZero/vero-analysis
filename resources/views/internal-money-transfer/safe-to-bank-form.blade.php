@@ -111,6 +111,9 @@
                                                     <input value="0" type="text" disabled class="form-control cash-balance-js" placeholder="{{__('Account Balance')}}">
                                                 </div>
                                             </div>
+											
+										
+											
 
                                         </div>
 

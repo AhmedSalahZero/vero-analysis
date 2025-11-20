@@ -491,12 +491,17 @@ class OdooService
 		$odooBranch = $this->fetchData('account.account',$fields,$filters)[0]??null;
 		$chartOfAccountId= $odooBranch['id'];
 		$journalId = $this->getJournalIdFromChartOfAccountId($chartOfAccountId);
-		if($odooBranch && $journalId){
+		
+		$odooInboundTransferPaymentMethodId = null ;
+		$odooOutboundTransferPaymentMethodId = null ;
+		$chequeReceivableId=$odooSetting ? $odooSetting->getChequesReceivableId() : null;
+		$chequePayableId=$odooSetting ? $odooSetting->getChequesPayableId() : null;
+						
+		if($chartOfAccountId && $journalId){
 			
-					$odooInboundTransferPaymentMethodId = $this->getPaymentMethodId($journalId,$chartOfAccountId,'inbound');
+						$odooInboundTransferPaymentMethodId = $this->getPaymentMethodId($journalId,$chartOfAccountId,'inbound');
 						$odooOutboundTransferPaymentMethodId = $this->getPaymentMethodId($journalId,$chartOfAccountId,'outbound');
-						$chequeReceivableId=$odooSetting ? $odooSetting->getChequesReceivableId() : null;
-						$chequePayableId=$odooSetting ? $odooSetting->getChequesPayableId() : null;
+						
 						if($chequeReceivableId){
 							$odooInboundChequePaymentMethodId = $this->getPaymentMethodId($journalId,$chequeReceivableId,'inbound');
 						}
@@ -504,15 +509,19 @@ class OdooService
 							$odooOutboundChequePaymentMethodId = $this->getPaymentMethodId($journalId,$chequePayableId,'outbound');
 						}
 						
-					DB::table('branch')->where('company_id',$companyId)->where('odoo_code',$odooCode)->update([
-						'odoo_id'=>$chartOfAccountId,
-						'journal_id'=>$journalId,
-						'odoo_inbound_transfer_payment_method_id'=>$odooInboundTransferPaymentMethodId??null ,
-						'odoo_outbound_transfer_payment_method_id'=>$odooOutboundTransferPaymentMethodId??null,
-						'odoo_inbound_cheque_payment_method_id'=>$odooInboundChequePaymentMethodId??null ,
-						'odoo_outbound_cheque_payment_method_id'=>$odooOutboundChequePaymentMethodId??null,
-					]);
+					
 		}
+		if($chartOfAccountId){
+			DB::table('branch')->where('company_id',$companyId)->where('odoo_code',$odooCode)->update([
+							'odoo_id'=>$chartOfAccountId,
+							'journal_id'=>$journalId,
+							'odoo_inbound_transfer_payment_method_id'=>$odooInboundTransferPaymentMethodId??null ,
+							'odoo_outbound_transfer_payment_method_id'=>$odooOutboundTransferPaymentMethodId??null,
+							'odoo_inbound_cheque_payment_method_id'=>$odooInboundChequePaymentMethodId??null ,
+							'odoo_outbound_cheque_payment_method_id'=>$odooOutboundChequePaymentMethodId??null,
+						]);
+		}
+					
 		
 	}
 	public function syncBanks()

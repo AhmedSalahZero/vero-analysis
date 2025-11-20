@@ -67,7 +67,6 @@ class NewBranchesMicrofinanceControllerController extends Controller
 			foreach($openingProjects as $currentLoopIndex=>$openingProjectArr){
 				$startDateAsString = $openingProjectArr['start_date'].'-01';
 				$startDateAsIndex = $study->convertDateStringToDateIndex($startDateAsString);
-				// dd($positionArr['hiring_counts']);
 				foreach($positionArr['hiring_counts'] as $hiringIndex => $hiringCount){
 					$currentIndex = $hiringIndex+$startDateAsIndex;
 					$currentCount = $hiringCount * $openingProjectArr['counts'];
@@ -75,7 +74,6 @@ class NewBranchesMicrofinanceControllerController extends Controller
 				}
 			}
 		}
-		// dd($newBranchesHiringCounts);
 		$study->saveManpowerForm($request,self::BRANCH_TYPE,null,$newBranchesHiringCounts);
 		$study->storeRepeaterRelations($request,['newBranchMicrofinanceOpeningProjections'],$company,[]);
 		

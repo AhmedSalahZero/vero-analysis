@@ -56,7 +56,9 @@ class MoneyPaymentOdooService
             if (!is_numeric($accountBankStatementLineId)) {
                 throw new Exception("Failed to create journal entry: " . json_encode($accountBankStatementLineId));
             }
+			logger('yes-from4');
 			if($partner_id){
+				logger('no-from7');
 				$this->updatePartner($partner_id,$moveId,$context);
 			}
 			
@@ -69,6 +71,7 @@ class MoneyPaymentOdooService
     }
 	protected function updatePartner($partner_id,$moveId,$context)
 	{
+		// return ;
 		$this->execute(
             'account.move',
             'button_draft',
@@ -100,17 +103,9 @@ class MoneyPaymentOdooService
 	}
 	protected function getDataFormatted(string $date , float $amountInCurrency  , float $amountInMainFunctionalCurrency  , int $odooCurrencyId , int $journalId, int $debitOdooAccountId , int $creditOdooAccountId   , ?string $ref , ?int $partner_id ,?string $message , int $isTax = null ):array 
 	{
-		// $inEditMode = is_null($id) ? 0 : 1;
-		// $id = is_null($id) ? 0 : $id ; 
 		
-		
-// if(!isset($line_ids[0])){
-//      throw new Exception("Line Ids not found: " . $moveId);
-
-// }
-// $ref = $paymentRef;
-$paymentRef = $ref ;
-$message =$paymentRef;
+				$paymentRef = $ref ;
+				$message =$paymentRef;
 		return [
                'journal_id' => $journalId, // account journal id (safe or bank journal id )
                'amount' => -$amountInCurrency,
@@ -135,7 +130,7 @@ $message =$paymentRef;
 						'amount_currency'=>-$amountInCurrency,
                         'currency_id' => $odooCurrencyId,
                         'name' => $message ,
-                     'partner_id' => $partner_id
+                 	    'partner_id' => $partner_id
                     ]],
                 ],
             ];
@@ -148,123 +143,68 @@ $message =$paymentRef;
           return $this->createAndPostJournalEntry($date,$amountInCurrency,$amountInMainFunctionalCurrency,$odooCurrencyId,$journalId,$debitOdooAccountId,$creditOdooAccountId,$ref,$odooPartnerId,$message,$isTax);
        
     }
-	// protected function getAnalysisAccountIds(array $analytic_distribution):array 
-	// {
-	// 	$distribution_analytic_account_ids = [];
-	// 	foreach (array_keys($analytic_distribution) as $key) {
-	// 		$distribution_analytic_account_ids[] = [0, (int)$key];
-	// 	}
-
-	// 	// Wrap in outer array with 6 and 0
-	// 	$distribution_analytic_account_ids = [[6, 0, ...$distribution_analytic_account_ids]];
-	// 	return $distribution_analytic_account_ids;
-	// }
 	
 	
 	
 	
-	
-// public function updateJournalEntry(
-//         int $moveId ,
-//         int $accountBankStatementOdooId ,
-//         string $date , 
-//         float $amountInCurrency , 
-// 		float $amountInMainFunctionalCurrency,
-//         int $currency_id , 
-//         int $journal_id , 
-//         int $debitOdooAccountId , 
-//         int $creditOdooAccountId ,
-// 		bool $accountNumberHasChanged,
-// 		bool $odooPartnerId ,
-//         string $ref, 
-//         $message = ''
-//     ) {
-		
+// 	public function createJournalEntry(
+//     float $amount = 30000,
+//     string $date = '2025-11-19',
+//     int $debitAccountId = 134,
+//     int $creditAccountId = 225,
+//     int $journalId = null,                  // Optional now
+//     int $currencyId = 74,
+//     string $ref = '-------',
+//     string $message = '',
+//     string $moveName = null
+// ) {
+//     // Prepare move (journal entry) data
+//     $moveData = [
+//         'date'         => $date,
+//         'journal_id'   => $journalId,       // Can be false/null → Odoo will pick default
+//         'ref'          => $ref,
+//         'name'         => $moveName ?? '/', // '/' lets Odoo auto-generate the number
+//         'line_ids'     => [
+//             [0, 0, [
+//                 'account_id'   => $debitAccountId,
+//                 'debit'        => $amount,
+//                 'credit'       => 0.0,
+//                 'currency_id'  => $currencyId !== 74 ? $currencyId : false,
+//                 'name'         => $message ?: '/',
+//                 'partner_id'   => false,
+//             ]],
+//             [0, 0, [
+//                 'account_id'   => $creditAccountId,
+//                 'debit'        => 0.0,
+//                 'credit'       => $amount,
+//                 'currency_id'  => $currencyId !== 74 ? $currencyId : false,
+//                 'name'         => $message ?: '/',
+//                 'partner_id'   => false,
+//             ]],
+//         ],
+//     ];
 
-// 	    $currentState = $this->execute(
-//             'account.move',
-//             'read',
-//             [[$moveId], ['state' => 'draft']],
-//         );
-// 		$currentState = $currentState[0]['state'] ;
-// 		if($currentState == 'posted'){
-// 			$this->execute(
-// 				'account.move',
-// 				'button_draft',
-// 				[[$moveId]]
-// 			);
-// 		}
-	
-
-//         $basicArr =  [
-//            'journal_id' => $journal_id,
-//            'amount' => $amountInCurrency  * -1,
-//            'date' => $date,
-// 		   'partner_id'=>$odooPartnerId,
-//            'ref' => $ref,
-// 		];
-// 		if($accountNumberHasChanged){
-// 			$basicArr['name']="/";
-// 		}
-//           $this->execute(
-//             'account.bank.statement.line',
-//             'write',
-//             [[$accountBankStatementOdooId],
-// 			$basicArr
-//             ]
-//     );
-
-
-
-
-// $line_ids= $this->fetchData('account.move',['id','line_ids'],[[['id', '=', $moveId]]]) [0]['line_ids']??[];
-// if(!isset($line_ids[0])){
-//      throw new Exception("Line Ids not found: " . $moveId);
-// }
-
-//   $this->execute(
-//             'account.move',
-//             'write',
-//             [[$moveId],
-//              [
-//             'line_ids' => [
-//                 [1, $line_ids[0], [
-//                     'account_id' => $debitOdooAccountId,
-//                     'debit' => abs($amountInMainFunctionalCurrency),
-// 					'amount_currency'=>abs($amountInCurrency),
-//                     'credit' => 0.0,
-// 					'partner_id' => $odooPartnerId,
-//                     'currency_id' => $currency_id,
-//                     'name' => $message,
-//                 ]],
-//                 [1, $line_ids[1], [
-//                     'account_id' => $creditOdooAccountId,
-//                     'debit' => 0.0,
-//                     'credit' => abs($amountInMainFunctionalCurrency),
-// 					'amount_currency'=>$amountInCurrency*-1,
-//                     'currency_id' => $currency_id,
-// 					'partner_id' => $odooPartnerId,
-//                     'name' => $message,
-//                 ]],
-//             ],
-//         ]]
-//     );
-
+//     // Optional: bypass move validity check only if you're 100% sure it's balanced
 //     $context = [
-//             'check_move_validity' => true,
-//         ];
+//         'check_move_validity' => true,
+//         // 'skip_account_move_synchronization' => true, // only if needed
+//     ];
 
+//     $moveId = $this->execute(
+//         'account.move',
+//         'create',
+//         [$moveData],
+//         ['context' => $context]
+//     );
 
-//   $posted = $this->execute(
-//             'account.move',
-//             'action_post',
-//             [[$moveId]],
-//             ['context' => $context]
-//         );
-		
-		
-// 		$this->updatePartner($odooPartnerId,$moveId,$context);
+//     // Optionally post the entry immediately
+//     if ($moveId) {
+//         $this->execute('account.move', 'action_post', [$moveId]);
+//     }
 
+//     dd('Journal Entry Created & Posted', $moveId);
+
+//     return $moveId;
 // }
 
 }
