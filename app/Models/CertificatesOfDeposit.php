@@ -277,5 +277,9 @@ public function getOdooCode()
 	{
 		return $this->journal_id ;
 	}
+	public function deleteOdooRelations($isBreakOrApplyDeposit)
+	{
+		$this->deleteOdoo($isBreakOrApplyDeposit);	
+	}
 	
 }

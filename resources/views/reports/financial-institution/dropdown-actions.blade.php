@@ -12,8 +12,10 @@
 			@if(hasAuthFor('view time of deposit'))
         <a class="dropdown-item" href="{{ route('view.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitutionBank->id]) }}">{{__('Time Deposit "TDs"')}}</a>
 		@endif 
+		@if(showCertificateOfDeposits())
 		@if(hasAuthFor('view certificate of deposit'))
         <a class="dropdown-item" href="{{ route('view.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitutionBank->id]) }}">{{__('Certificate Of Deposit "CDs"')}}</a>
+		@endif 
 		@endif 
 			
     </div>

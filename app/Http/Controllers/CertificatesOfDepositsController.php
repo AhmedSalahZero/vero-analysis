@@ -237,6 +237,8 @@ class CertificatesOfDepositsController
 	}
 	public function destroy(Company $company , FinancialInstitution $financialInstitution , CertificatesOFDeposit $certificatesOfDeposit)
 	{
+		$certificatesOfDeposit->deletePeriodInterestAmounts();
+		$certificatesOfDeposit->deleteOdooRelations(false);
 		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($certificatesOfDeposit->currentAccountBankStatements);
 		$certificatesOfDeposit->delete();
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
@@ -258,7 +260,7 @@ class CertificatesOfDepositsController
 	}
 	public function deletePeriodInterest(Company $company,Request $request,FinancialInstitution $financialInstitution,CertificatesOfDeposit $certificatesOfDeposit,CurrentAccountBankStatement $currentAccountBankStatement)
 	{
-		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($certificatesOfDeposit->currentAccountBankStatements->where('id',$currentAccountBankStatement->id));
+		$certificatesOfDeposit->deletePeriodInterest($currentAccountBankStatement);
 		return redirect()->back()->with('success',__('Item Has Been Updated Successfully'));
 	}
 	
@@ -276,10 +278,12 @@ class CertificatesOfDepositsController
 			'actual_interest_amount'=>$actualInterestAmount,
 			'status'=>$certificateType
 		]);
-		
+		$certificatesOfDeposit->handleTdOrCdStoreDepositForOdoo(true);
 		$accountType = AccountType::where('slug',AccountType::CURRENT_ACCOUNT)->first() ;
 		if($actualInterestAmount > 0){
-			$certificatesOfDeposit->handleDebitStatement($financialInstitution->id , $accountType , $certificatesOfDeposit->getMaturityAmountAddedToAccountNumber() , null , $actualDepositDate,$actualInterestAmount);
+			$currentAccount = $certificatesOfDeposit->handleDebitStatement($financialInstitution->id , $accountType , $certificatesOfDeposit->getMaturityAmountAddedToAccountNumber() , null , $actualDepositDate,$actualInterestAmount,null,null,1,null,null,false,true);
+			$certificatesOfDeposit->storePeriodInterestOdooRelations($currentAccount,$actualDepositDate,$actualInterestAmount);
+			// ddd
 		}
 		$certificatesOfDeposit->handleDebitStatement($financialInstitution->id , $accountType , $certificatesOfDeposit->getMaturityAmountAddedToAccountNumber() , null , $actualDepositDate,$certificatesOfDeposit->getAmount());
 		return redirect()->route('view.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id ,'active'=>$certificateType])->with('success',__('Certificate Has Been Marked As Matured'));
@@ -294,7 +298,8 @@ class CertificatesOfDepositsController
 	public function reverseDeposit(Company $company,Request $request,FinancialInstitution $financialInstitution,CertificatesOfDeposit $certificatesOfDeposit)
 	{
 		$certificateType = CertificatesOfDeposit::RUNNING ;
-		$certificatesOfDeposit->reverseOdooDeposit();
+			$breakInterestStatement = $certificatesOfDeposit->currentAccountBankStatements->where('is_break_interest',1)->first();
+		$certificatesOfDeposit->reverseOdooDeposit($breakInterestStatement);
 		$certificatesOfDeposit->update([
 			'deposit_date'=>null,
 			'actual_interest_amount'=>null,
@@ -316,7 +321,7 @@ class CertificatesOfDepositsController
 	{
 		$breakDate = Carbon::make($request->get('break_date'))->format('Y-m-d') ;
 		$breakInterestAmount  = $request->get('break_interest_amount') ;
-		$breakChargeAmount  = $request->get('break_charge_amount') ;
+		$breakChargeAmount  = $request->get('break_charge_amount',0) ;
 		$amount  = $request->get('amount') ;
 		$certificateType = CertificatesOfDeposit::BROKEN ;
 		$certificatesOfDeposit->update([
@@ -325,7 +330,8 @@ class CertificatesOfDepositsController
 			'status'=>$certificateType,
 			'break_charge_amount'=>$breakChargeAmount
 		]);
-		$certificatesOfDeposit->storeOdooBreak(false);
+			$certificatesOfDeposit->handleTdOrCdStoreDepositForOdoo(true);
+		// $certificatesOfDeposit->storeOdooBreak(false);
 		$accountType = AccountType::where('slug',AccountType::CURRENT_ACCOUNT)->first() ;
 		/**
 		 * * اول حاجه هنضيف دبت بقيمة الشهادة 

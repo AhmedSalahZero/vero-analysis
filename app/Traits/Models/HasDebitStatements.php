@@ -15,30 +15,30 @@ trait HasDebitStatements
 	 * * بنحطها في الاستيت منت
 	 * * سواء كانت كاش استيتمنت او بانك استيتمنت علي حسب نوع الحساب او الحركة يعني
 	 */
-	public function handleDebitStatement(?int $financialInstitutionId = 0 ,?AccountType $accountType = null , ?string $accountNumber = null,?string $moneyType = null,?string $date = null,?float $debit = 0,?string $currencyName = null,?int $receivingBranchId = null,$exchangeRate=1 , $commentEn = null , $commentAr = null,$isPeriodInterest=false)
+	public function handleDebitStatement(?int $financialInstitutionId = 0 ,?AccountType $accountType = null , ?string $accountNumber = null,?string $moneyType = null,?string $date = null,?float $debit = 0,?string $currencyName = null,?int $receivingBranchId = null,$exchangeRate=1 , $commentEn = null , $commentAr = null,$isPeriodInterest=false , $isBreakInterest = false )
 	{
 		if($accountType && $accountType->getSlug() == AccountType::CLEAN_OVERDRAFT){
 			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($accountNumber,getCurrentCompanyId(),$financialInstitutionId);
-			$this->storeCleanOverdraftDebitBankStatement($moneyType,$cleanOverdraft,$date,$debit);
+			return $this->storeCleanOverdraftDebitBankStatement($moneyType,$cleanOverdraft,$date,$debit);
 		}
 		if($accountType && $accountType->getSlug() == AccountType::FULLY_SECURED_OVERDRAFT){
 			$fullySecuredOverdraft  = FullySecuredOverdraft::findByAccountNumber($accountNumber,getCurrentCompanyId(),$financialInstitutionId);
-			$this->storeFullySecuredOverdraftDebitBankStatement($moneyType,$fullySecuredOverdraft,$date,$debit);
+			return $this->storeFullySecuredOverdraftDebitBankStatement($moneyType,$fullySecuredOverdraft,$date,$debit);
 		}
 		if($accountType && $accountType->getSlug() == AccountType::OVERDRAFT_AGAINST_COMMERCIAL_PAPER){
 			$overdraftAgainstCommercialPaper  = OverdraftAgainstCommercialPaper::findByAccountNumber($accountNumber,getCurrentCompanyId(),$financialInstitutionId);
-			$this->storeOverdraftAgainstCommercialPaperDebitBankStatement($moneyType,$overdraftAgainstCommercialPaper,$date,$debit);
+			return $this->storeOverdraftAgainstCommercialPaperDebitBankStatement($moneyType,$overdraftAgainstCommercialPaper,$date,$debit);
 		}
 		if($accountType && $accountType->getSlug() == AccountType::OVERDRAFT_AGAINST_ASSIGNMENT_OF_CONTRACTS){
 			$odAgainstAssignmentOfContract  = OverdraftAgainstAssignmentOfContract::findByAccountNumber($accountNumber,getCurrentCompanyId(),$financialInstitutionId);
-			$this->storeOverdraftAgainstAssignmentOfContractDebitBankStatement($moneyType,$odAgainstAssignmentOfContract,$date,$debit);
+			return $this->storeOverdraftAgainstAssignmentOfContractDebitBankStatement($moneyType,$odAgainstAssignmentOfContract,$date,$debit);
 		}
 		elseif($accountType && $accountType->getSlug() == AccountType::CURRENT_ACCOUNT){
 			$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($accountNumber,getCurrentCompanyId(),$financialInstitutionId);
-			$this->storeCurrentAccountDebitBankStatement($date,$debit,$financialInstitutionAccount->id,false,$commentEn,$commentAr,$isPeriodInterest);
+			return $this->storeCurrentAccountDebitBankStatement($date,$debit,$financialInstitutionAccount->id,false,$commentEn,$commentAr,$isPeriodInterest,$isBreakInterest);
 		}
 		elseif($this->isCashInSafe()){
-			$this->storeCashInSafeDebitStatement($date,$debit,$currencyName,$receivingBranchId,$exchangeRate);
+			return $this->storeCashInSafeDebitStatement($date,$debit,$currencyName,$receivingBranchId,$exchangeRate);
 		}
 	}
 	
@@ -110,7 +110,7 @@ trait HasDebitStatements
 			'date'=>$date,
 		]);
 	}	
-	public function storeCurrentAccountDebitBankStatement(string $date , $debit , int $financialInstitutionAccountId , bool $isTdRenewal = false  , string $commentEn = null , string $commentAr = null,$isPeriodCdOrTdInterest = false )
+	public function storeCurrentAccountDebitBankStatement(string $date , $debit , int $financialInstitutionAccountId , bool $isTdRenewal = false  , string $commentEn = null , string $commentAr = null,$isPeriodCdOrTdInterest = false  , $isBreakInterest =false )
 	{
 		return $this->currentAccountDebitBankStatement()->create([
 			'financial_institution_account_id'=>$financialInstitutionAccountId,
@@ -121,7 +121,8 @@ trait HasDebitStatements
 			'is_td_renewal'=>$isTdRenewal,
 			'comment_en'=>$commentEn,
 			'comment_ar'=>$commentAr,
-			'is_period_cd_or_td_interest'=>$isPeriodCdOrTdInterest
+			'is_period_cd_or_td_interest'=>$isPeriodCdOrTdInterest,
+			'is_break_interest'=>$isBreakInterest
 		]);
 	}	
 	

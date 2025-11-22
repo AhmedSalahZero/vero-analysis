@@ -1993,7 +1993,7 @@ const isNonBanking = +("<?php echo e(hasMiddleware('isNonBankingService')); ?>")
                 return
             }
             $('.show-only-when-invoice-currency-not-equal-receiving-currency').show();
-
+	console.log(fromCurrency , toCurrency,date)
             $.ajax({
                 url
                 , data: {
@@ -2482,6 +2482,25 @@ const isNonBanking = +("<?php echo e(hasMiddleware('isNonBankingService')); ?>")
         }
 
     </script>
+	
+	 <script>
+ 
+			$('.kt_datepicker_max_date_is_today').each(function(index,element){
+				$(element).datepicker({
+                autoclose: true
+                , todayHighlight: true
+                , orientation: "bottom left",
+                // format: 'mm/dd/yyyy',
+                endDate: new Date(),
+
+                rtl: false
+            });
+			})
+            
+
+
+    </script>
+	
     <script>
         $(function() {
             currentPageLoaded = true;

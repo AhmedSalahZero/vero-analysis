@@ -35,7 +35,8 @@
                                                                     <div class="col-md-6 mb-4">
                                                                         <label>{{__('Interest Amount')}} </label>
                                                                         <div class="kt-input-icon">
-                                                                            <input value="{{ $model->isMatured() ? $model->getActualInterestAmount() : $model->getInterestAmount() }}" type="text" name="periodic_interest_amount" class="form-control only-greater-than-or-equal-zero-allowed">
+                                                                            <input value="{{ 0 }}" type="text" name="periodic_interest_amount" class="form-control only-greater-than-or-equal-zero-allowed">
+                                                                            {{-- <input value="{{ $model->isMatured() ? $model->getActualInterestAmount() : $model->getInterestAmount() }}" type="text" name="periodic_interest_amount" class="form-control only-greater-than-or-equal-zero-allowed"> --}}
                                                                         </div>
                                                                     </div>
 
@@ -43,7 +44,7 @@
                                                                         <label>{{__('Deposit Date')}}</label>
                                                                         <div class="kt-input-icon">
                                                                             <div class="input-group date">
-                                                                                <input required type="text" name="periodic_interest_date" value="{{ formatDateForDatePicker($model->getEndDate()) }}" class="form-control" readonly placeholder="Select date" id="kt_datepicker_2" />
+                                                                                <input max="" required type="text" name="periodic_interest_date" value="{{ formatDateForDatePicker($model->getEndDate()) }}" class="form-control kt_datepicker_max_date_is_today" readonly placeholder="Select date" />
                                                                                 <div class="input-group-append">
                                                                                     <span class="input-group-text">
                                                                                         <i class="la la-calendar-check-o"></i>

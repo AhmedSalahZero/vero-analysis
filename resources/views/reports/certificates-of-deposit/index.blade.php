@@ -243,12 +243,12 @@ use \App\Models\CertificatesOfDeposit;
                                                                         </div>
                                                                     </div>
 																	
-																	 <div class="col-md-3 mb-4">
+																	 {{-- <div class="col-md-3 mb-4">
                                                                         <label>{{__('Break Charge Amount')}} </label>
                                                                         <div class="kt-input-icon">
                                                                             <input name="break_charge_amount" value="{{  0  }}" type="text"  class="form-control only-greater-than-or-equal-zero-allowed">
                                                                         </div>
-                                                                    </div>
+                                                                    </div> --}}
 																	
 																	
 

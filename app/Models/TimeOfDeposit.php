@@ -75,6 +75,13 @@ class TimeOfDeposit extends Model
 	{
 		return $this->deposit_date;
 	}
+	public function getDepositDateOrBreakDate():string
+	{
+		if($this->isBroken()){
+			return $this->getBreakDate();
+		}
+		return $this->getDepositDate();
+	}
 	public function getDepositDateFormatted()
 	{
 		$depositDate = $this->deposit_date ;
@@ -396,4 +403,34 @@ class TimeOfDeposit extends Model
 		
 	}
 	
+	public function fullyIntegratedWithOdoo():bool
+	{
+		return !$this->hasOdooError() && count($this->getOdooReferenceNames()) ;
+	}
+	public function getOdooReferenceNames():array 
+	{
+		$result = [];
+		foreach([
+			'inbound_break_odoo_reference',
+			'inbound_odoo_reference'
+		] as $referenceColumnName){
+			if($this->{$referenceColumnName}){
+				$result[] = $this->{$referenceColumnName};
+			}
+		}
+		$interestOdooReferences = $this->currentAccountBankStatements->pluck('interest_odoo_reference')->toArray();
+		foreach($interestOdooReferences as $interestOdooReference){
+			$result[] = $interestOdooReference;
+		}
+		return $result;
+	}
+	public function hasOdooError():bool
+	{
+		return !$this->synced_with_odoo && $this->odoo_error_message ;
+	}
+	
+	public function deleteOdooRelations(bool $isBreakOrApplyDeposit)
+	{
+		$this->deleteOdoo($isBreakOrApplyDeposit);	
+	}
 }

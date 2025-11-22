@@ -123,7 +123,9 @@ use \App\Models\TimeOfDeposit;
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
 											@if(hasAuthFor('create time of deposit'))
+											@include('reports._integrated_modal',['model'=>$model])
 											@include('reports.time-of-deposit.renewal-date._renew_modal')
+											
 											@include('reports.time-of-deposit.renewal-date._apply_periodic_interest')
                                             <a
 											
@@ -162,10 +164,10 @@ use \App\Models\TimeOfDeposit;
                                                                         <label>{{__('Interest Amount')}} </label>
                                                                         <div class="kt-input-icon">
 																		@php
-																			$interestAmount = $model->isMatured() ? $model->getActualInterestAmount() : $model->getInterestAmount();
-																			$interestAmount = $model->isPeriodically() ? 0 : $interestAmount;
+																	///		$interestAmount = $model->isMatured() ? $model->getActualInterestAmount() : $model->getInterestAmount();
+																		///	$interestAmount = $model->isPeriodically() ? 0 : $interestAmount;
 																		@endphp
-                                                                            <input value="{{  $interestAmount}}" type="text" name="actual_interest_amount" class="form-control only-greater-than-or-equal-zero-allowed">
+                                                                            <input value="{{  0}}" type="text" name="actual_interest_amount" class="form-control only-greater-than-or-equal-zero-allowed">
                                                                         </div>
                                                                     </div>
 
@@ -173,7 +175,7 @@ use \App\Models\TimeOfDeposit;
                                                                         <label>{{__('Deposit Date')}}</label>
                                                                         <div class="kt-input-icon">
                                                                             <div class="input-group date">
-                                                                                <input required type="text" name="deposit_date" value="{{ formatDateForDatePicker($model->getEndDate()) }}" class="form-control" readonly placeholder="Select date" id="kt_datepicker_2" />
+                                                                                <input required type="text" name="deposit_date" value="{{ formatDateForDatePicker($model->getEndDate()) }}" class="form-control kt_datepicker_max_date_is_today" readonly placeholder="Select date" i />
                                                                                 <div class="input-group-append">
                                                                                     <span class="input-group-text">
                                                                                         <i class="la la-calendar-check-o"></i>
@@ -208,7 +210,7 @@ use \App\Models\TimeOfDeposit;
 												@if(hasAuthFor('create time of deposit'))
 											<a data-toggle="modal" data-target="#apply-break-modal-{{ $model->id }}" type="button" class="btn  btn-secondary btn-outline-hover-danger   btn-icon" title="{{ __('Break') }}" href="#"><i class="fa fa-ban"></i></a>
                                             <div class="modal fade" id="apply-break-modal-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                                <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+                                                <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                                     <div class="modal-content">
                                                         <form action="{{ route('apply.break.to.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'timeOfDeposit'=>$model->id ]) }}" method="post">
                                                             @csrf
@@ -223,7 +225,7 @@ use \App\Models\TimeOfDeposit;
 
                                                                    
 
-                                                                    <div class="col-md-2 mb-4">
+                                                                    <div class="col-md-4 mb-4">
                                                                         <label>{{__('Break Date')}}</label>
                                                                         <div class="kt-input-icon">
                                                                             <div class="input-group date">
@@ -238,7 +240,7 @@ use \App\Models\TimeOfDeposit;
                                                                     </div>
 																	
 																	
-																	 <div class="col-md-3 mb-4">
+																	 <div class="col-md-4 mb-4">
                                                                         <label>{{__('Amount')}} </label>
                                                                         <div class="kt-input-icon">
 																			<input type="hidden" name="amount" value="{{ $model->getAmount() }}" >
@@ -247,19 +249,19 @@ use \App\Models\TimeOfDeposit;
                                                                     </div>
 																	
 																	
-																		 <div class="col-md-3 mb-4">
+																		 <div class="col-md-4 mb-4">
                                                                         <label>{{__('Break Interest Amount')}} </label>
                                                                         <div class="kt-input-icon">
                                                                             <input name="break_interest_amount" value="{{  0  }}" type="text"  class="form-control only-greater-than-or-equal-zero-allowed">
                                                                         </div>
                                                                     </div>
 																	
-																	 <div class="col-md-3 mb-4">
+																	 {{-- <div class="col-md-3 mb-4">
                                                                         <label>{{__('Break Charge Amount')}} </label>
                                                                         <div class="kt-input-icon">
                                                                             <input name="break_charge_amount" value="{{  0  }}" type="text"  class="form-control only-greater-than-or-equal-zero-allowed">
                                                                         </div>
-                                                                    </div>
+                                                                    </div> --}}
 																	
 																	
 
@@ -271,7 +273,7 @@ use \App\Models\TimeOfDeposit;
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                                <button type="submit" class="btn btn-success">{{ __('Confirm') }}</button>
+                                                                <button type="submit" class="btn btn-green">{{ __('Confirm') }}</button>
                                                             </div>
 
                                                         </form>
@@ -387,6 +389,7 @@ use \App\Models\TimeOfDeposit;
 
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
+										@include('reports._integrated_modal',['model'=>$model])
 										@include('reports.time-of-deposit.renewal-date._renew_modal')
                                             <a data-toggle="modal" data-target="#reverse-deposit-modal-{{ $model->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Reverse Deposit') }}" href="#"><i class="fa fa-undo"></i></a>
                                             <div class="modal fade" id="reverse-deposit-modal-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -542,6 +545,7 @@ use \App\Models\TimeOfDeposit;
 
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
+										@include('reports._integrated_modal',['model'=>$model])
 										@include('reports.time-of-deposit.renewal-date._renew_modal')
                                             <a data-toggle="modal" data-target="#reverse-broken-modal-{{ $model->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Reverse Broken') }}" href="#"><i class="fa fa-undo"></i></a>
                                             <div class="modal fade" id="reverse-broken-modal-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">

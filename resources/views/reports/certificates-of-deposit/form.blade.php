@@ -357,7 +357,7 @@
 
                                 for (var i = 0; i < res.data.length; i++) {
                                     id = Object.keys(res.data[i])[0];
-
+									selected = '';
                                     if (id == currentSelected) {
                                         selected = "selected";
                                     }

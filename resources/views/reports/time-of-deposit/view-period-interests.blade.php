@@ -301,71 +301,6 @@ use Carbon\Carbon;
 
 
 
-                {{-- <div class="row">
-                    <div class="col-md-12">
-                        <!--begin::Portlet-->
-
-
-                        <!--begin::Form-->
-                        <form method="post" action="{{ isset($model) ? route('update.adjust.due.dates',['company'=>$company->id,'modelId'=>$invoice->id ,'modelType'=>$modelType , 'dueDateHistory'=>$model->id]) :route('store.adjust.due.dates',['company'=>$company->id , 'modelId'=>$invoice->getId(),'modelType'=>$modelType]) }}" class="kt-form kt-form--label-right">
-                            @csrf
-                            @if(isset($model))
-                            @method('patch')
-                            @endif
-                            <div class="kt-portlet">
-                                <div class="kt-portlet__head">
-                                    <div class="kt-portlet__head-label">
-                                        <h3 class="kt-portlet__head-title head-title text-primary">
-                                            {{__('Adjusted Collection Date Section')}}
-                                        </h3>
-                                    </div>
-                                </div>
-                                <div class="kt-portlet__body">
-                                    <div class="form-group row">
-                                        <div class="col-md-4 mb-4">
-                                            <label>{{$customerNameOrSupplierNameText}} </label>
-                                            <input type="text" class="form-control" disabled value="{{ $invoice->getName() }}">
-                                        </div>
-                                        <div class="col-md-4 mb-4">
-                                            <label>{{__('Invoice Number')}} </label>
-                                            <input type="text" class="form-control" disabled value="{{ $invoice->getInvoiceNumber() }}">
-                                        </div>
-                                        <div class="col-md-4 mb-4">
-                                            <label>{{__('Invoice Due Date')}} </label>
-                                            <input type="text" class="form-control" disabled value="{{ $invoice->getDueDateFormatted() }}">
-                                        </div>
-
-                                        <div class="col-md-4 mb-4">
-                                            <label>{{__('Invoice Net Balance')}} </label>
-                                            <input type="text" class="form-control" disabled value="{{ $invoice->getNetBalanceFormatted() }}">
-                                        </div>
-                                        <div class="col-md-4 mb-4">
-                                            <label>{{__('Invoice Currency')}} </label>
-                                            <input type="text" class="form-control" disabled value="{{ $invoice->getCurrency() }}">
-                                        </div>
-
-                                        <div class="col-md-4">
-                                            <label>{{__('Adjusted Collection Date')}} @include('star') </label>
-                                            <div class="kt-input-icon">
-                                                <div class="input-group date">
-                                                    <input required type="text" name="due_date" value="{{ isset($model) ? $model->getDueDateFormattedForDatePicker() : null }}" id="kt_datepicker_2" class="form-control" readonly placeholder="{{ __('Select date') }}" />
-                                                    <div class="input-group-append">
-                                                        <span class="input-group-text">
-                                                            <i class="la la-calendar-check-o"></i>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <x-submitting />
-
-                        </form>
-                    </div>
-                </div> --}}
 
                 <div class="kt-portlet">
 
@@ -393,9 +328,7 @@ use Carbon\Carbon;
                                                     {{ __('Date') }}
                                                 </th>
 
-                                                {{-- <th class="view-table-th max-w-name  max-w-counts header-th  align-middle text-center">
-                                                    {{ __('Days Count') }}
-                                                </th> --}}
+                                                
 
                                                 <th class="view-table-th max-w-name  max-w-counts header-th  align-middle text-center">
                                                     {{ __('Amount') }}
@@ -425,23 +358,16 @@ use Carbon\Carbon;
 											@endphp
                                             <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
                                                 <td class="sub-text-bg max-w-serial text-center   ">{{ ++$index }}</td>
-                                                {{-- <td class="sub-text-bg max-w-invoice-date  text-center   ">{{ $currentDueDate = $row->getDueDateFormatted() }} {{ is_null($previousDate) ? __(' (Original Due Date) ') : '' }} </td> --}}
-                                                {{-- <td class="sub-text-bg  text-center  max-w-counts ">{{ $previousDate ? getDiffBetweenTwoDatesInDays(Carbon::make($previousDate),Carbon::make($currentDueDate)) : '-' }}</td> --}}
                                                 @php
                                                 $previousDate = $row->date;
                                                 @endphp
                                                 <td class="sub-text-bg  text-center max-w-counts ">{{ $row->date }} </td>
                                                 <td class="sub-text-bg  text-center max-w-counts ">{{ number_format($row->debit,2) . ' ' . $model->getCurrency() }}</td>
                                                 <td class="sub-text-bg  text-center max-w-action   ">
-											
-                                                    {{-- @if($loop->last) --}}
-                                                    {{-- <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{route('edit.adjust.due.dates',[$company,$invoice->id,$modelType,$row->id])}}"><i class="fa fa-pen-alt"></i></a> --}}
-
-
+													@include('reports._integrated_modal',['model'=>$row])
+												
                                                     <a class="btn btn-secondary btn-outline-hover-danger btn-icon  " href="#" data-toggle="modal" data-target="#modal-delete-{{ $row['id']}}" title="Delete"><i class="fa fa-trash-alt"></i>
                                                     </a>
-                                                    {{-- @endif --}}
-
                                                     <div id="modal-delete-{{ $row['id'] }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
                                                         <div class="modal-dialog">
                                                             <div class="modal-content">

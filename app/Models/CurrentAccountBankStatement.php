@@ -360,4 +360,20 @@ class CurrentAccountBankStatement extends Model  implements IHaveStatement
 		
 		
 	}
+		public function fullyIntegratedWithOdoo()
+	{
+		return count($this->getOdooReferenceNames());
+	}
+	public function getOdooReferenceNames():array 
+	{
+		$result = [];
+		foreach([
+			'interest_odoo_reference',
+		] as $referenceColumnName){
+			if($this->{$referenceColumnName}){
+				$result[] = $this->{$referenceColumnName};
+			}
+		}
+		return $result;
+	}	
 }

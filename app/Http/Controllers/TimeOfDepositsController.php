@@ -9,6 +9,7 @@ use App\Models\Company;
 use App\Models\CurrentAccountBankStatement;
 use App\Models\FinancialInstitution;
 use App\Models\TimeOfDeposit;
+use App\Services\Api\CashExpenseOdooService;
 use App\Services\Api\OdooService;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
@@ -221,7 +222,7 @@ class TimeOfDepositsController
 	
 	public function update(Company $company , UpdateTimeOfDepositRequest $request , FinancialInstitution $financialInstitution,TimeOfDeposit $timeOfDeposit){
 		$deductedFromAccountId = $request->get('deducted_from_account_id',0) ;
-		$accountNumberHasChanged = $deductedFromAccountId != $timeOfDeposit->getDeductedFromAccountId();
+	//	$accountNumberHasChanged = $deductedFromAccountId != $timeOfDeposit->getDeductedFromAccountId();
 		$data['updated_by'] = auth()->user()->id ;
 		$data = $request->only($this->getCommonDataArr());
 		foreach(['start_date','end_date'] as $dateField){
@@ -238,22 +239,21 @@ class TimeOfDepositsController
 		$timeOfDeposit->update($data);
 		$timeOfDeposit->deletePeriodInterestAmounts();
 		$timeOfDeposit->handleDeductedForBankStatement($financialInstitution->id,$data['start_date'],number_unformat($request->get('amount')),$company->id,$deductedFromAccountId,$request->get('account_number'));
-		$timeOfDeposit->handleTdOrCdStoreDepositForOdoo($accountNumberHasChanged);
+		$timeOfDeposit->handleTdOrCdStoreDepositForOdoo(false);
 		$type = $request->get('type',TimeOfDeposit::RUNNING);
 		$activeTab = $type ;
 		return redirect()->route('view.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
 	}
 	public function destroy(Company $company , FinancialInstitution $financialInstitution , TimeOFDeposit $timeOfDeposit)
 	{
+		$timeOfDeposit->deletePeriodInterestAmounts();
+		$timeOfDeposit->deleteOdooRelations(false);
 		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($timeOfDeposit->currentAccountBankStatements);
 		$timeOfDeposit->delete();
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
 	}
 	public function applyPeriodInterest(Company $company,Request $request,FinancialInstitution $financialInstitution,TimeOfDeposit $timeOfDeposit)
 	{
-		/**
-		 * ! No Odoo Service Yet
-		 */
 		$periodInterestAmount = number_unformat($request->get('periodic_interest_amount')) ;
 		$periodInterestDate = $request->get('periodic_interest_date') ;
 		$timeOfDeposit->applyPeriodicInterestInStatement($financialInstitution,$periodInterestAmount,$periodInterestDate);
@@ -268,10 +268,7 @@ class TimeOfDepositsController
 	}
 	public function deletePeriodInterest(Company $company,Request $request,FinancialInstitution $financialInstitution,TimeOfDeposit $timeOfDeposit,CurrentAccountBankStatement $currentAccountBankStatement)
 	{
-		/**
-		 * ! No Odoo Service Yet
-		 */
-		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($timeOfDeposit->currentAccountBankStatements->where('id',$currentAccountBankStatement->id));
+		$timeOfDeposit->deletePeriodInterest($currentAccountBankStatement);
 		return redirect()->back()->with('success',__('Item Has Been Updated Successfully'));
 	}
 	
@@ -289,12 +286,14 @@ class TimeOfDepositsController
 			'actual_interest_amount'=>$actualInterestAmount,
 			'status'=>$type
 		]);
-		$timeOfDeposit->handleTdOrCdApplyDepositInterestForOdoo(false);
+		
 		$accountType = AccountType::where('slug',AccountType::CURRENT_ACCOUNT)->first() ;
 		if($actualInterestAmount > 0){
-			$timeOfDeposit->handleDebitStatement($financialInstitution->id , $accountType , $timeOfDeposit->getMaturityAmountAddedToAccountNumber() , null , $actualDepositDate,$actualInterestAmount);
+			$currentAccount = $timeOfDeposit->handleDebitStatement($financialInstitution->id , $accountType , $timeOfDeposit->getMaturityAmountAddedToAccountNumber() , null , $actualDepositDate,$actualInterestAmount,null,null,1,null,null,false,true);
+			$timeOfDeposit->storePeriodInterestOdooRelations($currentAccount,$actualDepositDate,$actualInterestAmount);
 		}
 		$timeOfDeposit->handleDebitStatement($financialInstitution->id , $accountType , $timeOfDeposit->getMaturityAmountAddedToAccountNumber() , null , $actualDepositDate,$timeOfDeposit->getAmount());
+		$timeOfDeposit->handleTdOrCdStoreDepositForOdoo(true);
 		return redirect()->route('view.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id ,'active'=>$type])->with('success',__('Time Of Deposit Has Been Marked As Matured'));
 	}
 	
@@ -308,13 +307,21 @@ class TimeOfDepositsController
 	{
 		// $actualDepositDate = Carbon::make($request->get('actual_deposit_date'))->format('Y-m-d') ;
 		// $actualInterestAmount  = $request->get('actual_interest_amount') ;
-		$timeOfDeposit->reverseOdooDeposit();
-	
+		$breakInterestStatement = $timeOfDeposit->currentAccountBankStatements->where('is_break_interest',1)->first();
+		
+		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($timeOfDeposit->currentAccountBankStatements->where('type','!=',CurrentAccountBankStatement::DEDUCTED_FOR_CURRENT_ACCOUNT));
+		if($breakInterestStatement){
+			$timeOfDeposit->reverseOdooDeposit($breakInterestStatement);
+		}
+		
+		
+		
 		$type = TimeOfDeposit::RUNNING ;
 		$timeOfDeposit->update([
 			'deposit_date'=>null,
 			'actual_interest_amount'=>null,
-			'status'=>TimeOfDeposit::RUNNING
+			'status'=>TimeOfDeposit::RUNNING,
+			'inbound_break_odoo_reference'=>null
 		]);
 		
 		
@@ -323,7 +330,6 @@ class TimeOfDepositsController
 		 * * هنشيل قيم ال
 		 * * current account bank statement
 		 */
-		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($timeOfDeposit->currentAccountBankStatements->where('type','!=',CurrentAccountBankStatement::DEDUCTED_FOR_CURRENT_ACCOUNT));
 		return redirect()->route('view.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id ,'active'=>$type])->with('success',__('Time Of Deposit Has Been Marked As Matured'));
 	}
 	
@@ -335,7 +341,7 @@ class TimeOfDepositsController
 	{
 		$breakDate = Carbon::make($request->get('break_date'))->format('Y-m-d') ;
 		$breakInterestAmount  = $request->get('break_interest_amount') ;
-		$breakChargeAmount  = $request->get('break_charge_amount') ;
+		$breakChargeAmount  = $request->get('break_charge_amount',0) ;
 		$amount  = $request->get('amount') ;
 		$type = TimeOfDeposit::BROKEN ;
 		$timeOfDeposit->update([
@@ -344,7 +350,8 @@ class TimeOfDepositsController
 			'status'=>$type,
 			'break_charge_amount'=>$breakChargeAmount
 		]);
-		$timeOfDeposit->storeOdooBreak(false);
+		$timeOfDeposit->handleTdOrCdStoreDepositForOdoo(true);
+		// $timeOfDeposit->storeOdooBreak(false);
 		
 		$accountType = AccountType::where('slug',AccountType::CURRENT_ACCOUNT)->first() ;
 		/**
@@ -361,7 +368,9 @@ class TimeOfDepositsController
 		if($breakInterestAmount > 0){
 			$commentEn = __('TD Interest Amount',[],'en');
 			$commentAr = __('TD Interest Amount',[],'ar');
-			$timeOfDeposit->handleDebitStatement($financialInstitution->id , $accountType , $timeOfDeposit->getMaturityAmountAddedToAccountNumber() , null , $breakDate,$breakInterestAmount,null,null,1,$commentEn,$commentAr);
+			$currentAccount = $timeOfDeposit->handleDebitStatement($financialInstitution->id , $accountType , $timeOfDeposit->getMaturityAmountAddedToAccountNumber() , null , $breakDate,$breakInterestAmount,null,null,1,$commentEn,$commentAr,false,true);
+			$timeOfDeposit->storePeriodInterestOdooRelations($currentAccount,$breakDate,$breakInterestAmount);
+				
 		}
 		/**
 		 * * واخيرا هنضيف كريدت بقيمة الرسوم الادارية ( رسوم كسر الوديعة)
@@ -382,24 +391,30 @@ class TimeOfDepositsController
 	 */
 	public function reverseBroken(Company $company,Request $request,FinancialInstitution $financialInstitution,TimeOfDeposit $timeOfDeposit)
 	{
-		/**
-		 * ! No Odoo Service Yet
-		 */
-		
-		// $actualDepositDate = Carbon::make($request->get('actual_deposit_date'))->format('Y-m-d') ;
-		// $actualInterestAmount  = $request->get('actual_interest_amount') ;
 		$type = TimeOfDeposit::RUNNING ;
+		
+		$breakInterestStatement = $timeOfDeposit->currentAccountBankStatements->where('is_break_interest',1)->first();
+		
+		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($timeOfDeposit->currentAccountBankStatements->where('type','!=',CurrentAccountBankStatement::DEDUCTED_FOR_CURRENT_ACCOUNT));
+		if($breakInterestStatement){
+			$timeOfDeposit->reverseOdooDeposit($breakInterestStatement);
+		}
+		
+		
 		$timeOfDeposit->update([
 			'break_date'=>null,
 			'break_interest_amount'=>null,
 			'status'=>$type,
 			'break_charge_amount'=>null,
-			'status'=>TimeOfDeposit::RUNNING
+			'status'=>TimeOfDeposit::RUNNING,
+			'inbound_break_odoo_reference'=>null
 		]);
 		/**
 		 * * هنشيل قيم ال
 		 * * current account bank statement
 		 */
+		
+		
 		
 		 CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($timeOfDeposit->currentAccountBankStatements);
 		 

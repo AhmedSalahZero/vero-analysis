@@ -363,6 +363,7 @@
 									var selected = "";
 									let currentSelected = $('select[name="deducted_from_account_id"]').attr('data-current-selected');
                                 for (var i = 0; i < res.data.length; i++) {
+									selected='';
                                     id = Object.keys(res.data[i])[0];
 									if(id == currentSelected){
 										selected ="selected";
@@ -372,6 +373,7 @@
                                     optionsWithSelect += ' <option '+selected+' value="' + id + '">' + accountNumber + '</option> '
                                 }
                                 $('select.js-append-current-accounts').empty().append(options)
+								console.log(optionsWithSelect)
                                 $('select.js-append-current-accounts-with-select').empty().append(optionsWithSelect)
                             }
                         })

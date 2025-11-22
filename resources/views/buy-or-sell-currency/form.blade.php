@@ -99,7 +99,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                         <div class="kt-portlet__head">
                             <div class="kt-portlet__head-label">
                                 <h3 class="kt-portlet__head-title head-title text-primary">
-                                    <x-sectionTitle :title="__((isset($model) ? 'Edit' : 'Add') . ' '  . __('Buy Or Sell Currencies') )"></x-sectionTitle>
+                                    <x-sectionTitle :title="__((isset($model) ? 'Edit' : 'Add') . ' '  . __('Sell Or Buy Currencies') )"></x-sectionTitle>
                                 </h3>
                             </div>
                         </div>
@@ -113,7 +113,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                 <div class="kt-portlet__head">
                                     <div class="kt-portlet__head-label flex-1">
                                         <h3 class="kt-portlet__head-title head-title text-primary">
-                                            {{-- {{__('Buy Or Sell Currencies Information')}} --}}
+                                            {{-- {{__('Sell Or Buy Currencies Information')}} --}}
                                         </h3>
 
                                         <div data-type="{{ $bankToBankConst.','.$bankToSafeConst }}" class="show-only-if flex-1 d-flex justify-content-end pt-3">
@@ -164,7 +164,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                             </div>
 
                                             <div class="col-md-3">
-                                                <x-form.date :classes="'balance-date'" :label="__('Transaction Date')" :required="true" :model="$model??null" :name="'transaction_date'"  :placeholder="__('Select Date')"></x-form.date>
+                                                <x-form.date :classes="'balance-date update-exchange-rate exchange-rate-date'" :label="__('Transaction Date')" :required="true" :model="$model??null" :name="'transaction_date'"  :placeholder="__('Select Date')"></x-form.date>
                                             </div>
 
 
@@ -173,7 +173,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                     @include('star')
                                                 </label>
                                                 <div class="input-group">
-                                                    <select data-current-selected="{{ isset($model) ? $model->getCurrencyToSell() : '' }}" js-from-when-change-trigger-change-account-type name="currency_to_sell" class="form-control current-from-currency" js-from-when-change-trigger-change-account-type>
+                                                    <select data-current-selected="{{ isset($model) ? $model->getCurrencyToSell() : '' }}" js-from-when-change-trigger-change-account-type name="currency_to_sell" class="form-control current-from-currency update-exchange-rate current-invoice-currency" js-from-when-change-trigger-change-account-type>
                                                         <option selected>{{__('Select')}}</option>
                                                         @foreach(getCurrencies() as $currencyName => $currencyValue )
                                                         <option value="{{ $currencyName }}" @if(isset($model) && $model->getCurrencyToSell() == $currencyName ) selected @endif > {{ $currencyValue }}</option>
@@ -187,7 +187,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                     @include('star')
                                                 </label>
                                                 <div class="input-group">
-                                                    <select data-current-selected="{{ isset($model) ? $model->getCurrencyToBuy() : '' }}" js-from-when-change-trigger-change-account-type name="currency_to_buy" class="form-control current-to-currency" js-to-when-change-trigger-change-account-type>
+                                                    <select data-current-selected="{{ isset($model) ? $model->getCurrencyToBuy() : '' }}" js-from-when-change-trigger-change-account-type name="currency_to_buy" class="form-control current-to-currency update-exchange-rate receiving-currency-class" js-to-when-change-trigger-change-account-type>
                                                         <option selected>{{__('Select')}}</option>
                                                         @foreach(getCurrencies() as $currencyName => $currencyValue )
                                                         <option value="{{ $currencyName }}" @if(isset($model) && $model->getCurrencyToBuy() == $currencyName ) selected @endif > {{ $currencyValue }}</option>
@@ -215,7 +215,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <input id="calcField" type="text" value="{{ isset($model) ? $model->getExchangeRate():0 }}" name="exchange_rate" class="
-													form-control exchange-rate-js recalculate-amount-in-main-currency 
+													form-control exchange-rate-js exchange-rate-class recalculate-amount-in-main-currency 
 													" placeholder="{{__('Exchange Rate')}}">
                                                 </div>
 

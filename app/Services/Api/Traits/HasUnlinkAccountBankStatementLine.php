@@ -15,7 +15,8 @@ trait HasUnlinkAccountBankStatementLine
         );
 		
 		 if (empty($entry)) {
-            throw new \Exception("Move ID not found: " . $journalEntryId);
+			return ;
+            // throw new \Exception("Move ID not found: " . $journalEntryId);
         }
         if ($entry[0]['state'] === 'draft') {
     //        Log::info("Payment $accountBankStatementLineId is already in draft state");

@@ -7,6 +7,7 @@ require_once(public_path('apis/ripcord.php'));
 
 trait AuthTrait 
 {
+	
 	protected string $url ;
 	protected String $db;
 	protected string $username;

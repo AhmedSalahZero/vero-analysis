@@ -23,11 +23,11 @@ class CashExpenseOdooService
         return null ;
     }
     
-    protected function createAndPostJournalEntry(string $subCategoryName, string $date, float $amountInCurrency, float $amountInMainFunctionalCurrency, int $odooCurrencyId, int $journalId, int $debitOdooAccountId, int $creditOdooAccountId, array $analytic_distribution, ?string $ref, ?int $partner_id, ?string $message)
+    protected function createAndPostJournalEntry(?string $subCategoryName, string $date, float $amountInCurrency, float $amountInMainFunctionalCurrency, int $odooCurrencyId, int $journalId, int $debitOdooAccountId, int $creditOdooAccountId, array $analytic_distribution, ?string $ref, ?int $partner_id, ?string $message,$paymentRef=null)
     {
         $id = null ;  // in edit mode
             
-        $journalEntryData = $this->getDataFormatted($subCategoryName, $date, $amountInCurrency, $amountInMainFunctionalCurrency, $odooCurrencyId, $journalId, $debitOdooAccountId, $creditOdooAccountId, $analytic_distribution, $ref, $partner_id, $message, $id) ;
+        $journalEntryData = $this->getDataFormatted($subCategoryName, $date, $amountInCurrency, $amountInMainFunctionalCurrency, $odooCurrencyId, $journalId, $debitOdooAccountId, $creditOdooAccountId, $analytic_distribution, $ref, $partner_id, $message, $id,$paymentRef) ;
 
         $context = [
             'check_move_validity' => true,
@@ -65,14 +65,14 @@ class CashExpenseOdooService
 			'reference'=>$statementData[0]['move_id'][1]??null
         ];
     }
-    protected function getDataFormatted(string $subCategoryName, string $date, float $amountInCurrency, float $amountInMainFunctionalCurrency, int $odooCurrencyId, int $journalId, int $debitOdooAccountId, int $creditOdooAccountId, array $analytic_distribution, ?string $ref, ?int $partner_id, ?string $message, int $id = null):array
+    protected function getDataFormatted(?string $subCategoryName, string $date, float $amountInCurrency, float $amountInMainFunctionalCurrency, int $odooCurrencyId, int $journalId, int $debitOdooAccountId, int $creditOdooAccountId, array $analytic_distribution, ?string $ref, ?int $partner_id, ?string $message, int $id = null , $paymentRef = null):array
     {
         $inEditMode = is_null($id) ? 0 : 1;
         $id = is_null($id) ? 0 : $id ;
         
         $distribution_analytic_account_ids = $this->getAnalysisAccountIds($analytic_distribution);
   
-        $paymentRef = 'Expense Payment ' . $subCategoryName;
+        $paymentRef = $subCategoryName ?  'Expense Payment ' . $subCategoryName : $paymentRef;
         $message = $paymentRef;
         $ref = $paymentRef;
 
@@ -114,12 +114,12 @@ class CashExpenseOdooService
         return $data;
     }
     
-    public function createCashExpense(string $subCategoryName, string $date, float $amountInCurrency, float $amountInMainFunctionalCurrency, int $journalId, int $odooCurrencyId, int $debitOdooAccountId, int $creditOdooAccountId, $analytic_distribution)
+    public function createCashExpense(?string $subCategoryName, string $date, float $amountInCurrency, float $amountInMainFunctionalCurrency, int $journalId, int $odooCurrencyId, int $debitOdooAccountId, int $creditOdooAccountId, $analytic_distribution,$paymentRef=null)
     {
         $ref = $this->getRef();
         $message =$this->getMessage();
         $odooPartnerId = $this->getOdooPartnerId();
-        return $this->createAndPostJournalEntry($subCategoryName, $date, $amountInCurrency, $amountInMainFunctionalCurrency, $odooCurrencyId, $journalId, $debitOdooAccountId, $creditOdooAccountId, $analytic_distribution, $ref, $odooPartnerId, $message);
+        return $this->createAndPostJournalEntry($subCategoryName, $date, $amountInCurrency, $amountInMainFunctionalCurrency, $odooCurrencyId, $journalId, $debitOdooAccountId, $creditOdooAccountId, $analytic_distribution, $ref, $odooPartnerId, $message,$paymentRef);
        
     }
     protected function getAnalysisAccountIds(array $analytic_distribution):array
@@ -136,7 +136,6 @@ class CashExpenseOdooService
 		}else{
 			$distribution_analytic_account_ids = [[6, 0, []]];
 		}
-		// dd($distribution_analytic_account_ids);
         return $distribution_analytic_account_ids;
     }
     

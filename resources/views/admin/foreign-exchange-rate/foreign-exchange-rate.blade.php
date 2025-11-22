@@ -87,7 +87,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                     </x-table-title.with-two-dates>
 
                     <div class="kt-portlet__body">
-					@if(hasAuthFor('create foreign exchange rate'))
+					@if(hasAuthFor('create foreign exchange rate') && !$company->hasOdooIntegrationCredentials())
 					<div class="row">
                     <div class="col-md-12">
                        @include('admin.foreign-exchange-rate._form')

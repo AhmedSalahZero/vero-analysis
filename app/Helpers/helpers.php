@@ -6954,7 +6954,7 @@ function getHeaderMenu($currentCompany = null)
             'submenu'=>[]
                 ],
                 [
-                    'title'=>__('Buy Or Sell Currency'),
+                    'title'=>__('Sell Or Buy Currency'),
                     'link'=>route('buy-or-sell-currencies.index', ['company'=>$company->id ]),
                     'show'=>$user->can('view buy or sell currency'),
                     'submenu'=>[]
@@ -8523,4 +8523,8 @@ function routeWithQueryParam(string $route):string
 function getThreeDotsHint():string 
 {
 	return __('[you can use the three dots to repeat within the same year]');
+}
+function showCertificateOfDeposits():bool
+{
+	return true ;
 }

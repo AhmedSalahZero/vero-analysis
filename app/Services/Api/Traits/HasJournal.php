@@ -9,7 +9,6 @@ trait HasJournal
 	{
 		$isChequeOrChequePayment = $moneyModel->isChequeOrChequePayment();
 		if($isChequeOrChequePayment){
-
 			return $moneyModel->getChequeJournalId();
 		}
 		$isCashInSafeOrCashPayment = $moneyModel->isCash();
