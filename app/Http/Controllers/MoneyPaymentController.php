@@ -121,7 +121,6 @@ class MoneyPaymentController
 		
 		$accountTypes = AccountType::onlyCashAccounts()->get();
 		$cashPayments = $moneyType == MoneyPayment::CASH_PAYMENT ? $this->applyFilter($request,$cashPayments) :$cashPayments  ;
-		// dd($moneyType);
 		$outgoingTransfer = $moneyType === MoneyPayment::OUTGOING_TRANSFER ? $this->applyFilter($request,$outgoingTransfer) : $outgoingTransfer  ;
 		
 		$payableCheques = $moneyType == MoneyPayment::PAYABLE_CHEQUE ? $this->applyFilter($request,$payableCheques) : $payableCheques;

@@ -456,7 +456,7 @@ trait IsMoney
 				if($cheque->isInSafe()){
 					return $cheque->branch->getOdooId();
 				}
-				dd('lol');
+				dd('cheque type');
 		}
 		if($payableCheque = $this->payableCheque){
 			return $payableCheque->deliveryBank->getOdooId();
