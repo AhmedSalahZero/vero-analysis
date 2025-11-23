@@ -354,6 +354,9 @@ trait IsInvoice
 		if($soOrPoNumber){
 			$salesOrder = DB::table('sales_orders')->where('company_id',$companyId)->where('so_number',$soOrPoNumber)->first() ;
 			$contract = $salesOrder ? DB::table('contracts')->where('id',$salesOrder->contract_id)->first() : null ;
+			if($soOrPoNumber == 'S00089'){
+				// dd($soOrPoNumber,$contract);
+			}
 		}
 		
 		$invoiceData = [

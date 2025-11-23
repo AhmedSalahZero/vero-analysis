@@ -86,6 +86,9 @@ class ForeignExchangeRate extends Model
 		$mainFunctionCurrency = $company->getMainFunctionalCurrency();
 		$oldForeignExchangeRates = ForeignExchangeRate::where('company_id',$company->id)->get();
 		foreach(getCurrenciesForSuppliersAndCustomers($company->id) as $currencyName){
+			if(is_null($currencyName)){
+				continue;
+			}
 			if($currencyName != $mainFunctionCurrency){
 				$newExchangeRates = $exchangeRateService->getExchangeRates($currencyName) ;
 				

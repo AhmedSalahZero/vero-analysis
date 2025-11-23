@@ -394,7 +394,6 @@ class CustomerInvoice extends Model implements IInvoice
 		})
 		->join('partners','partners.id','=','money_received.partner_id')
 		->where('money_received.type','=',$moneyType)
-		// ->where('receiving_currency',$currency)
 		->whereBetween($dateColumnName,[$startDate,$endDate])
 		->when($contractCode , function($query) use ($contractCode){
 			$query->join('settlements','money_received.id','=','settlements.money_received_id')
@@ -406,6 +405,9 @@ class CustomerInvoice extends Model implements IInvoice
 			;
 		})
 		->selectRaw($columnNames)->get();
+		if($chequeStatus == Cheque::COLLECTED){
+			// dd($rows,$contractCode);
+		}
 		
 		// if($moneyType == MoneyReceived::INCOMING_TRANSFER){
 		// }

@@ -224,6 +224,7 @@ class OdooService
 				'date', //end date
 			]
 		]);
+		// dd($projects);
 		foreach($projects as $projectArr){
 			$projectAmount = 0 ;
 			$modelType = 'Customer';
@@ -252,6 +253,7 @@ class OdooService
 			];
 			if($oldProject){
 				$projectFormatted['id'] = $oldProject->id;
+				$projectFormatted['code'] = $oldProject->code;
 			}
 			$salesOrderFilters = array(array(
 				['project_id','=',$currentOdooProjectId]
@@ -302,7 +304,6 @@ class OdooService
 					$contract = $oldProject ? $oldProject : new Contract ;
 					$request = (new Request())->merge($projectFormatted);
 					$contract->storeBasicForm($request);
-					
 				}
 				
 		}
@@ -330,7 +331,11 @@ class OdooService
 			// 'state',
 			// 'invoice_line_ids' // product ids 
 		];
-		$filters = array(array(array('move_type', 'in', ['in_invoice','out_invoice'])
+		$filters = array(array(array('move_type', 'in', [
+			'in_invoice',
+		// ,
+		'out_invoice'
+		])
 		,array('state', '=', 'posted'),
 			array('write_date', '>=', $startDate),
 			array('write_date', '<=', $endDate),
@@ -339,6 +344,8 @@ class OdooService
 		
 		));
 		$invoices = $this->fetchData('account.move',$fields,$filters);
+		// $contracts = $this->fetchData('account.move',$fields,$filters);
+		// dd($invoices);
 		return $invoices;
 		// /**
 		//  * * الكود اللي تحت دا بيجيب المنتجات

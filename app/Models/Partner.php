@@ -200,7 +200,7 @@ class Partner extends Model
 		return self::where('company_id',$companyId)->where('is_supplier',1)->orderBy('name')->pluck('name','id');
 	} 
 	public static function findByOdooId(int $id,int $companyId){
-		return self::where('odoo_id',$id)->where('company_id',$companyId)->first();
+		return self::where('odoo_id',$id)->where('is_tax',0)->where('company_id',$companyId)->first();
 	}
 	public static function findByName(string $name,int $companyId){
 		return self::where('name',$name)->where('company_id',$companyId)->first();

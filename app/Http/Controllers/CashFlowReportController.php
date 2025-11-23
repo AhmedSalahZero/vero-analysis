@@ -46,11 +46,14 @@ class CashFlowReportController
 		$saveReport = $request->has('save_report');
 		$resetReport = $request->has('reset_report') && $request->get('reset_report');
 		$contractId = $request->get('contract_id')	 ;
+		// dd($contractId);
 		$contract = Contract::find($contractId);
 		/**
 		 * @var Contract $contract 
 		 */
 		$contractCode = $contract ? $contract->getCode() : null ;
+		// dd($contract,$contractCode);
+		// dd($contract,$contractCode);
 		$contractName = $contract ? $contract->getName() : null ;
 		$customer = $contract ? $contract->client : null ;
 		$customerId = $customer ? $customer->getId() : null ;
@@ -163,6 +166,7 @@ class CashFlowReportController
 		}
 		
 		  CustomerInvoice::getProjectionOtherCashIn($result ,$company,$cashflowReportId,$isContract) ;
+		//   dd($result);
 		  /**
 		   * ! start postponed
 		   */

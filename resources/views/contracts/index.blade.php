@@ -484,9 +484,7 @@ use App\Models\Contract;
             <!--Begin:: Tab Content-->
             <div class="tab-pane {{ !Request('active') && $contractStatus == Contract::RUNNING || Request('active') == $currentType ?'active':'' }}" id="{{ $currentType }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-                    {{-- <x-table-title.with-two-dates :type="$currentType" :title="__(Contract::getAllTypes()[$currentType])" :startDate="$filterDates[$currentType]['startDate']??''" :endDate="$filterDates[$currentType]['endDate']??''">
-                        <x-export-buy-or-sell-currency :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('buy-or-sell-currencies.create',['company'=>$company->id])}}" />
-                    </x-table-title.with-two-dates> --}}
+                    
                     <div class="kt-portlet__body">
 
 
@@ -516,9 +514,11 @@ use App\Models\Contract;
                             </tr>
                             @php
                             $id = 0 ;
+							$i=0;
                             @endphp
                             @foreach($items[$currentType]??[] as $mainItemId => $parnetAndSubData )
                             @php
+						
                             $parent =$parnetAndSubData['parent'] ;
                             $subItems =$parnetAndSubData['sub_items'] ?? [];
                             $contract = $parent['contract'] ;

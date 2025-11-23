@@ -6027,10 +6027,7 @@ function getCurrenciesForSuppliersAndCustomers(int $companyId):array
     $currencyFromBranch = Branch::where('company_id', $companyId)->pluck('currency', 'currency')->toArray();
     $currencyFromAccounts = FinancialInstitutionAccount::where('company_id', $companyId)->pluck('currency', 'currency')->toArray() ;
     return array_merge($currencyFromBranch, $currencyFromAccounts);
-    // return array_merge(
-    // 	CustomerInvoice::getCurrencies(),
-    // 	SupplierInvoice::getCurrencies()
-    // );
+   
 }
 function getCurrencies()
 {
