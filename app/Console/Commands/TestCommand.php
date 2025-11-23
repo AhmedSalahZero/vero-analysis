@@ -56,13 +56,19 @@ class TestCommand extends Command
 	public function handle()
 	{
 		$fetch = (new OdooPayment(Company::find(92)));
-		$x = $fetch->fetchData('account.payment',[],[[['id','=',416]]]);
-
+		$x = $fetch->fetchData('account.bank.statement.line',[],[[['name','=','MISR/2025/00431']]]);
+		// dd($x);
+		// $x = $fetch->un('account.bank.statement.line',[],[[['name','=','MISR/2025/00431']]]);
+		// dd($x);
+		
 		$x = $fetch->fetchData('account.move',[],[[['name','=','MISR/2025/00491']]]);
 		// dd($x);
 		$unlink = new OdooService(Company::find(92));
-		($unlink->unlink('account.bank.statement.line',34048));
-		dd($unlink->unlink('account.bank.statement.line',34049));
+		// dd($x);
+		// $unlink->unlinkBankStatementLine(8936);
+		$unlink->unlinkBankCollection(8940);
+		// ($unlink->unlink('account.bank.statement.line',8936));
+		// dd($unlink->unlink('account.bank.statement.line',34049));
 		
 		// $this->models->execute_kw(
 		// 		$this->db,

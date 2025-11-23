@@ -23,7 +23,7 @@ class ContractCashFlowReportController
     use GeneralFunctions;
     public function index(Company $company)
 	{
-		$clientsWithContracts = Partner::onlyCompany($company->id)->onlyCustomers()->onlyThatHaveContracts()->get();
+		$clientsWithContracts = Partner::onlyCompany($company->id)->orderBy('name')->onlyCustomers()->onlyThatHaveContracts()->get();
 		$contractCashflowReports = $company->cashflowReports->where('is_contract',1);
         return view('reports.contract_cash_flow_form', compact('company','clientsWithContracts','contractCashflowReports'));
     }

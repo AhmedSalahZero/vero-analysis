@@ -213,7 +213,7 @@ class OdooPayment
     {
 		
 		
-		try{
+		// try{
 			
 			$invoice = $customerInvoiceSettlement->invoice;
 			$moneyModel = $customerInvoiceSettlement->getMoney();
@@ -303,14 +303,14 @@ class OdooPayment
 			}
 			
 			
-		}
-		catch(\Exception $e){
-			session()->put('fail',__('Error While Connecting With Odoo : ' . $e->getMessage()));
-			$moneyModel->update([
-				'synced_with_odoo'=>false ,
-				'odoo_error_message'=>$e->getMessage() 
-			]);
-		}
+		// }
+		// catch(\Exception $e){
+		// 	session()->put('fail',__('Error While Connecting With Odoo : ' . $e->getMessage()));
+		// 	$moneyModel->update([
+		// 		'synced_with_odoo'=>false ,
+		// 		'odoo_error_message'=>$e->getMessage() 
+		// 	]);
+		// }
     }
 	
 	public function reCreatePayment($customerInvoiceSettlement)
@@ -534,9 +534,10 @@ class OdooPayment
             else {
                 Log::warning("No invoices linked to payment ID $accountPayment_id");
             }
-		
+		//	dd($statementEntryId ,$statementMoveId ,$accountPayment_id ,$invoiceState ,$paymentLineIds);
             return [
                 'statement_entry_id' => $statementEntryId,
+				'bank_reference'=>$statementData[0]['name']??null,
                 'entry_id' => $statementMoveId,
                 'payment_id' => $accountPayment_id,
                 'invoice_state' => !empty($invoiceState) ? $invoiceState[0]['state'] : 'unknown',
@@ -770,6 +771,42 @@ class OdooPayment
                 'message' => 'Failed to process cheque collection: ' . $e->getMessage()
             ];
         }
+    }
+	
+	   public function unlinkBankCollection(int $accountBankStatementId)
+    {
+        $models = $this->models;
+    
+        $move_line_ids = $models->execute_kw(
+            $this->db,
+            $this->uid,
+            $this->password,
+            'account.bank.statement.line',
+            'read',
+            [[$accountBankStatementId]],
+            ['fields' => ['line_ids']]
+        );
+        $line_ids = $move_line_ids[0]['line_ids']; // [33352, 33353]
+
+        $models->execute_kw(
+            $this->db,
+            $this->uid,
+            $this->password,
+            'account.move.line',
+            'remove_move_reconcile',
+            [$line_ids]
+        );
+
+        // Now unlink works
+        $models->execute_kw(
+            $this->db,
+            $this->uid,
+            $this->password,
+            'account.bank.statement.line',
+            'unlink',
+            [[$accountBankStatementId]]
+        );
+    
     }
 	
 	

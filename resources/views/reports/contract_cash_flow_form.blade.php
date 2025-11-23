@@ -50,7 +50,6 @@
                             </div>
                         </div>
 
-
                         <div class="col-md-3">
                             <x-form.select :label="__('Customer')" :pleaseSelect="false"  :selectedValue="isset($currentContract) && $currentContract->client ? $currentContract->client->id : ''" :options="formatOptionsForSelect($clientsWithContracts)" :add-new="false" class="select2-select suppliers-or-customers-js repeater-select  " data-filter-type="{{ 'create' }}" :all="false" name="partner_id"></x-form.select>
                         </div>

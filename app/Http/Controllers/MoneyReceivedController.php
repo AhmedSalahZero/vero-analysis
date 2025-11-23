@@ -670,8 +670,7 @@ class MoneyReceivedController
         $data['account_number'] = $request->input('account_number.'.MoneyReceived::CHEQUE_UNDER_COLLECTION);
         $data['account_type'] = is_null($data['account_type']) ? $request->get('account_type') : $data['account_type'] ;
         $data['drawl_bank_id'] = $request->input('receiving_bank_id.'.MoneyReceived::CHEQUE_UNDER_COLLECTION, $request->get('drawl_bank_id'));
-        // $data['drawl_bank_id'] = is_null($data['drawl_bank_id'])  ?
-        // $accountType = AccountType::find($data['account_type']);
+       
     
         $data['account_number'] = is_null($data['account_number']) ? $request->get('account_number') : $data['account_number'] ;
         $data['status'] = Cheque::UNDER_COLLECTION;
@@ -760,6 +759,10 @@ class MoneyReceivedController
                 $odooPartnerId = $moneyReceived->getPartnerOdooId();
                 $ref = 'Cheque Collection ' . $settlementOrMoneyModel->getInvoiceNumber();
                 $res =$OdooPaymentService->chequeCollection($odooId, $receivedAmount, $actualCollectionDate, $odooCurrencyId, $journalId, $debitAccountOdooId, $creditOdooAccountId, $odooPartnerId, $ref);
+				$moneyReceived->update([
+					'account_bank_statement_line_id'=>$res['statement_entry_id']??null,
+					'odoo_reference'=>$res['bank_reference']??null
+				]);
             }
         
         }
@@ -787,12 +790,16 @@ class MoneyReceivedController
         $OdooPaymentService = null ;
         if ($hasOdooIntegration) {
             $OdooPaymentService = new OdooPayment($company);
+			if($moneyReceived->account_bank_statement_line_id){
+				$OdooPaymentService->unlinkBankCollection($moneyReceived->account_bank_statement_line_id);
+			}
         }
 
         if ($hasOdooIntegration) {
-            foreach ($moneyReceived->settlements as $settlement) {
-                $OdooPaymentService->reCreatePayment($settlement);
-            }
+			
+            // foreach ($moneyReceived->settlements as $settlement) {
+            //     $OdooPaymentService->reCreatePayment($settlement);
+            // }
         }
 
 		

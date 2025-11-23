@@ -202,7 +202,8 @@ class ContractsController
 		/**
 		 * @var Partner $partner 
 		 */
-		$contracts = $partner->contracts ;
+		$contracts = $partner->contracts->sortBy('name') ;
+		// dd()
 		if(!$request->boolean('inEditMode')){
 			$contracts = $contracts->where('parent_id',null)->values() ;
 		}
