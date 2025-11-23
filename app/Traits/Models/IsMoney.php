@@ -475,6 +475,19 @@ trait IsMoney
 	}
 	public function isChequeAndNotCustomerOrSupplier()
 	{
-		return $this->isCheque() && (!in_array($this->getPartnerType(),['is_customer','is_supplier']));
+		return $this->isChequeOrChequePayment() && (!in_array($this->getPartnerType(),['is_customer','is_supplier']));
 	}
+	public function handleOdooDownPayments($OdooPaymentService,$hasOdooIntegration)
+	{
+		/**
+		 * @var MoneyPayment | MoneyReceived $this
+		 */
+		if($hasOdooIntegration && $this->isDownPayment()){
+			$OdooPaymentService->reCreateDownPayment($this);
+		}elseif($hasOdooIntegration && $this->isChequeAndNotCustomerOrSupplier()){
+			$OdooPaymentService->reCreateDownPayment($this);
+		}
+		
+	}
+	
 }

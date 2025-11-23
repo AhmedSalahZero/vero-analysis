@@ -6750,7 +6750,7 @@ function getHeaderMenu($currentCompany = null)
                     'submenu'=>[]
                 ],
                 [
-                    'title'=>__('Cash Flow Report'),
+                    'title'=>__('Company Cash Flow Report'),
                     'link'=>route('view.cashflow.report', ['company'=>$companyId]),
                     'show'=>$canViewCashFlow ,
                     'submenu'=>[]

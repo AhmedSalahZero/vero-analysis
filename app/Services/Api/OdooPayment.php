@@ -15,7 +15,6 @@ class OdooPayment
 	
 	public function createDownPayment($moneyModel )
     {
-	
       
 		try{
 			$company = $moneyModel->company ;
@@ -24,10 +23,12 @@ class OdooPayment
 				return ;
 			}
 			$journalId = $this->getJournalId($moneyModel) ;
+		
 			/**
 			 * * $bankOrSafeId
 			 */
 			$paymentAmount = $moneyModel->isInvoiceSettlementWithDownPayment() ? $moneyModel->downPaymentSettlements->sum('down_payment_amount') : $moneyModel->getAmount()  ;
+			
 			if($moneyModel->isChequeAndNotCustomerOrSupplier()){
 				$paymentAmount=$moneyModel->getAmount();
 			}
@@ -48,7 +49,16 @@ class OdooPayment
                 'active_model' => 'account.move',
            		'active_ids' => [],
             ];
-			
+			// dd([
+            //         'amount' => $paymentAmount,
+            //         'journal_id' => $journalId,
+            //         'date' => $paymentDate,
+			// 		'currency_id'=>$odooCurrencyId,
+            //         'partner_id' => $odooPartnerId,
+            //         'payment_type' => $inBoundOrOutBound,
+            //         'partner_type' => $customerOrSupplier ,
+			// 		'payment_method_line_id'=>(int)$moneyModel->getPaymentMethodLineId() 
+			// ]);
             $paymentId = $this->models->execute_kw(
                 $this->db,
                 $this->uid,
@@ -69,7 +79,7 @@ class OdooPayment
             );
 			
 			
-             $this->models->execute_kw(
+              $this->models->execute_kw(
                 $this->db,
                 $this->uid,
                 $this->password,
@@ -77,6 +87,7 @@ class OdooPayment
                 'action_post',
                	[[$paymentId]],
             );
+	
 			if(is_array($paymentId) && isset($paymentId['faultString'])){
 				session()->put('fail',$paymentId['faultString']);
 				$moneyModel->update([
@@ -313,9 +324,11 @@ class OdooPayment
 	
 	public function reCreateDownPayment($moneyModel)
     {
+		
 		if($moneyModel->odoo_id){
 			$this->cancelPayments($moneyModel->odoo_id);
 		}
+		
 		$this->createDownPayment($moneyModel);
 
     }
@@ -540,14 +553,14 @@ class OdooPayment
     }
 	
     public function chequePayment(
-        $accountPayment_id = 112,
-        float $amount = 22800, 
-        string $date = '2025-06-04', 
-        int $currency_id = 74, 
-        int $journal_id = 243, // Misr Bank Journal
-        int $debitOdooAccountId = 814, // Cheque Payable Account
-        int $creditOdooAccountId = 260, // Bank Misr Account
-        int $PartnerId = 331,
+        $accountPayment_id ,
+        float $amount , 
+        string $date , 
+        int $currency_id , 
+        int $journal_id , // Misr Bank Journal
+        int $debitOdooAccountId , // Cheque Payable Account
+        int $creditOdooAccountId , // Bank Misr Account
+        int $PartnerId,
         string $ref , 
         $message = ''
     ) {
@@ -574,7 +587,7 @@ class OdooPayment
             if (!in_array($paymentState, ['draft', 'posted', 'in_process'])) {
                 throw new Exception("Payment ID $accountPayment_id is in state '$paymentState' and cannot be processed");
             }
-
+		
             // Step 2: If payment is in draft, post it
             if ($paymentState === 'draft') {
                 $this->execute(
@@ -602,6 +615,7 @@ class OdooPayment
 
             
 
+	
             if (empty($existingStatementLines)) {
                 // Step 4: Create bank statement line to affect bank balance
                 $statementEntryData = [

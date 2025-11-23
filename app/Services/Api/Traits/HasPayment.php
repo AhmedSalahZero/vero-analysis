@@ -81,7 +81,7 @@ trait HasPayment
         foreach ($payments as $existingPayment) {
             $odooPaymentId = $existingPayment['id'] ;
             $this->setPaymentToDraft($odooPaymentId);
-            $this->execute(
+             $this->execute(
                 'account.payment',
                 'unlink',
                 [[$odooPaymentId]]

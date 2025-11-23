@@ -405,7 +405,7 @@ $selectedBanks = [];
                         <label>{{__('Account Number')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
-                                <select data-current-selected="{{ isset($model) ? $model->getOutgoingTransferAccountNumber() : 0 }}" name="account_number[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control js-account-number">
+                                <select data-current-selected="{{ isset($model) ? $model->getOutgoingTransferAccountNumber() : 0 }}" name="account_number[{{ MoneyPayment::PAYABLE_CHEQUE }}]" class="form-control js-account-number">
                                     <option value="" selected>{{__('Select')}}</option>
                                 </select>
                             </div>

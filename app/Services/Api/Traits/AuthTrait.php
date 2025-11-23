@@ -49,7 +49,7 @@ trait AuthTrait
 		$this->models = $models;
 		$this->uid = $uid;
 	}
-	   private function execute($model, $method, $args,$kwargs = [])
+	   public function execute($model, $method, $args,$kwargs = [])
     {
         $result = $this->models->execute_kw(
             $this->db,

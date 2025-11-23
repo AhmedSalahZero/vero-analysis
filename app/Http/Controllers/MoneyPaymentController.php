@@ -597,6 +597,7 @@ class MoneyPaymentController
 	}
 	public function markChequesAsPaid(Company $company,MarkChequeAsPaidRequest $request)
 	{
+	
 		
 			$hasOdooIntegration = $company->hasOdooIntegrationCredentials();
 			$OdooPaymentService = null ;
@@ -609,6 +610,7 @@ class MoneyPaymentController
 		$data = $request->only(['actual_payment_date']);
 		$actualPaymentDate = Carbon::make($request->get('actual_payment_date'))->format('Y-m-d');
 		$data['status'] = PayableCheque::PAID;
+		
 		foreach($moneyPaymentIds as $moneyPaymentId){
 			/**
 			 * @var MoneyPayment $moneyPayment
@@ -618,10 +620,9 @@ class MoneyPaymentController
 			$balancesResultJsonResponse = ((new MoneyReceivedController())->updateNetBalanceBasedOnAccountNumber($request,$company,$moneyPayment->getPayableChequeAccountType(),$moneyPayment->getPayableChequeAccountNumber(),$moneyPayment->getPayableChequePaymentBankId(),$actualPaymentDate));
 			$netBalance = $balancesResultJsonResponse->getData()->net_balance;
 			$errMessage = __('Net Balance Less Than Paid Amount');
-			
+	
 			if($netBalance < $currentPaidAmount){
 				if($request->ajax()){
-			
 					return response()->json([
 						'status'=>false ,
 						'msg'=>$errMessage = __('Net Balance Less Than Paid Amount'),
@@ -644,6 +645,7 @@ class MoneyPaymentController
 			$odooSetting = $company->odooSetting;
 			$financialInstitution = $moneyPayment->payableCheque->deliveryBank;
 			$currency = $moneyPayment->getCurrency();
+			// $moneyPayment->handleOdooDownPayments($OdooPaymentService,$hasOdooIntegration);
 			foreach($moneyPayment->settlements as $settlement){
 				$odooId = $settlement->odoo_id ; 
 				$odooCurrencyId =Currency::getOdooId($currency);
@@ -654,8 +656,24 @@ class MoneyPaymentController
 				$creditOdooAccountId = $odooSetting->getChequesPayableId();
 				$odooPartnerId = $moneyPayment->getPartnerOdooId();
 				$ref = 'Cheque Payment ' . $settlement->getInvoiceNumber();
+				                // $res =$OdooPaymentService->chequeCollection($odooId, $receivedAmount, $actualCollectionDate, $odooCurrencyId, $journalId, $debitAccountOdooId, $creditOdooAccountId, $odooPartnerId, $ref);
+
 				$OdooPaymentService->chequePayment($odooId,$currentPaidAmount  ,$actualPaymentDate,$odooCurrencyId,$journalId,$creditOdooAccountId,$debitAccountOdooId,$odooPartnerId,$ref);
+				// $ref = 'Cheque Collection ' . $settlementOrMoneyModel->getInvoiceNumber();
+                // $res =$OdooPaymentService->chequeCollection($odooId, $receivedAmount, $actualCollectionDate, $odooCurrencyId, $journalId, $debitAccountOdooId, $creditOdooAccountId, $odooPartnerId, $ref);
+				
 			}
+			// $moneyPayment->handleOdooDownPayments($OdooPaymentService,$hasOdooIntegration);
+			
+			
+			// 	if ($hasOdooIntegration) {
+            //     foreach ($moneyPayment->settlements as $settlement) {
+            //         $OdooPaymentService->reCreatePayment($settlement);
+            //     }
+            // }
+			
+			// $moneyPayment->handleOdooDownPayments($OdooPaymentService,$hasOdooIntegration);
+			
 		}
 		
 			if($currentStatement){

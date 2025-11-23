@@ -10,11 +10,13 @@ use App\Models\NonBankingService\Study;
 use App\Models\NonBankingService\TestCashFlowStatement;
 use App\Models\NonBankingService\TestIncomeStatement;
 use App\Models\Partner;
+use App\Models\Settlement;
 use App\ReadyFunctions\ConvertFlatRateToDecreasingRate;
+use App\Services\Api\CashExpenseOdooService;
 use App\Services\Api\OdooPayment;
 use App\Services\Api\OdooService;
-use Carbon\Carbon;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -53,8 +55,37 @@ class TestCommand extends Command
 	}
 	public function handle()
 	{
-		// LetterOfGuaranteeIssuance::where('')
-	}
+		$fetch = (new OdooPayment(Company::find(92)));
+		$x = $fetch->fetchData('account.payment',[],[[['id','=',416]]]);
+
+		$x = $fetch->fetchData('account.move',[],[[['name','=','MISR/2025/00491']]]);
+		// dd($x);
+		$unlink = new OdooService(Company::find(92));
+		($unlink->unlink('account.bank.statement.line',34048));
+		dd($unlink->unlink('account.bank.statement.line',34049));
+		
+		// $this->models->execute_kw(
+		// 		$this->db,
+		// 		$this->uid,
+		// 		$this->password,
+		// 		$modelName,
+		// 		'unlink',
+		// 		[[$id]]
+		// 	);
+			
+		// $x =  $fetch->fetchData(
+        //             'account.move',
+		// 			[],[[['name','=','MISR/2025/00491']]],
+				
+		// );
+		
+			
+		// $settlement = Settlement::find(261);
+		// $fetch->reCreatePayment($settlement);
+		// 		dd($x);
+		// dd($x);
+		
+		}
 	
 	/**
 	 * Execute the console command.

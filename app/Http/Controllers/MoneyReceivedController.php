@@ -788,7 +788,7 @@ class MoneyReceivedController
         if ($hasOdooIntegration) {
             $OdooPaymentService = new OdooPayment($company);
         }
-    
+
         if ($hasOdooIntegration) {
             foreach ($moneyReceived->settlements as $settlement) {
                 $OdooPaymentService->reCreatePayment($settlement);
@@ -803,7 +803,6 @@ class MoneyReceivedController
     }
     public function sendToSafe(Company $company, Request $request, MoneyReceived $moneyReceived)
     {
-        
         
         $hasOdooIntegration = $company->hasOdooIntegrationCredentials();
         $OdooPaymentService = null ;

@@ -147,7 +147,10 @@ class OdooService
 			$exchangeRate = 1/$invoice['invoice_currency_rate'];
 			$vatPlusWithholdArr = $invoice['tax_totals']['subtotals'];
 			$firstWithholdOrVatName = $vatPlusWithholdArr[0]['name'] ?? null;
+			$secondWithholdOrVatName = $vatPlusWithholdArr[1]['name'] ?? null;
 			$isFirstWithhold = $firstWithholdOrVatName == 'Subtotal W/O WHTax';
+			$isSecondWithhold = $secondWithholdOrVatName == 'Subtotal W/O WHTax';
+			// dd($isFirstWithhold);
 			$withholdAmount = 0 ;
 			$withholdAmountInMainCurrency = 0 ;
 			$excludeIndex = -1 ;
@@ -156,12 +159,20 @@ class OdooService
 				$withholdAmountInMainCurrency = abs($vatPlusWithholdArr[0]['tax_amount']);
 				$excludeIndex = 0 ;
 			}
+			if($isSecondWithhold){
+				$withholdAmount = abs($vatPlusWithholdArr[1]['tax_amount_currency']);
+				$withholdAmountInMainCurrency = abs($vatPlusWithholdArr[1]['tax_amount']);
+				$excludeIndex = 1 ;
+			}
+			
 			$vatAmount = 0 ;
+			// dd($vatPlusWithholdArr);
 			foreach($vatPlusWithholdArr as $vatIndex => $vatArr){
 				if($vatIndex != $excludeIndex){
-					$vatAmount+=abs($vatArr['tax_amount_currency']);
+					$vatAmount+=($vatArr['tax_amount_currency']);
 				}
 			}
+			$vatAmount = abs($vatAmount);
 			
 			$invoiceAmount = abs($invoice['amount_untaxed_in_currency_signed']);
 			$collectedAmount = 0 ;
@@ -184,6 +195,7 @@ class OdooService
 			if($isCustomer){
 				$invoiceId =  CustomerInvoice::createForOdoo($odooInvoiceId,$partnerId,$odooPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$withholdAmountInMainCurrency,$collectedAmount,$collectedAmountInMainCurrency,$exchangeRate,$soNumber,$companyId);
 			}elseif($isSupplier){
+				// dd($odooInvoiceId,$partnerId,$odooPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$withholdAmountInMainCurrency,$collectedAmount,$collectedAmountInMainCurrency,$exchangeRate,$soNumber,$companyId);
 				$invoiceId= SupplierInvoice::createForOdoo($odooInvoiceId,$partnerId,$odooPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$withholdAmountInMainCurrency,$collectedAmount,$collectedAmountInMainCurrency,$exchangeRate,$soNumber,$companyId);
 			}
 			
@@ -322,9 +334,9 @@ class OdooService
 		,array('state', '=', 'posted'),
 			array('write_date', '>=', $startDate),
 			array('write_date', '<=', $endDate),
-		// array('name','=','INV/2025/00008')
-			// array('name','=','INV/2025/00009')
-			// ,['name','=','INV/2025/00004']
+			// array('name','=','INV/2025/00005')
+			// array('name','=','BILL/2025/01/0015')
+		
 		));
 		$invoices = $this->fetchData('account.move',$fields,$filters);
 		return $invoices;

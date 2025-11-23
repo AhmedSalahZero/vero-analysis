@@ -395,7 +395,7 @@ trait IsInvoice
 			$invoiceData['contract_code'] = is_null($invoiceData['contract_code'])  ? $currentInvoice->contract_code : $invoiceData['contract_code'];
 			$invoiceData['contract_name'] = is_null($invoiceData['contract_name'])  ? $currentInvoice->contract_name : $invoiceData['contract_name'];
 			$invoiceData['project_name'] = is_null($invoiceData['project_name'])  ? $currentInvoice->project_name : $invoiceData['project_name'];
-			
+			// dd($invoiceData);
 			$currentInvoice->update($invoiceData);
 			
 			return  $currentInvoice->id ;

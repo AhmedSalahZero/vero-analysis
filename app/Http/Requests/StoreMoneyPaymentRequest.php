@@ -68,6 +68,7 @@ class StoreMoneyPaymentRequest extends FormRequest
 		$financialInstitution = null ;
 		$accountTypeId = $this->input('account_type.'.$type);
 		$accountNumber = $this->input('account_number.'.$type);
+		// dd($accountNumber,$this->all());
 		$financialInstitutionId = $this->input('delivery_bank_id.'.$type);
 		$openingBalanceDate = null;
 		if($financialInstitutionId && $accountTypeId && $accountNumber ){
