@@ -41,7 +41,10 @@ trait HasBasicFilter
 				if($searchFieldName == 'drawee_bank_id'){
 					$currentValue = $moneyReceived->getDraweeBankName() ;  
 				}
-				
+				if(is_null($value)){
+					return true;
+				}
+				// dd($currentValue,$value);
 				return false !== stristr($currentValue , $value);
 			});
 		})

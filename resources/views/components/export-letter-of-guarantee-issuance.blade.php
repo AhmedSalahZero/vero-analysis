@@ -54,6 +54,7 @@
 
                                 <div class="modal-footer">
                                     <button type="submit" id="js-search-id" type="submit" id="" class="btn btn-primary">{{ __('Search') }}</button>
+									<button  href="#" id="reset-search-id" type="button"  class="btn btn-primary">{{ __('Reset') }}</button>
                                 </div>
 
                             </form>

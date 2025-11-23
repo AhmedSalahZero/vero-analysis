@@ -67,6 +67,7 @@ use App\Models\CashExpense ;
 
                                 <div class="modal-footer">
                                     <button type="submit" href="{{ route('view.money.receive',['company'=>$company->id]) }}" id="js-search-id" type="submit" id="" class="btn btn-primary">{{ __('Search') }}</button>
+									<button  href="#" id="reset-search-id" type="button"  class="btn btn-primary">{{ __('Reset') }}</button>
                                 </div>
 
                             </form>

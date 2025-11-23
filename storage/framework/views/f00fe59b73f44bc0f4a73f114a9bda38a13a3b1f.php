@@ -2588,5 +2588,12 @@ function roundToTwo(num) {
 <?php echo e(session()->forget('fail')); ?>
 
 <!-- end::Body -->
+<script>
+	$(document).on('click','#reset-search-id',function(e){
+		e.preventDefault();
+		window.location.href = window.location.pathname;
+
+	})
+</script>
 </html>
 <?php /**PATH /media/salah/Software/projects/veroo/resources/views/layouts/dashboard.blade.php ENDPATH**/ ?>

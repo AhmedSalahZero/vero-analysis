@@ -2603,4 +2603,11 @@ function roundToTwo(num) {
 </body>
 {{ session()->forget('fail') }}
 <!-- end::Body -->
+<script>
+	$(document).on('click','#reset-search-id',function(e){
+		e.preventDefault();
+		window.location.href = window.location.pathname;
+
+	})
+</script>
 </html>
