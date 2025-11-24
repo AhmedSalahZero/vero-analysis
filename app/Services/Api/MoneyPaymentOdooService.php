@@ -23,10 +23,10 @@ class MoneyPaymentOdooService
 		return null ;
 	}
 	
-	 protected function createAndPostJournalEntry(string $date , float $amountInCurrency , float $amountInMainFunctionalCurrency  , int $odooCurrencyId , int $journalId, int $debitOdooAccountId , int $creditOdooAccountId , ?string $ref , ?int $partner_id ,?string $message , ?int $isTax ) 
+	 protected function createAndPostJournalEntry(string $date , float $amountInCurrency , float $amountInMainFunctionalCurrency  , int $odooCurrencyId , int $journalId, int $debitOdooAccountId , int $creditOdooAccountId , ?string $ref , ?int $partner_id ,?string $message , ?bool $isMoneyReceived = false ) 
     {
 			// $id = null ;  // in edit mode 
-            $journalEntryData = $this->getDataFormatted($date,$amountInCurrency,$amountInMainFunctionalCurrency,$odooCurrencyId,$journalId,$debitOdooAccountId,$creditOdooAccountId,$ref,$partner_id,$message,$isTax) ;
+            $journalEntryData = $this->getDataFormatted($date,$amountInCurrency,$amountInMainFunctionalCurrency,$odooCurrencyId,$journalId,$debitOdooAccountId,$creditOdooAccountId,$ref,$partner_id,$message,$isMoneyReceived) ;
 
             $context = [
                 'check_move_validity' => true,
@@ -56,9 +56,9 @@ class MoneyPaymentOdooService
             if (!is_numeric($accountBankStatementLineId)) {
                 throw new Exception("Failed to create journal entry: " . json_encode($accountBankStatementLineId));
             }
-			logger('yes-from4');
+			// logger('yes-from4');
 			if($partner_id){
-				logger('no-from7');
+			//	logger('no-from7');
 				$this->updatePartner($partner_id,$moveId,$context);
 			}
 			
@@ -101,14 +101,15 @@ class MoneyPaymentOdooService
             );
 			
 	}
-	protected function getDataFormatted(string $date , float $amountInCurrency  , float $amountInMainFunctionalCurrency  , int $odooCurrencyId , int $journalId, int $debitOdooAccountId , int $creditOdooAccountId   , ?string $ref , ?int $partner_id ,?string $message , int $isTax = null ):array 
+	protected function getDataFormatted(string $date , float $amountInCurrency  , float $amountInMainFunctionalCurrency  , int $odooCurrencyId , int $journalId, int $debitOdooAccountId , int $creditOdooAccountId   , ?string $ref , ?int $partner_id ,?string $message , bool $isMoneyReceived = false ):array 
 	{
 		
 				$paymentRef = $ref ;
 				$message =$paymentRef;
+
 		return [
                'journal_id' => $journalId, // account journal id (safe or bank journal id )
-               'amount' => -$amountInCurrency,
+               'amount' => $isMoneyReceived ? $amountInCurrency : -$amountInCurrency,
                'date' => $date,
                'partner_id' => $partner_id,
                'ref' =>  $ref, // create lg type
@@ -136,11 +137,11 @@ class MoneyPaymentOdooService
             ];
 	}
 	
-    public function createCashExpense(string $date,float $amountInCurrency,float $amountInMainFunctionalCurrency,int $journalId,int $odooCurrencyId,int $debitOdooAccountId,int $creditOdooAccountId,int $odooPartnerId,string $ref,int $isTax )
+    public function createCashExpense(string $date,float $amountInCurrency,float $amountInMainFunctionalCurrency,int $journalId,int $odooCurrencyId,int $debitOdooAccountId,int $creditOdooAccountId,int $odooPartnerId,string $ref,int $isTax , bool $isMoneyReceived = false )
     {
 		  $message =$this->getMessage(); 
 		  $odooPartnerId = $isTax ? null : $odooPartnerId;
-          return $this->createAndPostJournalEntry($date,$amountInCurrency,$amountInMainFunctionalCurrency,$odooCurrencyId,$journalId,$debitOdooAccountId,$creditOdooAccountId,$ref,$odooPartnerId,$message,$isTax);
+          return $this->createAndPostJournalEntry($date,$amountInCurrency,$amountInMainFunctionalCurrency,$odooCurrencyId,$journalId,$debitOdooAccountId,$creditOdooAccountId,$ref,$odooPartnerId,$message,$isMoneyReceived);
        
     }
 	

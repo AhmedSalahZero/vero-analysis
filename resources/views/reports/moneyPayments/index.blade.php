@@ -200,6 +200,7 @@ td{
 											@endif
 											
 											@if($moneyPayment->getIsPayableChequeDue())
+											
                                             <a data-id="{{ $moneyPayment->id }}" data-type="single" data-currency="{{ $moneyPayment->getCurrency() }}" data-due-date="{{ formatDateForDatePicker($moneyPayment->getPayableChequeDueDate()) }}" data-money-type="{{ MoneyPayment::PAYABLE_CHEQUE }}" data-toggle="modal" data-target="#send-to-under-collection-modal{{ MoneyPayment::PAYABLE_CHEQUE }}" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-primary btn-icon"  href=""><i class="fa fa-money-bill"></i></a>
 											@endif
 											

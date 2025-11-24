@@ -5,9 +5,10 @@ namespace App\Models;
 use App\Models\OpeningBalance;
 use App\Models\OutgoingTransfer;
 use App\Services\Api\CashExpenseOdooService;
-use App\Services\Api\OdooService;
+use App\Services\Api\OdooPayment;
 use App\Traits\Models\HasCreditStatements;
 use App\Traits\Models\HasForeignExchangeGainOrLoss;
+use App\Traits\Models\HasNonCustomerOrSupplier;
 use App\Traits\Models\HasReviewedBy;
 use App\Traits\Models\HasUserComment;
 use App\Traits\Models\IsMoney;
@@ -20,7 +21,7 @@ use Illuminate\Support\Facades\DB;
 class CashExpense extends Model
 {
 	
-	use IsMoney ,HasForeignExchangeGainOrLoss,HasCreditStatements,HasReviewedBy,HasUserComment;
+	use IsMoney ,HasForeignExchangeGainOrLoss,HasCreditStatements,HasReviewedBy,HasUserComment,HasNonCustomerOrSupplier;
 	const CASH_PAYMENT  = 'cash_payment';
 	const PAYABLE_CHEQUE  = 'payable_cheque';
 	const OUTGOING_TRANSFER  = 'outgoing-transfer';
@@ -457,12 +458,20 @@ class CashExpense extends Model
 	}
 	public function deleteRelations()
 	{
-		$company= $this->company;
-		$journalEntryId = $this->journal_entry_id;
-		if($company->hasOdooIntegrationCredentials() && $journalEntryId){
-					$cashExpenseOdooService = new CashExpenseOdooService($company);
-					$cashExpenseOdooService->unlink($journalEntryId);
-		}
+		$this->unlinkNonCustomerOrSupplierOdooExpense();
+		
+		// $company= $this->company;
+		// $journalEntryId = $this->journal_entry_id;
+		
+		if ($this->account_bank_statement_line_id) {
+            $OdooPaymentService = new OdooPayment($this->company);
+            $OdooPaymentService->unlinkBankCollection($this->account_bank_statement_line_id);
+        }
+		
+		// if($company->hasOdooIntegrationCredentials() && $journalEntryId){
+		// 			$cashExpenseOdooService = new CashExpenseOdooService($company);
+		// 			$cashExpenseOdooService->unlink($journalEntryId);
+		// }
 		$oldType = $this->getType();
 		$oldTypeRelationName = dashesToCamelCase($oldType);
 		$this->$oldTypeRelationName ? $this->$oldTypeRelationName->delete() : null;
@@ -659,5 +668,36 @@ class CashExpense extends Model
 	{
 		return count($this->getOdooReferenceNames());
 	}
+	public function isChequeAndNotCustomerOrSupplier()
+	{
+		return $this->isChequeOrChequePayment() && (!in_array($this->getPartnerType(),['is_customer','is_supplier']));
+	}
+	public function getOdooIdWithRefOfTransaction():array 
+	{
+		$cashExpenseCategoryName = $this->cashExpenseCategoryName;
 	
+		return [
+			'id'=>$cashExpenseCategoryName->getOdooId(),
+			'ref'=>__('Cash Expense Payable Cheque')
+		];
+	}
+	public function getDate()
+    {
+        return $this->getPaymentDate();
+    }
+	public function getPartnerType()
+	{
+		return null;
+	}
+	public function getDeliveryDate()
+	{
+		return $this->getDate();
+	}public function isInvoiceSettlementWithDownPayment()
+	{
+		return false;
+	}
+	 public function getCustomerOrSupplier():string
+    {
+        return 'supplier';
+    }
 }

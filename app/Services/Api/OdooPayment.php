@@ -11,54 +11,45 @@ use Illuminate\Support\Facades\Log;
 
 class OdooPayment
 {
-	use AuthTrait,HasPayment,HasJournal ;
-	
-	public function createDownPayment($moneyModel )
+    use AuthTrait,HasPayment,HasJournal ;
+    
+    public function createDownPayment($moneyModel)
     {
       
-		try{
-			$company = $moneyModel->company ;
-			$paymentDate = $moneyModel->getReceivingOrPaymentMoneyDate();
-			if(!$company->withinIntegrationDate($paymentDate)){
-				return ;
-			}
-			$journalId = $this->getJournalId($moneyModel) ;
-		
-			/**
-			 * * $bankOrSafeId
-			 */
-			$paymentAmount = $moneyModel->isInvoiceSettlementWithDownPayment() ? $moneyModel->downPaymentSettlements->sum('down_payment_amount') : $moneyModel->getAmount()  ;
-			
-			if($moneyModel->isChequeAndNotCustomerOrSupplier()){
-				$paymentAmount=$moneyModel->getAmount();
-			}
-			$currencyName = $moneyModel->getReceivingOrPaymentCurrency();
-			$odooCurrencyId = Currency::getOdooId($currencyName);
-			
-			/**
-			 * @var Company $company;
-			 */
-			
-			$odooPartnerId = $moneyModel->partner->getOdooId();
-			$inBoundOrOutBound =$moneyModel->getInboundOrOutbound();
-			$customerOrSupplier = $moneyModel->getCustomerOrSupplier();
-	
+        try {
+            $company = $moneyModel->company ;
+            $paymentDate = $moneyModel->getReceivingOrPaymentMoneyDate();
+            if (!$company->withinIntegrationDate($paymentDate)) {
+                return ;
+            }
+            $journalId = $this->getJournalId($moneyModel) ;
+        
+            /**
+             * * $bankOrSafeId
+             */
+            $paymentAmount = $moneyModel->isInvoiceSettlementWithDownPayment() ? $moneyModel->downPaymentSettlements->sum('down_payment_amount') : $moneyModel->getAmount()  ;
+            
+            if ($moneyModel->isChequeAndNotCustomerOrSupplier()) {
+                $paymentAmount=$moneyModel->getAmount();
+            }
+            $currencyName = $moneyModel->getReceivingOrPaymentCurrency();
+            $odooCurrencyId = Currency::getOdooId($currencyName);
+            
+            /**
+             * @var Company $company;
+             */
+            
+            $odooPartnerId = $moneyModel->partner ? $moneyModel->partner->getOdooId() : null;
+            $inBoundOrOutBound =$moneyModel->getInboundOrOutbound();
+            $customerOrSupplier = $moneyModel->getCustomerOrSupplier();
+    
        
             // Step 2: Register payment using account.payment.register
             $context = [
                 'active_model' => 'account.move',
-           		'active_ids' => [],
+                   'active_ids' => [],
             ];
-			// dd([
-            //         'amount' => $paymentAmount,
-            //         'journal_id' => $journalId,
-            //         'date' => $paymentDate,
-			// 		'currency_id'=>$odooCurrencyId,
-            //         'partner_id' => $odooPartnerId,
-            //         'payment_type' => $inBoundOrOutBound,
-            //         'partner_type' => $customerOrSupplier ,
-			// 		'payment_method_line_id'=>(int)$moneyModel->getPaymentMethodLineId() 
-			// ]);
+          
             $paymentId = $this->models->execute_kw(
                 $this->db,
                 $this->uid,
@@ -69,285 +60,283 @@ class OdooPayment
                     'amount' => $paymentAmount,
                     'journal_id' => $journalId,
                     'date' => $paymentDate,
-					'currency_id'=>$odooCurrencyId,
+                    'currency_id'=>$odooCurrencyId,
                     'partner_id' => $odooPartnerId,
                     'payment_type' => $inBoundOrOutBound,
                     'partner_type' => $customerOrSupplier ,
-					'payment_method_line_id'=>(int)$moneyModel->getPaymentMethodLineId() 
+                    'payment_method_line_id'=>(int)$moneyModel->getPaymentMethodLineId()
                 ]],
-               ['context' => $context]
+                ['context' => $context]
             );
-			
-			
-              $this->models->execute_kw(
+            
+            
+            $this->models->execute_kw(
                 $this->db,
                 $this->uid,
                 $this->password,
                 'account.payment',
                 'action_post',
-               	[[$paymentId]],
+                [[$paymentId]],
             );
-	
-			if(is_array($paymentId) && isset($paymentId['faultString'])){
-				session()->put('fail',$paymentId['faultString']);
-				$moneyModel->update([
-					'synced_with_odoo'=>false ,
-					'odoo_error_message'=>$paymentId['faultString']
-				]);
-				return ;
-			}
-			$odooAccountPayment = $this->fetchData('account.payment',['id','name'],[[['id','=',$paymentId]]]);
-			$moneyModel->update([
-				'odoo_id'=>$paymentId,
-				'odoo_reference'=>$odooAccountPayment[0]['name']??null,
-				'synced_with_odoo'=>true ,
-				'odoo_error_message'=>null
-			]);
-		}
-		catch(\Exception $e){
-			session()->put('fail',__('Error While Connecting With Odoo : ' . $e->getMessage()));
-			$moneyModel->update([
-				'synced_with_odoo'=>false ,
-				'odoo_error_message'=>$e->getMessage() 
-			]);
-		}
-		
-
-         
-    }
-	
-	public function createDownPaymentFromSettlement($settlement )
-    {
-	
-      
-		try{
-			$company = $settlement->company ;
-			$moneyModel =  $settlement->getMoney() ;
-			$paymentDate =$moneyModel->getReceivingOrPaymentMoneyDate();
-			if(!$company->withinIntegrationDate($paymentDate)){
-				return ;
-			}
-			$journalId = $this->getJournalId($moneyModel) ;
-			/**
-			 * * $bankOrSafeId
-			 */
-			$paymentAmount = $settlement->getAmountInReceivingCurrency()   ;
-			$currencyName = $moneyModel->getReceivingOrPaymentCurrency();
-			$odooCurrencyId = Currency::getOdooId($currencyName);
-			
-			/**
-			 * @var Company $company;
-			 */
-			
-			$odooPartnerId = $moneyModel->partner->getOdooId();
-			$inBoundOrOutBound =$moneyModel->getInboundOrOutbound();
-			$customerOrSupplier = $moneyModel->getCustomerOrSupplier();
-	
-       
-            // Step 2: Register payment using account.payment.register
-            $context = [
-                'active_model' => 'account.move',
-           		'active_ids' => [],
-            ];
-
-            $paymentId = $this->models->execute_kw(
-                $this->db,
-                $this->uid,
-                $this->password,
-                'account.payment',
-                'create',
-                [[
-                    'amount' => $paymentAmount,
-                    'journal_id' => $journalId,
-                    'date' => $paymentDate,
-					'currency_id'=>$odooCurrencyId,
-                    'partner_id' => $odooPartnerId,
-                    'payment_type' => $inBoundOrOutBound,
-                    'partner_type' => $customerOrSupplier ,
-					'payment_method_line_id'=>(int)$moneyModel->getPaymentMethodLineId() 
-                ]],
-               ['context' => $context]
-            );
-			
-			
-             $this->models->execute_kw(
-                $this->db,
-                $this->uid,
-                $this->password,
-                'account.payment',
-                'action_post',
-               	[[$paymentId]],
-            );
-			if(is_array($paymentId) && isset($paymentId['faultString'])){
-				session()->put('fail',$paymentId['faultString']);
-				$moneyModel->update([
-					'synced_with_odoo'=>false ,
-					'odoo_error_message'=>$paymentId['faultString']
-				]);
-				return ;
-			}
-			$odooAccountPayment = $this->fetchData('account.payment',['id','name'],[[['id','=',$paymentId]]]);
-			$moneyModel->update([
-				'synced_with_odoo'=>true ,
-				'odoo_error_message'=>null
-			]);
-			$settlement->update([
-				'odoo_id'=>$paymentId,
-				'odoo_reference_name'=>$odooAccountPayment[0]['name']??null,
-			]);
-				
-		}
-		catch(\Exception $e){
-			session()->put('fail',__('Error While Connecting With Odoo : ' . $e->getMessage()));
-			$moneyModel->update([
-				'synced_with_odoo'=>false ,
-				'odoo_error_message'=>$e->getMessage() 
-			]);
-		}
-		
+    
+            if (is_array($paymentId) && isset($paymentId['faultString'])) {
+                session()->put('fail', $paymentId['faultString']);
+                $moneyModel->update([
+                    'synced_with_odoo'=>false ,
+                    'odoo_error_message'=>$paymentId['faultString']
+                ]);
+                return ;
+            }
+            $odooAccountPayment = $this->fetchData('account.payment', ['id','name'], [[['id','=',$paymentId]]]);
+            $moneyModel->update([
+                'odoo_id'=>$paymentId,
+                'odoo_reference'=>$odooAccountPayment[0]['name']??null,
+                'synced_with_odoo'=>true ,
+                'odoo_error_message'=>null
+            ]);
+        } catch (\Exception $e) {
+            session()->put('fail', __('Error While Connecting With Odoo : ' . $e->getMessage()));
+            $moneyModel->update([
+                'synced_with_odoo'=>false ,
+                'odoo_error_message'=>$e->getMessage()
+            ]);
+        }
+        
 
          
     }
     
-	 public function createPayment($customerInvoiceSettlement )
+    public function createDownPaymentFromSettlement($settlement)
     {
-		
-		
-		// try{
-			
-			$invoice = $customerInvoiceSettlement->invoice;
-			$moneyModel = $customerInvoiceSettlement->getMoney();
-			$amountInInReceivingCurrency = $customerInvoiceSettlement->getAmountInReceivingCurrency();
-			if($invoice->opening_balance_id){
-				return $this->createDownPaymentFromSettlement($customerInvoiceSettlement);
-			}
-			$journalId = $this->getJournalId($moneyModel) ;
-			/**
-			 * * $bankOrSafeId
-			 */
-			$invoiceId = $invoice->getOdooId();
-			$receivingCurrencyName = $moneyModel->getReceivingOrPaymentCurrency();
-			$odooReceivingCurrencyId =  Currency::getOdooId($receivingCurrencyName) ;
-			$paymentDate = $moneyModel->getReceivingOrPaymentMoneyDate();
-			if(!$this->company->withinIntegrationDate($paymentDate)){
-				return ;
-			}
-			$odooPartnerId = $moneyModel->partner->getOdooId();
-			$invoiceNumber = $invoice->getInvoiceNumber();
-			$inBoundOrOutBound =$moneyModel->getInboundOrOutbound();
-			$customerOrSupplier = $moneyModel->getCustomerOrSupplier();
-	
+    
+      
+        try {
+            $company = $settlement->company ;
+            $moneyModel =  $settlement->getMoney() ;
+            $paymentDate =$moneyModel->getReceivingOrPaymentMoneyDate();
+            if (!$company->withinIntegrationDate($paymentDate)) {
+                return ;
+            }
+            $journalId = $this->getJournalId($moneyModel) ;
+            /**
+             * * $bankOrSafeId
+             */
+            $paymentAmount = $settlement->getAmountInReceivingCurrency()   ;
+            $currencyName = $moneyModel->getReceivingOrPaymentCurrency();
+            $odooCurrencyId = Currency::getOdooId($currencyName);
+            
+            /**
+             * @var Company $company;
+             */
+            
+            $odooPartnerId = $moneyModel->partner->getOdooId();
+            $inBoundOrOutBound =$moneyModel->getInboundOrOutbound();
+            $customerOrSupplier = $moneyModel->getCustomerOrSupplier();
+    
        
             // Step 2: Register payment using account.payment.register
             $context = [
                 'active_model' => 'account.move',
-                'active_ids' => [$invoiceId],
+                   'active_ids' => [],
             ];
-			
-            $paymentWizardId = $this->models->execute_kw(
+
+            $paymentId = $this->models->execute_kw(
                 $this->db,
                 $this->uid,
                 $this->password,
-                'account.payment.register',
+                'account.payment',
                 'create',
                 [[
-                    'amount' => $amountInInReceivingCurrency,
-		   			 'currency_id'=>$odooReceivingCurrencyId,
+                    'amount' => $paymentAmount,
                     'journal_id' => $journalId,
-                    'payment_date' => $paymentDate,
-                    'communication' => $invoiceNumber,
+                    'date' => $paymentDate,
+                    'currency_id'=>$odooCurrencyId,
                     'partner_id' => $odooPartnerId,
                     'payment_type' => $inBoundOrOutBound,
                     'partner_type' => $customerOrSupplier ,
-					 'payment_method_line_id'=>$moneyModel->getPaymentMethodLineId() 
+                    'payment_method_line_id'=>(int)$moneyModel->getPaymentMethodLineId()
                 ]],
                 ['context' => $context]
             );
-			
-            $paymentResult = $this->models->execute_kw(
+            
+            
+            $this->models->execute_kw(
                 $this->db,
                 $this->uid,
                 $this->password,
-                'account.payment.register',
-                'action_create_payments',
-                [[$paymentWizardId]],
-                ['context' => $context]
+                'account.payment',
+                'action_post',
+                [[$paymentId]],
             );
-			if(is_array($paymentResult) && isset($paymentResult['faultString'])){
-				session()->put('fail',$paymentResult['faultString']);
-				$moneyModel->update([
-					'synced_with_odoo'=>false ,
-					'odoo_error_message'=>$paymentResult['faultString']
-				]);
-				return ;
-			}
-			
-			$resId = $paymentResult['res_id'];
-			if(is_numeric($resId)){
-				$odooAccountPayment = $this->fetchData('account.payment',['id','name'],[[['id','=',$resId]]]);
-				$moneyModel->update([
-				'synced_with_odoo'=>true ,
-				'odoo_error_message'=>null
-			]);
-			$customerInvoiceSettlement->update([
-				'odoo_reference_name'=>$odooAccountPayment[0]['name']??null,
-				'odoo_id'=>$resId
-			]);
-			
-			
-	
-			return [
-				'odoo_id'=>$resId
-			];
-			
-			}
-			
-			
-		// }
-		// catch(\Exception $e){
-		// 	session()->put('fail',__('Error While Connecting With Odoo : ' . $e->getMessage()));
-		// 	$moneyModel->update([
-		// 		'synced_with_odoo'=>false ,
-		// 		'odoo_error_message'=>$e->getMessage() 
-		// 	]);
-		// }
+            if (is_array($paymentId) && isset($paymentId['faultString'])) {
+                session()->put('fail', $paymentId['faultString']);
+                $moneyModel->update([
+                    'synced_with_odoo'=>false ,
+                    'odoo_error_message'=>$paymentId['faultString']
+                ]);
+                return ;
+            }
+            $odooAccountPayment = $this->fetchData('account.payment', ['id','name'], [[['id','=',$paymentId]]]);
+            $moneyModel->update([
+                'synced_with_odoo'=>true ,
+                'odoo_error_message'=>null
+            ]);
+            $settlement->update([
+                'odoo_id'=>$paymentId,
+                'odoo_reference_name'=>$odooAccountPayment[0]['name']??null,
+            ]);
+                
+        } catch (\Exception $e) {
+            session()->put('fail', __('Error While Connecting With Odoo : ' . $e->getMessage()));
+            $moneyModel->update([
+                'synced_with_odoo'=>false ,
+                'odoo_error_message'=>$e->getMessage()
+            ]);
+        }
+        
+
+         
     }
-	
-	public function reCreatePayment($customerInvoiceSettlement)
+    
+    public function createPayment($customerInvoiceSettlement)
     {
-		if($customerInvoiceSettlement->odoo_id){
-			$this->cancelPayments($customerInvoiceSettlement->odoo_id);
-		}
-		$this->createPayment($customerInvoiceSettlement);
+        
+        
+        // try{
+            
+        $invoice = $customerInvoiceSettlement->invoice;
+        $moneyModel = $customerInvoiceSettlement->getMoney();
+        $amountInInReceivingCurrency = $customerInvoiceSettlement->getAmountInReceivingCurrency();
+        if ($invoice->opening_balance_id) {
+            return $this->createDownPaymentFromSettlement($customerInvoiceSettlement);
+        }
+        $journalId = $this->getJournalId($moneyModel) ;
+        /**
+         * * $bankOrSafeId
+         */
+        $invoiceId = $invoice->getOdooId();
+        $receivingCurrencyName = $moneyModel->getReceivingOrPaymentCurrency();
+        $odooReceivingCurrencyId =  Currency::getOdooId($receivingCurrencyName) ;
+        $paymentDate = $moneyModel->getReceivingOrPaymentMoneyDate();
+        if (!$this->company->withinIntegrationDate($paymentDate)) {
+            return ;
+        }
+        $odooPartnerId = $moneyModel->partner->getOdooId();
+        $invoiceNumber = $invoice->getInvoiceNumber();
+        $inBoundOrOutBound =$moneyModel->getInboundOrOutbound();
+        $customerOrSupplier = $moneyModel->getCustomerOrSupplier();
+    
+       
+        // Step 2: Register payment using account.payment.register
+        $context = [
+            'active_model' => 'account.move',
+            'active_ids' => [$invoiceId],
+        ];
+            
+        $paymentWizardId = $this->models->execute_kw(
+            $this->db,
+            $this->uid,
+            $this->password,
+            'account.payment.register',
+            'create',
+            [[
+                'amount' => $amountInInReceivingCurrency,
+                 'currency_id'=>$odooReceivingCurrencyId,
+                'journal_id' => $journalId,
+                'payment_date' => $paymentDate,
+                'communication' => $invoiceNumber,
+                'partner_id' => $odooPartnerId,
+                'payment_type' => $inBoundOrOutBound,
+                'partner_type' => $customerOrSupplier ,
+                 'payment_method_line_id'=>$moneyModel->getPaymentMethodLineId()
+            ]],
+            ['context' => $context]
+        );
+            
+        $paymentResult = $this->models->execute_kw(
+            $this->db,
+            $this->uid,
+            $this->password,
+            'account.payment.register',
+            'action_create_payments',
+            [[$paymentWizardId]],
+            ['context' => $context]
+        );
+        if (is_array($paymentResult) && isset($paymentResult['faultString'])) {
+            session()->put('fail', $paymentResult['faultString']);
+            $moneyModel->update([
+                'synced_with_odoo'=>false ,
+                'odoo_error_message'=>$paymentResult['faultString']
+            ]);
+            return ;
+        }
+            
+        $resId = $paymentResult['res_id'];
+        if (is_numeric($resId)) {
+            $odooAccountPayment = $this->fetchData('account.payment', ['id','name'], [[['id','=',$resId]]]);
+            $moneyModel->update([
+            'synced_with_odoo'=>true ,
+            'odoo_error_message'=>null
+            ]);
+            $customerInvoiceSettlement->update([
+                'odoo_reference_name'=>$odooAccountPayment[0]['name']??null,
+                'odoo_id'=>$resId
+            ]);
+            
+            
+    
+            return [
+                'odoo_id'=>$resId
+            ];
+            
+        }
+            
+            
+        // }
+        // catch(\Exception $e){
+        // 	session()->put('fail',__('Error While Connecting With Odoo : ' . $e->getMessage()));
+        // 	$moneyModel->update([
+        // 		'synced_with_odoo'=>false ,
+        // 		'odoo_error_message'=>$e->getMessage()
+        // 	]);
+        // }
+    }
+    
+    public function reCreatePayment($customerInvoiceSettlement)
+    {
+        if ($customerInvoiceSettlement->odoo_id) {
+            $this->cancelPayments($customerInvoiceSettlement->odoo_id);
+        }
+        $this->createPayment($customerInvoiceSettlement);
 
     }
-	
-	public function reCreateDownPayment($moneyModel)
+    
+    public function reCreateDownPayment($moneyModel)
     {
-		
-		if($moneyModel->odoo_id){
-			$this->cancelPayments($moneyModel->odoo_id);
-		}
-		
-		$this->createDownPayment($moneyModel);
+        
+        if ($moneyModel->odoo_id) {
+            $this->cancelPayments($moneyModel->odoo_id);
+        }
+        
+        $this->createDownPayment($moneyModel);
 
     }
-	
-	
-	public function chequeCollection(
+    
+    
+    public function chequeCollection(
         int $accountPayment_id,
-        float $amount , 
-        string $date , 
-        int $currency_id , 
-        int $journal_id , // NBE Journal
-        int $debitOdooAccountId , // Misr Account
-        int $creditOdooAccountId , // Cheque Receivable Account
-        int $PartnerId ,
-        $ref , 
+        float $amount,
+        string $date,
+        int $currency_id,
+        int $journal_id, // NBE Journal
+        int $debitOdooAccountId, // Misr Account
+        int $creditOdooAccountId, // Cheque Receivable Account
+        int $PartnerId,
+        $ref,
         $message = ''
     ) {
-	
-		
+    
+        
         try {
             // Step 1: Verify the payment exists and get its details
             $paymentData = $this->execute(
@@ -369,7 +358,7 @@ class OdooPayment
             if (!in_array($paymentState, ['draft', 'posted', 'in_process'])) {
                 throw new Exception("Payment ID $accountPayment_id is in state '$paymentState' and cannot be processed");
             }
-			
+            
             // Step 2: If payment is in draft, post it
             if ($paymentState === 'draft') {
                 $this->execute(
@@ -396,7 +385,7 @@ class OdooPayment
             $statementMoveId = null;
             $statementLineIds = [];
 
-		
+        
             if (empty($existingStatementLines)) {
                 // Step 4: Create bank statement line to affect bank balance
                 $statementEntryData = [
@@ -445,7 +434,7 @@ class OdooPayment
                     [$statementEntryData],
                     ['context' => $context]
                 );
-			
+            
       
                 if (!is_numeric($statementEntryId)) {
                     throw new Exception("Failed to create bank statement line: " . json_encode($statementEntryId));
@@ -468,7 +457,8 @@ class OdooPayment
                 }
 
                 $statementMoveId = $statementData[0]['move_id'][0];
-		
+                $bankReference = $statementData[0]['move_id'][1];
+        
                 $statementLineIds = $statementData[0]['line_ids'][1] ?? [];
 
 
@@ -485,25 +475,25 @@ class OdooPayment
                     throw new Exception("Failed to retrieve payment move lines for move_id: $moveId");
                 }
 
-               $linesToReconcile = array_merge($paymentLineIds, (array)$statementLineIds);
+                $linesToReconcile = array_merge($paymentLineIds, (array)$statementLineIds);
 
 
-               try {
+                try {
                     $result = $this->execute(
-                            'account.move.line',
-                            'reconcile',
-                            [$linesToReconcile],
-                            ['context' => ['skip_full_reconcile_check' => true]]
-                        );
-                        // Handle success
-                    } catch (Exception $e) {
-						session()->put('fail',$e->getMessage());
-				
-                        // Log or handle error
-                        Log::error('Odoo reconciliation failed: ' . $e->getMessage());
-                    }
+                        'account.move.line',
+                        'reconcile',
+                        [$linesToReconcile],
+                        ['context' => ['skip_full_reconcile_check' => true]]
+                    );
+                    // Handle success
+                } catch (Exception $e) {
+                    session()->put('fail', $e->getMessage());
                 
-            } 
+                    // Log or handle error
+                    Log::error('Odoo reconciliation failed: ' . $e->getMessage());
+                }
+                
+            }
 
        
             // Step 7: Update payment to set is_matched to true if not already
@@ -530,14 +520,13 @@ class OdooPayment
                         Log::warning("Invoice ID {$invoice['id']} state is {$invoice['state']} instead of 'paid'");
                     }
                 }
-            } 
-            else {
+            } else {
                 Log::warning("No invoices linked to payment ID $accountPayment_id");
             }
-		//	dd($statementEntryId ,$statementMoveId ,$accountPayment_id ,$invoiceState ,$paymentLineIds);
+    
             return [
                 'statement_entry_id' => $statementEntryId,
-				'bank_reference'=>$statementData[0]['name']??null,
+                'bank_reference'=>$bankReference??null,
                 'entry_id' => $statementMoveId,
                 'payment_id' => $accountPayment_id,
                 'invoice_state' => !empty($invoiceState) ? $invoiceState[0]['state'] : 'unknown',
@@ -545,24 +534,24 @@ class OdooPayment
             ];
 
         } catch (\Exception $e) {
-			session()->put('fail','Error in chequeCollection: ' . $e->getMessage());
+            session()->put('fail', 'Error in chequeCollection: ' . $e->getMessage());
             return [
                 'error' => true,
                 'message' => 'Failed to process cheque collection: ' . $e->getMessage()
             ];
         }
     }
-	
+    
     public function chequePayment(
-        $accountPayment_id ,
-        float $amount , 
-        string $date , 
-        int $currency_id , 
-        int $journal_id , // Misr Bank Journal
-        int $debitOdooAccountId , // Cheque Payable Account
-        int $creditOdooAccountId , // Bank Misr Account
-        int $PartnerId,
-        string $ref , 
+        $accountPayment_id,
+        float $amount,
+        string $date,
+        int $currency_id,
+        int $journal_id, // Misr Bank Journal
+        int $debitOdooAccountId, // Cheque Payable Account
+        int $creditOdooAccountId, // Bank Misr Account
+        ?int $PartnerId,
+        string $ref,
         $message = ''
     ) {
         try {
@@ -588,7 +577,7 @@ class OdooPayment
             if (!in_array($paymentState, ['draft', 'posted', 'in_process'])) {
                 throw new Exception("Payment ID $accountPayment_id is in state '$paymentState' and cannot be processed");
             }
-		
+        
             // Step 2: If payment is in draft, post it
             if ($paymentState === 'draft') {
                 $this->execute(
@@ -616,7 +605,7 @@ class OdooPayment
 
             
 
-	
+    
             if (empty($existingStatementLines)) {
                 // Step 4: Create bank statement line to affect bank balance
                 $statementEntryData = [
@@ -690,7 +679,7 @@ class OdooPayment
 
                 $statementMoveId = $statementData[0]['move_id'][0];
                 $statementLineIds = $statementData[0]['line_ids'][0] ?? [];
-
+				$bankReference = $statementData[0]['move_id'][1];
 
 
                 // Step 6: Reconcile payment and bank statement lines
@@ -706,23 +695,23 @@ class OdooPayment
                     throw new Exception("Failed to retrieve payment move lines for move_id: $moveId");
                 }
 
-               $linesToReconcile = array_merge($paymentLineIds, (array)$statementLineIds);
+                $linesToReconcile = array_merge($paymentLineIds, (array)$statementLineIds);
 
 
-               try {
+                try {
                     $result = $this->execute(
-                            'account.move.line',
-                            'reconcile',
-                            [$linesToReconcile],
-                            ['context' => ['skip_full_reconcile_check' => true]]
-                        );
-                        // Handle success
-                    } catch (Exception $e) {
-                        // Log or handle error
-                        Log::error('Odoo reconciliation failed: ' . $e->getMessage());
-                    }
+                        'account.move.line',
+                        'reconcile',
+                        [$linesToReconcile],
+                        ['context' => ['skip_full_reconcile_check' => true]]
+                    );
+                    // Handle success
+                } catch (Exception $e) {
+                    // Log or handle error
+                    Log::error('Odoo reconciliation failed: ' . $e->getMessage());
+                }
                 
-            } 
+            }
 
        
 
@@ -750,13 +739,13 @@ class OdooPayment
                         Log::warning("Invoice ID {$invoice['id']} state is {$invoice['state']} instead of 'paid'");
                     }
                 }
-            } 
-            else {
+            } else {
                 Log::warning("No invoices linked to payment ID $accountPayment_id");
             }
 
             // Step 9: Return result
             return [
+                'bank_reference'=>$bankReference??null,
                 'statement_entry_id' => $statementEntryId,
                 'entry_id' => $statementMoveId,
                 'payment_id' => $accountPayment_id,
@@ -772,8 +761,8 @@ class OdooPayment
             ];
         }
     }
-	
-	   public function unlinkBankCollection(int $accountBankStatementId)
+    
+    public function unlinkBankCollection(int $accountBankStatementId)
     {
         $models = $this->models;
     
@@ -786,7 +775,7 @@ class OdooPayment
             [[$accountBankStatementId]],
             ['fields' => ['line_ids']]
         );
-        $line_ids = $move_line_ids[0]['line_ids']; // [33352, 33353]
+        $line_ids = $move_line_ids[0]['line_ids']??[]; // [33352, 33353]
 
         $models->execute_kw(
             $this->db,
@@ -808,7 +797,7 @@ class OdooPayment
         );
     
     }
-	
-	
-	
+    
+    
+
 }

@@ -9,7 +9,7 @@ use App\Services\Api\OdooPayment;
 
 trait HasNonCustomerOrSupplier
 {
-    public function storeNonCustomerOrSupplierOdooExpense()
+    public function storeNonCustomerOrSupplierOdooExpense( )
     {
         $company = $this->company ;
         $date = $this->getDate();
@@ -34,10 +34,11 @@ trait HasNonCustomerOrSupplier
             $debitOdooAccountId = $isMoneyReceived ?  $chartOfAccountOdooId : $odooIdWithRef['id'] ;
             $isTax = $this->partner->isTax();
             $odooPartnerId = $this->partner->getOdooId();
-            //	$debitOdooAccountId = $isTax ? $odooPartnerId : $debitOdooAccountId;
             $ref =$odooIdWithRef['ref'] ;
-            // if()																									// $journalId,int $odooCurrencyId,int $debitOdooAccountId,int $creditOdooAccountId,int $odooPartnerId
-            $result   = $moneyPaymentOdooService->createCashExpense($date, $amountInCurrency, $amountInMainFunctionalCurrency, $journalId, $odooCurrencyId, $debitOdooAccountId, $creditOdooAccountId, $odooPartnerId, $ref, $isTax);
+			/**
+			 * * في الماني ريسيد هنضربها في سالب عليشان بتنضرب جوة في السالب فا تبقي موجب
+			 */
+            $result   = $moneyPaymentOdooService->createCashExpense($date, $amountInCurrency, $amountInMainFunctionalCurrency, $journalId, $odooCurrencyId, $debitOdooAccountId, $creditOdooAccountId, $odooPartnerId, $ref, $isTax,$isMoneyReceived);
             $this->account_bank_statement_line_id = $result['account_bank_statement_line_id'];
             $this->journal_entry_id = $result['journal_entry_id'];
             $this->odoo_reference = $result['odoo_reference'];

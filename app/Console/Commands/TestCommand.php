@@ -55,18 +55,19 @@ class TestCommand extends Command
 	}
 	public function handle()
 	{
-		$fetch = (new OdooPayment(Company::find(92)));
-		$x = $fetch->fetchData('account.bank.statement.line',[],[[['name','=','MISR/2025/00431']]]);
+		// $fetch = (new OdooPayment(Company::find(92)));
+		// $x = $fetch->fetchData('account.bank.statement.line',[],[[['name','=','MISR/2025/00431']]]);
 		// dd($x);
 		// $x = $fetch->un('account.bank.statement.line',[],[[['name','=','MISR/2025/00431']]]);
 		// dd($x);
 		
-		$x = $fetch->fetchData('account.move',[],[[['name','=','MISR/2025/00491']]]);
+		// $x = $fetch->fetchData('account.bank.statement.line',[],[[['id','=',8946]]]);
 		// dd($x);
-		$unlink = new OdooService(Company::find(92));
+		// dd($x);
+		$unlink = new OdooPayment(Company::find(92));
 		// dd($x);
 		// $unlink->unlinkBankStatementLine(8936);
-		$unlink->unlinkBankCollection(8940);
+		$unlink->unlinkBankCollection(8950);
 		// ($unlink->unlink('account.bank.statement.line',8936));
 		// dd($unlink->unlink('account.bank.statement.line',34049));
 		

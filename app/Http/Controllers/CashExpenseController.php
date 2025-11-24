@@ -236,7 +236,7 @@ class CashExpenseController
 		$moneyType = $request->get('type');
 		$bankId = null;
 		$paymentBranchName = $request->get('delivery_branch_id') ;
-		$data = $request->only(['type','odoo_id','payment_date','currency','cash_expense_category_name_id','user_comment','journal_entry_id','account_bank_statement_odoo_id','odoo_id']);
+		$data = $request->only(['type','odoo_id','payment_date','currency','cash_expense_category_name_id','user_comment','journal_entry_id','odoo_id']);
 		$cashExpenseCategoryNameId= $request->get('cash_expense_category_name_id');
 		$cashExpenseCategoryName = CashExpenseCategoryName::find($cashExpenseCategoryNameId);
 		$subCategoryName = $cashExpenseCategoryName->getName();
@@ -335,12 +335,17 @@ class CashExpenseController
 			 * *  delete unlink
 			 * */
 			
-
 			$result = $cashExpenseOdooService->createCashExpense($subCategoryName,$date,$amountInCurrency,$amountInMainFunctionalCurrency,$journalId,$odooCurrencyId,$debitOdooAccountId,$creditOdooAccountId,$analytic_distribution);
-			$cashExpense->account_bank_statement_odoo_id=$result['account_bank_statement_line_id'];
+			$cashExpense->account_bank_statement_line_id=$result['account_bank_statement_line_id'];
 			$cashExpense->journal_entry_id=$result['journal_entry_id'];
 			$cashExpense->odoo_reference=$result['reference'];
 			$cashExpense->save();
+			
+			
+		 }else{
+			// cheques 
+			$cashExpense->storeNonCustomerOrSupplierOdooExpense();
+			
 		 }
 		 
 	
@@ -421,7 +426,7 @@ class CashExpenseController
 		// $accountNumber =  $request->input('account_number.'.$newType);
 		$request->merge([
 			// 'journal_entry_id'=>$cashExpense->journal_entry_id,
-			// 'account_bank_statement_odoo_id'=>$cashExpense->account_bank_statement_odoo_id,
+			// 'account_bank_statement_line_id'=>$cashExpense->account_bank_statement_line_id,
 			'odoo_id'=>$cashExpense->odoo_id ,   // انا مش متاكد ان كان الكولوم دا محتاجينه ولا لا 
 		]);
 		
@@ -467,11 +472,17 @@ class CashExpenseController
 		$data['status'] = PayableCheque::PAID;
 		foreach($cashExpenseIds as $cashExpenseId){
 			$cashExpense = CashExpense::find($cashExpenseId) ;
+			/**
+			 * @var CashExpense $cashExpense
+			 */
 			// $chequeDueDate = $cashExpense->payableCheque->due_date;
 			$cashExpense->payableCheque->update($data);
+			
+			$cashExpense->markPayableChequeAsPaidInOdoo();
+			
+			
 			if($currentStatement = $cashExpense->getCurrentStatement()){
 				$currentStatement->handleFullDateAfterDateEdit($data['actual_payment_date'],$currentStatement->debit,$currentStatement->credit);
-			
 
 			}
 

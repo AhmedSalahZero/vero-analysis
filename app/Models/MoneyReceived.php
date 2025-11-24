@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\OpeningBalance;
+use App\Services\Api\OdooPayment;
 use App\Traits\Models\HasCreditStatements;
 use App\Traits\Models\HasDebitStatements;
 use App\Traits\Models\HasForeignExchangeGainOrLoss;
@@ -807,7 +808,20 @@ class MoneyReceived extends Model
 	{
 		$this->unlinkNonCustomerOrSupplierOdooExpense();
 		$oldType = $this->getType();
+		 if ($this->account_bank_statement_line_id) {
+            $OdooPaymentService = new OdooPayment($this->company);
+            $OdooPaymentService->unlinkBankCollection($this->account_bank_statement_line_id);
+        }
+		
+		
+		
 		$this->settlements->each(function($settlement){
+			
+			if ($settlement->account_bank_statement_line_id) {
+            $OdooPaymentService = new OdooPayment($this->company);
+            $OdooPaymentService->unlinkBankCollection($settlement->account_bank_statement_line_id);
+        }
+		
 			$settlement->delete();
 		});
 		// $this->downPayment ? (new MoneyReceivedController())->destroy(getCurrentCompany(),$this->downPayment) : null ;
