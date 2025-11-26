@@ -329,12 +329,6 @@ class CashExpenseController
 			$creditOdooAccountId=$cashExpenseOdooService->getChartOfAccountId($cashExpense);
 			$odooCurrencyId = Currency::getOdooId($currencyName);
 			$debitOdooAccountId = $cashExpenseCategoryName->getOdooId();
-			// $debitOdooAccountId = 614;
-			/**
-			 * *
-			 * *  delete unlink
-			 * */
-			
 			$result = $cashExpenseOdooService->createCashExpense($subCategoryName,$date,$amountInCurrency,$amountInMainFunctionalCurrency,$journalId,$odooCurrencyId,$debitOdooAccountId,$creditOdooAccountId,$analytic_distribution);
 			$cashExpense->account_bank_statement_line_id=$result['account_bank_statement_line_id'];
 			$cashExpense->journal_entry_id=$result['journal_entry_id'];

@@ -405,7 +405,7 @@ class OdooPayment
                             'credit' => 0.0,
                             'currency_id' => $currency_id,
                             'name' => $message,
-                            
+                            'partner_id' => $PartnerId,
                            
                         ]],
                         
@@ -415,7 +415,7 @@ class OdooPayment
                             'credit' => abs($amount),
                             'currency_id' => $currency_id,
                             'name' => $message,
-                          
+                          'partner_id' => $PartnerId,
                           
                         ]],
                     ],
@@ -604,7 +604,6 @@ class OdooPayment
 
 
             
-
     
             if (empty($existingStatementLines)) {
                 // Step 4: Create bank statement line to affect bank balance
@@ -625,7 +624,7 @@ class OdooPayment
                             'credit' => 0.0,
                             'currency_id' => $currency_id,
                             'name' => $message,
-                            
+                              'partner_id' => $PartnerId,
                            
                         ]],
                         
@@ -635,7 +634,7 @@ class OdooPayment
                             'credit' => abs($amount),
                             'currency_id' => $currency_id,
                             'name' => $message,
-                          
+                            'partner_id' => $PartnerId,
                           
                         ]],
                     ],

@@ -77,8 +77,8 @@ class DownPaymentContractsController extends Controller
 			'moneyModelName'=>$moneyModelName,
 			'searchFields'=>$searchFields,
 			'models'=>$models,
-			'title'=>$partnerName . ' ' .__('Contracts Down Payment'),
-			'tableTitle'=>__('Contracts Down Payment Table') ,
+			'title'=>$partnerName . ' ' .__('Down Payment'),
+			'tableTitle'=>__('Down Payment Table') ,
 			// 'financialInstitution'=>$financialInstitution,
 			'filterDates'=>$filterDates
 		]);

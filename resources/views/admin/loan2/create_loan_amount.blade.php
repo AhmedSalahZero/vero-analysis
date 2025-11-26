@@ -845,7 +845,6 @@
 
         let installmentFactories = calcInstallmentFactor(new Date(installmentStartDate.getTime()), intersetFactor, stepRate, stepFactor, period, installment_payment_interval);
 
-        // console.log(new Date(installmentStartDate.getTime()))
         let installmentAmountArr = getInstallmentAmount(loanFactories, installmentFactories, stepRate, stepFactor, new Date(installmentStartDate.getTime()), addMonths(new Date(start_date_formatted.getTime()), (period ? period : 0))
             , period, installment_payment_interval, interval, loanAmount
 
@@ -1116,7 +1115,6 @@
     }
 
     function calcInstallmentFactor(installmentStartDate, intersetFactor, stepRate, stepFactor, interval, installment_payment_interval) {
-        // console.log(installmentStartDate);
 
         let firstInstallmentStartDate = installmentStartDate;
         installmentFactors = [];
@@ -1183,7 +1181,6 @@
             stepFactorOfDate = stepFactor['stepFactors'].find((item) => {
                 return item.date == getDateFormatted(loopDate)
             });
-            //    console.log(stepFactorOfDate);
 
             if (!stepFactorOfDate) {
                 break

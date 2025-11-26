@@ -255,7 +255,6 @@ $(document).on('change','select[js-get-lc-facility-based-on-financial-institutio
 				var name =lcFacilities[id]; 
 				options+=`<option ${currentSelected == id ? 'selected' : '' } value="${id}"  >${name}</option>`
 			}
-			console.log(options)
 			$('select#lc-facility-id').empty().append(options).trigger('change')
 		}
 	})

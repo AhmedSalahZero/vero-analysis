@@ -252,7 +252,6 @@ use App\Models\MoneyReceived ;
 
                                                 <div class="input-group">
                                                     <select name="currency" class="form-control select-for-currency ajax-get-invoice-numbers" js-when-change-trigger-change-account-type>
-                                                        {{-- <option selected>{{__('Select')}}</option> --}}
                                                         @foreach(getCurrencies() as $currencyName => $currencyValue )
                                                         <option value="{{ $currencyName }}" @if(isset($cashInSafeStatement) && $cashInSafeStatement->getCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
                                                         @endforeach
@@ -511,7 +510,7 @@ use App\Models\MoneyReceived ;
                                             <td>
                                                 <div class="kt-input-icon width-15">
                                                     <div class="input-group">
-                                                        <input name="cheque_number" type="text" class="form-control " value="{{ isset($chequeInSafe) ? $chequeInSafe->getChequeNumber() : old('cheuqe_number',0) }}">
+                                                        <input name="cheque_number" type="text" class="form-control " value="{{ isset($chequeInSafe) ? $chequeInSafe->getChequeNumber() : old('cheque_number',0) }}">
                                                     </div>
                                                 </div>
                                             </td>
@@ -750,7 +749,7 @@ use App\Models\MoneyReceived ;
                                             <td>
                                                 <div class="kt-input-icon width-15">
                                                     <div class="input-group">
-                                                        <input name="cheque_number" type="text" class="form-control " value="{{ (isset($chequeUnderCollection) ? $chequeUnderCollection->getChequeNumber() : old('cheuqe_number',0)) }}">
+                                                        <input name="cheque_number" type="text" class="form-control " value="{{ (isset($chequeUnderCollection) ? $chequeUnderCollection->getChequeNumber() : old('cheque_number',0)) }}">
                                                     </div>
                                                 </div>
                                             </td>
@@ -951,8 +950,6 @@ use App\Models\MoneyReceived ;
                                         __('Payment <br> Bank')=>'drawee-bank-width',
                                         __('Account <br> Type')=>'account-type-width',
                                         __('Account <br> Number')=>'account-number-width',
-
-
                                         ] as $title=>$classes)
                                         <x-tables.repeater-table-th class="{{ $classes }}" :title="$title"></x-tables.repeater-table-th>
                                         @endforeach
@@ -965,7 +962,7 @@ use App\Models\MoneyReceived ;
                                         @foreach( count($rows) ? $rows : [-1] as $payableCheques)
                                         @php
                                         if( !($payableCheques instanceof \App\Models\MoneyPayment) ){
-                                        unset($payableCheques);
+                                  	 	     unset($payableCheques);
                                         }
                                         @endphp
                                         <tr @if($isRepeater) data-repeater-item @endif>
@@ -983,7 +980,7 @@ use App\Models\MoneyReceived ;
 
                                             <td>
                                                 <div class="input-group css-fix-plus-direction">
-                                                    <x-form.select :add-new-modal="true" :add-new-modal-modal-type="'Supplier'" :add-new-modal-modal-name="'Partner'" :add-new-modal-modal-title="__('Supplier Name')" :options="$suppliersFormatted" :add-new="false" :label="' '" class="customer_name_class repeater-select" data-filter-type="{{ 'create' }}" :all="false" name="supplier_id" :selected-value="isset($payableCheques) ? $payableCheques->getSupplierId() : 0"></x-form.select>
+                                                    <x-form.select  :options="$suppliersFormatted" :add-new="false" :label="' '" class="customer_name_class repeater-select" data-filter-type="{{ 'create' }}" :all="false" name="supplier_id" :selected-value="isset($payableCheques) ? $payableCheques->getSupplierId() : 0"></x-form.select>
                                                 </div>
 
                                             </td>
@@ -992,7 +989,6 @@ use App\Models\MoneyReceived ;
 
                                                 <div class="input-group">
                                                     <select name="currency" class="form-control select-for-currency ajax-get-invoice-numbers" js-when-change-trigger-change-account-type>
-                                                        {{-- <option selected>{{__('Select')}}</option> --}}
                                                         @foreach(getCurrencies() as $currencyName => $currencyValue )
                                                         <option value="{{ $currencyName }}" @if(isset($payableCheques) && $payableCheques->getCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
                                                         @endforeach
@@ -1017,7 +1013,7 @@ use App\Models\MoneyReceived ;
                                             <td>
                                                 <div class="kt-input-icon width-15">
                                                     <div class="input-group">
-                                                        <input name="cheque_number" type="text" class="form-control " value="{{ isset($payableCheques) ? $payableCheques->getPayableChequeNumber() : old('cheuqe_number',0)}}">
+                                                        <input name="cheque_number" type="text" class="form-control " value="{{ isset($payableCheques) ? $payableCheques->getPayableChequeNumber() : old('cheque_number',0)}}">
                                                     </div>
                                                 </div>
                                             </td>

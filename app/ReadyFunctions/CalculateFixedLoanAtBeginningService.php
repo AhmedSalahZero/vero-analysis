@@ -35,11 +35,9 @@ class CalculateFixedLoanAtBeginningService
 					$loanAmount =$fixedAtEndResult['current_result'][$i-1]['beginning'][$currentStartDateAsIndex]??0;
 					}
                 $loanStartDate = $dateWithDateIndex[$currentStartDateAsIndex]??null;
-				// logger($loanStartDate . ' - ' . $currentBaseRate. '-' .$marginRate);
 				if(is_null($loanStartDate)){
 					continue;
 				}
-				// logger($monthIndex);
                 $tenor = $originalTenor -($currentStartDateAsIndex - $monthIndex );
             }
             $currentResultArr = [];

@@ -919,7 +919,6 @@ class Study extends Model
             foreach ($yearMonthIndexes as $monthIndex => $trueOrFalse) {
                 if ($trueOrFalse) {
                     $currentValue = $directFactoringBreakdown->getNetFundingAmountsAtMonthIndex($monthIndex);
-                    // logger($currentValue.'-'.$directFactoringBreakdown->id);
                     $sum+=$currentValue ;
                     $resultPerCategory[$directFactoringBreakdown->id][$monthIndex] = isset($resultPerCategory[$directFactoringBreakdown->id][$monthIndex]) ? $resultPerCategory[$directFactoringBreakdown->id][$monthIndex] + $currentValue  : $currentValue;
                     
@@ -1055,7 +1054,6 @@ class Study extends Model
         // $loanEndBalances =[];
         
         foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
-            // logger('from qq');
             foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
             
                 $baseRatesMapping = is_array($baseRatesMapping) ? HArr::filterByYearOrMonthIndex($baseRatesMapping, $yearIndexWithYear, $yearIndex, $dateIndexWithDate[$monthIndex], $this->isMonthlyStudy()) : $baseRatesMapping;
@@ -1063,7 +1061,6 @@ class Study extends Model
                 $yearOrMonthIndex = $isMonthlyStudy ? $monthIndex : $yearIndex;
                 
                 foreach ($revenueIdWitLoanAmounts as $leasingRevenueStreamBreakdownId => $yearIndexWithAmount) {
-                    // logger('from ddd');
                     $loanAtCurrentYear = $yearIndexWithAmount[$yearOrMonthIndex]??0 ;
                     $currentMonthlyLoanAmount = $loanAtCurrentYear / ($this->isMonthlyStudy() ? 1 : count($yearMonthIndexes))  ;
                     if ($currentMonthlyLoanAmount <= 0) {
@@ -1124,7 +1121,6 @@ class Study extends Model
                     if ($eclAndNewPortfolioFundingRate && count($totalMonthlyLoanAmounts)) {
                         $newLoanFundingRate = $eclAndNewPortfolioFundingRate->getNewLoansFundingRatesAtYearOrMonthIndex($yearOrMonthIndex);
                         $currentMarginRate = $generalAndReserveAssumption->getBankLendingMarginRatesAtYearOrMonthIndex($yearOrMonthIndex);
-                        // logger($yearOrMonthIndex.'-'.$currentMarginRate);
                         $currentMonthlyLoanAmount = $totalMonthlyLoanAmounts[$monthIndex];
                         $currentMonthlyLoanAmount = $currentMonthlyLoanAmount * $newLoanFundingRate / 100 ;
                         // $currentMonthlyLoanAmount = $currentMonthlyLoanAmount * $newLoanFundingRate / 100 ;
@@ -4684,7 +4680,6 @@ class Study extends Model
                         if ($dateAsIndex >=$securitizationDate) {
 							
                            
-					//		logger('current accured'.$previousPortfolioAccuredInterest);
                             $currentPrincipleAmount = $principlePayments[$dateAsIndex]??0;
                             $currentPortfolioValue = isset($result[$securitization->id]['portfolio_result'][$dateAsIndex]) ? $result[$securitization->id]['portfolio_result'][$dateAsIndex] + $value : $value ;
                             $result[$securitization->id]['portfolio_result'][$dateAsIndex]=$currentPortfolioValue;
@@ -4697,14 +4692,12 @@ class Study extends Model
                     
                     $currentAccuredInterest = json_decode($loanSchedulePayment->accured_interest, true);
                     $previousAccuredInterest += ($currentAccuredInterest['monthly']['end_balance'][$securitizationDate-1]??0);
-                    // logger($previousAccuredInterest);
                     
         
                             
                     $bankPortfolioBeginningBalance = json_decode($loanSchedulePayment->beginning, true);
                     
                     $currentBankBeginningBalance += $bankPortfolioBeginningBalance[$securitizationDate]??0 ;
-				//	logger('current accured'.$previousAccuredInterest);
                   
                 
                 }

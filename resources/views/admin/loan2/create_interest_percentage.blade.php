@@ -884,9 +884,7 @@
         }
 
         var endTime = performance.now()
-        // alert(((endTime - startTime)/1000))
-        // console.log(`Call to doSomething took  milliseconds`)
-        // alert(pricing);
+    
 
         formatTable(newDat, givenLoanAmount, fixedType, installmentAmountArr, getLoanVal);
 
@@ -907,7 +905,6 @@
         for (let j = (gracePeriod + installment_payment_interval); j <= (period / installment_payment_interval); j++) {
             if (j % (interval) == 0 && j != 0) // after one year
             {
-                console.log(11111111111);
                 installmentAmount = installmentAmount * (1 + (stepRate));
                 givenInstallmentAmountArr.push(installmentAmount);
             } else {
@@ -924,13 +921,8 @@
 
 
         let flatInterestAmount = ((totalGivenInstallment - givenLoanAmount) / givenLoanAmount) / (period / 12);
-        // console.log('before')
-        // console.log(flatInterestAmount );
+        
         let trialInterest = roundUp(flatInterestAmount);
-        // let trialInterest = flatInterestAmount * 1.2 ;
-        // console.log('after')
-
-
         return trialInterest;
 
     }
@@ -975,7 +967,6 @@
 
 
         }
-        // console.log(days)
         return {
             "daysCount": days
         };
@@ -1167,7 +1158,6 @@
     }
 
     function calcInstallmentFactor(installmentStartDate, intersetFactor, stepRate, stepFactor, interval, installment_payment_interval) {
-        // console.log(installmentStartDate);
 
         let firstInstallmentStartDate = installmentStartDate;
         installmentFactors = [];
@@ -1235,7 +1225,6 @@
             stepFactorOfDate = stepFactor['stepFactors'].find((item) => {
                 return item.date == getDateFormatted(loopDate)
             });
-            //    console.log(stepFactorOfDate);
 
             if (!stepFactorOfDate) {
                 break

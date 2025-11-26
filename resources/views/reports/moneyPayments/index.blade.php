@@ -9,18 +9,20 @@ $banks = [];
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 
 <style>
-th:not(.bank-max-width),
-	td:not(.bank-max-width){
-		text-wrap:nowrap !important;
-	}
-td{
-	vertical-align:middle !important;
-}
+    th:not(.bank-max-width),
+    td:not(.bank-max-width) {
+        text-wrap: nowrap !important;
+    }
 
-.color-green{
-	color:white !important;
-	background-color:green !important;
-}
+    td {
+        vertical-align: middle !important;
+    }
+
+    .color-green {
+        color: white !important;
+        background-color: green !important;
+    }
+
     button[type="submit"],
     button[type="button"] {
         font-size: 1rem !important;
@@ -76,18 +78,18 @@ td{
                 </li>
                 {{-- <li class="nav-item">
                     <a class="nav-link {{ Request('active') == MoneyPayment::CHEQUE_UNDER_COLLECTION ? 'active':''  }}" data-toggle="tab" href="#{{ MoneyPayment::CHEQUE_UNDER_COLLECTION }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Cheques Under Collection') }}
-                    </a>
+                <i class="fa fa-money-check-alt"></i> {{ __('Cheques Under Collection') }}
+                </a>
                 </li> --}}
                 {{-- <li class="nav-item">
                     <a class="nav-link {{ Request('active') == MoneyPayment::CHEQUE_COLLECTED ? 'active':''  }}" data-toggle="tab" href="#{{ MoneyPayment::CHEQUE_COLLECTED }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Collected Cheques') }}
-                    </a>
+                <i class="fa fa-money-check-alt"></i> {{ __('Collected Cheques') }}
+                </a>
                 </li> --}}
                 {{-- <li class="nav-item">
                     <a class="nav-link {{  Request('active') == MoneyPayment::CHEQUE_REJECTED ?'active':'' }}" data-toggle="tab" href="#{{ MoneyPayment::CHEQUE_REJECTED }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Rejected Cheques') }}
-                    </a>
+                <i class="fa fa-money-check-alt"></i> {{ __('Rejected Cheques') }}
+                </a>
                 </li> --}}
 
 
@@ -104,24 +106,24 @@ td{
 
                 {{-- <li class="nav-item">
                     <a class="nav-link {{ Request('active') == MoneyPayment::CASH_IN_BANK ? 'active':''  }}" data-toggle="tab" href="#{{ MoneyPayment::CASH_IN_BANK }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i>{{ __('Bank Deposit') }}
-                    </a>
+                <i class="fa fa-money-check-alt"></i>{{ __('Bank Deposit') }}
+                </a>
                 </li> --}}
 
             </ul>
-		@if(auth()->user()->can('create supplier payment'))
+            @if(auth()->user()->can('create supplier payment'))
             <div class="flex-tabs">
-			<a href="{{route('create.money.payment',['company'=>$company->id])}}" class="btn  btn-sm active-style btn-icon-sm align-self-center">
-                <i class="fas fa-plus"></i>
-                {{ __('Money Payment') }}
-            </a>
-			
-			  <a href="{{route('create.money.payment',['company'=>$company->id,'type'=>'down-payment'])}}" class="btn btn-sm active-style btn-icon-sm align-self-center">
-                <i class="fas fa-plus"></i>
-                {{ __('Down Payment') }}
-            </a>
-			</div>
-			@endif 
+                <a href="{{route('create.money.payment',['company'=>$company->id])}}" class="btn  btn-sm active-style btn-icon-sm align-self-center">
+                    <i class="fas fa-plus"></i>
+                    {{ __('Money Payment') }}
+                </a>
+
+                <a href="{{route('create.money.payment',['company'=>$company->id,'type'=>'down-payment'])}}" class="btn btn-sm active-style btn-icon-sm align-self-center">
+                    <i class="fas fa-plus"></i>
+                    {{ __('Down Payment') }}
+                </a>
+            </div>
+            @endif
 
         </div>
     </div>
@@ -157,7 +159,7 @@ td{
                                 </tr>
                             </thead>
                             <tbody>
-							{{-- {{ dd($payableCheques->pluck('id')->toArray()) }} --}}
+                                {{-- {{ dd($payableCheques->pluck('id')->toArray()) }} --}}
                                 @foreach($payableCheques as $moneyPayment)
                                 <tr>
                                     <td>
@@ -175,39 +177,49 @@ td{
                                     <td class="text-nowrap">{{ $moneyPayment->payableCheque->getAccountNumber() }}</td>
                                     <td class="text-nowrap">{{ $moneyPayment->payableCheque->getDueDateFormatted() }}</td>
                                     <td>{{ $moneyPayment->payableCheque->getDueAfterDays() }}</td>
-									@php
-										$dueStatus = $moneyPayment->payableCheque->getDueStatusFormatted() ;
-									@endphp
-									
+                                    @php
+                                    $dueStatus = $moneyPayment->payableCheque->getDueStatusFormatted() ;
+                                    @endphp
+
                                     <td class="font-weight-bold bank-max-width" style="color:{{ $dueStatus['color'] }}!important">
-									@if($moneyPayment->payableCheque->getStatus() == 'paid') 
-									-
-									@else  
-									{{ $dueStatus['status'] }}
-									@endif
-									</td>
+                                        @if($moneyPayment->payableCheque->getStatus() == 'paid')
+                                        -
+                                        @else
+                                        {{ $dueStatus['status'] }}
+                                        @endif
+                                    </td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell" data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
-										@include('reports._user_comment_modal',['model'=>$moneyPayment])
-										@include('reports._user_odoo_modal',['model'=>$moneyPayment])
-											@include('reports._integrated_modal',['model'=>$moneyPayment])
-										
-										
-											@if(auth()->user()->can('update supplier payment'))
-											@include('reports._review_modal',['model'=>$moneyPayment])
-											@if(!$moneyPayment->isOpenBalance())
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.payment',['company'=>$company->id,'moneyPayment'=>$moneyPayment->id]) }}"><i class="fa fa-pen-alt"></i></a>
-											@endif
+                                            @include('reports._user_comment_modal',['model'=>$moneyPayment])
+                                            @include('reports._user_odoo_modal',['model'=>$moneyPayment])
+                                            @include('reports._integrated_modal',['model'=>$moneyPayment])
+
+
+                                            @if(auth()->user()->can('update supplier payment'))
+                                            @include('reports._review_modal',['model'=>$moneyPayment])
+                                            @if(!$moneyPayment->isOpenBalance())
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="{{ __('Edit Cheque') }}" href="{{ route('edit.money.payment',['company'=>$company->id,'moneyPayment'=>$moneyPayment->id]) }}"><i class="fa fa-pen-alt"></i></a>
+											@else 
+										@include('reports.moneyPayments._edit_opening_balance_cheque')
 											
-											@if($moneyPayment->getIsPayableChequeDue())
-											
-                                            <a data-id="{{ $moneyPayment->id }}" data-type="single" data-currency="{{ $moneyPayment->getCurrency() }}" data-due-date="{{ formatDateForDatePicker($moneyPayment->getPayableChequeDueDate()) }}" data-money-type="{{ MoneyPayment::PAYABLE_CHEQUE }}" data-toggle="modal" data-target="#send-to-under-collection-modal{{ MoneyPayment::PAYABLE_CHEQUE }}" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-primary btn-icon"  href=""><i class="fa fa-money-bill"></i></a>
-											@endif
-											
-											@endif 
-								
-											@if(!$moneyPayment->isOpenBalance())
-											@if(auth()->user()->can('delete supplier payment'))
+											 {{-- <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false"> --}}
+
+
+                                        {{-- <span style="overflow: visible; position: relative; width: 110px;"> --}}
+                                        
+                                        {{-- </span> --}}
+                                    {{-- </td> --}}
+									
+                                            @endif
+
+                                            @if($moneyPayment->getIsPayableChequeDue())
+                                            <a data-id="{{ $moneyPayment->id }}" data-type="single" data-currency="{{ $moneyPayment->getCurrency() }}" data-due-date="{{ formatDateForDatePicker($moneyPayment->getChequeActualPaymentDate()) }}" data-money-type="{{ MoneyPayment::PAYABLE_CHEQUE }}" data-toggle="modal" data-target="#send-to-under-collection-modal{{ MoneyPayment::PAYABLE_CHEQUE }}" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-primary btn-icon" href=""><i class="fa fa-money-bill"></i></a>
+                                            @endif
+
+                                            @endif
+
+                                            @if(!$moneyPayment->isOpenBalance())
+                                            @if(auth()->user()->can('delete supplier payment'))
                                             <a data-toggle="modal" data-target="#delete-cheque-id-{{ $moneyPayment->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-cheque-id-{{ $moneyPayment->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -230,8 +242,8 @@ td{
                                                     </div>
                                                 </div>
                                             </div>
-											@endif 
-											@endif 
+                                            @endif
+                                            @endif
                                         </span>
                                     </td>
                                 </tr>
@@ -247,7 +259,7 @@ td{
 
 
 
-        
+
 
 
 
@@ -260,8 +272,8 @@ td{
                 <div class="kt-portlet kt-portlet--mobile">
 
                     <x-table-title.with-two-dates :type="MoneyPayment::OUTGOING_TRANSFER" :title="__('Outgoing Transfer')" :startDate="$filterDates[MoneyPayment::OUTGOING_TRANSFER]['startDate']??''" :endDate="$filterDates[MoneyPayment::OUTGOING_TRANSFER]['endDate']??''">
-                        <x-export-money-payment :route-redirect="route('view.money.payment',['company'=>$company->id])" :route-action="route('outgoing.transfer.mark.as.paid',['company'=>$company->id])" :popup-title="__('Do You Want To Mark This Outcoming Transfer/s As Paid ?')"  :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$outgoingTransferTableSearchFields" :money-payment-type="MoneyPayment::OUTGOING_TRANSFER" :has-search="1" :has-batch-collection="1" :banks="$banks??[]" :selectedBanks="$selectedBanks" href="{{route('create.money.payment',['company'=>$company->id])}}" />
-					
+                        <x-export-money-payment :route-redirect="route('view.money.payment',['company'=>$company->id])" :route-action="route('outgoing.transfer.mark.as.paid',['company'=>$company->id])" :popup-title="__('Do You Want To Mark This Outcoming Transfer/s As Paid ?')" :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$outgoingTransferTableSearchFields" :money-payment-type="MoneyPayment::OUTGOING_TRANSFER" :has-search="1" :has-batch-collection="1" :banks="$banks??[]" :selectedBanks="$selectedBanks" href="{{route('create.money.payment',['company'=>$company->id])}}" />
+
                     </x-table-title.with-two-dates>
                     <div class="kt-portlet__body">
 
@@ -270,7 +282,7 @@ td{
                             <thead>
                                 <tr class="table-standard-color">
                                     {{-- <th class="align-middle">{{ __('Select') }}</th> --}}
-								
+
                                     <th class="bank-max-width">{{ __('Status') }}</th>
                                     <th class="bank-max-width">{{ __('Supplier Name') }}</th>
                                     <th>{{ __('Payment Date') }}</th>
@@ -287,10 +299,10 @@ td{
                                 @foreach($outgoingTransfer as $money)
 
                                 <tr>
-								{{-- <td>
+                                    {{-- <td>
                                         <input style="max-height:25px;" id="cash-send-to-collection{{ $money->id }}" type="checkbox" name="second_to_collection[]" value="{{ $money->id }}" data-money-type="{{ MoneyPayment::OUTGOING_TRANSFER }}" class="form-control checkbox js-send-to-collection">
                                     </td> --}}
-								   <td class="bank-max-width">{{ $money->getMoneyTypeFormatted() }}</td>
+                                    <td class="bank-max-width">{{ $money->getMoneyTypeFormatted() }}</td>
                                     <td class="bank-max-width">{{ $money->getSupplierName() }}</td>
                                     <td class="text-nowrap">{{ $money->getDeliveryDateFormatted() }}</td>
                                     <td class="bank-max-width">{{ $money->getOutgoingTransferDeliveryBankName() }}</td>
@@ -300,17 +312,17 @@ td{
                                     <td>{{ $money->getOutgoingTransferAccountNumber() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell" data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
-											@include('reports._user_comment_modal',['model'=>$money])
-											@include('reports._user_odoo_modal',['model'=>$money])
-											@include('reports._integrated_modal',['model'=>$money])
-										@if(!$money->isOpenBalance())
-										@if(auth()->user()->can('update supplier payment'))
-										@include('reports._review_modal',['model'=>$money])
+                                            @include('reports._user_comment_modal',['model'=>$money])
+                                            @include('reports._user_odoo_modal',['model'=>$money])
+                                            @include('reports._integrated_modal',['model'=>$money])
+                                            @if(!$money->isOpenBalance())
+                                            @if(auth()->user()->can('update supplier payment'))
+                                            @include('reports._review_modal',['model'=>$money])
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.payment',['company'=>$company->id,'moneyPayment'=>$money->id]) }}"><i class="fa fa-pen-alt"></i></a>
-@endif 
-@endif 
-@if(!$money->isOpenBalance())
-@if(auth()->user()->can('delete supplier payment'))
+                                            @endif
+                                            @endif
+                                            @if(!$money->isOpenBalance())
+                                            @if(auth()->user()->can('delete supplier payment'))
                                             <a data-toggle="modal" data-target="#delete-transfer-id-{{ $money->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-transfer-id-{{ $money->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -334,8 +346,8 @@ td{
                                                     </div>
                                                 </div>
                                             </div>
-											@endif 
-											@endif 
+                                            @endif
+                                            @endif
                                         </span>
                                     </td>
                                 </tr>
@@ -391,16 +403,16 @@ td{
                                     <td>{{ $moneyPayment->getCashPaymentReceiptNumber() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell" data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
-										@include('reports._user_comment_modal',['model'=>$moneyPayment])
-										@include('reports._user_odoo_modal',['model'=>$moneyPayment])
-											@include('reports._integrated_modal',['model'=>$moneyPayment])
-											
-										@if(!$moneyPayment->isOpenBalance())
-										@if(auth()->user()->can('update supplier payment'))
-											@include('reports._review_modal',['model'=>$moneyPayment])
+                                            @include('reports._user_comment_modal',['model'=>$moneyPayment])
+                                            @include('reports._user_odoo_modal',['model'=>$moneyPayment])
+                                            @include('reports._integrated_modal',['model'=>$moneyPayment])
+
+                                            @if(!$moneyPayment->isOpenBalance())
+                                            @if(auth()->user()->can('update supplier payment'))
+                                            @include('reports._review_modal',['model'=>$moneyPayment])
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.payment',['company'=>$company->id,'moneyPayment'=>$moneyPayment->id]) }}"><i class="fa fa-pen-alt"></i></a>
-										@endif 
-										@if(auth()->user()->can('delete supplier payment'))
+                                            @endif
+                                            @if(auth()->user()->can('delete supplier payment'))
                                             <a data-toggle="modal" data-target="#delete-transfer-id-{{ $moneyPayment->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-transfer-id-{{ $moneyPayment->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -424,8 +436,8 @@ td{
                                                     </div>
                                                 </div>
                                             </div>
-											@endif 
-@endif 
+                                            @endif
+                                            @endif
                                         </span>
                                     </td>
                                 </tr>
@@ -489,10 +501,10 @@ td{
         if (type == 'single') {
             $('#current-single-item' + moneyType).val($(this).attr('data-id'));
             $('#current-currency' + moneyType).val($(this).attr('data-currency'));
-			$('input[name="actual_payment_date"]').val($(this).attr('data-due-date'));
-        }else{
-			$('input[name="actual_payment_date"]').val("{{ now()->format('m/d/Y') }}");
-		}
+            $('input[name="actual_payment_date"]').val($(this).attr('data-due-date'));
+        } else {
+            $('input[name="actual_payment_date"]').val("{{ now()->format('m/d/Y') }}");
+        }
     })
     $(document).on('submit', '.ajax-send-cheques-to-collection', function(e) {
         e.preventDefault();
@@ -518,38 +530,37 @@ td{
             , data: formData
             , type: "post"
         }).then(function(res) {
-			
-			if(res.status === false){
-				 Swal.fire({
-                text: res.msg
-                , icon: 'error'
-                , timer: 2000
-            }).then(function() {
-              window.location.href = res.pageLink;
-            });
-			}
-           else{
-			 Swal.fire({
-                text: 'Done'
-                , icon: 'success'
-                , timer: 2000
-            }).then(function() {
-              window.location.href = res.pageLink;
-            });
-		   }
-        }).catch(res=>{
-			title ="{{ __('Error !') }}";
-			message = "{{ __('Something went Wrong') }}";
-			if (res.responseJSON && res.responseJSON.errors) {
-                            message = res.responseJSON.errors[Object.keys(res.responseJSON.errors)[0]][0]
-            }
-			 Swal.fire({
-                            icon: 'error'
-                            , title: title
-                            , text: message
 
-                        })
-		})
+            if (res.status === false) {
+                Swal.fire({
+                    text: res.msg
+                    , icon: 'error'
+                    , timer: 2000
+                }).then(function() {
+                    window.location.href = res.pageLink;
+                });
+            } else {
+                Swal.fire({
+                    text: 'Done'
+                    , icon: 'success'
+                    , timer: 2000
+                }).then(function() {
+                    window.location.href = res.pageLink;
+                });
+            }
+        }).catch(res => {
+            title = "{{ __('Error !') }}";
+            message = "{{ __('Something went Wrong') }}";
+            if (res.responseJSON && res.responseJSON.errors) {
+                message = res.responseJSON.errors[Object.keys(res.responseJSON.errors)[0]][0]
+            }
+            Swal.fire({
+                icon: 'error'
+                , title: title
+                , text: message
+
+            })
+        })
     });
 
 </script>
@@ -602,6 +613,15 @@ td{
 </script>
 @endsection
 @push('js')
+          
+<script>
+			
+ $(document).find('.datepicker-input').datepicker({
+                    dateFormat: 'mm-dd-yy'
+                    , autoclose: true
+                })
+				
+</script>
 {{-- <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script> --}}
 {{-- <script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript"></script> --}}
 @endpush

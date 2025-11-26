@@ -54,7 +54,6 @@ class MicrofinanceProductSalesProject extends Model
                 $amountBeforeVat = $model->avg_amount;
                 //  $amount * (1+$currentIncreaseRate/100);
                 for ($currentStartDateAsIndex ; $currentStartDateAsIndex <= $endDateAsIndex ; $currentStartDateAsIndex++) {
-                    //	logger('for');
                     $currentIncreaseRate = $increaseRates[$dateIndexWithYearIndex[$currentStartDateAsIndex]]??0  ;
                     if ($counter!=0&&$counter % $intervalMode == 0) {
                         $resultWithoutVat[$currentStartDateAsIndex] = $resultWithoutVat[$currentStartDateAsIndex-1] * (1+$currentIncreaseRate/100)  ;

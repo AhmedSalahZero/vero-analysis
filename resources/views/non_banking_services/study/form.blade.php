@@ -506,7 +506,6 @@
         if (studyDuration || studyDuration == '0') {
             const numberOfMonths = (studyDuration * 12) - 1
             let studyEndDate = studyStartDate.addMonths(numberOfMonths)
-            console.log('before', studyEndDate.getFullYear(), )
             let currentEndYear = studyEndDate.getFullYear();
             let dateFormattedForView = new Date(currentEndYear, 12, 0)
 

@@ -338,7 +338,7 @@ class Company extends Model implements HasMedia
 		return $this->moneyPayments->whereNull('advanced_opening_balance_id')->where('type',MoneyPayment::PAYABLE_CHEQUE)->filterByDeliveryDate($startDate,$endDate)->filter(function(MoneyPayment $moneyPayment){
 			$payableCheque = $moneyPayment->payableCheque ;
 			return $payableCheque && in_array($payableCheque->getStatus(),[PayableCheque::PENDING,PayableCheque::PAID]) ;
-		})->values();
+		})->sortByDesc('delivery_date')->values();
 	}
 	
 	public function mediumTermLoans()
@@ -479,6 +479,7 @@ class Company extends Model implements HasMedia
 	
 	public function getCollectedCheques(?string $startDate = null , ?string $endDate = null):Collection
 	{
+
 		return $this->moneyReceived->whereNull('advanced_opening_balance_id')->where('type',MoneyReceived::CHEQUE)->filterByReceivingDate($startDate,$endDate)->filter(function(MoneyReceived $moneyReceived){
 			$cheque = $moneyReceived->cheque ;
 			return $cheque && in_array($cheque->getStatus(),[Cheque::COLLECTED]) ;

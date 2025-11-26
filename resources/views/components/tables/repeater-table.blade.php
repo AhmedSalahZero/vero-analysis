@@ -117,8 +117,6 @@ $canAddNewItem = true;
         if (!$dropdown.length) {
             return
         }
-        console.log($container)
-        console.log($dropdown.length)
         const $searchInput = $container.find('.search-input')
         const $addOptionInput = $container.find('.add-option-input')
         const $addOptionBtn = $container.find('.btn-add-option')

@@ -622,6 +622,9 @@ class MoneyPayment extends Model
     {
         $moneyType = $this->getMoneyType();
         $partnerType = $this->getPartnerType();
+		if($this->isOpenBalance()){
+			return __('From Opening');
+		}
         if ($moneyType == 'money-payment') {
             $moneyType = 'invoice-settlement';
         }
@@ -707,6 +710,10 @@ class MoneyPayment extends Model
      * * statements
      * * سواء بانك او كاش الخ
      */
+	public function getChequeActualPaymentDate()
+	{
+		return $this->isPayableCheque() ? $this->payableCheque->actual_payment_date : null;
+	}
     public function getStatementDate()
     {
         if ($this->isPayableCheque()) {
@@ -948,6 +955,9 @@ class MoneyPayment extends Model
         throw new Exception('Transaction Type ' . $transactionType . ' Does Not Have Account Id');
         
     }
-    
+    public function isPaidPayableCheque():bool
+	{
+		return $this->payableCheque && $this->payableCheque->isPaid();
+	}
 	
 }

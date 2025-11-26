@@ -380,9 +380,9 @@ class MoneyReceivedController
         $hasUnappliedAmount = (bool)$request->get('unapplied_amount');
         $isGeneralDownPaymentOrSettlementOpening = $request->get('down_payment_type') == MoneyReceived::DOWN_PAYMENT_GENERAL || $request->get('down_payment_type') == MoneyReceived::SETTLEMENT_OF_OPENING_BALANCE;
         $partnerType = $request->get('partner_type', 'is_customer');
-		
+        
 
-		
+        
         $moneyType = $request->get('type');
         $financialInstitutionId = null;
         $contractId = $request->get('contract_id');
@@ -682,14 +682,22 @@ class MoneyReceivedController
              * @var MoneyReceived $moneyReceived
              */
             $moneyReceived = MoneyReceived::find($moneyReceivedId) ;
+            $isOpening = $moneyReceived->isOpenBalance();
             $data['expected_collection_date'] = $moneyReceived->cheque->calculateChequeExpectedCollectionDate($data['deposit_date'], $data['clearance_days']);
             $moneyReceived->cheque->update(array_merge($data, ['updated_at'=>now()]));
-            if ($hasOdooIntegration) {
-                foreach ($moneyReceived->settlements as $settlement) {
-                    $OdooPaymentService->reCreatePayment($settlement);
+            if (!$isOpening) {
+                if ($hasOdooIntegration) {
+                    foreach ($moneyReceived->settlements as $settlement) {
+                        $OdooPaymentService->reCreatePayment($settlement);
+                    }
+                    if ($moneyReceived->isInvoiceSettlementWithDownPayment()) {
+                        $odooPaymentService = new OdooPayment($company);
+                        $odooPaymentService->recreateDownPayment($moneyReceived);
+                    }
                 }
+                $moneyReceived->handleOdooDownPayments($OdooPaymentService, $hasOdooIntegration);
+                
             }
-            $moneyReceived->handleOdooDownPayments($OdooPaymentService, $hasOdooIntegration);
             
             // if($hasOdooIntegration && $moneyReceived->isDownPayment()){
             // 	$OdooPaymentService->reCreateDownPayment($moneyReceived);
@@ -749,9 +757,14 @@ class MoneyReceivedController
             $odooSetting = $company->odooSetting;
             $hasSettlements = $moneyReceived->settlements->count();
             $items = $hasSettlements ? $moneyReceived->settlements : [$moneyReceived];
-        
+       
+            if ($moneyReceived->isInvoiceSettlementWithDownPayment()) {
+                $items->push($moneyReceived);
+            }
             foreach ($items as $settlementOrMoneyModel) {
                 $odooId = $settlementOrMoneyModel->odoo_id ;
+				$isMoneyReceived = $settlementOrMoneyModel instanceof MoneyReceived ;
+                $isOpeningAndMoneyReceivedBalance = $isMoneyReceived && $settlementOrMoneyModel->isOpenBalance() ;
                 $odooCurrencyId =Currency::getOdooId($currency);
                 $accountTypeId=$moneyReceived->cheque->getAccountTypeId();
                 $accountNumber = $moneyReceived->cheque->getAccountNumber();
@@ -760,12 +773,20 @@ class MoneyReceivedController
                 $creditOdooAccountId = $odooSetting->getChequesReceivableId();
                 $odooPartnerId = $moneyReceived->getPartnerOdooId();
                 $amount= $settlementOrMoneyModel->getAmount();
+				if($isMoneyReceived && $moneyReceived->isInvoiceSettlementWithDownPayment() ){
+					$amount = $moneyReceived->downPaymentSettlements->sum('down_payment_amount');
+				}
                 $ref = 'Cheque Collection ' . $settlementOrMoneyModel->getInvoiceNumber();
-                $res =$OdooPaymentService->chequeCollection($odooId, $amount, $actualCollectionDate, $odooCurrencyId, $journalId, $debitAccountOdooId, $creditOdooAccountId, $odooPartnerId, $ref);
-                $settlementOrMoneyModel->update([
-                    'account_bank_statement_line_id'=>$res['statement_entry_id']??null,
-                    'odoo_reference'=>$res['bank_reference']??null
-                ]);
+                if ($isOpeningAndMoneyReceivedBalance) {
+                    $settlementOrMoneyModel->markOpeningPayableChequeAsPaidInOdoo(true);
+                } else {
+                    $res =$OdooPaymentService->chequeCollection($odooId, $amount, $actualCollectionDate, $odooCurrencyId, $journalId, $debitAccountOdooId, $creditOdooAccountId, $odooPartnerId, $ref);
+                    $settlementOrMoneyModel->update([
+                        'account_bank_statement_line_id'=>$res['statement_entry_id']??null,
+                        'odoo_reference'=>$res['bank_reference']??null
+                    ]);
+                    
+                }
             }
         
         }
@@ -779,11 +800,15 @@ class MoneyReceivedController
     }
     public function sendToUnderCollection(Company $company, BackToUnderCollectionChequeRequest $request, MoneyReceived $moneyReceived)
     {
-        $moneyReceived->cheque->update([
+        $isOpenBalance=  $moneyReceived->isOpenBalance();
+        $updateChequeData = [
             'status'=>Cheque::UNDER_COLLECTION,
             // 'collection_fees'=>null,
             'actual_collection_date'=>null
-        ]);
+        ] ;
+
+    
+        $moneyReceived->cheque->update($updateChequeData);
 
         while ($currentStatement = $moneyReceived->getCurrentStatement()) {
             $currentStatement->delete();
@@ -791,12 +816,13 @@ class MoneyReceivedController
         }
         $hasOdooIntegration = $company->hasOdooIntegrationCredentials();
         $OdooPaymentService = null ;
-        if ($hasOdooIntegration) {
+        if ($hasOdooIntegration && !$isOpenBalance) {
             $OdooPaymentService = new OdooPayment($company);
-            
             $hasSettlements = $moneyReceived->settlements->count();
             $items = $hasSettlements ? $moneyReceived->settlements : [$moneyReceived];
-        
+            if ($moneyReceived->isInvoiceSettlementWithDownPayment()) {
+                $items->push($moneyReceived);
+            }
             foreach ($items as $settlementOrMoneyModel) {
                 if ($settlementOrMoneyModel->account_bank_statement_line_id) {
                     $OdooPaymentService->unlinkBankCollection($settlementOrMoneyModel->account_bank_statement_line_id);
@@ -804,11 +830,13 @@ class MoneyReceivedController
             }
         }
 
-        if ($hasOdooIntegration) {
-            
-            // foreach ($moneyReceived->settlements as $settlement) {
-            //     $OdooPaymentService->reCreatePayment($settlement);
-            // }
+        if ($hasOdooIntegration && $isOpenBalance) {
+            $moneyReceived->unlinkNonCustomerOrSupplierOdooExpense();
+            $moneyReceived->update([
+            'odoo_reference'=>null,
+            'journal_entry_id'=>null ,
+            'account_bank_statement_line_id'=>null
+            ]);
         }
 
         
@@ -825,7 +853,7 @@ class MoneyReceivedController
         if ($hasOdooIntegration) {
             $OdooPaymentService = new OdooPayment($company);
         }
-        
+        $isOpeningBalance = $moneyReceived->isOpenBalance();
         $moneyReceived->cheque->update([
             'status'=>Cheque::IN_SAFE,
             'deposit_date'=>null ,
@@ -836,10 +864,16 @@ class MoneyReceivedController
             'expected_collection_date'=>null ,
             'clearance_days'=>null
         ]);
-        if ($hasOdooIntegration) {
+        
+        if ($hasOdooIntegration && !$isOpeningBalance) {
             foreach ($moneyReceived->settlements as $settlement) {
                 $OdooPaymentService->reCreatePayment($settlement);
             }
+            if ($moneyReceived->isInvoiceSettlementWithDownPayment()) {
+                $odooPaymentService = new OdooPayment($company);
+                $odooPaymentService->recreateDownPayment($moneyReceived);
+            }
+                    
         }
         return redirect()->route('view.money.receive', ['company'=>$company->id,'active'=>MoneyReceived::CHEQUE])->with('success', __('Cheque Is Returned To Safe'));
     }

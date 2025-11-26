@@ -985,7 +985,6 @@ $(document).on('change','select.department-class',function(){
 			for(var positionId in positionArr){
 				positionId = positionId;
 				var selected = currentSelected.includes(positionId);
-				console.log(currentSelected,positionId,selected,'--')
 				options+=`<option ${selected ? 'selected':''} value="${positionId}">${positionArr[positionId]}</option>`
 			}
 			$(positionRow).empty().append(options).trigger('change');
@@ -1012,7 +1011,6 @@ $(document).ready(function() {
         const table = $('#fixedAssets_repeater');
         const isReadonly = table.hasClass('readonly');
         
-		// console.log('save form',saveForm);
 
         if (isReadonly) {
 			table.removeClass('readonly').addClass('editable');

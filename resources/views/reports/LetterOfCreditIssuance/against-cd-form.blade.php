@@ -690,7 +690,6 @@ use App\Models\LetterOfCreditIssuance;
 		const lcIssuanceId = "{{ isset($model) ? $model->id : 0 }}" 
         const accountTypeId = $('select#account_type_id').val()
 		const cdOrTdAccountId = $('select[name="cd_or_td_id"]').val()
-		console.log(cdOrTdAccountId)
         const accountId = $('select[js-cd-or-td-account-number]').val()
 		const source = "{{ $source }}"
         $.ajax({

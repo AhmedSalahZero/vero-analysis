@@ -237,7 +237,6 @@
                                     <select name="termAndConditions[{{ $index }}][commission_interval]" class="form-control repeater-select">
                                         {{-- <option selected>{{__('Select')}}</option> --}}
                                         @foreach(getCommissionInterval() as $name => $nameFormatted )
-                                        {{ logger($name) }}
                                         <option value="{{ $name  }}" @if(isset($termAndCondition) && ($termAndCondition->getCommissionInterval() == $name ) ) selected @elseif(!isset($termAndCondition) && $name == 'monthly') selected @endif > {{ $nameFormatted }}</option>
                                         @endforeach
                                     </select>

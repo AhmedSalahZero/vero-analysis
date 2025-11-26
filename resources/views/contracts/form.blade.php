@@ -776,7 +776,6 @@ use App\Models\MoneyReceived ;
         percentage = percentage / 100;
         const parent = $(this).closest('[data-repeater-list="purchasesOrders"]');
         let amount = number_unformat($(parent).find('.js-recalculate-allocation-amount-js').val());
-		console.log(parent,percentage,amount)
         amount = amount ? amount : 0;
         $(this).closest('tr').find('.allocation-amount-class').val(percentage * amount)
 

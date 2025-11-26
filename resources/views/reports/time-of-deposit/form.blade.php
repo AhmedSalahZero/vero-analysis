@@ -373,7 +373,6 @@
                                     optionsWithSelect += ' <option '+selected+' value="' + id + '">' + accountNumber + '</option> '
                                 }
                                 $('select.js-append-current-accounts').empty().append(options)
-								console.log(optionsWithSelect)
                                 $('select.js-append-current-accounts-with-select').empty().append(optionsWithSelect)
                             }
                         })

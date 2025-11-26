@@ -64,7 +64,7 @@ use App\Models\MoneyReceived ;
 
                                 <div class="modal-footer">
                                     <button type="submit" href="{{ route('view.money.receive',['company'=>$company->id]) }}" id="js-search-id" type="submit" id="" class="btn btn-primary">{{ __('Search') }}</button>
-                                    <button  href="#" id="reset-search-id" type="button"  class="btn btn-primary">{{ __('Reset') }}</button>
+                                    <button href="#" id="reset-search-id" type="button" class="btn btn-primary">{{ __('Reset') }}</button>
                                 </div>
 
                             </form>
@@ -161,7 +161,7 @@ use App\Models\MoneyReceived ;
                                         <label>{{__('Net Balance')}} <span class="net-balance-date-js"></span> </label>
                                         <div class="kt-input-icon">
                                             <input value="0" type="text" disabled class="form-control net-balance-js" placeholder="{{__('Net Balance')}}">
-                                        
+
                                         </div>
                                     </div>
                                     <div class="col-md-2 mb-3">

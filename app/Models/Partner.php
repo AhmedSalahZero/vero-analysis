@@ -198,7 +198,12 @@ class Partner extends Model
 	
 	public static function getSuppliersForCompany(int $companyId){
 		return self::where('company_id',$companyId)->where('is_supplier',1)->orderBy('name')->pluck('name','id');
+		
 	} 
+	public  static function getSuppliersForCompanyFormattedForSelect(Company $company)
+	{
+		return self::where('company_id', $company->id)->where('is_supplier',1)->orderBy('name','asc')->get()->formattedForSelect(true, 'getId', 'getName');
+	}
 	public static function findByOdooId(int $id,int $companyId){
 		return self::where('odoo_id',$id)->where('is_tax',0)->where('company_id',$companyId)->first();
 	}

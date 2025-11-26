@@ -480,7 +480,6 @@ td {
 <script>
 $(function(){
 	   $(document).on('blur','.editable',function(){
-					console.log('here');
                         var columnIndex = this._DT_CellIndex  ? this._DT_CellIndex.column : 0 ;
                         var tdData = $(this).closest('table').find('.header-th').eq(columnIndex)[0] ;
                         var dataTableId = $(this).closest('table.main-table-class').attr('id')  ;
@@ -493,7 +492,6 @@ $(function(){
                         var isJson = $(tdData).data('is-json');
                         var relationName = $(tdData).data('relation-name') || $(this).data('relation-name');
                         var data = $(this).text();
-	console.log(tdData ,isRelation,relationName,modelName )
                         $.ajax({
                                 url:"{{ route('admin.edit.table.cell',getCurrentCompanyId()) }}",
                                 data:{

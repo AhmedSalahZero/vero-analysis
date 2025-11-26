@@ -331,14 +331,20 @@ $(document).on('change', '.js-update-account-number-based-on-account-type', func
 	const lang = $('body').attr('data-lang')
 	const companyId = $('body').attr('data-current-company-id')
 	const repeaterParentIfExists = $(this).closest('[data-repeater-item]')
-	const parent = repeaterParentIfExists.length ? repeaterParentIfExists : $(this).closest('.kt-portlet__body')
+	let parent = repeaterParentIfExists.length ? repeaterParentIfExists : $(this).closest('.kt-portlet__body')
+	if($(this).closest('.closest-parent-class').length){
+		parent = $(this).closest('.closest-parent-class');
+	}
 	const moneyType = $(this).closest('form').attr('data-money-type')
 	let currency = $(this).closest('form').find('select.current-currency').val()
 	currency = currency ? currency : $('input[type="hidden"].current-currency').val();	 
 	currency = currency ? currency : $('.js-send-to-collection[data-money-type="' + moneyType + '"]').closest('tr').find('[data-currency]').attr('data-currency')
 	currency = currency ? currency : $(this).closest('.kt-portlet__body').find('.current-currency').val();
 	currency = currency ? currency : $(this).closest('[data-repeater-item]').find('.select-for-currency').val();
+	currency = currency ? currency: $(this).closest('.closest-parent-class').find('.select-for-currency').val();
+	
 	let financialInstitutionBankId = parent.find('[data-financial-institution-id]').val()
+	console.log(financialInstitutionBankId , currency);
 	financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $('[data-financial-institution-id]').val()
 	if (!val || !currency || !financialInstitutionBankId) {
 		return
@@ -413,7 +419,14 @@ $(document).on('change', '.js-update-account-id-based-on-account-type', function
 
 
 $(document).on('change', '[js-when-change-trigger-change-account-type]', function () {
+
 	let parent = $(this).closest('.kt-portlet__body').find('.js-update-account-number-based-on-account-type') ;
+	// if($(this).closest('.closest-parent-class').length){
+	// 	parent= $(this).closest('.closest-parent-class').length;
+	// 	$(parent).find('.js-update-account-number-based-on-account-type').trigger('change')
+	// 	return ;
+		
+	// }
 	
 	$('.js-update-account-number-based-on-account-type').trigger('change')
 	if(parseInt(parent)){

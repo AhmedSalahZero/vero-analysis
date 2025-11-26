@@ -444,7 +444,6 @@ use App\Models\NonBankingService\Expense;
         $('.js-type-btn').removeClass('active');
         $(this).addClass('active');
         $('.parent-card').hide();
-        console.log(mainCardId)
         $('[data-card-id="' + mainCardId + '"]').show();
     })
     $(function() {

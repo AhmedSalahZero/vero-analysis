@@ -348,7 +348,7 @@ use App\Models\MoneyReceived;
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($receivedChequesUnderCollection as $moneyReceived)
+                                @foreach($receivedChequesUnderCollection->sortByDesc('cheque.deposit_date') as $moneyReceived)
                                 <tr>
   									 <td class="text-wrap bank-max-width">{{ $moneyReceived->getMoneyTypeFormatted() }}</td>
                                     <td class="bank-max-width">{{ $moneyReceived->getCustomerName() }}</td>
@@ -525,7 +525,7 @@ use App\Models\MoneyReceived;
                                     <th class="align-middle">{{ __('Cheque Number') }}</th>
                                     <th class="align-middle">{{ __('Cheque Amount') }}</th>
                                     <th class="align-middle">{{ __('Due Date') }}</th>
-                                    <th class="align-middle">{{ __('Deposit Date') }}</th>
+                                    <th class="align-middle">{{ __('Collection Date') }}</th>
                                     <th class="bank-max-width align-middle">{{ __('Drawal Bank') }}</th>
                                     <th class="align-middle bank-max-width">{{ __('Account Type') }}</th>
                                     <th class="align-middle">{{ __('Account Number') }}</th>
@@ -535,7 +535,7 @@ use App\Models\MoneyReceived;
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($collectedCheques as $moneyReceived)
+                                @foreach($collectedCheques->sortByDesc('cheque.deposit_date') as $moneyReceived)
                                 <tr>
  									  <td class="text-wrap bank-max-width">{{ $moneyReceived->getMoneyTypeFormatted() }}</td>
                                     <td class="bank-max-width">{{ $moneyReceived->getCustomerName() }}</td>

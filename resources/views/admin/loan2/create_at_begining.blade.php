@@ -1072,7 +1072,6 @@ tbody td{
 
         let stepFactor = calcStepFactor(period, interval, new Date(installmentStartDate.getTime()), addMonths(new Date(start_date_formatted.getTime()), (period ? (getIsFixedAtBeginning() ? period - installment_payment_interval : period) : 0))); // object
         let daysCount = calDaysCount(new Date(start_date_formatted.getTime()), period, installment_payment_interval);
-		console.log(daysCount);
         let pricing = parseFloat($('#pricing').val()) / 100
         let intersetFactor = calcIntersetFactor(daysCount, pricing);
         let loanFactories = calcLoanFactor(fixedType, loanAmount, intersetFactor, gracePeriod, installment_payment_interval, new Date(start_date_formatted.getTime()), period
@@ -1245,7 +1244,6 @@ tbody td{
 
         }
 
-        console.log(stepFactor);
 
         return {
             "stepFactors": stepFactor
@@ -1399,7 +1397,6 @@ tbody td{
 
 
         }
-        // console.log(installmentFactors);
         return {
             "installmentFactors": installmentFactors
         };

@@ -1465,7 +1465,6 @@ $fixedVariableExpenseCoefficientCorrelations[$name][$subItemName] = 0;
 			chartDataArr = {};
 		}
 	
-		console.log('ddd',chartDataArr);
  		  am4core.registry.baseSprites.find(c => c.htmlContainer.id === currentChartId).data = chartDataArr		
     })
 

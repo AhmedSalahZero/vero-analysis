@@ -23,11 +23,11 @@ class CashExpenseOdooService
         return null ;
     }
     
-    protected function createAndPostJournalEntry(?string $subCategoryName, string $date, float $amountInCurrency, float $amountInMainFunctionalCurrency, int $odooCurrencyId, int $journalId, int $debitOdooAccountId, int $creditOdooAccountId, array $analytic_distribution, ?string $ref, ?int $partner_id, ?string $message,$paymentRef=null)
+    protected function createAndPostJournalEntry(?string $subCategoryName, string $date, float $amountInCurrency, float $amountInMainFunctionalCurrency, int $odooCurrencyId, int $journalId, int $debitOdooAccountId, int $creditOdooAccountId, array $analytic_distribution, ?string $ref, ?int $partner_id, ?string $message, $paymentRef=null,$isMoneyReceived=false)
     {
         $id = null ;  // in edit mode
             
-        $journalEntryData = $this->getDataFormatted($subCategoryName, $date, $amountInCurrency, $amountInMainFunctionalCurrency, $odooCurrencyId, $journalId, $debitOdooAccountId, $creditOdooAccountId, $analytic_distribution, $ref, $partner_id, $message, $id,$paymentRef) ;
+        $journalEntryData = $this->getDataFormatted($subCategoryName, $date, $amountInCurrency, $amountInMainFunctionalCurrency, $odooCurrencyId, $journalId, $debitOdooAccountId, $creditOdooAccountId, $analytic_distribution, $ref, $partner_id, $message, $id, $paymentRef,$isMoneyReceived) ;
 
         $context = [
             'check_move_validity' => true,
@@ -62,10 +62,10 @@ class CashExpenseOdooService
         return [
             'account_bank_statement_line_id'=>$accountBankStatementLineId,
             'journal_entry_id'=>$journalEntryId,
-			'reference'=>$statementData[0]['move_id'][1]??null
+            'reference'=>$statementData[0]['move_id'][1]??null
         ];
     }
-    protected function getDataFormatted(?string $subCategoryName, string $date, float $amountInCurrency, float $amountInMainFunctionalCurrency, int $odooCurrencyId, int $journalId, int $debitOdooAccountId, int $creditOdooAccountId, array $analytic_distribution, ?string $ref, ?int $partner_id, ?string $message, int $id = null , $paymentRef = null):array
+    protected function getDataFormatted(?string $subCategoryName, string $date, float $amountInCurrency, float $amountInMainFunctionalCurrency, int $odooCurrencyId, int $journalId, int $debitOdooAccountId, int $creditOdooAccountId, array $analytic_distribution, ?string $ref, ?int $partner_id, ?string $message, int $id = null, $paymentRef = null, $isMoneyReceived = false):array
     {
         $inEditMode = is_null($id) ? 0 : 1;
         $id = is_null($id) ? 0 : $id ;
@@ -81,7 +81,7 @@ class CashExpenseOdooService
         }
         $data = [
                        'journal_id' => $journalId, // account journal id (safe or bank journal id )
-                       'amount' => -$amountInCurrency,
+                       'amount' =>$isMoneyReceived ?  $amountInCurrency : -$amountInCurrency,
                        'date' => $date,
                       'partner_id' => $partner_id,
                        'ref' =>  $ref, // create lg type
@@ -114,12 +114,12 @@ class CashExpenseOdooService
         return $data;
     }
     
-    public function createCashExpense(?string $subCategoryName, string $date, float $amountInCurrency, float $amountInMainFunctionalCurrency, int $journalId, int $odooCurrencyId, int $debitOdooAccountId, int $creditOdooAccountId, $analytic_distribution,$paymentRef=null)
+    public function createCashExpense(?string $subCategoryName, string $date, float $amountInCurrency, float $amountInMainFunctionalCurrency, int $journalId, int $odooCurrencyId, int $debitOdooAccountId, int $creditOdooAccountId, $analytic_distribution, $paymentRef=null, $odooPartnerId = null,$isMoneyReceived = false)
     {
         $ref = $this->getRef();
         $message =$this->getMessage();
-        $odooPartnerId = $this->getOdooPartnerId();
-        return $this->createAndPostJournalEntry($subCategoryName, $date, $amountInCurrency, $amountInMainFunctionalCurrency, $odooCurrencyId, $journalId, $debitOdooAccountId, $creditOdooAccountId, $analytic_distribution, $ref, $odooPartnerId, $message,$paymentRef);
+       
+        return $this->createAndPostJournalEntry($subCategoryName, $date, $amountInCurrency, $amountInMainFunctionalCurrency, $odooCurrencyId, $journalId, $debitOdooAccountId, $creditOdooAccountId, $analytic_distribution, $ref, $odooPartnerId, $message, $paymentRef,$isMoneyReceived);
        
     }
     protected function getAnalysisAccountIds(array $analytic_distribution):array
@@ -131,11 +131,11 @@ class CashExpenseOdooService
             }
         }
         // Wrap in outer array with 6 and 0
-		if(count($distribution_analytic_account_ids)){
-			$distribution_analytic_account_ids = [[6, 0, ...$distribution_analytic_account_ids]];
-		}else{
-			$distribution_analytic_account_ids = [[6, 0, []]];
-		}
+        if (count($distribution_analytic_account_ids)) {
+            $distribution_analytic_account_ids = [[6, 0, ...$distribution_analytic_account_ids]];
+        } else {
+            $distribution_analytic_account_ids = [[6, 0, []]];
+        }
         return $distribution_analytic_account_ids;
     }
     

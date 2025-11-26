@@ -723,7 +723,6 @@ td.padding-left-0{
                                                     }
                                                     , {
                                                         render: function(d, b, row) {
-															console.log(row)
                                                             return row['revenueBusinessLineName']
                                                         }
                                                         , data: 'order'

@@ -136,7 +136,6 @@ class Contract extends Model
                  * * overdraft against assignment of contract
                  */
                 // if ($model->isRunningAndAgainst() && $currentAccountType && !$currentAccountType->isOverdraftAgainstAssignmentOfContractAccount()) {
-				// 	logger('from fff');
 					
                 //     $model->deleteOverdraftAgainstAssignmentOfContractsLimits();
                 //     return ;
@@ -152,7 +151,6 @@ class Contract extends Model
                  * *
                  */
                 // if ($model->isRunningAndAgainst() && $currentAccountType && $currentAccountType->isOverdraftAgainstAssignmentOfContractAccount() && !$model->overdraftAgainstAssignmentOfContractLimits->count() && $oldAccountType && !$oldAccountType->isOverdraftAgainstAssignmentOfContractAccount()) {
-				// 	logger('from bbb');
 					
                 //     $model->handleOverdraftAgainstAssignmentOfContractLimit();
 
@@ -164,7 +162,6 @@ class Contract extends Model
                  * * وحطها في حساب تاني حتى لو كانت بنك مختلف
                  */
                 // if ($model->isRunningAndAgainst() && $oldAccountType && $oldAccountType->isOverdraftAgainstAssignmentOfContractAccount() && $currentAccountType && $currentAccountType->isOverdraftAgainstAssignmentOfContractAccount() && $currentAccountNumber != $oldAccountNumber) {
-				// 	logger('from lllt');
 					
                 //     $model->overdraftAgainstAssignmentOfContractLimits->each(function ($overdraftAgainstAssignmentOfContract) use ($model, $currentAccountNumber) {
                 //         $overdraftAgainstAssignmentOfContract->update([
@@ -181,7 +178,6 @@ class Contract extends Model
                 if ($model->isRunningAndAgainst() 
 				// && $currentAccountType->isOverdraftAgainstAssignmentOfContractAccount()
 			 	&& !$model->overdraftAgainstAssignmentOfContractLimits->count()) {
-				//	logger('from tty');
 					
                     $model->handleOverdraftAgainstAssignmentOfContractLimit();
                     return ;

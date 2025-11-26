@@ -27,7 +27,7 @@ class OpeningBalancesController extends Controller
     
     public function store(Company $company, StoreOpeningBalancesRequest $request, Study $study)
     {
-        
+		
         $study->storeRepeaterRelations($request, ['fixedAssetOpeningBalances','cashAndBankOpeningBalances','otherDebtorsOpeningBalances','vatAndCreditWithholdTaxesOpeningBalances'
         ,'supplierPayableOpeningBalances','otherCreditorsOpeningBalances','otherLongTermAssetsOpeningBalances','otherLongTermLiabilitiesOpeningBalances','equityOpeningBalances','longTermLoanOpeningBalances'
          ], $company, ['study_id'=>$study->id]);

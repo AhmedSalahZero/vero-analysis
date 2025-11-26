@@ -96,6 +96,7 @@ class PayableCheque extends Model
 	{
 		return $this->getChequeNumber();
 	}
+	
 	public function setActualPaymentDateAttribute($value)
 	{
 		if(!$value){

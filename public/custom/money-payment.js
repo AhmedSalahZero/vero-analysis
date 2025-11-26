@@ -479,6 +479,7 @@ $(document).on('change', '.js-update-account-number-based-on-account-type', func
 
 })
 $(document).on('change', '[js-when-change-trigger-change-account-type]', function () {
+	
 	$(this).closest('.kt-portlet__body').find('.js-update-account-number-based-on-account-type').trigger('change')
 })
 $(function () {
@@ -645,7 +646,6 @@ function showOrHideTransaction(partnerColumnName)
 			options = `<option ${currentSelect == 'pay-to' ? 'selected' :''}  value="pay-to">Pay To</option>`
 		
 		}
-		console.log(partnerColumnName,options)
 		
 		$('#transaction-type-parent').find('select').empty().append(options);
 		

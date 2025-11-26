@@ -1018,7 +1018,6 @@ use App\Models\Contract;
                 for (var contract of res.contracts) {
                     contracts += `<option ${currentSelected ==contract.id ? 'selected' :'' } value="${contract.id}" data-code="${contract.code}" data-amount="${contract.amount}" data-start-date="${contract.start_date}" data-end-date="${contract.end_date}" data-currency="${contract.currency}" >${contract.name}</option>`;
                 }
-                console.log(parent.find('select.contracts-js').length)
                 parent.find('select.contracts-js').empty().append(contracts).trigger('change')
             }
         })

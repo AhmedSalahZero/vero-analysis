@@ -56,9 +56,7 @@ class MoneyPaymentOdooService
             if (!is_numeric($accountBankStatementLineId)) {
                 throw new Exception("Failed to create journal entry: " . json_encode($accountBankStatementLineId));
             }
-			// logger('yes-from4');
 			if($partner_id){
-			//	logger('no-from7');
 				$this->updatePartner($partner_id,$moveId,$context);
 			}
 			

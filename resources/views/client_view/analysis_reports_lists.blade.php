@@ -272,7 +272,6 @@
 														@continue
 													@endif
 														
-														{{ logger($sub_section->id ) }}
 														
 														
 														@if($user->canViewReport($sub_section->name['en'])

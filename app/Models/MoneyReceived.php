@@ -775,6 +775,10 @@ class MoneyReceived extends Model
 	{
 		$moneyType = $this->getMoneyType();
 		$partnerType = $this->getPartnerType();
+		if($this->isOpenBalance()){
+			return __('From Opening');
+		}
+		
 		if($moneyType == 'money-received'){
 			$moneyType = 'invoice-settlement';
 		}

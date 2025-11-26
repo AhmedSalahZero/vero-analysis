@@ -405,12 +405,6 @@ class CustomerInvoice extends Model implements IInvoice
 			;
 		})
 		->selectRaw($columnNames)->get();
-		if($chequeStatus == Cheque::COLLECTED){
-			// dd($rows,$contractCode);
-		}
-		
-		// if($moneyType == MoneyReceived::INCOMING_TRANSFER){
-		// }
 		foreach($rows as $row){
 			$receivingDate = $row->receiving_date;
 			$receivingCurrency = $row->receiving_currency;

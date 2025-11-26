@@ -51,8 +51,9 @@ trait HasNonCustomerOrSupplier
     {
         $company = $this->company ;
         $journalEntryId = $this->journal_entry_id;
-        
+      
         if ($company->hasOdooIntegrationCredentials() && $journalEntryId) {
+		
             $moneyPaymentOdooService = new MoneyPaymentOdooService($company);
             $moneyPaymentOdooService->unlink($journalEntryId);
         } elseif ($company->hasOdooIntegrationCredentials()) {

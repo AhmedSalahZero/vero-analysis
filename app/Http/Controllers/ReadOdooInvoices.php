@@ -15,6 +15,7 @@ class ReadOdooInvoices extends Controller
 		$startDate = $request->get('odoo_start_date');
 		$endDate = $request->get('odoo_end_date');
 		try{
+			$odoo->startImportContracts($startDate,$endDate,$company->id);
 			$odoo->startImportInvoices($startDate,$endDate,$company->id);
 		}catch(\Exception $e){
 			session()->put('fail', $e->getMessage());

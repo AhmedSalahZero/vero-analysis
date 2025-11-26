@@ -87,14 +87,7 @@ trait HasBasicStoreRequest
 			if(!isset($data['id']) || $data['id'] == 0){
 				unset($data['id']);
 				$currentDataArr = $this->filterTableColumnThatExistsOnly($connectionName,$relationTableName,array_merge($data,$additionRelationData));
-				// if(count($currentDataArr)){
-					
-				// }
-				// try{
-				// logger($relationName);
-				// if($relationName == 'cashAndBankOpeningBalances'){
-				// 	dd($currentDataArr);
-				// }
+				
 				$this->$relationName()->create($currentDataArr);
 				// }
 				// catch(\Exception $e){

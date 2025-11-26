@@ -32,9 +32,15 @@ class UnappliedAmountForContractAsDownPaymentRule implements ImplicitRule
      */
     public function passes($attribute, $value)
     {
+		if(is_null($value)){
+			return true;
+		}
 		$isMoneyReceivedForm = Request()->has('received_amount');
 		$receivedAmountOrPaidAmountKeyName = $isMoneyReceivedForm ? 'received_amount' : 'paid_amount';
 		$receivingOrPaymentCurrencyName = $isMoneyReceivedForm ? 'receiving_currency':'payment_currency';
+		// if($this->isOpenBalance()){
+			
+		// }
 		$totalPaidAmountForContract = array_sum(array_column($value,$receivedAmountOrPaidAmountKeyName));
 		
 		if($this->is_down_payment){
