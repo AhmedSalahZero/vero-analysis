@@ -44,7 +44,6 @@ trait HasBasicFilter
 				if(is_null($value)){
 					return true;
 				}
-				// dd($currentValue,$value);
 				return false !== stristr($currentValue , $value);
 			});
 		})

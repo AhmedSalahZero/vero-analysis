@@ -53,9 +53,9 @@ trait HasPeriodicInterest
 			$this->deletePeriodInterest($currentAccountBankStatement);
 		}
     }
-    public function storePeriodInterestOdooRelations($accountStatement , string $periodInterestDate, float $amount , $financialInstitutionId = null , $financialInstitutionAccountId = null)
+    public function storePeriodInterestOdooRelations($accountStatement , string $periodInterestDate, float $amount , $financialInstitutionId = null , $financialInstitutionAccountId = null,$company = null)
     {
-        $company = $this->company;
+        $company = is_null($company) ?  $this->company : $company;
         $financialInstitutionId = is_null($financialInstitutionId) ?  $this->financial_institution_id : $financialInstitutionId;
 		$financialInstitutionAccountId = is_null($financialInstitutionAccountId) ? $this->maturity_amount_added_to_account_id : $financialInstitutionAccountId;
         $financialInstitutionAccount = FinancialInstitutionAccount::find($financialInstitutionAccountId);
@@ -70,7 +70,7 @@ trait HasPeriodicInterest
         $odooCurrencyId = Currency::getOdooId($currencyName);
         $debitOdooAccountId = $financialInstitutionAccount->odoo_id;
         $paymentRef = __('Interest Revenue');
-        $result = $cashExpenseOdooService->createCashExpense(null, $date, $amountInCurrency, $amountInMainFunctionalCurrency, $journalId, $odooCurrencyId, $debitOdooAccountId, $creditOdooAccountId,[],$paymentRef);
+        $result = $cashExpenseOdooService->createCashExpense(null, $date, $amountInCurrency, $amountInMainFunctionalCurrency, $journalId, $odooCurrencyId, $debitOdooAccountId, $creditOdooAccountId,[],$paymentRef,null,true);
         // $accountStatement->interest_account_bank_statement_odoo_id=$result['account_bank_statement_line_id'];
         $accountStatement->interest_journal_entry_id=$result['journal_entry_id'];
         $accountStatement->interest_odoo_reference=$result['reference'];

@@ -163,7 +163,6 @@ class CashFlowReportController
 		}
 		
 		  CustomerInvoice::getProjectionOtherCashIn($result ,$company,$cashflowReportId,$isContract) ;
-		//   dd($result);
 		  /**
 		   * ! start postponed
 		   */

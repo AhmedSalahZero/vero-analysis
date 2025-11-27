@@ -56,7 +56,7 @@ public function createJournalEntry(
         $this->execute('account.move', 'action_post', [$moveId]);
     }
 
-    dd('Journal Entry Created & Posted', $moveId);
+ //     dd('Journal Entry Created & Posted', $moveId);
 
     return $moveId;
 }

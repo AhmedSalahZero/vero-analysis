@@ -57,6 +57,11 @@
             width: 9% !important;
             flex: initial !important;
         } 
+		  .width-30 {
+            max-width: 225px !important;
+            width: 225px !important;
+    
+        } 
 		.width-2000{
 			width:3000px !important;
 		}

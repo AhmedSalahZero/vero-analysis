@@ -262,7 +262,7 @@ class BankStatementController
 		if($bankStatementRecord && $bankStatementRecord->interest_journal_entry_id){
 			(new CashExpenseOdooService($company))->unlink($bankStatementRecord->interest_journal_entry_id);
 		}
-		(new TimeOfDeposit())->storePeriodInterestOdooRelations($bankStatementRecord,$date,$debit,$financialInstitutionId , $financialInstitutionAccountId);
+		(new TimeOfDeposit())->storePeriodInterestOdooRelations($bankStatementRecord,$date,$debit,$financialInstitutionId , $financialInstitutionAccountId,$company);
         $bankStatementRecord->handleFullDateAfterDateEdit($date, $debit, $credit);
         return redirect()->back()->with('success', __('Data Updated Successfully'));
     }

@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Http\Controllers\LetterOfGuaranteeIssuanceController;
 use App\Models\Company;
 use App\Models\FinancialStatement;
 use App\Models\LetterOfGuaranteeIssuance;
@@ -55,6 +56,10 @@ class TestCommand extends Command
 	}
 	public function handle()
 	{
+		$letterOfGuaranteeIssuance = LetterOfGuaranteeIssuance::find(200);
+		$company = $letterOfGuaranteeIssuance->company;
+		$source = 'lg-facility';
+		(new LetterOfGuaranteeIssuanceController)->backToRunningStatus($company,new Request , $letterOfGuaranteeIssuance,$source);
 		// $fetch = (new OdooPayment(Company::find(92)));
 		// $x = $fetch->fetchData('account.bank.statement.line',[],[[['name','=','MISR/2025/00431']]]);
 		// dd($x);

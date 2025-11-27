@@ -126,7 +126,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle"> {!! __('Status') !!} </th>
 									
                                     <th class="text-center align-middle bank-max-width">{{ __('Bank Name') }}</th>
-                                    <th class="text-center align-middle">{{ __('LG Code') }}</th>
+                                    <th class="text-center align-middle width-30">{{ __('LG Code') }}</th>
                                     <th class="text-center align-middle"> {!! __('Transaction <br> Reference') !!} </th>
                                     <th class="text-center align-middle">{{ __('LG Amount') }}</th>
                                     <th class="text-center align-middle"> {!! __('Transaction <br> No Date') !!} </th>
@@ -158,7 +158,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 									
 									">{{ $model->getStatusFormatted() }}</td>
                                     <td class="bank-max-width">{{ $model->getFinancialInstitutionBankName() }}</td>
-                                    <td class="text-uppercase">{{ $model->getLgCode() }}</td>
+                                    <td class="text-uppercase width-30">{{ $model->getLgCode() }}</td>
                                     <td class="text-transform">{{ $model->getTransactionReference() }}</td>
                                     <td class="text-transform">{{ $model->getLgAmountFormatted() }} <br> {{ $model->getLgCurrency() }} </td>
                                     <td class="text-transform text-nowrap">{{ $model->getTransactionDateFormatted() }}</td>
@@ -245,7 +245,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle"> {!! __('Source') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Status') !!} </th>
                                     <th class="text-center align-middle bank-max-width">{{ __('Bank Name') }}</th>
-                                    <th class="text-center align-middle">{{ __('LG Code') }}</th>
+                                    <th class="text-center align-middle width-30">{{ __('LG Code') }}</th>
                                     <th class="text-center align-middle">{{ __('LG Amount') }}</th>
 							
                                     <th class="text-center align-middle"> {!! __('Purchase <br> No Date') !!} </th>
@@ -275,7 +275,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 									
 									"> {{ $model->getStatusFormatted() }}</td>
                                     <td class="bank-max-width">{{ $model->getFinancialInstitutionBankName() }}</td>
-                                    <td class="text-uppercase">{{ $model->getLgCode() }}</td>
+                                    <td class="text-uppercase width-30">{{ $model->getLgCode() }}</td>
                                     <td class="text-transform">{{ $model->getLgAmountFormatted() }}  <br> {{ $model->getLgCurrency() }} </td>
                                     <td class="text-transform text-nowrap">{{ $model->getPurchaseOrderDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
@@ -354,7 +354,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle"> {!! __('Source') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Status') !!} </th>
                                     <th class="text-center align-middle bank-max-width">{{ __('Bank Name') }}</th>
-                                    <th class="text-center align-middle">{{ __('LG Code') }}</th>
+                                    <th class="text-center align-middle width-30">{{ __('LG Code') }}</th>
                                     <th class="text-center align-middle">{{ __('LG Amount') }}</th>
                                     <th class="text-center align-middle">{{ __('LG Current Amount') }}</th>
                                     <th class="text-center align-middle"> {!! __('Purchase <br> No Date') !!} </th>
@@ -384,7 +384,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 									
 									">{{ $model->getStatusFormatted() }}</td>
                                     <td class="bank-max-width">{{ $model->getFinancialInstitutionBankName() }}</td>
-                                    <td class="text-uppercase">{{ $model->getLgCode() }}</td>
+                                    <td class="text-uppercase width-30">{{ $model->getLgCode() }}</td>
                                     <td class="text-transform">{{ $model->getLgAmountFormatted() }}  <br> {{ $model->getLgCurrency() }} </td>
                                     <td class="text-transform">{{ $model->getLgCurrentAmountFormatted() }} <br> {{ $model->getLgCurrency() }} </td>
                                     <td class="text-transform text-nowrap">{{ $model->getPurchaseOrderDateFormatted() }}</td>
@@ -470,7 +470,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle"> {!! __('Source') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Status') !!} </th>
                                     <th class="text-center align-middle bank-max-width">{{ __('Bank Name') }}</th>
-                                    <th class="text-center align-middle">{{ __('LG Code') }}</th>
+                                    <th class="text-center align-middle width-30">{{ __('LG Code') }}</th>
                                     <th class="text-center align-middle">{{ __('LG Amount') }}</th>
                                     <th class="text-center align-middle">{!! __('Purchase <br> No Date') !!} </th>
                                     <th class="text-center align-middle">{{ __('Issuance Date') }}</th>
@@ -499,7 +499,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 									
 									">{{ $model->getStatusFormatted() }}</td>
                                     <td class="bank-max-width">{{ $model->getFinancialInstitutionBankName() }}</td>
-                                    <td class="text-uppercase">{{ $model->getLgCode() }}</td>
+                                    <td class="text-uppercase width-30">{{ $model->getLgCode() }}</td>
                                     <td class="text-transform">{{ $model->getLgAmountFormatted() }}  <br> {{ $model->getLgCurrency() }} </td>
 
                                     <td class="text-transform text-nowrap">{{ $model->getPurchaseOrderDateFormatted() }}</td>

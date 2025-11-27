@@ -471,7 +471,7 @@ class LetterOfGuaranteeIssuance extends Model
         
         if ($company->hasOdooIntegrationCredentials()) {
             $odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company);
-            foreach (['journal_entry_id','commission_fees_journal_entry_id','issuance_fees_journal_entry_id','renewal_fees_journal_entry_id'] as $journalColumnName) {
+            foreach (['journal_entry_id','commission_fees_journal_entry_id','issuance_fees_journal_entry_id','renewal_fees_journal_entry_id','cancel_journal_entry_id'] as $journalColumnName) {
                 $currentJournalEntryId = $this->{$journalColumnName};
                 if ($currentJournalEntryId) {
                     $odooLetterOfGuaranteeIssuance->unlink($currentJournalEntryId);
@@ -760,7 +760,6 @@ class LetterOfGuaranteeIssuance extends Model
         }
         $result = [];
         $projectAccountId = $contract->project_account_id ;
-        // dd($contract,$projectAccountId);
         if ($projectAccountId) {
             $result[strval($projectAccountId)] =(float)100;
         }
@@ -770,7 +769,7 @@ class LetterOfGuaranteeIssuance extends Model
         return $result;
             
     }
-    public function cancelOdooLg($cancellationDate , $cashCoverAmount , $ref, $message,$letterOfGuaranteeIssuanceAdvancedPaymentHistory = null )
+    public function cancelOdooLg($cancellationDate , $cashCoverAmount , $ref, $message,$letterOfGuaranteeIssuanceAdvancedPaymentHistory = null , $journalEntryIdColumnName = 'journal_entry_id' )
     {
 		$model = $letterOfGuaranteeIssuanceAdvancedPaymentHistory ? $letterOfGuaranteeIssuanceAdvancedPaymentHistory : $this;
         $financialInstitutionId = $this->financial_institution_id ;
@@ -778,7 +777,7 @@ class LetterOfGuaranteeIssuance extends Model
         $company = $this->company;
         $isCdOrTdCashCoverAccount = $this->isCdOrTd();
         $odooLetterOfGuaranteeIssuance = null ;
-        foreach (['journal_entry_id'] as $journalColumnName) {
+        foreach ([$journalEntryIdColumnName] as $journalColumnName) {
             $currentJournalEntryId = $this->{$journalColumnName};
             $odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company);
             if ($currentJournalEntryId) {
@@ -798,7 +797,7 @@ class LetterOfGuaranteeIssuance extends Model
            // $amount = ;
             $result = $odooLetterOfGuaranteeIssuance->createLgCancelCashCover($cancellationDate, $cashCoverAmount, $journalId, $odooCurrencyId, $lgOdooAccountId, $accountOdooId, $this->getBeneficiaryOdooId(), $ref, $message);
        //     $model->account_bank_statement_odoo_id=$result['account_bank_statement_line_id'];
-            $model->journal_entry_id=$result['journal_entry_id'];
+            $model->{$journalEntryIdColumnName}=$result['journal_entry_id'];
             $model->save();
             
         }
