@@ -32,7 +32,7 @@
             return;
         }
         $.ajax({
-            url: "{{route('update.contracts.based.on.customer',['company'=>$company->id])}}"
+            url: "{{route('update.contracts.based.on.customer',['company'=>$company->id,'is_lc'=>1])}}"
             , data: {
                 customerId
             , }

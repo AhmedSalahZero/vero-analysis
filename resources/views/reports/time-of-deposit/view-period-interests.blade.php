@@ -139,6 +139,9 @@ use Carbon\Carbon;
 </style>
 @endsection
 @section('sub-header')
+{{-- dd --}}
+
+	
 <x-main-form-title :id="'main-form-title'" :class="''">{{ __('Period Interest Amounts') }}</x-main-form-title>
 @endsection
 @section('content')
@@ -148,7 +151,12 @@ use Carbon\Carbon;
 
         <div class="kt-portlet">
 
-
+ <x-back-to-bank-header-btn
+	:create-permission-name="''" :create-route="''" 
+	:title="__('Back To TDs Table')"
+	:route="route('view.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id])"
+	></x-back-to-bank-header-btn>
+	
             <div class="kt-portlet__body">
 
                 @php

@@ -144,6 +144,7 @@ class ContractsController
 	}
 	public function updateContractsBasedOnCustomer(Request $request , Company $company ){
 		$customer = Partner::find($request->get('customerId'));
+		$isFromLc = $request->boolean('is_lc');
 		if(!$customer){
 			return response()->json([
 				'contracts'=>[]
@@ -152,10 +153,13 @@ class ContractsController
 		$contracts = $customer->contracts;
 		$contractFormatted = [];
 		foreach($contracts as $contract){
-			$contractFormatted[$contract->name] = [
-				'id'=>$contract->id ,
-				'currency'=>$contract->getCurrency()
-			];
+			$contractCanBeReturned= $isFromLc ? $contract->forSupplier()  :$contract->forCustomer();
+			if($contractCanBeReturned){
+				$contractFormatted[$contract->name] = [
+					'id'=>$contract->id ,
+					'currency'=>$contract->getCurrency()
+				];
+			}
 		}
 		$isCustomer = $customer->is_customer ;
 		return response()->json([

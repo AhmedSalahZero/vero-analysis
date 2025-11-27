@@ -6670,7 +6670,7 @@ function getHeaderMenu($currentCompany = null)
             'is-notification'=>true
         ],
         'cash-dashboard'=>[
-            'title'=>__('Cash Dashboard'),
+            'title'=>__('Dashboard'),
             'show'=>$canViewCashDashboard ,
             'link'=>'#',
             'submenu'=>[
