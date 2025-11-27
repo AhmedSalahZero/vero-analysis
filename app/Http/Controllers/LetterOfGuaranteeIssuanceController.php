@@ -308,9 +308,9 @@ class LetterOfGuaranteeIssuanceController
         LetterOfGuaranteeCashCoverStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->letterOfGuaranteeCashCoverStatements->where('type', LetterOfGuaranteeIssuance::FOR_CANCELLATION));
 		
 		$isAdvancedPayment = $letterOfGuaranteeIssuance->isAdvancedPayment();
-		if(!$isAdvancedPayment){
-			LetterOfGuaranteeCashCoverStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->letterOfGuaranteeCashCoverStatements->where('type', 'debit-lg-amount'));
-		}
+		LetterOfGuaranteeCashCoverStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->letterOfGuaranteeCashCoverStatements->where('type', 'debit-lg-amount'));
+		// if(!$isAdvancedPayment){
+		// }
 		$cashCovertToBeRemovedRow = $letterOfGuaranteeIssuance->currentAccountBankStatements->where('lg_advanced_payment_history_id',0)->where('is_debit', 1)->first() ;
 		$cashCoverAmount  = $cashCovertToBeRemovedRow ? $cashCovertToBeRemovedRow->debit : 0;
 
