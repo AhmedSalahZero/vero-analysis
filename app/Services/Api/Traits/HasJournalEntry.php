@@ -1,15 +1,16 @@
 <?php
 namespace App\Services\Api\Traits;
 
+use App\Services\Api\Traits\HasAnalysisAccount;
 use Exception;
 
 trait HasJournalEntry
 {
 
-    public function createAndPostJournalEntry(string $date, float $amount, int $odooCurrencyId, int $journalId, int $debitOdooAccountId, int $creditOdooAccountId, ?string $ref, ?int $partnerId, ?string $message)
+    public function createAndPostJournalEntry(string $date, float $amount, int $odooCurrencyId, int $journalId, int $debitOdooAccountId, int $creditOdooAccountId, ?string $ref, ?int $partnerId, ?string $message, $analytic_distribution= [])
     {
         $id = null ;  // in edit mode
-        $journalEntryData = $this->getDataFormatted($date, $amount, $odooCurrencyId, $journalId, $debitOdooAccountId, $creditOdooAccountId, $ref, $partnerId, $message, $id) ;
+        $journalEntryData = $this->getDataFormatted($date, $amount, $odooCurrencyId, $journalId, $debitOdooAccountId, $creditOdooAccountId, $ref, $partnerId, $message, $id, $analytic_distribution) ;
 
         $context = [
             'check_move_validity' => true,
@@ -44,14 +45,17 @@ trait HasJournalEntry
         return [
             'account_bank_statement_line_id'=>$accountBankStatementLineId,
             'journal_entry_id'=>$journalEntryId,
-			'reference'=>$statementData[0]['move_id'][1]??null
+            'reference'=>$statementData[0]['move_id'][1]??null
         ];
     }
-    protected function getDataFormatted(string $date, float $amount, int $odooCurrencyId, int $journalId, int $debitOdooAccountId, int $creditOdooAccountId, ?string $ref, ?int $partnerId, ?string $message, int $id = null):array
+    protected function getDataFormatted(string $date, float $amount, int $odooCurrencyId, int $journalId, int $debitOdooAccountId, int $creditOdooAccountId, ?string $ref, ?int $partnerId, ?string $message, int $id = null, $analytic_distribution = []):array
     {
         $inEditMode = is_null($id) ? 0 : 1;
         $id = is_null($id) ? 0 : $id ;
-		
+        /**
+         * @var HasJournalEntry $this
+         */
+        $distribution_analytic_account_ids = getAnalysisAccountIds($analytic_distribution, $partnerId);
         return [
                'journal_id' => $journalId, // account journal id (safe or bank journal id )
                'amount' => $amount,
@@ -66,6 +70,9 @@ trait HasJournalEntry
                         'currency_id' => $odooCurrencyId,
                         'name' => $message , // cash cover
                         'partner_id' => $partnerId,
+                        'analytic_distribution' =>$analytic_distribution,   // 87  -> x_plan2_id     80 -> percentage   Allocate Amount / Paid Amount * 100     ,
+                        'distribution_analytic_account_ids' => $distribution_analytic_account_ids  ,
+                                    
                     ]],
                     [$inEditMode, $id+1, [
                         'account_id' => $creditOdooAccountId, // chart of account odoo id
@@ -74,6 +81,11 @@ trait HasJournalEntry
                         'currency_id' => $odooCurrencyId,
                         'name' => $message ,
                         'partner_id' => $partnerId,
+                        // 'analytic_distribution' => [],
+                        // 'distribution_analytic_account_ids' => [[6, 0, []]] ,
+                              'analytic_distribution' =>$analytic_distribution,   // 87  -> x_plan2_id     80 -> percentage   Allocate Amount / Paid Amount * 100     ,
+                        'distribution_analytic_account_ids' => $distribution_analytic_account_ids  ,
+                           
                     ]],
                 ],
             ];

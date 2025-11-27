@@ -296,7 +296,6 @@ class CurrentAccountBankStatement extends Model  implements IHaveStatement
 		
 		$statementStartDateAsCarbon = Carbon::make($statementDate)->startOfYear();
 		
-		//$isLastDayOfMonth = $contractStartDateAsCarbon->isSameDay($contractStartDateAsCarbon->endOfMonth());
 		
 		$statementEndDateAsCarbon= $statementStartDateAsCarbon->copy()->endOfYear();
 		

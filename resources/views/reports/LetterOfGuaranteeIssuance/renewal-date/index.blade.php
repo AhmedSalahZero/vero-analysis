@@ -358,13 +358,10 @@ use Carbon\Carbon;
                                                 </div>
                                             </div>
                                         </div>
-										
                                     <div class="col-md-3 mb-4">
                                             <label>{{__('Renewal Fees')}} </label>
                                             <input type="text" class="form-control only-greater-than-or-equal-zero-allowed" name="fees_amount" value="{{ isset($model)  ? $model->getFeesAmount() : 0 }}">
                                         </div>
-                                       
-                                      
                                     </div>
                                 </div>
                             </div>

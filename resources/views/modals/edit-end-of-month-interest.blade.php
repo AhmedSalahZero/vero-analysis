@@ -6,7 +6,7 @@
              <form action="{{ route('update.bank.statement.debit.or.credit',['company'=>$company->id ]) }}" method="post">
                  @csrf
                  <div class="modal-header">
-                     <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Please Confirm Commission Fees Date & Amount ?') }}</h5>
+                     <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Please Confirm End Of Month Fees Date & Amount ?') }}</h5>
                      <button type="button" class="close" aria-label="Close">
                          <span aria-hidden="true">&times;</span>
                      </button>

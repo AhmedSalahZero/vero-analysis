@@ -53,11 +53,12 @@ trait HasPeriodicInterest
 			$this->deletePeriodInterest($currentAccountBankStatement);
 		}
     }
-    public function storePeriodInterestOdooRelations($accountStatement , string $periodInterestDate, float $amount)
+    public function storePeriodInterestOdooRelations($accountStatement , string $periodInterestDate, float $amount , $financialInstitutionId = null , $financialInstitutionAccountId = null)
     {
         $company = $this->company;
-        $financialInstitutionId = $this->financial_institution_id;
-        $financialInstitutionAccount = FinancialInstitutionAccount::find($this->maturity_amount_added_to_account_id);
+        $financialInstitutionId = is_null($financialInstitutionId) ?  $this->financial_institution_id : $financialInstitutionId;
+		$financialInstitutionAccountId = is_null($financialInstitutionAccountId) ? $this->maturity_amount_added_to_account_id : $financialInstitutionAccountId;
+        $financialInstitutionAccount = FinancialInstitutionAccount::find($financialInstitutionAccountId);
         $journalId = $financialInstitutionAccount->journal_id ;
         $currencyName = $financialInstitutionAccount->getCurrency();
         $amountInCurrency = $amount;

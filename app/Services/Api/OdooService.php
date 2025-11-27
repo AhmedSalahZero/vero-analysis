@@ -232,6 +232,10 @@ class OdooService
 			$currentProjectEndDate = isset($projectArr['date']) && $projectArr['date'] ? $projectArr['date'] : now()->format('Y-m-d') ;
 			$currentOdooProjectId = $projectArr['id'];
 			$currentOdooCustomerId = $projectArr['partner_id'][0]??null ;
+			// if($currentOdooProjectId == 18){
+			// 	dd($projectArr,$currentOdooCustomerId);
+			// }
+			
 			if(is_null($currentOdooCustomerId)){
 				continue;
 			}
@@ -239,6 +243,7 @@ class OdooService
 			$code = Contract::generateRandomContract($companyId,$currentOdooCustomerName,$startDate,$modelType);
 			$partnerId = Partner::handlePartnerForOdoo($currentOdooCustomerId ,$currentOdooCustomerName,0, 1,false,false,$companyId  );
 			$oldProject = Contract::where('odoo_id',$currentOdooProjectId)->first();
+			
 			$projectFormatted = [
 				'odoo_id'=>$currentOdooProjectId,
 				'code'=>$code,

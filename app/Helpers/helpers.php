@@ -8525,3 +8525,24 @@ function showCertificateOfDeposits():bool
 {
 	return true ;
 }
+
+  function getAnalysisAccountIds(array $analytic_distribution,?int $partnerId = null):array
+    {
+		if (is_null($partnerId)) {
+            return [[6, 0, []]];
+        }
+        $distribution_analytic_account_ids = [];
+        foreach (array_keys($analytic_distribution) as $key) {
+            if ($key > 0) {
+                $distribution_analytic_account_ids[] = [0, (int)$key];
+            }
+        }
+        // Wrap in outer array with 6 and 0
+        if (count($distribution_analytic_account_ids)) {
+            $distribution_analytic_account_ids = [[6, 0, ...$distribution_analytic_account_ids]];
+        } else {
+            $distribution_analytic_account_ids = [[6, 0, []]];
+        }
+        return $distribution_analytic_account_ids;
+    }
+	

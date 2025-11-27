@@ -356,6 +356,10 @@ class LetterOfGuaranteeIssuance extends Model
     {
         return $this->cash_cover_deducted_from_account_id ?: $this->lg_fees_and_commission_account_id;
     }
+    public function getCommissionFeesAccountId()
+    {
+        return $this->lg_fees_and_commission_account_id;
+    }
     public function isCdOrTd():bool
     {
         return  in_array($this->getCashCoverDeductedFromAccountTypeId(), [28,29]);
@@ -509,7 +513,7 @@ class LetterOfGuaranteeIssuance extends Model
     }
     public function getRenewalDateBefore(string $date):?string
     {
-		$row = $this->renewalDateHistories->where('renewal_date', '<', $date)->sortByDesc('renewal_date')->first() ;
+        $row = $this->renewalDateHistories->where('renewal_date', '<', $date)->sortByDesc('renewal_date')->first() ;
         return  $row ? $row->renewal_date : null;
     }
     public function letterOfGuaranteeFacility()
@@ -612,42 +616,48 @@ class LetterOfGuaranteeIssuance extends Model
     
     public function handleIssuanceAndCommissionFeesForOdoo()
     {
-		$issuanceDate = $this->getIssuanceDate();
-		$company=  $this->company;
-		
+        $issuanceDate = $this->getIssuanceDate();
+        $company=  $this->company;
+        
         if ($this->isOpeningBalance() || !$company->withinIntegrationDate($issuanceDate)) {
             return ;
         }
         $odooSetting = $company->odooSetting;
-		if(is_null($odooSetting)){
-			return ;
-		}
+        $financialInstitutionAccountForCommissionAndFees = FinancialInstitutionAccount::find($this->getCommissionFeesAccountId());
+        if (is_null($odooSetting)) {
+            return ;
+        }
+        
+        $analytic_distribution = $this->formatAnalysisDistribution() ;
         $odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company);
         $issuanceFees  = $this->getIssuanceFees();
-        $financialInstitutionAccountForCashCover = FinancialInstitutionAccount::find($this->getCashCoverDeductedFromAccountId());
-        $fromAccountNumber = $financialInstitutionAccountForCashCover->getAccountNumber();
-        $journalId = $financialInstitutionAccountForCashCover->financialInstitution->getJournalIdForAccount(27, $fromAccountNumber);
-        $accountOdooId = $financialInstitutionAccountForCashCover->financialInstitution->getOdooIdForAccount(27, $fromAccountNumber);
+        $fromAccountNumber = $financialInstitutionAccountForCommissionAndFees->getAccountNumber();
+        $journalId = $financialInstitutionAccountForCommissionAndFees->financialInstitution->getJournalIdForAccount(27, $fromAccountNumber);
+        $accountOdooId = $financialInstitutionAccountForCommissionAndFees->financialInstitution->getOdooIdForAccount(27, $fromAccountNumber);
         $currency = $this->getLgCurrency();
         $odooCurrencyId = Currency::getOdooId($currency);
         $debitOdooAccountId = $odooSetting->getLetterOfGuaranteeIssuanceFeesId();
-		// $debitOdooAccountId = 614;
         $lgType =$this->getLgTypeFormatted();
         $ref = $lgType . ' Issuance Fees';
         $message = $ref;
-        $result = $odooLetterOfGuaranteeIssuance->createLgIssuanceCashCover($issuanceDate, $issuanceFees, $journalId, $odooCurrencyId, $debitOdooAccountId, $accountOdooId, $this->getBeneficiaryOdooId(), $ref, $message);
-        $this->issuance_fees_account_bank_statement_odoo_id=$result['account_bank_statement_line_id'];
-        $this->issuance_fees_journal_entry_id=$result['journal_entry_id'];
-        $this->odoo_issuance_fees_reference=$result['reference'];
+        if ($issuanceFees > 0) {
+            $result = $odooLetterOfGuaranteeIssuance->createLgIssuanceCashCover($issuanceDate, $issuanceFees, $journalId, $odooCurrencyId, $debitOdooAccountId, $accountOdooId, $this->getBeneficiaryOdooId(), $ref, $message, $analytic_distribution);
+            $this->issuance_fees_account_bank_statement_odoo_id=$result['account_bank_statement_line_id'];
+            $this->issuance_fees_journal_entry_id=$result['journal_entry_id'];
+            $this->odoo_issuance_fees_reference=$result['reference'];
+            $this->save();
+        }
         $commissionFees = $this->getLgCommissionAmount();
-        $ref = $lgType . ' Commission Fees';
-        $message = $ref;
-        $debitOdooAccountId = $odooSetting->getLetterOfGuaranteeCommissionFeesId();
-        $result = $odooLetterOfGuaranteeIssuance->createLgIssuanceCashCover($issuanceDate, $commissionFees, $journalId, $odooCurrencyId, $debitOdooAccountId, $accountOdooId, $this->getBeneficiaryOdooId(), $ref, $message);
-        $this->commission_fees_account_bank_statement_odoo_id=$result['account_bank_statement_line_id'];
-        $this->commission_fees_journal_entry_id=$result['journal_entry_id'];
-        $this->odoo_commission_fees_reference=$result['reference'];
-        $this->save();
+        if ($commissionFees > 0) {
+            $ref = $lgType . ' Commission Fees';
+            $message = $ref;
+            $debitOdooAccountId = $odooSetting->getLetterOfGuaranteeCommissionFeesId();
+            $result = $odooLetterOfGuaranteeIssuance->createLgIssuanceCashCover($issuanceDate, $commissionFees, $journalId, $odooCurrencyId, $debitOdooAccountId, $accountOdooId, $this->getBeneficiaryOdooId(), $ref, $message, $analytic_distribution);
+            $this->commission_fees_account_bank_statement_odoo_id=$result['account_bank_statement_line_id'];
+            $this->commission_fees_journal_entry_id=$result['journal_entry_id'];
+            $this->odoo_commission_fees_reference=$result['reference'];
+            $this->save();
+        }
     }
     
     public function handleLgIssuanceCashCoverForOdoo()
@@ -656,8 +666,15 @@ class LetterOfGuaranteeIssuance extends Model
         $isCdOrTdCashCoverAccount = $this->isCdOrTd();
         $company = $this->company;
         $issuanceDate = $this->getIssuanceDate();
+        // new issuance and cd
+        //
+        
         if ($company->hasOdooIntegrationCredentials() && !$isOpeningBalance && !$isCdOrTdCashCoverAccount && $company->withinIntegrationDate($issuanceDate)) {
             $financialInstitutionAccountForCashCover = FinancialInstitutionAccount::find($this->getCashCoverDeductedFromAccountId());
+            if (is_null($financialInstitutionAccountForCashCover)) {
+                return;
+            }
+            $analytic_distribution = $this->formatAnalysisDistribution() ;
             $odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company);
             $fromAccountNumber = $financialInstitutionAccountForCashCover->getAccountNumber();
             $journalId = $financialInstitutionAccountForCashCover->financialInstitution->getJournalIdForAccount(27, $fromAccountNumber);
@@ -670,7 +687,7 @@ class LetterOfGuaranteeIssuance extends Model
             
             $ref = $this->generateCashCoverRef();
             $message = $this->generateCashCoverMessage();
-            $result = $odooLetterOfGuaranteeIssuance->createLgIssuanceCashCover($issuanceDate, $cashCoverAmount, $journalId, $odooCurrencyId, $lgDebitOdooAccountId, $accountOdooId, $this->getBeneficiaryOdooId(), $ref, $message);
+            $result = $odooLetterOfGuaranteeIssuance->createLgIssuanceCashCover($issuanceDate, $cashCoverAmount, $journalId, $odooCurrencyId, $lgDebitOdooAccountId, $accountOdooId, $this->getBeneficiaryOdooId(), $ref, $message, $analytic_distribution);
             $this->account_bank_statement_odoo_id=$result['account_bank_statement_line_id'];
             $this->journal_entry_id=$result['journal_entry_id'];
             $this->cash_cover_fees_reference=$result['reference'];
@@ -678,8 +695,8 @@ class LetterOfGuaranteeIssuance extends Model
             
         }
     }
-	
-	 public function generateCashCoverRef():string
+    
+    public function generateCashCoverRef():string
     {
         return __('Create Cash Cover ') . ' ' . $this->getLgTypeFormatted();
     }
@@ -687,8 +704,8 @@ class LetterOfGuaranteeIssuance extends Model
     {
         return __('Cash Cover');
     }
-	
-	
+    
+    
     public function generateIssuanceRef():string
     {
         return __('Create Issuance') . ' ' . $this->getLgTypeFormatted();
@@ -703,27 +720,102 @@ class LetterOfGuaranteeIssuance extends Model
     }
     public function generateCancelMessage():string
     {
-        return __('Cash Cover');
+        return __('Cash Cover Refund');
     }
-	public function getOdooReferenceNames():array
-	{
-		$references = [];
-		$i = 0;
-		foreach([
-			'odoo_commission_fees_reference',
-			'odoo_issuance_fees_reference',
-			'cash_cover_fees_reference'
-		] as $columnName ){
-			if($this->{$columnName}){
-				$i ++;
-				$references[] = $i .'-'.$this->{$columnName};
-			}
-		}
-		return $references ;
-	}
-	public function fullyIntegratedWithOdoo()
-	{
-		return count($this->getOdooReferenceNames());
-	}
-
+    
+    public function generateDecreasedRef():string
+    {
+        return __('Decreased') . ' ' . $this->getLgTypeFormatted() ;
+    }
+    public function generateDecreasedMessage():string
+    {
+        return __('Cash Cover Decreased');
+    }
+    
+    public function getOdooReferenceNames():array
+    {
+        $references = [];
+        $i = 0;
+        foreach ([
+            'odoo_commission_fees_reference',
+            'odoo_issuance_fees_reference',
+            'cash_cover_fees_reference'
+        ] as $columnName) {
+            if ($this->{$columnName}) {
+                $i ++;
+                $references[] = $i .'-'.$this->{$columnName};
+            }
+        }
+        return $references ;
+    }
+    public function fullyIntegratedWithOdoo()
+    {
+        return count($this->getOdooReferenceNames());
+    }
+    public function formatAnalysisDistribution():array
+    {
+        $contract = $this->contract;
+        if (!$contract) {
+            return [];
+        }
+        $result = [];
+        $projectAccountId = $contract->project_account_id ;
+        // dd($contract,$projectAccountId);
+        if ($projectAccountId) {
+            $result[strval($projectAccountId)] =(float)100;
+        }
+        if (count($result) == 1) {
+            $result["-0"] = 0.0;
+        }
+        return $result;
+            
+    }
+    public function cancelOdooLg($cancellationDate , $cashCoverAmount , $ref, $message,$letterOfGuaranteeIssuanceAdvancedPaymentHistory = null )
+    {
+		$model = $letterOfGuaranteeIssuanceAdvancedPaymentHistory ? $letterOfGuaranteeIssuanceAdvancedPaymentHistory : $this;
+        $financialInstitutionId = $this->financial_institution_id ;
+        $financialInstitution = FinancialInstitution::find($financialInstitutionId);
+        $company = $this->company;
+        $isCdOrTdCashCoverAccount = $this->isCdOrTd();
+        $odooLetterOfGuaranteeIssuance = null ;
+        foreach (['journal_entry_id'] as $journalColumnName) {
+            $currentJournalEntryId = $this->{$journalColumnName};
+            $odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company);
+            if ($currentJournalEntryId) {
+                $odooLetterOfGuaranteeIssuance->unlink($currentJournalEntryId);
+            }
+        }
+        if ($company->hasOdooIntegrationCredentials() && !$isCdOrTdCashCoverAccount && $company->withinIntegrationDate($cancellationDate)) {
+            $lgType= $this->getLgType();
+            $financialInstitutionAccount = FinancialInstitutionAccount::find($this->getCashCoverDeductedFromAccountId());
+            $currency = $financialInstitutionAccount->getCurrency();
+            $odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company);
+            $fromAccountNumber = $financialInstitutionAccount->getAccountNumber();
+            $journalId = $financialInstitution->getJournalIdForAccount(27, $fromAccountNumber);
+            $odooCurrencyId = Currency::getOdooId($currency);
+            $lgOdooAccountId = FinancialInstitutionAccount::getLetterOfGuaranteeOdooIdFromType($lgType, $company->id);
+            $accountOdooId = $financialInstitution->getOdooIdForAccount(27, $fromAccountNumber);
+           // $amount = ;
+            $result = $odooLetterOfGuaranteeIssuance->createLgCancelCashCover($cancellationDate, $cashCoverAmount, $journalId, $odooCurrencyId, $lgOdooAccountId, $accountOdooId, $this->getBeneficiaryOdooId(), $ref, $message);
+       //     $model->account_bank_statement_odoo_id=$result['account_bank_statement_line_id'];
+            $model->journal_entry_id=$result['journal_entry_id'];
+            $model->save();
+            
+        }
+    
+            
+    }
+    public function getCancellationAmount()
+    {
+        $isAdvancedPayment =  $this->isAdvancedPayment() ;
+        return  $isAdvancedPayment ? $this->getLgCurrentAmount() :  $this->getLgAmount();
+    }
+    public function getCashCoverCancellationAmount()
+    {
+        $isAdvancedPayment =  $this->isAdvancedPayment() ;
+        $amount = $this->getCancellationAmount();
+        $cashCoverRate = $this->getCashCoverRate() / 100;
+        $cashCoverAmount = $isAdvancedPayment ? $amount *$cashCoverRate  : $this->getCashCoverAmount();
+        return $cashCoverAmount;
+    }
 }

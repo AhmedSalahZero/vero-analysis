@@ -56,7 +56,7 @@ class LetterOfGuaranteeIssuanceRenewalDateController
 			'letter_of_guarantee_issuance_id'=>$letterOfGuaranteeIssuance->id
 		]);
 		
-		$lgRenewalDateHistory->handleRenewalFeesForOdoo($renewalFeesAmount,$renewalDate);
+		$lgRenewalDateHistory->handleRenewalFeesForOdoo($renewalFeesAmount,$expiryDate);
 		
 		$this->storeCommissionToCreditCurrentAccountBankStatement($lgRenewalDateHistory,$letterOfGuaranteeIssuance,$company,$expiryDate,$renewalDate,$transactionName,$lgType);
 		$financialInstitutionAccountOpeningBalance = $financialInstitutionAccount->getOpeningBalanceDate();
@@ -101,7 +101,6 @@ class LetterOfGuaranteeIssuanceRenewalDateController
 	}
 	public function update(StoreLgRenewalDateRequest $request , Company $company ,  LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance  , LgRenewalDateHistory $LgRenewalDateHistory){
 		$date = $request->get('renewal_date') ;
-
 		$renewalFeesAmount = $request->get('fees_amount');
 		$date = explode('/',$date);
 		$month = $date[0];
@@ -127,10 +126,11 @@ class LetterOfGuaranteeIssuanceRenewalDateController
 			}
 		}
 		$LgRenewalDateHistory->update([
-			'renewal_date'=>$renewalDate 
+			'renewal_date'=>$renewalDate ,
+			'fees_amount'=>$renewalFeesAmount
 		]);
 		$LgRenewalDateHistory->unlinkRenewalFeesForOddo();
-		$LgRenewalDateHistory->handleRenewalFeesForOdoo($renewalFeesAmount,$renewalDate);
+		$LgRenewalDateHistory->handleRenewalFeesForOdoo($renewalFeesAmount,$expiryDate);
 		$letterOfGuaranteeIssuance->update([
 			'renewal_date'=>$renewalDate
 		]);

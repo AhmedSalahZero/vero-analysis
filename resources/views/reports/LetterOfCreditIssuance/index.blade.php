@@ -116,7 +116,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle">{{ __('Supplier Name') }}</th>
                                     <th class="text-center align-middle"> {!! __('Transaction <br> Reference') !!} </th>
                                     <th class="text-center align-middle">{{ __('LC Amount') }}</th>
-                                    {{-- <th class="text-center align-middle"> {!! __('Transaction <br> Order Date') !!} </th> --}}
+                                    {{-- <th class="text-center align-middle"> {!! __('Transaction <br> No Date') !!} </th> --}}
                                     <th class="text-center align-middle">{{ __('Issuance Date') }}</th>
                                     <th class="text-center align-middle">{{ __('Due Date') }}</th>
                                     <th class="text-center align-middle">{{ __('Control') }}</th>
@@ -216,7 +216,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle">{{ __('Supplier Name') }}</th>
                                     <th class="text-center align-middle">{{ __('LC Amount') }}</th>
 							
-                                    <th class="text-center align-middle"> {!! __('Purchase <br> Order Date') !!} </th>
+                                    <th class="text-center align-middle"> {!! __('Purchase <br> No Date') !!} </th>
                                     <th class="text-center align-middle">{{ __('Issuance Date') }}</th>
                                     <th class="text-center align-middle">{{ __('Due Date') }}</th>
                                     <th class="text-center align-middle">{{ __('Control') }}</th>
@@ -308,7 +308,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle">{{ __('Supplier Name') }}</th>
                                     <th class="text-center align-middle">{{ __('LC Amount') }}</th>
                                     <th class="text-center align-middle">{{ __('LC Current Amount') }}</th>
-                                    <th class="text-center align-middle"> {!! __('Purchase <br> Order Date') !!} </th>
+                                    <th class="text-center align-middle"> {!! __('Purchase <br> No Date') !!} </th>
                                     <th class="text-center align-middle">{{ __('Issuance Date') }}</th>
                                     <th class="text-center align-middle">{{ __('Due Date') }}</th>
                                     <th class="text-center align-middle">{{ __('Control') }}</th>
@@ -444,7 +444,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
         const popupType = $(this).attr('data-type');
         const modal = $(this).closest('.modal');
         if (searchFieldName === 'purchase_order_date') {
-            modal.find('.data-type-span').html('[{{ __("Purchase Order Date") }}]')
+            modal.find('.data-type-span').html('[{{ __("Purchase No Date") }}]')
             $(modal).find('.search-field').val('').trigger('change').prop('disabled', true);
         } else if (searchFieldName === 'issuance_date') {
             modal.find('.data-type-span').html('[ {{ __("Issuance Date") }} ]')

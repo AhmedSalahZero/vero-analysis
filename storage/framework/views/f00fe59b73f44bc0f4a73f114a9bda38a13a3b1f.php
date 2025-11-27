@@ -1993,7 +1993,6 @@ const isNonBanking = +("<?php echo e(hasMiddleware('isNonBankingService')); ?>")
                 return
             }
             $('.show-only-when-invoice-currency-not-equal-receiving-currency').show();
-	console.log(fromCurrency , toCurrency,date)
             $.ajax({
                 url
                 , data: {
@@ -2003,7 +2002,6 @@ const isNonBanking = +("<?php echo e(hasMiddleware('isNonBankingService')); ?>")
                 }
                 , success: function(res) {
                     exchangeRate = res.exchange_rate;
-				console.log('ex',exchangeRate)
                     $('.exchange-rate-class').val(exchangeRate).trigger('change')
                 }
             })
