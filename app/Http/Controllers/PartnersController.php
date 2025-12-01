@@ -137,6 +137,8 @@ class PartnersController
 			'is_other_partner'=>$request->boolean('is_other_partner'),
 			'is_subsidiary_company'=>$request->boolean('is_subsidiary_company'),
 		]);
+		
+		
 		$newName = $request->get('name');
 		$partner->storeBasicForm($request);
 		$partner->update([
