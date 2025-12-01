@@ -362,13 +362,14 @@ class SupplierInvoice extends Model implements IInvoice
 
 		
 		$contracts = Contract::where('company_id',$companyId)
-		->where('end_date','>=',now()->format('Y-m-d'))
+	//	->where('end_date','>=',now()->format('Y-m-d'))
 		->where('end_date','<=',$endDate)
 		->where('currency',$currency)
 		->when($contractId,function($query) use ($contractId){
 			$query->where('id',$contractId);
 		})
 		->with('purchasesOrders')->get();
+		
 		$contractWithPurchaseOrders = [];
 		foreach($contracts as $contract){
 			foreach($contract->purchasesOrders as $purchaseOrder){
@@ -485,4 +486,9 @@ public function getPurchasesOrderNumber()
 	{
 		return $this->purchases_order_number;
 	}	
+	public function getProjectName()
+	{
+		return $this->project_name ?: '--';
+	}
+	
 }

@@ -37,10 +37,10 @@ class CalculateNetBalance implements ShouldQueue
      */
     public function handle()
     {
-         $customerInvoices = CustomerInvoice::where('company_id',$this->companyId)->where('net_balance',null)->get();
-		 foreach($customerInvoices as $customerInvoice){
-			$customerInvoice->syncNetBalance();
-		 }
+        //  $customerInvoices = CustomerInvoice::where('company_id',$this->companyId)->where('net_balance',null)->get();
+		//  foreach($customerInvoices as $customerInvoice){
+		// 	$customerInvoice->syncNetBalance();
+		//  }
         
     }
 }

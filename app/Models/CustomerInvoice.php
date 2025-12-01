@@ -483,7 +483,7 @@ class CustomerInvoice extends Model implements IInvoice
 		$currentTypeText = 'Forecasted Project Collection';
 		
 		$contracts = Contract::where('company_id',$companyId)
-		->where('end_date','>=',now()->format('Y-m-d'))
+		// ->where('end_date','>=',now()->format('Y-m-d'))
 		->where('end_date','<=',$endDate)
 		->where('currency',$currency)
 		->when($contractId,function($query) use ($contractId){
@@ -491,6 +491,7 @@ class CustomerInvoice extends Model implements IInvoice
 		})
 		// ->where('end_date','<=',now()->format('Y-m-d'))
 		->with('salesOrders')->get();
+	//	dd($endDate);
 		$contractWithSalesOrders = [];
 		foreach($contracts as $contract){
 			foreach($contract->salesOrders as $salesOrder){

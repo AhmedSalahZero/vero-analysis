@@ -870,6 +870,7 @@ class CustomerInvoiceDashboardController extends Controller
         $startDate = $startDate ?: $request->get('start_date', now()->subMonths(12)->format('Y-m-d'));
         $endDate = $endDate?: $request->get('end_date', now()->format('Y-m-d'));
         $invoices = ('\App\Models\\' . $modelType)::getInvoicesForInvoiceStartAndEndDate( $clientIdColumnName, $partnerId, $company ,  $currency ,  $startDate ,  $endDate);
+
         $partner = Partner::find($partnerId);
 		if(!$partner){
 			return view('admin.reports.customer-statement-report', [
@@ -886,6 +887,7 @@ class CustomerInvoiceDashboardController extends Controller
 		}
         $partnerName = $partner->getName() ;
         $invoicesWithItsReceivedMoney = $this->formatForStatementReport($invoices, $partnerId, $startDate, $endDate, $currency,$modelType);
+		// dd($invoices,$invoicesWithItsReceivedMoney);
 		if($returnResult){
 			if(count($invoicesWithItsReceivedMoney) < 1){
 				return [];

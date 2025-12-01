@@ -126,10 +126,17 @@ class PartnersController
     }
 	
 	public function update(Company $company, StorePartnerRequest $request , Partner $partner){
-		
 		// $lcSettlementInternalTransfer->deleteRelations();
 		// $partner->delete();
 		$oldName = $partner->getName();
+		$partner->update([
+			'is_customer'=>$request->boolean('is_customer'),
+			'is_supplier'=>$request->boolean('is_supplier'),
+			'is_employee'=>$request->boolean('is_employee'),
+			'is_shareholder'=>$request->boolean('is_shareholder'),
+			'is_other_partner'=>$request->boolean('is_other_partner'),
+			'is_subsidiary_company'=>$request->boolean('is_subsidiary_company'),
+		]);
 		$newName = $request->get('name');
 		$partner->storeBasicForm($request);
 		$partner->update([

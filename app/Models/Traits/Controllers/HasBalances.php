@@ -40,8 +40,7 @@ trait HasBalances
 		$currentData['comment'] =null;
 		$index++ ;
 		$formattedData[$index] = $currentData;
-
-
+	
 		self::appendBalances($isMainCurrency , $currency,$invoices, $index, $formattedData, $partnerId, $startDate, $endDate,$clientInvoiceIds,$modelType,true);
 	
 		
@@ -119,6 +118,7 @@ trait HasBalances
 			
 			
 		}
+		
 		foreach(InvoiceDeduction::getForInvoices($clientInvoiceIds,$modelType,$startDate,$endDate) as $invoiceDeduction){
 			$invoice = $invoiceDeduction->getInvoice();
 			$invoiceExchangeRate = $invoice->getExchangeRate();
@@ -142,25 +142,26 @@ trait HasBalances
 				$tempArr[$index] = $currentData ;
 			}
 		}
-		
-		
-		
-	
+		// dd($modelType);
+		$partnerType = $modelType =='SupplierInvoice' ? 'is_supplier' : 'is_customer' ;
 		$allMoneyModels =  $fullMoneyModelName::
 		where('company_id',getCurrentCompanyId())
 		->whereBetween($dateColumnName,[$startDate,$endDate])
 		->where('partner_id',$partnerId)
+		->where('partner_type',$partnerType)
 		->when(!$isMainCurrency , function($q) use ($currency){
 			// $q->where('currency',$currency);
 		})
 		->get() ; 
+		if(count($formattedData)){
+			// dd($formattedData,$allMoneyModels);
+		}
 		if($modelType == 'SupplierInvoice'){
 			$letterOfCreditIssuance  = LetterOfCreditIssuance::where('company_id',getCurrentCompanyId())
 			->whereBetween('payment_date',[$startDate,$endDate])
 			->where('partner_id',$partnerId)->has('settlements')->get();
 			$allMoneyModels = $allMoneyModels->merge($letterOfCreditIssuance);
 		}
-	
 		foreach($allMoneyModels as $moneyModel) {
 		
 			$dateReceivingFormatted = $moneyModel->getReceivingOrPaymentMoneyDateFormatted() ;
