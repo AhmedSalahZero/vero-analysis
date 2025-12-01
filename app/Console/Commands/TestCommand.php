@@ -57,9 +57,10 @@ class TestCommand extends Command
 	}
 	public function handle()
 	{
-		SupplierInvoice::where('id','>',0)->update([
-			'updated_at'=>now()
-		]);
+	//	dd($this->getSupplierInvoicesWithout());
+		// SupplierInvoice::where('id','>',0)->update([
+		// 	'updated_at'=>now()
+		// ]);
 		
 		// $letterOfGuaranteeIssuance = LetterOfGuaranteeIssuance::find(200);
 		// $company = $letterOfGuaranteeIssuance->company;
@@ -306,6 +307,24 @@ public function getAllColumnNamesFromTable($table , $connectionName)
     }
 
     return $jsonColumns;
+}
+public function getSupplierInvoicesWithout()
+{
+	$moneyPayments = MoneyPayment::where('company_id',92)->get();
+	$result = [];
+	foreach($moneyPayments as $moneyPayment){
+		$settlements = $moneyPayment->settlements;
+		foreach($settlements as $settlement){
+			if($settlement->invoice_id && !$settlement->supplierInvoice){
+				$message = 'money_payment_id = ' .$moneyPayment->id.' - '.' settlement amount ' . $settlement->settlement_amount .'settlement id ' . $settlement->id. ' comment '.$moneyPayment->comment_en;
+				$result[]=$message;
+			}
+		}
+		
+	}
+	// dd($result);
+	// dd($moneyPayments);
+	
 }
 
 

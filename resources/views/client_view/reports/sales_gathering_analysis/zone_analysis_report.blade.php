@@ -107,7 +107,6 @@
                             <i class="row_icon{{ $id }} flaticon2-up white-text"></i>
                             <b>{{ __($zone_name) }}</b>
                         </td>
-                        {{-- Total --}}
                         <?php $total_per_zone = $zone_channels_data['Total'] ?? [];
                                         unset($zone_channels_data['Total']); ?>
                         {{-- Growth Rate % --}}

@@ -41,7 +41,7 @@
                                 </div>
                             </div>
                         </div>
-   <div class="col-md-2 mb-4">
+                        <div class="col-md-2 mb-4">
                             <label>{{ __('Currency') }} </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
@@ -54,11 +54,11 @@
                             </div>
                         </div>
 
-					<div class="col-md-3 mb-4">
+                        <div class="col-md-3 mb-4">
                             <label>{{ __('Partner Type') }} </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <select data-live-search="true" data-actions-box="true" name="partner_type" id="partner_type" required class="form-control  kt-bootstrap-select select2-select kt_bootstrap_select">
+                                    <select data-remove-select="1" data-live-search="true" data-actions-box="true" name="partner_type" id="partner_type" required class="form-control  kt-bootstrap-select select2-select kt_bootstrap_select">
                                         @foreach($partnerTypes as $id=>$title)
                                         <option value="{{ $id }}">{{ $title }}</option>
                                         @endforeach
@@ -66,23 +66,23 @@
                                 </div>
                             </div>
                         </div>
-						
-						
-							<div class="col-md-3 mb-4">
+
+
+                        <div class="col-md-3 mb-4">
                             <label>{{ __('Partners') }} </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <select data-live-search="true" data-actions-box="true" name="partner_id" id="customer_name" required class="form-control  kt-bootstrap-select select2-select kt_bootstrap_select">
-                                        
+                                    <select multiple data-live-search="true" data-actions-box="true" name="partner_id[]" id="customer_name" required class="form-control  kt-bootstrap-select select2-select kt_bootstrap_select">
+
                                     </select>
                                 </div>
                             </div>
                         </div>
-						
 
 
-                     
-                       
+
+
+
 
 
 
@@ -132,4 +132,7 @@
 <script src="{{ url('assets/vendors/general/jquery.repeater/src/repeater.js') }}" type="text/javascript"></script>
 <script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/form-repeater.js') }}" type="text/javascript"></script>
 <script src="/custom/money-receive.js"></script>
+<script>
+$('select#partner_type').trigger('change')
+</script>
 @endsection

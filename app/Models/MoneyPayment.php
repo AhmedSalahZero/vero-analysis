@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Models\OpeningBalance;
 use App\Models\OutgoingTransfer;
-use App\Services\Api\MoneyPaymentOdooService;
 use App\Services\Api\OdooPayment;
 use App\Traits\Models\HasCreditStatements;
 use App\Traits\Models\HasForeignExchangeGainOrLoss;

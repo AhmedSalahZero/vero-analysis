@@ -27,13 +27,13 @@ class PartnersStatementController
 		]);
     }
 	public function result(Company $company , Request $request){
-		
 		$startDate = $request->get('start_date');
 		$endDate = $request->get('end_date');
 		$partnerType = $request->get('partner_type');
 		$currency = $request->get('currency');
-		$partnerId = $request->get('partner_id');
-		$partner = Partner::find($partnerId);
+		$partnerIds = (array)$request->get('partner_id',[]);
+		// foreach($partnerIds )
+	//	$partner = Partner::find($partnerId);
 		$statementTableName = [
 			'is_subsidiary_company'=>'subsidiary_company_statements',
 			'is_shareholder'=>'shareholder_statements',
@@ -41,26 +41,37 @@ class PartnersStatementController
 			'is_other_partner'=>'other_partner_statements',
 			'is_tax'=>'tax_statements'
 		][$partnerType] ;
+		$statements = [];
+		foreach($partnerIds as $partnerId){
+			$partner = Partner::find($partnerId);
+			$statements[$partner->id]=['name'=>$partner->getName() , 'statements'=>
 		
-		$results=DB::table($statementTableName)
-		->where('company_id',$company->id)
-		->where('currency_name',$currency)
-		->where('partner_id',$partnerId)
-		->where('date','>=',$startDate)
-		->where('date','<=',$endDate)
-		->orderByRaw('full_date asc , created_at asc')
-		->get();
-			if(!count($results)){
-				return redirect()
-									->back()
-									->with('fail',__('No Data Found'))	
-									;
-			}
+			DB::table($statementTableName)
+			->where('.company_id',$company->id)
+			->where('currency_name',$currency)
+			->where('partner_id',$partnerId)
+			->where('date','>=',$startDate)
+			->where('date','<=',$endDate)
+			->orderByRaw('full_date asc , created_at asc')
+			->get()
+			
+		];
+			
+		}
+		// dd($statements);
+			// if(!count($results)){
+			// 	return redirect()
+			// 						->back()
+			// 						->with('fail',__('No Data Found'))	
+			// 						;
+			// }
 		
 		return view('partners_statement_result',[
-			'results'=>$results,
+			'statements'=>$statements,
 			'currency'=>$currency,
-			'partner'=>$partner
+			'title'=>__('Partners Statements')
+			
+			// 'partner'=>$partner
 		]);
 	}
 

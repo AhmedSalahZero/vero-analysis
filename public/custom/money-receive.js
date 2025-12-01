@@ -486,6 +486,9 @@ $(function () {
 	});
 
 $(document).on('change','select#partner_type',function(){
+	const removeSelect = $(this).attr('data-remove-select');
+	// alert()
+	
 	const partnerColumnName = $(this).val();
 	if(partnerColumnName == 'is_customer'){
 		$('#settlement-card-id').fadeIn();
@@ -512,12 +515,11 @@ $(document).on('change','select#partner_type',function(){
 		type:"get",
 		success:function(res){
 			const partners = res.partners;
-			let elements = `<option value="" selected>Select</option>`;
+			let elements = removeSelect ? '' : `<option value="" selected>Select</option>`;
 			for(var name in partners){
 				var id = partners[name]
 				elements+=`<option value="${id}">${name}</option>`
 			}
-		
 			$('select#customer_name').empty().append(elements).trigger('change')
 		}
 	});
