@@ -234,7 +234,7 @@ trait HasBalances
 							$receivedAmountOrPaidAmount = $moneyModel->getAmount();
 							$exchangeRate =  $moneyModel->getExchangeRate() ;
 							$currentAmount =  $receivedAmountOrPaidAmount -  ($moneyModelAmount*$exchangeRate) ;
-							dd($moneyModel->getReceivingOrPaymentCurrency() ,  $currency);
+						//	dd($moneyModel->getReceivingOrPaymentCurrency() ,  $currency);
 							if($currentAmount >= -5 && $currentAmount<=5){
 								continue ;
 							}
