@@ -285,24 +285,20 @@ class CustomerInvoice extends Model implements IInvoice
 		->when($contractCode,function($builder) use ($contractCode){
 			$builder->where('contract_code',$contractCode);
 		})
-		// ->where('currency',$currency)
 		->where('net_balance','>',0)
 		->whereBetween('invoice_due_date',[now()->format('Y-m-d'),$endDate])->get();
-	
 			foreach($items as $item){
 				$sum = $item->net_balance_in_main_currency ; 
 				$invoiceNumber = $item->invoice_number . ' [ ' . $item->customer_name . ' ]' ; 
 				$currentWeekYear = $datesWithWeekNumber[$item->invoice_due_date] ;
-				// $customerName = $item->customer_name ; 
-				$invoiceNumber = __('Invoice No.') . ' ' .  $invoiceNumber;
+				$projectName = $item->project_name ? '[ ' . $item->getProjectName() . ' ]' : '';
+				$invoiceNumber = __('Invoice No.') . ' ' .  $invoiceNumber . $projectName  ;
 				$result['customers'][$key][$invoiceNumber]['weeks'][$currentWeekYear] = isset($result['customers'][$key][$invoiceNumber]['weeks'][$currentWeekYear]) ? $result['customers'][$key][$invoiceNumber]['weeks'][$currentWeekYear] + $sum :  $sum;
 				$result['customers'][$key][$invoiceNumber]['total'] = isset($result['customers'][$key][$invoiceNumber]['total']) ? $result['customers'][$key][$invoiceNumber]['total']  + $sum : $sum;
 				$currentTotal = $sum;
 				$result['customers'][$key]['total'][$currentWeekYear] = isset($result['customers'][$key]['total'][$currentWeekYear]) ? $result['customers'][$key]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
-			//	$totalCashInFlowArray[$currentWeekYear] = isset($totalCashInFlowArray[$currentWeekYear]) ? $totalCashInFlowArray[$currentWeekYear] + $currentTotal : $currentTotal;
-				// $result['customers'][$key]['total']['total_of_total']= isset($result['customers'][$key]['total']['total_of_total']) ? $result['customers'][$key]['total']['total_of_total'] +$sum :$sum ;
 			}
-		// } 
+	
 	}
 	public static function getCashAndBankBalanceAtDate(array &$result  ,$foreignExchangeRates , $mainFunctionalCurrency , string $startDate , string $currentWeekYear    , $companyId = null):void
 	{
@@ -491,7 +487,6 @@ class CustomerInvoice extends Model implements IInvoice
 		})
 		// ->where('end_date','<=',now()->format('Y-m-d'))
 		->with('salesOrders')->get();
-	//	dd($endDate);
 		$contractWithSalesOrders = [];
 		foreach($contracts as $contract){
 			foreach($contract->salesOrders as $salesOrder){
@@ -521,11 +516,14 @@ class CustomerInvoice extends Model implements IInvoice
 				$soNumber = $soArr['so_number']; 
 				$customerName = $contract->getClientName();
 				$currentInvoiceAmount = DB::table('customer_invoices')->where('company_id',$companyId)->where('currency',$currency)->where('sales_order_number',$soNumber)->where('contract_code',$contractCode)->sum('invoice_amount');
+				$salesOrderDownPayments = DB::table('down_payment_settlements')->where('company_id',$companyId)->where('sales_order_id',$soId)->where('contract_id',$contractId)->sum('down_payment_amount');
+				$salesOrderNetPayments = $salesOrderDownPayments - $currentInvoiceAmount;
+				
 				$salesOrderNetBalance = 0 ;
-				if($currentInvoiceAmount > $salesOrderAmount){
+				if($salesOrderNetPayments > $salesOrderAmount){
 					$salesOrderNetBalance = 0;	
 				}else{
-					$salesOrderNetBalance = $salesOrderAmount - $currentInvoiceAmount;
+					$salesOrderNetBalance = $salesOrderAmount - $salesOrderNetPayments;
 				}
 				$invoiceNumber =   $customerName . '-' . $contractName  ;
 				$result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear] = isset($result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear]) ? $result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear]+  $salesOrderNetBalance :$salesOrderNetBalance;
@@ -533,8 +531,6 @@ class CustomerInvoice extends Model implements IInvoice
 				$currentTotal = $salesOrderNetBalance;
 				$result['customers'][$currentTypeText]['total'][$currentWeekYear] = isset($result['customers'][$currentTypeText]['total'][$currentWeekYear]) ? $result['customers'][$currentTypeText]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
 				$result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear] = isset($result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear]) ? $result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear] + $salesOrderNetBalance : $salesOrderNetBalance;
-				//$totalCashInFlowArray[$currentWeekYear] = isset($totalCashInFlowArray[$currentWeekYear]) ? $totalCashInFlowArray[$currentWeekYear] + $salesOrderNetBalance : $salesOrderNetBalance ;
-				// $result['customers'][$currentTypeText]['total']['total_of_total'] = isset($result['customers'][$currentTypeText]['total']['total_of_total']) ? $result['customers'][$currentTypeText]['total']['total_of_total'] + $salesOrderNetBalance : $salesOrderNetBalance;
 			}
 		}
 

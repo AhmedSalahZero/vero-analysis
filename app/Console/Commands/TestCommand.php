@@ -12,6 +12,7 @@ use App\Models\NonBankingService\TestCashFlowStatement;
 use App\Models\NonBankingService\TestIncomeStatement;
 use App\Models\Partner;
 use App\Models\Settlement;
+use App\Models\SupplierInvoice;
 use App\ReadyFunctions\ConvertFlatRateToDecreasingRate;
 use App\Services\Api\CashExpenseOdooService;
 use App\Services\Api\OdooPayment;
@@ -56,10 +57,14 @@ class TestCommand extends Command
 	}
 	public function handle()
 	{
-		$letterOfGuaranteeIssuance = LetterOfGuaranteeIssuance::find(200);
-		$company = $letterOfGuaranteeIssuance->company;
-		$source = 'lg-facility';
-		(new LetterOfGuaranteeIssuanceController)->backToRunningStatus($company,new Request , $letterOfGuaranteeIssuance,$source);
+		SupplierInvoice::where('id','>',0)->update([
+			'updated_at'=>now()
+		]);
+		
+		// $letterOfGuaranteeIssuance = LetterOfGuaranteeIssuance::find(200);
+		// $company = $letterOfGuaranteeIssuance->company;
+		// $source = 'lg-facility';
+		// (new LetterOfGuaranteeIssuanceController)->backToRunningStatus($company,new Request , $letterOfGuaranteeIssuance,$source);
 		// $fetch = (new OdooPayment(Company::find(92)));
 		// $x = $fetch->fetchData('account.bank.statement.line',[],[[['name','=','MISR/2025/00431']]]);
 		// dd($x);
@@ -69,10 +74,10 @@ class TestCommand extends Command
 		// $x = $fetch->fetchData('account.bank.statement.line',[],[[['id','=',8946]]]);
 		// dd($x);
 		// dd($x);
-		$unlink = new OdooPayment(Company::find(92));
+		// $unlink = new OdooPayment(Company::find(92));
 		// dd($x);
 		// $unlink->unlinkBankStatementLine(8936);
-		$unlink->unlinkBankCollection(8950);
+		// $unlink->unlinkBankCollection(8950);
 		// ($unlink->unlink('account.bank.statement.line',8936));
 		// dd($unlink->unlink('account.bank.statement.line',34049));
 		

@@ -399,11 +399,15 @@ class SupplierInvoice extends Model implements IInvoice
 				$poNumber = $soArr['po_number']; 
 				$customerName = $contract->getClientName();
 				$currentInvoiceAmount = DB::table('supplier_invoices')->where('company_id',$companyId)->where('currency',$currency)->where('purchases_order_number',$poNumber)->where('contract_code',$contractCode)->sum('invoice_amount');
+				
+				$salesOrderDownPayments = DB::table('down_payment_money_payment_settlements')->where('company_id',$companyId)->where('purchase_order_id',$soId)->where('contract_id',$contractId)->sum('down_payment_amount');
+				$purchaseOrderNetPayments = $salesOrderDownPayments - $currentInvoiceAmount;
+				
 				$purchaseOrderNetBalance = 0 ;
-				if($currentInvoiceAmount > $purchaseOrderAmount){
+				if($purchaseOrderNetPayments > $purchaseOrderAmount){
 					$purchaseOrderNetBalance = 0;	
 				}else{
-					$purchaseOrderNetBalance = $purchaseOrderAmount - $currentInvoiceAmount;
+					$purchaseOrderNetBalance = $purchaseOrderAmount - $purchaseOrderNetPayments;
 				}
 				$invoiceNumber =   $customerName . '-' . $contractName  ;
 				$result['suppliers'][$key][$invoiceNumber]['weeks'][$currentWeekYear] = isset($result['suppliers'][$key][$invoiceNumber]['weeks'][$currentWeekYear]) ? $result['suppliers'][$key][$invoiceNumber]['weeks'][$currentWeekYear]+  $purchaseOrderNetBalance :$purchaseOrderNetBalance;
