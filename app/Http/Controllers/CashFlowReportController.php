@@ -351,7 +351,7 @@ class CashFlowReportController
 			'supplierDueInvoices'=>$supplierDueInvoices,
 			'pastDueInstallments'=>$pastDueInstallments,
 			'pastDueLoanInstallments'=>$pastDueLoanInstallments,
-			'letterOfGuaranteeModelData'=>$letterOfGuaranteeModelData,
+		//	'letterOfGuaranteeModelData'=>$letterOfGuaranteeModelData,
 			'months'=>$months ,
 			'days'=>$days,
 			'reportInterval'=>$reportInterval,
