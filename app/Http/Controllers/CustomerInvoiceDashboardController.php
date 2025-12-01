@@ -896,6 +896,7 @@ class CustomerInvoiceDashboardController extends Controller
         if (count($invoicesWithItsReceivedMoney) < 1) {
             return  redirect()->back()->with('fail', __('No Data Found'));
         }
+		
         return view('admin.reports.customer-statement-report', [
             'invoicesWithItsReceivedMoney' => $invoicesWithItsReceivedMoney,
             'partnerName' => $partnerName,

@@ -40,7 +40,6 @@ trait HasBalances
 		$currentData['comment'] =null;
 		$index++ ;
 		$formattedData[$index] = $currentData;
-	
 		self::appendBalances($isMainCurrency , $currency,$invoices, $index, $formattedData, $partnerId, $startDate, $endDate,$clientInvoiceIds,$modelType,true);
 	
 		
@@ -142,7 +141,6 @@ trait HasBalances
 				$tempArr[$index] = $currentData ;
 			}
 		}
-		// dd($modelType);
 		$partnerType = $modelType =='SupplierInvoice' ? 'is_supplier' : 'is_customer' ;
 		$allMoneyModels =  $fullMoneyModelName::
 		where('company_id',getCurrentCompanyId())
@@ -153,15 +151,14 @@ trait HasBalances
 			// $q->where('currency',$currency);
 		})
 		->get() ; 
-		if(count($formattedData)){
-			// dd($formattedData,$allMoneyModels);
-		}
+		
 		if($modelType == 'SupplierInvoice'){
 			$letterOfCreditIssuance  = LetterOfCreditIssuance::where('company_id',getCurrentCompanyId())
 			->whereBetween('payment_date',[$startDate,$endDate])
 			->where('partner_id',$partnerId)->has('settlements')->get();
 			$allMoneyModels = $allMoneyModels->merge($letterOfCreditIssuance);
 		}
+		
 		foreach($allMoneyModels as $moneyModel) {
 		
 			$dateReceivingFormatted = $moneyModel->getReceivingOrPaymentMoneyDateFormatted() ;
@@ -232,13 +229,13 @@ trait HasBalances
 					
 					
 					elseif($moneyModel->getReceivingOrPaymentCurrency() == $currency || $isMainCurrency){
-						
 						  // start down payment from receiving currency 
 				
 							$receivedAmountOrPaidAmount = $moneyModel->getAmount();
 							$exchangeRate =  $moneyModel->getExchangeRate() ;
 							$currentAmount =  $receivedAmountOrPaidAmount -  ($moneyModelAmount*$exchangeRate) ;
-							if($currentAmount == 0){
+							dd($moneyModel->getReceivingOrPaymentCurrency() ,  $currency);
+							if($currentAmount >= -5 && $currentAmount<=5){
 								continue ;
 							}
 						  $currentDebit = $isCustomer ? 0 : $currentAmount;

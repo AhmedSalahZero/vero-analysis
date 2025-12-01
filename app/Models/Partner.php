@@ -208,7 +208,7 @@ class Partner extends Model
 		return self::where('odoo_id',$id)->where('is_tax',0)->where('company_id',$companyId)->first();
 	}
 	public static function findByName(string $name,int $companyId){
-		return self::where('name',$name)->where('company_id',$companyId)->first();
+		return self::where('name',$name)->where('is_tax',0)->where('company_id',$companyId)->first();
 	}
 	public static function handlePartnerForOdoo($odooPartnerId ,$odooPartnerName,$isSupplier ,$isCustomer,$isEmployee,$isOtherPartner,$companyId  ):int
 	{
@@ -243,21 +243,21 @@ class Partner extends Model
 			if($isCustomer){
 				$partner->update([
 					'is_customer'=>1 ,
-						'odoo_id'=>$odooPartnerId,
+					'odoo_id'=>$odooPartnerId,
 					'name'=>$odooPartnerName
 				]);
 			}
 			if($isEmployee){
 				$partner->update([
 					'is_employee'=>1 ,
-						'odoo_id'=>$odooPartnerId,
+					'odoo_id'=>$odooPartnerId,
 					'name'=>$odooPartnerName
 				]);
 			}
 			if($isOtherPartner){
 				$partner->update([
 					'is_other_partner'=>1 ,
-						'odoo_id'=>$odooPartnerId,
+					'odoo_id'=>$odooPartnerId,
 					'name'=>$odooPartnerName
 				]);
 			}
@@ -275,7 +275,6 @@ class Partner extends Model
 			'is_employee'=>$isEmployee,
 			'is_other_partner'=>$isOtherPartner,
 			'company_id'=>$companyId ,
-			// 'company_id'=>$company->id ,
 			'name'=>$partnerName
 		]);
 		return $partner;
@@ -325,7 +324,7 @@ class Partner extends Model
 	}
 	public static function handleTaxesColumnsToPartnerTable(Company $company)
 	{
-		
+	//	dd(self::getTaxesNames());
 		foreach(self::getTaxesNames() as $name){
 			$row = Partner::where('company_id',$company->id)->where('is_tax',1)->where('name',$name)->first();
 			$data = [

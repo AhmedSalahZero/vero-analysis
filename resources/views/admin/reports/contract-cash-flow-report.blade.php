@@ -460,6 +460,9 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                     <td class="red reset-table-width text-nowrap @if($hasSubRows) trigger-child-row-1 cursor-pointer @endif sub-text-bg text-capitalize main-tr is-close"> @if($hasSubRows) + @endif  </td>
                                     <td class="sub-text-bg   editable-text  max-w-classes-name is-name-cell ">{{ $customerName }}</td>
                                     <td class="  sub-numeric-bg text-center editable-date"> 
+									
+									
+										
 										@if($customerName == __('Customers Past Due Invoices'))
 										<button   class="btn btn-sm btn-danger text-white js-show-customer-due-invoices-modal">{{ __('View') }}</button>
 										{{-- {{ dd($contractCode , $currencyName , isset($cashflowReport) ? $cashflowReport:null ,$reportInterval ) }} --}}
@@ -561,7 +564,10 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
 										
                                     @endphp
 									
-                                    <td  data-id="{{ $currentValue }}" class="  sub-numeric-bg text-center editable-date">{{ number_format($currentValue,0) }}</td>
+                                    <td  data-id="{{ $currentValue }}" class="  sub-numeric-bg text-center editable-date">{{ number_format($currentValue,0) }}
+								
+										
+									</td>
                                     @endforeach
 									@php
 											

@@ -100,6 +100,7 @@ class CashFlowReportController
 		
 		// $reportInterval = 'daily';
 		$result = [];
+		$letterOfGuaranteeModelData = [];
 		// $cashExpenseCategoryNamesArr = [];
 		$pastDueSupplierInvoicesForContracts = collect([]);
 		$result['customers']=[
@@ -228,7 +229,7 @@ class CashFlowReportController
 				TimeOfDeposit::getAmountAndInterestAtDates($result,$foreignExchangeRates,$mainFunctionalCurrency,$company->id,$startDate,$endDate,$currentWeekYear);
 			}
 			 LetterOfGuaranteeIssuance::getCommissionAndFeesAtDates($result,$foreignExchangeRates , $mainFunctionalCurrency,'date',$company->id,$startDate,$endDate,$currentWeekYear,$contractId);
-			 LetterOfGuaranteeIssuance::getCashCovers($result,$foreignExchangeRates , $mainFunctionalCurrency,'renewal_date',$company->id,$startDate,$endDate,$currentWeekYear,$contractId);
+			 LetterOfGuaranteeIssuance::getCashCovers($letterOfGuaranteeModelData,$result,$foreignExchangeRates , $mainFunctionalCurrency,'renewal_date',$company->id,$startDate,$endDate,$currentWeekYear,$contractId);
 			 LetterOfCreditIssuance::getCommissionAndFeesAtDates($result,$foreignExchangeRates , $mainFunctionalCurrency,'date',$company->id,$startDate,$endDate,$currentWeekYear);
 			 LetterOfCreditIssuance::getRemainingLcAmountAtDates($result,$foreignExchangeRates , $mainFunctionalCurrency,$company->id,$startDate,$endDate,$currentWeekYear);
 			CashExpense::getCashOutForExpenseCategoriesAtDates($result,$foreignExchangeRates,$mainFunctionalCurrency,CashExpense::OUTGOING_TRANSFER,'payment_date',$company->id,$startDate,$endDate,$currentWeekYear,$contractId,null);
@@ -350,7 +351,7 @@ class CashFlowReportController
 			'supplierDueInvoices'=>$supplierDueInvoices,
 			'pastDueInstallments'=>$pastDueInstallments,
 			'pastDueLoanInstallments'=>$pastDueLoanInstallments,
-			
+			'letterOfGuaranteeModelData'=>$letterOfGuaranteeModelData,
 			'months'=>$months ,
 			'days'=>$days,
 			'reportInterval'=>$reportInterval,
@@ -376,7 +377,8 @@ class CashFlowReportController
 				}
 				return redirect()->route($redirectRouteName,$routeParams);
 			}
-		return view('admin.reports.contract-cash-flow-report',array_merge($reportData,['currencyName'=>$currencyName,'contractCode'=>$contractCode]));
+			// dd($letterOfGuaranteeModelData);
+		return view('admin.reports.contract-cash-flow-report',array_merge($reportData,['currencyName'=>$currencyName,'contractCode'=>$contractCode,'letterOfGuaranteeModelData'=>$letterOfGuaranteeModelData]));
 	}
 	public function formatAccumulatedNetCash(array $netCashes,array $weeks)
 	{

@@ -14,6 +14,7 @@ class ReadOdooPartners extends Controller
 		$odoo = new OdooService($company);
 		$startDate = $request->get('odoo_start_date');
 		$endDate = $request->get('odoo_end_date');
+		
 		try{
 			$odoo->getPartners($startDate,$endDate,$company->id);
 		}catch(\Exception $e){

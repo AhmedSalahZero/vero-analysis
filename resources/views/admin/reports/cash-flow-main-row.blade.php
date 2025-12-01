@@ -1,12 +1,17 @@
-{{-- {{ dD($pastDueLoanInstallments,$dates) }} --}}
+
 					 <tr class=" @if($customerName == __('Total Cash Inflow') || $customerName == __('Total Cash Outflow') ||  $customerName == __('Total Cash')) bg-lighter @else  @endif  parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   " data-model-id="{{ $rowIndex }}">
                                     <td class="red reset-table-width text-nowrap trigger-child-row-1 cursor-pointer sub-text-bg text-capitalize main-tr is-close"> @if($hasSubRows) + @endif  </td>
                                     <td class="sub-text-bg   editable-text  max-w-classes-name is-name-cell ">{{ $customerName }}</td>
                                     <td class="  sub-numeric-bg text-center editable-date"> 
+										{{-- @if($customerName == __('Cancelled LGs Cash Cover'))
+										<button   class="btn btn-sm btn-danger text-white js-show-customer-due-invoices-modal">{{ __('View') }}</button>
+										@endif  --}}
 										@if($customerName == __('Customers Past Due Invoices'))
 										<button   class="btn btn-sm btn-danger text-white js-show-customer-due-invoices-modal">{{ __('View') }}</button>
                                                 <x-modal.due-invoices :contractCode="$contractCode" :currencyName="$currencyName" :cashflowReport="isset($cashflowReport) ? $cashflowReport:null" :report-interval="$reportInterval" :currentInvoiceType="'CustomerInvoice'" :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueCustomerInvoices[$currentCurrencyName]??[]" :id="'test-modal-id'"></x-modal.due-invoices>
 										@endif 
+										
+										
 										
 											@if($customerName == 'Suppliers Past Due Invoices')
 												<button   class="btn btn-sm btn-danger text-white js-show-customer-due-invoices-modal">{{ __('View') }}</button>
@@ -73,7 +78,7 @@
 										$currentMainRowTotal += $currentValue;
 									}
 									 if($customerName == 'Accumulated Net Cash (+/-)'){
-										dd($customerName,$allMainRowsTotals,$finalResult[$currentCurrencyName]);
+						//				dd($customerName,$allMainRowsTotals,$finalResult[$currentCurrencyName]);
 									}
 									$allMainRowsTotals[$customerName][$weekAndYear] = $currentMainRowTotal ;
 										
