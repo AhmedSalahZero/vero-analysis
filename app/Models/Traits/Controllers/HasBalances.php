@@ -179,6 +179,7 @@ trait HasBalances
 						$currentData['document_type'] = $moneyModelType;
 						$currentData['document_no'] = $docNumber  ;
 						$currentData['debit'] = $currentDebit;
+						
 						$currentData['credit'] =$currentCredit;
 						$currentData['comment'] = $currentComment ;
 						if($isNotBegBalance){

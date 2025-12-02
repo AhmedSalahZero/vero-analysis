@@ -704,57 +704,6 @@ use App\Models\Partner;
 
 
 
-
-
-{{-- @if(isset($model) && $model->getDownPaymentType() == MoneyReceived::DOWN_PAYMENT_OVER_CONTRACT)
-            <div class="kt-portlet" id="settlement-card-id">
-                <div class="kt-portlet__head">
-                    <div class="kt-portlet__head-label">
-                        <h3 class="kt-portlet__head-title head-title text-primary">
-                            {{__('Settlement Information')}}
-</h3>
-</div>
-</div>
-<div class="kt-portlet__body">
-
-
-    <div class="js-append-to">
-    </div>
-    <div class="js-template hidden">
-        <div class="col-md-12 js-duplicate-node">
-            {!! CustomerInvoice::getSettlementsTemplate() !!}
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="row">
-        <div class="col-md-1 width-10"></div>
-        <div class="col-md-1 width-8"></div>
-        <div class="col-md-1 width-8"></div>
-        <div class="col-md-1 width-8"></div>
-        <div class="col-md-1 width-12"></div>
-        <div class="col-md-2 width-12"></div>
-        <div class="col-md-1 width-12"></div>
-        <div class="col-md-2 width-12 closest-parent">
-            <label class="label text-nowrap">{{ __('Unapplied Amount') }}
-                <span class="taking-currency-span"></span>
-            </label>
-            <input readonly id="remaining-settlement-taking-js" class="form-control" placeholder="{{ __('Unapplied Amount') }}" type="text" value="0">
-        </div>
-        <div class="col-md-2 width-12 closest-parent">
-            <label class="label">{{ __('Unapplied Amount') }}
-                <span class="invoice-currency-span"></span>
-            </label>
-            <input readonly id="remaining-settlement-js" class="form-control" placeholder="{{ __('Unapplied Amount') }}" type="text" name="unapplied_amount" value="0">
-        </div>
-
-    </div>
-</div>
-</div>
-@endif --}}
-
-
 @include('user_comment',['model'=>$model??null])
 <x-submitting-by-ajax />
 

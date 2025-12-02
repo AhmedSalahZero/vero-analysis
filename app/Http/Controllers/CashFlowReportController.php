@@ -377,7 +377,6 @@ class CashFlowReportController
 				}
 				return redirect()->route($redirectRouteName,$routeParams);
 			}
-			// dd($letterOfGuaranteeModelData);
 		return view('admin.reports.contract-cash-flow-report',array_merge($reportData,['currencyName'=>$currencyName,'contractCode'=>$contractCode,'letterOfGuaranteeModelData'=>$letterOfGuaranteeModelData]));
 	}
 	public function formatAccumulatedNetCash(array $netCashes,array $weeks)

@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Helpers\HArr;
 use App\Http\Requests\DeleteMoneyPaymentRequest;
 use App\Http\Requests\MarkChequeAsPaidRequest;
 use App\Http\Requests\StoreMoneyPaymentRequest;
@@ -337,6 +338,7 @@ class MoneyPaymentController
         $hasUnappliedAmount = (bool)$request->get('unapplied_amount');
         $partnerType = $request->get('partner_type', 'is_supplier');
         $moneyType = $request->get('type');
+		
         $isGeneralDownPaymentOrSettlementOpening = $request->get('down_payment_type') == MoneyPayment::DOWN_PAYMENT_GENERAL || $request->get('down_payment_type') == MoneyPayment::SETTLEMENT_OF_OPENING_BALANCE;
         $financialInstitutionId = null;
         $contractId = $request->get('contract_id');
@@ -370,9 +372,7 @@ class MoneyPaymentController
         $amountInPaymentCurrency = $request->input('paid_amount.'.$moneyType, 0) ;
         $amountInPaymentCurrency = unformat_number($amountInPaymentCurrency);
         
-        $totalSettlements = array_sum(array_column($request->get('settlements', []), 'settlement_amount'));
-        $invoiceCurrencyAmount =  $isTheSameCurrency ? $amountInPaymentCurrency  : $totalSettlements  ;
-        // $invoiceCurrencyAmount = $amountInPaymentCurrency / $exchangeRate ;
+        $invoiceCurrencyAmount =  $isTheSameCurrency ? $amountInPaymentCurrency  : HArr::sumFormattedArr(array_column($request->get('settlements', []), 'settlement_amount'))  ;
         
         if ($moneyType == MoneyPayment::CASH_PAYMENT) {
             $relationData = $request->only(['receipt_number']) ;
@@ -403,8 +403,6 @@ class MoneyPaymentController
             ];
         }
     
-        // $data['paid_amount'] = $paidAmount ;
-        // $data['paid_amount'] = $isDownPayment || ! $request->has('settlements') ?  $amountInPaymentCurrency  : array_sum(array_column($request->get('settlements'),'settlement_amount'));
         if ($partnerType && $partnerType != 'is_supplier') {
             $data['paid_amount'] = $request->input('paid_amount.'.$moneyType, 0);
         }

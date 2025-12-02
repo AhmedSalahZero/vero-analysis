@@ -2,6 +2,7 @@
 
 namespace App\Rules;
 
+use App\Helpers\HArr;
 use Illuminate\Contracts\Validation\ImplicitRule;
 
 class UnappliedAmountForContractAsDownPaymentRule implements ImplicitRule
@@ -37,7 +38,7 @@ class UnappliedAmountForContractAsDownPaymentRule implements ImplicitRule
 		$isMoneyReceivedForm = Request()->has('received_amount');
 		$receivedAmountOrPaidAmountKeyName = $isMoneyReceivedForm ? 'received_amount' : 'paid_amount';
 		$receivingOrPaymentCurrencyName = $isMoneyReceivedForm ? 'receiving_currency':'payment_currency';
-		$totalPaidAmountForContract = array_sum(array_column($value,$receivedAmountOrPaidAmountKeyName));
+		$totalPaidAmountForContract = HArr::sumFormattedArr(array_column($value,$receivedAmountOrPaidAmountKeyName));
 		
 		if($this->is_down_payment){
 			$this->failed_message  = __('Total Paid Amount Must Equal To Total Down Payment');
@@ -51,7 +52,8 @@ class UnappliedAmountForContractAsDownPaymentRule implements ImplicitRule
 		$moneyType = Request()->get('type');
 		$exchangeRate = $currency == $receivingOrPaymentCurrency ? 1 : number_unformat(Request()->input('exchange_rate.'.$moneyType,1)) ;
 		$this->failed_message = __('Total Paid Amount For Contract Not Equal To Unapplied Amount');
-		return $totalPaidAmountForContract / $exchangeRate == $this->total_unapplied_amount ;
+		$diff = $totalPaidAmountForContract - ($this->total_unapplied_amount*$exchangeRate);
+		return $diff >= -1 && $diff<=1;
     }
 
     /**

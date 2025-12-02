@@ -418,11 +418,10 @@ $(document).on('change', '.js-settlement-amount,.settlement-amount-class,[data-m
 	}else{
 		$('#contract-row-id').hide()
 	}
-	
-	$('#remaining-settlement-js').val(number_format(totalRemaining))
-
+	$('#remaining-settlement-js').val(number_format(totalRemaining,2))
 	var totalRemainingInRecCurrency = totalRemaining * exchangeRate-  totalOrdersAmount;
-	$('#remaining-settlement-taking-js').val(number_format(totalRemainingInRecCurrency))
+	console.log(totalRemainingInRecCurrency,totalRemaining ,exchangeRate , totalOrdersAmount );
+	$('#remaining-settlement-taking-js').val(number_format(totalRemainingInRecCurrency,2))
 
 })
 $('.js-send-to-collection').on('change', function () {

@@ -57,6 +57,7 @@ class TestCommand extends Command
 	}
 	public function handle()
 	{
+		
 	//	dd($this->getSupplierInvoicesWithout());
 		// SupplierInvoice::where('id','>',0)->update([
 		// 	'updated_at'=>now()

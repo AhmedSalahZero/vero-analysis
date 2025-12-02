@@ -303,10 +303,10 @@ $(document).on('change', '.js-settlement-amount,.settlement-amount-class,[data-m
 	}else{
 		$('#contract-row-id').hide()
 	}
-	$('#remaining-settlement-js').val(number_format(totalRemaining))
+	$('#remaining-settlement-js').val(number_format(totalRemaining,2))
 
 	var totalRemainingInRecCurrency = totalRemaining * exchangeRate - (totalOrdersAmount) ;
-	$('#remaining-settlement-taking-js').val(number_format(totalRemainingInRecCurrency))
+	$('#remaining-settlement-taking-js').val(number_format(totalRemainingInRecCurrency,2))
 
 })
 $('.js-send-to-collection').on('change', function () {
@@ -344,7 +344,6 @@ $(document).on('change', '.js-update-account-number-based-on-account-type', func
 	currency = currency ? currency: $(this).closest('.closest-parent-class').find('.select-for-currency').val();
 	
 	let financialInstitutionBankId = parent.find('[data-financial-institution-id]').val()
-	console.log(financialInstitutionBankId , currency);
 	financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $('[data-financial-institution-id]').val()
 	if (!val || !currency || !financialInstitutionBankId) {
 		return

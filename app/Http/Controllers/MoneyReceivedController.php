@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Helpers\HArr;
 use App\Http\Requests\ApplyCollectionToChequeRequest;
 use App\Http\Requests\BackToUnderCollectionChequeRequest;
 use App\Http\Requests\DeleteMoneyReceivedRequest;
@@ -415,8 +416,7 @@ class MoneyReceivedController
         $amountInReceivingCurrency = $request->input('received_amount.'.$moneyType, 0) ;
         
         $amountInReceivingCurrency = unformat_number($amountInReceivingCurrency);
-        $totalSettlements = array_sum(array_column($request->get('settlements', []), 'settlement_amount'));
-        $invoiceCurrencyAmount =  $isTheSameCurrency ? $amountInReceivingCurrency  : $totalSettlements  ;
+        $invoiceCurrencyAmount =  $isTheSameCurrency ? $amountInReceivingCurrency  : HArr::sumFormattedArr(array_column($request->get('settlements', []), 'settlement_amount'))  ;
         if ($moneyType == MoneyReceived::CASH_IN_SAFE) {
             $relationData = $request->only(['receipt_number']) ;
             $relationData['receiving_branch_id'] = $this->generateBranchId($receivedBankName, $company->id) ;

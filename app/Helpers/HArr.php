@@ -1223,4 +1223,11 @@ class HArr
 		return $calculatedCorporateTaxesPerYear;
 		
 	}
+	public static function sumFormattedArr(array $items){
+		$sum = 0 ;
+		foreach($items as $no){
+			$sum+=number_unformat($no);
+		}
+		return $sum;
+	}
 }
