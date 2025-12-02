@@ -380,9 +380,6 @@ class MoneyReceivedController
         $hasUnappliedAmount = (bool)$request->get('unapplied_amount');
         $isGeneralDownPaymentOrSettlementOpening = $request->get('down_payment_type') == MoneyReceived::DOWN_PAYMENT_GENERAL || $request->get('down_payment_type') == MoneyReceived::SETTLEMENT_OF_OPENING_BALANCE;
         $partnerType = $request->get('partner_type', 'is_customer');
-        
-
-        
         $moneyType = $request->get('type');
         $financialInstitutionId = null;
         $contractId = $request->get('contract_id');

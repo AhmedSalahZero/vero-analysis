@@ -6,6 +6,7 @@ use App\Models\FinancialInstitution;
 use App\Models\MoneyPayment;
 use App\Rules\AmountCanNotBeGreaterThanEndBalanceAtPaymentDate;
 use App\Rules\AtLeaseOneSettlementMustBeExist;
+use App\Rules\ContractDownPaymentRule;
 use App\Rules\DateMustBeGreaterThanOrEqualDate;
 use App\Rules\ReceivingOrPaymentDateRule;
 use App\Rules\SettlementPlusWithoutCanNotBeGreaterNetBalance;
@@ -91,6 +92,7 @@ class StoreMoneyPaymentRequest extends FormRequest
 			'purchases_orders_amounts'=>$partnerType =='is_supplier' ? [new UnappliedAmountForContractAsDownPaymentRule($this->unapplied_amount?:0,$this->is_down_payment,$paidAmount)] : [], 
 			'allocations'=>[new ValidAllocationsRule()],
 			'amount_can_not_be_greater_than_end_balance_at_payment_date'=>new AmountCanNotBeGreaterThanEndBalanceAtPaymentDate($type,$this->input('paid_amount.'.$type),$this->route('company'),$this->input('account_type.'.$type),$this->input('account_number.'.$type),$financialInstitutionId,$this->delivery_date,$this->delivery_branch_id,null),
+			'downPayment_over_contract'=>[new ContractDownPaymentRule($paidAmount,false)]
         ];
     }
 	public function messages()

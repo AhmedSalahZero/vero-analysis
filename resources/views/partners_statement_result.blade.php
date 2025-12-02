@@ -61,12 +61,15 @@
     <div class="kt-portlet__body">
         <div class="tab-content  kt-margin-t-20">
 
-
+@php
+	$warningMessage = '<span class="text-red"> [ Just a note: partners without any transactions won’t appear in the report. ] </span>'
+@endphp
             <!--End:: Tab  EGP FX Rate Table -->
 
             <!--Begin:: Tab USD FX Rate Table -->
             <div class="tab-pane active" id="kt_apps_contacts_view_tab_2" role="tabpanel">
-                <x-table :tableTitle="$title" :tableClass="'kt_table_with_no_pagination'">
+                <x-table :tableTitle="$title . $warningMessage" :tableClass="'kt_table_with_no_pagination'">
+				
                     @slot('table_header')
                     <tr class="table-active text-center">
                         <th class="text-center absorbing-column">{{ __('Name') }}</th>
@@ -76,7 +79,7 @@
                         <th> {{ __('Debit') }} </th>
                         <th> {{ __('Credit') }} </th>
                         <th> {{ __('End Balance') }} </th>
-                        <th> {{ __('Reviewed') }} </th>
+                        {{-- <th> {{ __('Reviewed') }} </th> --}}
                         <th> {{ __('Comment') }} </th>
 
                     </tr>
@@ -120,10 +123,10 @@
                             </b>
 
                         </td>
-
+{{-- 
                         <td class="sub-text-bg text-center text-white">
                             <b>{{ __('Reviewed') }}</b>
-                        </td>
+                        </td> --}}
                         <td class="sub-text-bg align-middle text-white text-center max-w-amount">
                    
                             <b>
@@ -168,11 +171,11 @@
 						</td>
                         @php
                         $comment = isset($modelAsStdClass->{'comment_'.$lang}) ? $modelAsStdClass->{'comment_'.$lang} : null ;
-                        $reviewedArr = getBankStatementReviewed($modelAsStdClass) ;
-                        $reviewedText = getReviewedText($reviewedArr);
+                     //   $reviewedArr = getBankStatementReviewed($modelAsStdClass) ;
+                      //  $reviewedText = getReviewedText($reviewedArr);
                         $userComment = getUserCommentFromModel($modelAsStdClass);
                         @endphp
-                        <td class="sub-text-bg text-left ">{{ $reviewedText   }}</td>
+                        {{-- <td class="sub-text-bg text-left ">{{ $reviewedText   }}</td> --}}
                         <td class="sub-text-bg text-left max-w-amount">{{ $comment?:  getBankStatementComment($modelAsStdClass) }}
                             <br>
                             {{ $userComment }}
@@ -199,7 +202,7 @@
                         <td class="text-center active-style">{{ number_format($totalDebit) }}</td>
                         <td class="text-center active-style">{{ number_format($totalCredit) }}</td>
                         <td class="text-center active-style">{{ number_format($totalEndBalance) }}</td>
-                        <td class="text-center active-style">--</td>
+                        {{-- <td class="text-center active-style">--</td> --}}
                         <td class="text-center active-style">--</td>
                     </tr>
 

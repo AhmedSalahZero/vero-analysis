@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Models\MoneyReceived;
 use App\Rules\AtLeaseOneSettlementMustBeExist;
 use App\Rules\ContractAmountWithUnappliedAmountRule;
+use App\Rules\ContractDownPaymentRule;
 use App\Rules\ReceivingOrPaymentDateRule;
 use App\Rules\SettlementPlusWithoutCanNotBeGreaterNetBalance;
 use App\Rules\UnappliedAmountForContractAsDownPaymentRule;
@@ -81,7 +82,7 @@ class StoreMoneyReceivedRequest extends FormRequest
 			'receipt_number'=>$type== MoneyReceived::CASH_IN_SAFE ? ['required',new UniqueReceiptNumberForReceivingBranchRule('cash_in_safes',$this->receiving_branch_id?:0,$this->cash_id,__('Receipt Number For This Branch Already Exist'))] : [],
 	
 			'sales_orders_amounts'=>$partnerType =='is_customer' ? [new UnappliedAmountForContractAsDownPaymentRule($this->unapplied_amount?:0,$this->is_down_payment,$receivedAmount)] : [] ,
-	
+			'downPayment_over_contract'=>[new ContractDownPaymentRule($receivedAmount,true)]
         ];
     }
 	

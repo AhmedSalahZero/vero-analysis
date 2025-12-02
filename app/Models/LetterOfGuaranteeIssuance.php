@@ -612,7 +612,6 @@ class LetterOfGuaranteeIssuance extends Model
             $date = $rowWithoutGrouping->{$dateFieldName};
 			$partnerName = $rowWithoutGrouping->name;
 			 $lgCode = $rowWithoutGrouping->lg_code;
-			// dd( LetterOfGuaranteeIssuance::find($rowWithoutGrouping->letter_of_guarantee_issuance_id));
 			// $lgCode = LetterOfGuaranteeIssuance::find($rowWithoutGrouping->letter_of_guarantee_issuance_id)->getName();
 			$lgType = $lgsTypes[$rowWithoutGrouping->lg_type];
             $exchangeRate = ForeignExchangeRate::getExchangeRateAt($currentCurrency, $mainFunctionalCurrency, $date, $companyId, $foreignExchangeRates);

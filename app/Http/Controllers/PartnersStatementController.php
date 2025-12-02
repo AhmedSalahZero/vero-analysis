@@ -44,27 +44,27 @@ class PartnersStatementController
 		$statements = [];
 		foreach($partnerIds as $partnerId){
 			$partner = Partner::find($partnerId);
-			$statements[$partner->id]=['name'=>$partner->getName() , 'statements'=>
-		
-			DB::table($statementTableName)
+			$currentResult = DB::table($statementTableName)
 			->where('.company_id',$company->id)
 			->where('currency_name',$currency)
 			->where('partner_id',$partnerId)
 			->where('date','>=',$startDate)
 			->where('date','<=',$endDate)
 			->orderByRaw('full_date asc , created_at asc')
-			->get()
-			
-		];
+			->get() ;
+			if(count($currentResult)){
+				$statements[$partner->id]=['name'=>$partner->getName() , 'statements'=>$currentResult];
+			}
 			
 		}
-		// dd($statements);
-			// if(!count($results)){
-			// 	return redirect()
-			// 						->back()
-			// 						->with('fail',__('No Data Found'))	
-			// 						;
-			// }
+		
+
+			if(!count($statements)){
+				return redirect()
+									->back()
+									->with('fail',__('No Data Found'))	
+									;
+			}
 		
 		return view('partners_statement_result',[
 			'statements'=>$statements,

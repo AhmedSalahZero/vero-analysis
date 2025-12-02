@@ -20,7 +20,6 @@ class UnappliedAmountForContractAsDownPaymentRule implements ImplicitRule
         $this->total_unapplied_amount = $totalUnappliedAmount ;
 		$this->is_down_payment = $isDownPayment ;		
 		$this->paid_amount = $paidAmount ;		
-		// $this->failed_message = $isDownPayment ;		
     }
 
     /**
@@ -38,9 +37,6 @@ class UnappliedAmountForContractAsDownPaymentRule implements ImplicitRule
 		$isMoneyReceivedForm = Request()->has('received_amount');
 		$receivedAmountOrPaidAmountKeyName = $isMoneyReceivedForm ? 'received_amount' : 'paid_amount';
 		$receivingOrPaymentCurrencyName = $isMoneyReceivedForm ? 'receiving_currency':'payment_currency';
-		// if($this->isOpenBalance()){
-			
-		// }
 		$totalPaidAmountForContract = array_sum(array_column($value,$receivedAmountOrPaidAmountKeyName));
 		
 		if($this->is_down_payment){
