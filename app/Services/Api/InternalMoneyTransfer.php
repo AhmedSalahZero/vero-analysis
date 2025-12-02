@@ -41,6 +41,7 @@ class InternalMoneyTransfer
            'amount' => $amountInCurrency,
            'date' => $date,
            'ref' =>  $message,
+		//    'rate'=>$exchangeRate,
            'line_ids' => [
                 [0, 0, $debitArr ],
                    

@@ -76,7 +76,6 @@ class ForeignExchangeRate extends Model
 	public static function getExchangeRateAt($receivingCurrency,$mainFunctionalCurrency,$receivingDate,$companyId,$foreignExchangeRates)
 	{
 		return  $receivingCurrency != $mainFunctionalCurrency ? self::getExchangeRateForCurrencyAndClosestDate($receivingCurrency,$mainFunctionalCurrency,$receivingDate,$companyId,$foreignExchangeRates) : 1;
-		
 	}
 	
 	public static function importOdooExchangeRates(Company $company)

@@ -1,7 +1,6 @@
 <?php
 namespace App\Traits\Models;
 
-use App\Helpers\HArr;
 use App\Models\Branch;
 use App\Models\BuyOrSellCurrency;
 use App\Models\Company;
@@ -14,7 +13,7 @@ use App\Services\Api\InternalMoneyTransfer as OdooInternalMoneyTransfer;
 trait HasOdooMoneyTransfer
 {
     
-    private function storeOdoo(Company $company, string $date, int $outBankOdooId, int $outJournalId, int $inJournalId, int $inBankOdooId, float $amountInCurrency, string $currencyName, $isBreakDeposit= false,$secondCurrency = null , $amountToBuy = null)
+    private function storeOdoo(float $exchangeRate , Company $company, string $date, int $outBankOdooId, int $outJournalId, int $inJournalId, int $inBankOdooId, float $amountInCurrency, string $currencyName, $isBreakDeposit= false,$secondCurrency = null , $amountToBuy = null)
     {
         
 		$isInternalMoneyTransfer = is_null($secondCurrency) || is_null($amountToBuy) ;
@@ -24,8 +23,10 @@ trait HasOdooMoneyTransfer
 		$secondCurrency = $isInternalMoneyTransfer ? $mainFunctionalCurrency : $secondCurrency;
 		$isBuyOrSellWithTwoForeignCurrencies= !$isInternalMoneyTransfer && ($secondCurrency != $mainFunctionalCurrency && $currencyName != $mainFunctionalCurrency ); 
         $receiveOdooCurrencyId = $isInternalMoneyTransfer ? $odooCurrencyId  : Currency::getOdooId($secondCurrency);
-        $amountInMainFunctionalCurrency = $currencyName != $secondCurrency  ? $amountInCurrency * ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currencyName, $secondCurrency, $date, $company->id) : $amountInCurrency ;
-		$amountInMainFunctionalCurrencyInSend = $isBuyOrSellWithTwoForeignCurrencies ? $amountInCurrency * ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currencyName, $mainFunctionalCurrency, $date, $company->id) : $amountInMainFunctionalCurrency;
+		// ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currencyName, $secondCurrency, $date, $company->id)
+        $amountInMainFunctionalCurrency = $currencyName != $secondCurrency  ? $amountInCurrency *  $exchangeRate : $amountInCurrency ;
+		// ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currencyName, $mainFunctionalCurrency, $date, $company->id)
+		$amountInMainFunctionalCurrencyInSend = $isBuyOrSellWithTwoForeignCurrencies ? $amountInCurrency * $exchangeRate : $amountInMainFunctionalCurrency;
 		$amountInMainFunctionalCurrencyInReceive= $amountInMainFunctionalCurrencyInSend;
 		
 		
@@ -42,7 +43,6 @@ trait HasOdooMoneyTransfer
         if ($this->{$outboundJournalColumnName}) {
             $receiveResult = $internalMoneyTransferService->unlink($this->{$outboundJournalColumnName});
         }
-		
         $sendMoneyResult = $internalMoneyTransferService->sendMoneyTo($isBreakDeposit,$date, $amountInCurrency, $amountInMainFunctionalCurrencyInSend, $odooCurrencyId, $outJournalId, $outBankOdooId,$sendMessage);
         $this->{$outboundStatementColumnName} = $sendMoneyResult['account_bank_statement_line_id'] ;
         $this->{$outboundJournalColumnName} = $sendMoneyResult['journal_entry_id'] ;
@@ -105,11 +105,12 @@ trait HasOdooMoneyTransfer
             $fromAccountNumber = $this->from_account_number;
             $toAccountTypeId = $this->to_account_type_id;
             $toAccountNumber = $this->to_account_number;
-            $amountInCurrency = $this instanceof BuyOrSellCurrency ? $this->getAmountInMainCurrency() :  $this->getAmountInCurrency();
-            $currencyName = $this instanceof BuyOrSellCurrency ? $this->getCurrencyToSell() :  $this->getCurrency();
-			$secondCurrency=$this instanceof BuyOrSellCurrency ? $this->getCurrencyToBuy() : null;
-			$amountToBuy=$this instanceof BuyOrSellCurrency ? $this->getAmountToBuy() : null;
-			// $secondCurrencyToSendId = $this instanceof BuyOrSellCurrency ? 
+			$isBuyOrSell = $this instanceof BuyOrSellCurrency;
+			$exchangeRate = $isBuyOrSell ? $this->getExchangeRate() : 1 ;
+            $amountInCurrency = $isBuyOrSell ? $this->getAmountInMainCurrency() :  $this->getAmountInCurrency();
+            $currencyName = $isBuyOrSell ? $this->getCurrencyToSell() :  $this->getCurrency();
+			$secondCurrency=$isBuyOrSell ? $this->getCurrencyToBuy() : null;
+			$amountToBuy=$isBuyOrSell ? $this->getAmountToBuy() : null;
             $fromBranchId = $this->from_branch_id;
             $toBranchId = $this->to_branch_id;
             $type = $this->getType();
@@ -117,38 +118,36 @@ trait HasOdooMoneyTransfer
             $toFinancialInstitutionId=$this->to_bank_id;
             $fromFinancialInstitution = FinancialInstitution::find($fromFinancialInstitutionId);
             $toFinancialInstitution = FinancialInstitution::find($toFinancialInstitutionId);
-        
             if ($type == InternalMoneyTransfer::BANK_TO_BANK) {
                 $fromJournalId = $fromFinancialInstitution->getJournalIdForAccount($fromAccountTypeId, $fromAccountNumber);
                 $fromOdooId = $fromFinancialInstitution->getOdooIdForAccount($fromAccountTypeId, $fromAccountNumber);
                 $toJournalId = $toFinancialInstitution->getJournalIdForAccount($toAccountTypeId, $toAccountNumber);
                 $toOdooId = $toFinancialInstitution->getOdooIdForAccount($toAccountTypeId, $toAccountNumber);
-                $this->storeOdoo($company, $transferDate, $fromOdooId, $fromJournalId, $toJournalId, $toOdooId, $amountInCurrency, $currencyName,false,$secondCurrency,$amountToBuy);
+                $this->storeOdoo($exchangeRate,$company, $transferDate, $fromOdooId, $fromJournalId, $toJournalId, $toOdooId, $amountInCurrency, $currencyName,false,$secondCurrency,$amountToBuy);
             } elseif ($type == InternalMoneyTransfer::BANK_TO_SAFE) {
                 $fromOdooId = $fromFinancialInstitution->getOdooIdForAccount($fromAccountTypeId, $fromAccountNumber);
                 $fromJournalId = $fromFinancialInstitution->getJournalIdForAccount($fromAccountTypeId, $fromAccountNumber);
                 $branch = Branch::find($toBranchId) ;
                 $toJournalId = $branch->getJournalId();
                 $toOdooId = $branch->getOdooId();
-                $this->storeOdoo($company, $transferDate, $fromOdooId, $fromJournalId,$toJournalId,$toOdooId, $amountInCurrency, $currencyName,false,$secondCurrency,$amountToBuy);
+                $this->storeOdoo($exchangeRate,$company, $transferDate, $fromOdooId, $fromJournalId,$toJournalId,$toOdooId, $amountInCurrency, $currencyName,false,$secondCurrency,$amountToBuy);
             } elseif ($type == InternalMoneyTransfer::SAFE_TO_BANK) {
                 $branch = Branch::find($fromBranchId);
                 $fromJournalId = $branch->getJournalId();
                 $fromOdooId = $branch->getOdooId();
                 $toJournalId = $toFinancialInstitution->getJournalIdForAccount($toAccountTypeId, $toAccountNumber);
                 $toOdooId = $toFinancialInstitution->getOdooIdForAccount($toAccountTypeId, $toAccountNumber);
-                $this->storeOdoo($company, $transferDate,$fromOdooId, $fromJournalId, $toJournalId,$toOdooId, $amountInCurrency, $currencyName,false,$secondCurrency,$amountToBuy);
+                $this->storeOdoo($exchangeRate,$company, $transferDate,$fromOdooId, $fromJournalId, $toJournalId,$toOdooId, $amountInCurrency, $currencyName,false,$secondCurrency,$amountToBuy);
                 
             } elseif ($type == InternalMoneyTransfer::SAFE_TO_SAFE) {
                 $fromBranch = Branch::find($fromBranchId);
                 $fromJournalId = $fromBranch->getJournalId();
                 $fromOdooId = $fromBranch->getOdooId();
-                
                 $toBranch = Branch::find($toBranchId);
                 $toJournalId = $toBranch->getJournalId();
                 $toOdooId = $toBranch->getOdooId();
                 
-                $this->storeOdoo($company,$transferDate,$fromOdooId,$fromJournalId,$toJournalId,$toOdooId,$amountInCurrency,$currencyName,false,$secondCurrency,$amountToBuy);
+                $this->storeOdoo($exchangeRate,$company,$transferDate,$fromOdooId,$fromJournalId,$toJournalId,$toOdooId,$amountInCurrency,$currencyName,false,$secondCurrency,$amountToBuy);
                 
             }
             

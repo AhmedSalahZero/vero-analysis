@@ -32,19 +32,22 @@ class LgByBankNameReportController
     public function result(Company $company, Request $request)
     {
         $startDate = $request->get('start_date');
-        $endDate = $request->get('end_date');
+  //      $endDate = $request->get('end_date');
       
         $currencyName = $request->get('currency_name');
 		$results = [];
-		$bankId = $request->get('bank_id');
+		$bankIds = $request->get('bank_id');
 	
-		$bankName = FinancialInstitution::find($bankId)->getName();
+	//	$bankName = FinancialInstitution::find($bankId)->getName();
 		$status = $request->get('status');
-		$results = DB::table('letter_of_guarantee_issuances')->where('letter_of_guarantee_issuances.company_id',$company->id)->where('lg_currency',$currencyName)->where('financial_institution_id',$bankId)
+		$results = DB::table('letter_of_guarantee_issuances')->where('letter_of_guarantee_issuances.company_id',$company->id)->where('lg_currency',$currencyName)->whereIn('financial_institution_id',$bankIds)
 		->when($status== 'running',function($q){
 			$q->where('status','running');
 		})
-		->whereBetween('issuance_date',[$startDate,$endDate])
+		
+		// renewal_date
+		->where('renewal_date','>=',$startDate)
+		// ->whereBetween('issuance_date',[$startDate,$endDate])
 		->join('partners','partners.id','=','letter_of_guarantee_issuances.partner_id')
 		->join('financial_institutions','financial_institutions.id','=','letter_of_guarantee_issuances.financial_institution_id')
 		->join('banks','banks.id','=','financial_institutions.bank_id')
@@ -58,9 +61,9 @@ class LgByBankNameReportController
         return view('lg_by_bank_name_result', [
             'results' => $results,
             'currency' => $currencyName,
-			'bankName'=>$bankName,
+		//	'bankName'=>$bankName,
 			'startDate'=>Carbon::make($startDate)->format('d-m-Y'),
-			'endDate'=>Carbon::make($endDate)->format('d-m-Y')
+			// 'endDate'=>Carbon::make($endDate)->format('d-m-Y')
         ]);
     }
 	

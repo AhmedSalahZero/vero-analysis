@@ -110,10 +110,10 @@
 @endsection
 @section('sub-header')
 <x-main-form-title :id="'main-form-title'" :class="''">{{ __('Cash Expense Statement ['  ) . ' ' . __($currency) . ' ]' }} 
-@if($expenseCategoryName)
+{{-- @if($expenseCategoryName)
 [{{ $expenseCategory }}]
  [{{ $expenseCategoryName }}]
- @endif 
+ @endif  --}}
  </x-main-form-title>
 @endsection
 @section('content')
@@ -277,7 +277,7 @@
 
                                     <tr class="header-tr ">
 
-                                        <th class="view-table-th max-w-serial  header-th  align-middle text-center">
+                                        <th class="view-table-th   header-th  align-middle text-center">
                                             {{ __('#') }}
                                         </th>
 										  <th class="view-table-th   header-th  align-middle text-center">

@@ -82,7 +82,7 @@ class CashExpenseCategoryController
 		return redirect()->route('cash.expense.category.index',['company'=>$company->id]);  
 	}	
 	public function updateExpenseCategoryNameBasedOnCategory(Company $company , Request $request){
-		$caseExpensesIds = (array) $request->get('expenseCategoryId');
+		$caseExpensesIds = $request->get('expenseCategoryId',[]);
 		$expenseCategories = CashExpenseCategory::whereIn('id',$caseExpensesIds)->get();
 		$result = [];
 		foreach($expenseCategories as $expenseCategory){

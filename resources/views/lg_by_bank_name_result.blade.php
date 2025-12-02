@@ -128,7 +128,7 @@
 </style>
 @endsection
 @section('sub-header')
-<x-main-form-title :id="'main-form-title'" :class="''">{{ __('LG Report By Bank Name ['  ) . $bankName . ' ] [' . $startDate . ' ] [ ' . $endDate . ' ] [ ' . __(touppercase($currency)) . ' ]' }}</x-main-form-title>
+<x-main-form-title :id="'main-form-title'" :class="''">{{ __('LG Report By Bank Name ['  ) . $startDate . ' ]  [ ' . __(touppercase($currency)) . ' ]' }}</x-main-form-title>
 
 @endsection
 @section('content')

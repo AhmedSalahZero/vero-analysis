@@ -16,27 +16,25 @@ class CashExpenseStatementController
     use GeneralFunctions;
     public function index(Company $company)
 	{
-		// $selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
 		$cashExpenseCategories = CashExpenseCategory::where('company_id',$company->id)->orderBy('name','asc')->get()->formattedForSelect(true,'getId','getName');
         return view('cash_expense_statement_form', [
 			'company'=>$company,
 			'cashExpenseCategories'=>$cashExpenseCategories
-			// 'selectedBranches'=>$selectedBranches
 		]);
     }
 	public function result(Company $company , Request $request){
 		$startDate = $request->get('start_date');
 		$endDate = $request->get('end_date');
 		$currency = $request->get('currency');
-		$expenseCategoryId = is_array($request->get('expense_category_id')) ? $request->input('expense_category_id.0') :  $request->get('expense_category_id');
-		$expenseCategory =count($request->get('expense_category_id'))  == 1 ? CashExpenseCategory::find($expenseCategoryId)->getName() : null;
-		$cashExpenseCategoryId = is_array($request->get('cash_expense_category_name_id')) ? $request->input('cash_expense_category_name_id.0') : $request->get('cash_expense_category_name_id') ; 
-		$expenseCategoryName =   CashExpenseCategoryName::find($cashExpenseCategoryId)->getName();
+		// $expenseCategoryId = is_array($request->get('expense_category_id')) ? $request->input('expense_category_id.0') :  $request->get('expense_category_id');
+		// $expenseCategory =count($request->get('expense_category_id'))  == 1 ? CashExpenseCategory::find($expenseCategoryId)->getName() : null;
+		$cashExpenseCategoryIds = $request->get('cash_expense_category_name_id',[]) ; 
+		// $expenseCategoryName =   CashExpenseCategoryName::find($cashExpenseCategoryId)->getName();
 
 		$result = DB::table('cash_expenses')->where('cash_expenses.company_id',$company->id)->where('currency',$currency)
 		->where('payment_date','>=',$startDate)
 		->where('payment_date','<=',$endDate)
-		->whereIn('cash_expense_category_name_id',(array)$cashExpenseCategoryId)
+		->whereIn('cash_expense_category_name_id',$cashExpenseCategoryIds)
 		->orderByRaw('payment_date asc')
 		->join('cash_expense_category_names','cash_expense_category_names.id','=','cash_expenses.cash_expense_category_name_id')
 		->join('cash_expense_categories','cash_expense_categories.id','=','cash_expense_category_names.cash_expense_category_id')
@@ -53,8 +51,8 @@ class CashExpenseStatementController
 		return view('cash_expense_statement_result',[
 			'results'=>$result,
 			'currency'=>$currency,
-			'expenseCategory'=>$expenseCategory,
-			'expenseCategoryName'=>$expenseCategoryName
+			// 'expenseCategory'=>$expenseCategory,
+			// 'expenseCategoryName'=>$expenseCategoryName
 		]);
 	}
 

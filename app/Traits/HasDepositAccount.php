@@ -54,66 +54,11 @@ trait HasDepositAccount
 		$date = $this->getStartDate();
 		$this->deleteOdooRelations($isBreakOrApplyDeposit);
 		if($company->hasOdooIntegrationCredentials() && $company->withinIntegrationDate($date) && ! $isOpeningBalance){
-			// $fromFinancialInstitution = $this->financialInstitution;
-			// $toFinancialInstitution = $fromFinancialInstitution;
-			
-			// $fromAccountTypeId = 27 ;
-			// $toAccountTypeId = $this instanceof TimeOfDeposit ? 28 : 29  ;
-			// $fromAccountNumber =  FinancialInstitutionAccount::find($this->deducted_from_account_id)->getAccountNumber();
-			// $toAccountNumber = $this->getAccountNumber() ;
-			// $amount = $this->getAmount();
-			// $currencyName = $this->getCurrency();
-			// $fromJournalId = $fromFinancialInstitution->getJournalIdForAccount($fromAccountTypeId,$fromAccountNumber);
-			//  $fromOdooId = $fromFinancialInstitution->getOdooIdForAccount($fromAccountTypeId,$fromAccountNumber);
-			// $toJournalId = $toFinancialInstitution->getJournalIdForAccount($toAccountTypeId,$toAccountNumber);
-			// $toOdooId = $toFinancialInstitution->getOdooIdForAccount($toAccountTypeId,$toAccountNumber);
-			// if($toJournalId){
-			// 	$this->storeOdoo($company,$date,$fromOdooId,$fromJournalId,$toJournalId,$toOdooId, $amount, $currencyName, $isBreakOrApplyDeposit);
-			// }else{
-			// if($isBreakOrApplyDeposit){
-				
-			// }
-			
 				$this->handleTdOrCdStoreDepositWithoutJournalForOdoo($isBreakOrApplyDeposit);
-			// }
 			
 		}
 	}
 	
-	
-	// public function handleTdOrCdStoreApplyDepositForOdoo(bool $isBreakDeposit)
-	// {
-	// 	/**
-	// 	 * @var TimeOfDeposit $this
-	// 	 */
-	// 	$company = $this->company ; 
-	// 	$isOpeningBalance = $this->isOpeningBalance(); 
-	// 	$date = $this->getStartDate();
-	// 	$this->deleteOdooRelations();
-	// 	if($company->hasOdooIntegrationCredentials() && $company->withinIntegrationDate($date) && ! $isOpeningBalance){
-	// 		$fromFinancialInstitution = $this->financialInstitution;
-	// 		$toFinancialInstitution = $fromFinancialInstitution;
-	// 		$fromAccountTypeId = 27 ;
-	// 		$toAccountTypeId = $this instanceof TimeOfDeposit ? 28 : 29  ;
-	// 		$fromAccountNumber = FinancialInstitutionAccount::find($this->deducted_from_account_id)->getAccountNumber();
-	// 		$toAccountNumber = $this->getAccountNumber() ;
-	// 		$amount = $this->getAmount();
-	// 		$currencyName = $this->getCurrency();
-			
-	// 		$fromJournalId = $fromFinancialInstitution->getJournalIdForAccount($fromAccountTypeId,$fromAccountNumber);
-	// 		 $fromOdooId = $fromFinancialInstitution->getOdooIdForAccount($fromAccountTypeId,$fromAccountNumber);
-			 
-	// 		$toJournalId = $toFinancialInstitution->getJournalIdForAccount($toAccountTypeId,$toAccountNumber);
-	// 		$toOdooId = $toFinancialInstitution->getOdooIdForAccount($toAccountTypeId,$toAccountNumber);
-		
-	// 		if($toJournalId){
-	// 			$this->storeOdoo($company,$date,$fromOdooId,$fromJournalId,$toJournalId,$toOdooId, $amount, $currencyName, $isBreakDeposit);
-	// 		}else{
-	// 			$this->handleTdOrCdStoreDepositWithoutJournalForOdoo();
-	// 		}
-			
-	// 	}
-	// }
 	
 	
 	public function handleTdOrCdStoreDepositWithoutJournalForOdoo(bool $isBreakOrApplyDeposit)

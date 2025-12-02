@@ -291,7 +291,7 @@ class BuyOrSellCurrency extends Model
 	}
     public function deleteRelations()
     {
-		$this->deleteOdoo();
+		$this->deleteOdoo(false);
         $this->cleanOverdraftBankStatements->each(function (CleanOverdraftBankStatement $cleanOverdraftBankStatement) {
 			$cleanOverdraftBankStatement->delete();
 		});
