@@ -229,13 +229,7 @@ class InternalMoneyTransferController
     }
 	
 	public function update(Company $company , string $type , StoreInternalMoneyTransferRequest $request , InternalMoneyTransfer $internalMoneyTransfer){
-		// $request->merge([
-		// 	'outbound_account_bank_statement_odoo_id'=>$internalMoneyTransfer->outbound_account_bank_statement_odoo_id,
-		// 	'outbound_journal_entry_id'=>$internalMoneyTransfer->outbound_journal_entry_id,
-		// 	'inbound_account_bank_statement_odoo_id'=>$internalMoneyTransfer->inbound_account_bank_statement_odoo_id,
-		// 	'inbound_journal_entry_id'=>$internalMoneyTransfer->inbound_journal_entry_id,
-		// ]);
-		// $accountNumberHasChanged = $request->get('from_account_number') != $internalMoneyTransfer->getFromAccountNumber();
+
 		$internalMoneyTransfer->deleteRelations();
 		$internalMoneyTransfer->delete();
 		$this->store($company,$type,$request);

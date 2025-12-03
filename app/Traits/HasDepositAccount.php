@@ -71,12 +71,10 @@ trait HasDepositAccount
 		$this->deleteOdooRelations($isBreakOrApplyDeposit);
 		if($company->hasOdooIntegrationCredentials() && !$isOpeningBalance){
 			$referenceColumnName = $isBreakOrApplyDeposit ? 'inbound_break_odoo_reference' : 'inbound_odoo_reference';
-			$journalColumnName = $isBreakOrApplyDeposit ? 'store_break_journal_entry_id' : 'store_journal_entry_id';
+			$journalColumnName = $isBreakOrApplyDeposit ? 'store_break_journal_entry_id' : 'inbound_journal_entry_id';
 			// $storeAccountBankStatementLineColumnName = $isBreakOrApplyDeposit ? 'store_break_account_bank_statement_line_id' : 'store_account_bank_statement_line_id';
   			$timeOfCertificateOdooService = new TimeOrCertificateOfDepositOdooService($company);
-			// if ($this->store_journal_entry_id) {
-     	  	// 	 $timeOfCertificateOdooService->unlink($this->store_journal_entry_id);
-  			// }
+			
 		
 			// $odooSetting = $company->odooSetting ;
 			$fromFinancialInstitution = $this->financialInstitution;
@@ -112,53 +110,7 @@ trait HasDepositAccount
 				
 		}
 	}
-	
-	// public function handleTdOrCdApplyDepositInterestForOdoo(bool $isBreakDeposit)
-	// {
-	// 	/**
-	// 	 * @var TimeOfDeposit $this
-	// 	 */
-	// 	$company = $this->company ; 
-	// 	$date = $this->getDepositDate();
-	// 	$isOpeningBalance = $this->isOpeningBalance();
-	// 	if(!$isOpeningBalance && $company->hasOdooIntegrationCredentials() && $company->withinIntegrationDate($date)){
-	// 		$timeOfCertificateOdooService = new TimeOrCertificateOfDepositOdooService($company);
-	// 		$odooSetting = $company->odooSetting ;
-	// 		$fromFinancialInstitution = $this->financialInstitution;
-	// 		$debitAccountTypeId = 27 ;
-	// 		$amount = $this->getAmount();
-	// 		$currencyName = $this->getCurrency();
-			
-	// 		$odooCurrencyId = Currency::getOdooId($currencyName);
-			
-	// 		$creditAccountTypeId = $this instanceof TimeOfDeposit ? 28 : 29  ;
-	// 		$debitAccountNumber = FinancialInstitutionAccount::find($this->deducted_from_account_id)->getAccountNumber();
-	// 		$creditAccountNumber = $this->getAccountNumber() ;
-	// 		$toFinancialInstitution = $fromFinancialInstitution;
-	// 		$creditJournalId = $fromFinancialInstitution->getJournalIdForAccount($creditAccountTypeId,$creditAccountNumber);
-	// 		 $creditOdooId = $fromFinancialInstitution->getOdooIdForAccount($creditAccountTypeId,$creditAccountNumber);
-	// 		$debitJournalId = $toFinancialInstitution->getJournalIdForAccount($debitAccountTypeId,$debitAccountNumber);
-	// 		$debitOdooId = $toFinancialInstitution->getOdooIdForAccount($debitAccountTypeId,$debitAccountNumber);
-			 
-	// 		  if($creditJournalId){
-	// 			$this->storeOdoo($company,$date,$debitJournalId,$debitOdooId,$creditOdooId,$creditJournalId, $amount, $currencyName, $isBreakDeposit);
-	// 		 }else{
-	// 			$ref =$this instanceof TimeOfDeposit ? __('Time Of Deposit Maturity') : __('Certificate Of Deposit Maturity');
-	// 			$message=$ref;
-	// 			$result = $timeOfCertificateOdooService->createMoneyDepositInBank($date,$amount,$odooCurrencyId,$debitJournalId,$debitOdooId,$creditOdooId,$ref,null,$message);
-	// 			$this->maturity_account_bank_statement_line_id = $result['account_bank_statement_line_id'];
-	// 			$this->maturity_journal_entry_id = $result['journal_entry_id'];
-	// 		 }
-	// 		$creditAccountTypeId = $odooSetting->getInterestRevenueOdooId();
-	// 		$ref =$this instanceof TimeOfDeposit ? __('Time Of Deposit Interest') : __('Certificate Of Deposit Interest');
-	// 		$message=$ref;
-	// 		$interestAmount = $this->getInterestAmount();
-	// 		$result = $timeOfCertificateOdooService->createMoneyDepositInBank($date,$interestAmount,$odooCurrencyId,$debitJournalId,$debitOdooId,$creditAccountTypeId,$ref,null,$message);
-	// 		$this->interest_account_bank_statement_line_id = $result['account_bank_statement_line_id'];
-	// 		$this->interest_journal_entry_id = $result['journal_entry_id'];
-	// 		$this->save();
-	// 	}
-	// }
+
 	public function storeRenewal(string $expiryDate,float $newInterestRate)
 	{
 		$company = $this->company ;
@@ -192,43 +144,7 @@ trait HasDepositAccount
 	
 			
 	}
-	// public function storeOdooBreak($accountNumberHasChanged)
-	// {
-	// 	/**
-	// 	 * @var TimeOfDeposit $this
-	// 	 */
-	// 	$company = $this->company ; 
-	// 	$date = $this->getBreakDate();
-	// 	$isOpeningBalance = $this->isOpeningBalance();
-	// 	if(!$isOpeningBalance && $company->hasOdooIntegrationCredentials() && $company->withinIntegrationDate($date)) {
-	// 		$timeOfCertificateOdooService = new TimeOrCertificateOfDepositOdooService($company);
-	// 		$fromFinancialInstitution = $this->financialInstitution;
-	// 		$debitAccountTypeId = 27 ;
-	// 		$amount = $this->getBreakInterestAmount();
-	// 		$currencyName = $this->getCurrency();
-			
-	// 		$odooCurrencyId = Currency::getOdooId($currencyName);
-	// 		$creditAccountTypeId = $this instanceof TimeOfDeposit ? 28 : 29  ;
-	// 		$debitAccountNumber = FinancialInstitutionAccount::find($this->deducted_from_account_id)->getAccountNumber();
-	// 		$creditAccountNumber = $this->getAccountNumber() ;
-	// 		$toFinancialInstitution = $fromFinancialInstitution;
-	// 		$creditJournalId = $fromFinancialInstitution->getJournalIdForAccount($creditAccountTypeId,$creditAccountNumber);
-	// 		 $creditOdooId = $fromFinancialInstitution->getOdooIdForAccount($creditAccountTypeId,$creditAccountNumber);
-	// 		$debitJournalId = $toFinancialInstitution->getJournalIdForAccount($debitAccountTypeId,$debitAccountNumber);
-	// 		$debitOdooId = $toFinancialInstitution->getOdooIdForAccount($debitAccountTypeId,$debitAccountNumber);
-			 
-	// 		  if($creditJournalId){
-	// 			$this->storeOdoo($company,$date,$debitJournalId,$debitOdooId,$creditOdooId,$creditJournalId, $amount, $currencyName, $accountNumberHasChanged,true);
-	// 		 }else{
-	// 			$ref =$this instanceof TimeOfDeposit ? __('Time Of Deposit Break Interest') : __('Certificate Of Deposit Break Interest');
-	// 			$message=$ref;
-	// 			$result = $timeOfCertificateOdooService->createMoneyDepositInBank($date,$amount,$odooCurrencyId,$debitJournalId,$debitOdooId,$creditOdooId,$ref,null,$message);
-	// 			$this->break_account_bank_statement_line_id = $result['account_bank_statement_line_id'];
-	// 			$this->break_journal_entry_id = $result['journal_entry_id'];
-	// 		 }
-			
-	// 	}
-	// }
+
 	public function reverseOdooDeposit(CurrentAccountBankStatement $breakInterestStatement)
 	{
 		$company = $this->company;

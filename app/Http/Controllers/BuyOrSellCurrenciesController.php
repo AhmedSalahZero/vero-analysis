@@ -224,13 +224,7 @@ class BuyOrSellCurrenciesController
     }
 	
 	public function update(Company $company , StoreBuyOrSellCurrencyRequest $request , BuyOrSellCurrency $buyOrSellCurrency){
-		// $request->merge([
-		// 	'outbound_account_bank_statement_odoo_id'=>$buyOrSellCurrency->outbound_account_bank_statement_odoo_id,
-		// 	'outbound_journal_entry_id'=>$buyOrSellCurrency->outbound_journal_entry_id,
-		// 	'inbound_account_bank_statement_odoo_id'=>$buyOrSellCurrency->inbound_account_bank_statement_odoo_id,
-		// 	'inbound_journal_entry_id'=>$buyOrSellCurrency->inbound_journal_entry_id,
-		// ]);
-		// $accountNumberHasChanged = $request->get('from_account_number') != $buyOrSellCurrency->getFromAccountNumber();
+
 		$type = $buyOrSellCurrency->getType();
 		$buyOrSellCurrency->deleteRelations();
 		$buyOrSellCurrency->delete();

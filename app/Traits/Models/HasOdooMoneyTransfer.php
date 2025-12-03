@@ -13,7 +13,7 @@ use App\Services\Api\InternalMoneyTransfer as OdooInternalMoneyTransfer;
 trait HasOdooMoneyTransfer
 {
     
-    private function storeOdoo(float $exchangeRate , Company $company, string $date, int $outBankOdooId, int $outJournalId, int $inJournalId, int $inBankOdooId, float $amountInCurrency, string $currencyName, $isBreakDeposit= false,$secondCurrency = null , $amountToBuy = null)
+    private function storeOdoo(string $userComment, float $exchangeRate , Company $company, string $date, int $outBankOdooId, int $outJournalId, int $inJournalId, int $inBankOdooId, float $amountInCurrency, string $currencyName, $isBreakDeposit= false,$secondCurrency = null , $amountToBuy = null)
     {
         
 		$isInternalMoneyTransfer = is_null($secondCurrency) || is_null($amountToBuy) ;
@@ -43,7 +43,7 @@ trait HasOdooMoneyTransfer
         if ($this->{$outboundJournalColumnName}) {
             $receiveResult = $internalMoneyTransferService->unlink($this->{$outboundJournalColumnName});
         }
-        $sendMoneyResult = $internalMoneyTransferService->sendMoneyTo($isBreakDeposit,$date, $amountInCurrency, $amountInMainFunctionalCurrencyInSend, $odooCurrencyId, $outJournalId, $outBankOdooId,$sendMessage);
+        $sendMoneyResult = $internalMoneyTransferService->sendMoneyTo($isBreakDeposit,$date, $amountInCurrency, $amountInMainFunctionalCurrencyInSend, $odooCurrencyId, $outJournalId, $outBankOdooId,$sendMessage,$userComment);
         $this->{$outboundStatementColumnName} = $sendMoneyResult['account_bank_statement_line_id'] ;
         $this->{$outboundJournalColumnName} = $sendMoneyResult['journal_entry_id'] ;
         $this->{$outboundReferenceColumnName} = $sendMoneyResult['reference'] ;
@@ -57,7 +57,7 @@ trait HasOdooMoneyTransfer
         if ($this->{$inboundJournalColumnName}) {
             $receiveResult = $internalMoneyTransferService->unlink($this->{$inboundJournalColumnName});
         }
-        $receiveResult = $internalMoneyTransferService->storeReceiveMoneyTo($isBreakDeposit,$date, $receivedOdooAmount, $amountInMainFunctionalCurrencyInReceive, $receiveOdooCurrencyId, $inJournalId, $inBankOdooId,$receiveMessage);
+        $receiveResult = $internalMoneyTransferService->storeReceiveMoneyTo($isBreakDeposit,$date, $receivedOdooAmount, $amountInMainFunctionalCurrencyInReceive, $receiveOdooCurrencyId, $inJournalId, $inBankOdooId,$receiveMessage,$userComment);
         $this->{$inboundStatementColumnName} = $receiveResult['account_bank_statement_line_id'] ;
         $this->{$inboundJournalColumnName} = $receiveResult['journal_entry_id'] ;
         $this->{$inboundReferenceColumnName} = $receiveResult['reference'] ;
@@ -73,13 +73,11 @@ trait HasOdooMoneyTransfer
     {
         $company = $this->company;
 		$breakColumns = ['inbound_break_journal_entry_id','store_break_journal_entry_id'];
-		$storeColumns = ['store_journal_entry_id'] ;
+		$storeColumns = ['inbound_journal_entry_id'] ;
 		$columnsToDelete = $isBreakOrApplyDeposit ? $breakColumns : array_merge(
 			$breakColumns , 
 			$storeColumns
 		);
-		
-	
         if ($company->hasOdooIntegrationCredentials()) {
             $internalMoneyTransferService = (new OdooInternalMoneyTransfer($company));
             foreach ($columnsToDelete as $columnName) {
@@ -105,6 +103,7 @@ trait HasOdooMoneyTransfer
             $fromAccountNumber = $this->from_account_number;
             $toAccountTypeId = $this->to_account_type_id;
             $toAccountNumber = $this->to_account_number;
+			$userComment = $this->getUserComment();
 			$isBuyOrSell = $this instanceof BuyOrSellCurrency;
 			$exchangeRate = $isBuyOrSell ? $this->getExchangeRate() : 1 ;
             $amountInCurrency = $isBuyOrSell ? $this->getAmountInMainCurrency() :  $this->getAmountInCurrency();
@@ -123,21 +122,21 @@ trait HasOdooMoneyTransfer
                 $fromOdooId = $fromFinancialInstitution->getOdooIdForAccount($fromAccountTypeId, $fromAccountNumber);
                 $toJournalId = $toFinancialInstitution->getJournalIdForAccount($toAccountTypeId, $toAccountNumber);
                 $toOdooId = $toFinancialInstitution->getOdooIdForAccount($toAccountTypeId, $toAccountNumber);
-                $this->storeOdoo($exchangeRate,$company, $transferDate, $fromOdooId, $fromJournalId, $toJournalId, $toOdooId, $amountInCurrency, $currencyName,false,$secondCurrency,$amountToBuy);
+                $this->storeOdoo($userComment,$exchangeRate,$company, $transferDate, $fromOdooId, $fromJournalId, $toJournalId, $toOdooId, $amountInCurrency, $currencyName,false,$secondCurrency,$amountToBuy);
             } elseif ($type == InternalMoneyTransfer::BANK_TO_SAFE) {
                 $fromOdooId = $fromFinancialInstitution->getOdooIdForAccount($fromAccountTypeId, $fromAccountNumber);
                 $fromJournalId = $fromFinancialInstitution->getJournalIdForAccount($fromAccountTypeId, $fromAccountNumber);
                 $branch = Branch::find($toBranchId) ;
                 $toJournalId = $branch->getJournalId();
                 $toOdooId = $branch->getOdooId();
-                $this->storeOdoo($exchangeRate,$company, $transferDate, $fromOdooId, $fromJournalId,$toJournalId,$toOdooId, $amountInCurrency, $currencyName,false,$secondCurrency,$amountToBuy);
+                $this->storeOdoo($userComment,$exchangeRate,$company, $transferDate, $fromOdooId, $fromJournalId,$toJournalId,$toOdooId, $amountInCurrency, $currencyName,false,$secondCurrency,$amountToBuy);
             } elseif ($type == InternalMoneyTransfer::SAFE_TO_BANK) {
                 $branch = Branch::find($fromBranchId);
                 $fromJournalId = $branch->getJournalId();
                 $fromOdooId = $branch->getOdooId();
                 $toJournalId = $toFinancialInstitution->getJournalIdForAccount($toAccountTypeId, $toAccountNumber);
                 $toOdooId = $toFinancialInstitution->getOdooIdForAccount($toAccountTypeId, $toAccountNumber);
-                $this->storeOdoo($exchangeRate,$company, $transferDate,$fromOdooId, $fromJournalId, $toJournalId,$toOdooId, $amountInCurrency, $currencyName,false,$secondCurrency,$amountToBuy);
+                $this->storeOdoo($userComment,$exchangeRate,$company, $transferDate,$fromOdooId, $fromJournalId, $toJournalId,$toOdooId, $amountInCurrency, $currencyName,false,$secondCurrency,$amountToBuy);
                 
             } elseif ($type == InternalMoneyTransfer::SAFE_TO_SAFE) {
                 $fromBranch = Branch::find($fromBranchId);
@@ -147,7 +146,7 @@ trait HasOdooMoneyTransfer
                 $toJournalId = $toBranch->getJournalId();
                 $toOdooId = $toBranch->getOdooId();
                 
-                $this->storeOdoo($exchangeRate,$company,$transferDate,$fromOdooId,$fromJournalId,$toJournalId,$toOdooId,$amountInCurrency,$currencyName,false,$secondCurrency,$amountToBuy);
+                $this->storeOdoo($userComment,$exchangeRate,$company,$transferDate,$fromOdooId,$fromJournalId,$toJournalId,$toOdooId,$amountInCurrency,$currencyName,false,$secondCurrency,$amountToBuy);
                 
             }
             

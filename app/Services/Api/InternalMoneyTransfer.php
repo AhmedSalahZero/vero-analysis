@@ -12,21 +12,21 @@ class InternalMoneyTransfer
     use AuthTrait,HasPayment,HasUnlinkAccountBankStatementLine;
     
     
-    public function sendMoneyTo(bool $isBreakDeposit, string $date, float $amountInCurrency, float $amountInMainFunctionalCurrency, int $odooCurrencyId, int $journalId, int $bankOdooId, $message = 'to cash')
+    public function sendMoneyTo(bool $isBreakDeposit, string $date, float $amountInCurrency, float $amountInMainFunctionalCurrency, int $odooCurrencyId, int $journalId, int $bankOdooId, $message , $userComment )
     {
         $amountInCurrency = $amountInCurrency * -1;
         $LiquidTransferId = $this->company->odooSetting->getLiquidityAccountOdooId();
         
         $debitAccountId = $isBreakDeposit ?  $bankOdooId : $LiquidTransferId ;
         $creditAccountId = $isBreakDeposit ?  $LiquidTransferId : $bankOdooId ;
-        
+        $userComment = $userComment?:$message;
         $debitArr = [
                     'account_id' => $debitAccountId, // 87
                     'debit' => abs($amountInMainFunctionalCurrency),
                     'amount_currency'=>abs($amountInCurrency),
                     'credit' => 0.0,
                     'currency_id' => $odooCurrencyId,
-                    'name' => $message ,
+                    'name' => $userComment ,
                 ] ;
         $creditArr = [
             'account_id' => $creditAccountId,
@@ -34,7 +34,7 @@ class InternalMoneyTransfer
             'credit' => abs($amountInMainFunctionalCurrency),
             'amount_currency'=>$amountInCurrency,
             'currency_id' => $odooCurrencyId,
-            'name' => $message ,
+            'name' => $userComment ,
         ] ;
         $journalEntryData = [
            'journal_id' => $journalId,
@@ -178,7 +178,7 @@ class InternalMoneyTransfer
     
     // }
        
-    public function storeReceiveMoneyTo(bool $isBreakDeposit, string $date, float $amountInCurrency, float $amountInMainFunctionalCurrency, int $odooCurrencyId, int $journalId, int $bankOdooId, $message = '')
+    public function storeReceiveMoneyTo(bool $isBreakDeposit, string $date, float $amountInCurrency, float $amountInMainFunctionalCurrency, int $odooCurrencyId, int $journalId, int $bankOdooId, $message,$userComment)
     {
         /**
          * @var InternalMoneyTransfer $this
@@ -193,14 +193,14 @@ class InternalMoneyTransfer
         
         $debitAccountId = $isBreakDeposit ?  $LiquidTransferId  :  $bankOdooId ;
         $creditAccountId = $isBreakDeposit ?  $bankOdooId : $LiquidTransferId ;
-        
+        $userComment = $userComment?:$message;
         $debitArr = [
                     'account_id' => $debitAccountId, // 87
                     'debit' => abs($amountInMainFunctionalCurrency),
                     'amount_currency'=>abs($amountInCurrency),
                     'credit' => 0.0,
                     'currency_id' => $odooCurrencyId,
-                    'name' => $message ,
+                    'name' => $userComment ,
                         
                 ] ;
                 
@@ -210,7 +210,7 @@ class InternalMoneyTransfer
             'credit' => abs($amountInMainFunctionalCurrency),
             'amount_currency'=>$amountInCurrency*-1,
             'currency_id' => $odooCurrencyId,
-            'name' => $message ,
+            'name' => $userComment ,
                         
         ] ;
         

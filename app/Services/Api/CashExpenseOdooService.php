@@ -74,10 +74,8 @@ class CashExpenseOdooService
         $distribution_analytic_account_ids = getAnalysisAccountIds($analytic_distribution,$partner_id);
    		
         $paymentRef = $subCategoryName ?  'Expense Payment ' . $subCategoryName : $paymentRef;
-        $message = $paymentRef;
+        $message = is_null($message) ? $paymentRef : $message ;
         $ref = $paymentRef;
-
-       
         $data = [
                        'journal_id' => $journalId, // account journal id (safe or bank journal id )
                        'amount' =>$isMoneyReceived ?  $amountInCurrency : -$amountInCurrency,
@@ -121,9 +119,7 @@ class CashExpenseOdooService
     {
         $ref = is_null($paymentRef) ? $this->getRef() : $paymentRef;
         $message = is_null($message) ?  $this->getMessage() : $message;
-       
         return $this->createAndPostJournalEntry($subCategoryName, $date, $amountInCurrency, $amountInMainFunctionalCurrency, $odooCurrencyId, $journalId, $debitOdooAccountId, $creditOdooAccountId, $analytic_distribution, $ref, $odooPartnerId, $message, $paymentRef,$isMoneyReceived);
-       
     }
   
     

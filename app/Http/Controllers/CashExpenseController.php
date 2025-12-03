@@ -328,7 +328,8 @@ class CashExpenseController
 			$creditOdooAccountId=$cashExpenseOdooService->getChartOfAccountId($cashExpense);
 			$odooCurrencyId = Currency::getOdooId($currencyName);
 			$debitOdooAccountId = $cashExpenseCategoryName->getOdooId();
-			$result = $cashExpenseOdooService->createCashExpense($subCategoryName,$date,$amountInCurrency,$amountInMainFunctionalCurrency,$journalId,$odooCurrencyId,$debitOdooAccountId,$creditOdooAccountId,$analytic_distribution,'refff',null,false , 'messagge');
+			$userComment = $cashExpense->getUserComment();
+			$result = $cashExpenseOdooService->createCashExpense($subCategoryName,$date,$amountInCurrency,$amountInMainFunctionalCurrency,$journalId,$odooCurrencyId,$debitOdooAccountId,$creditOdooAccountId,$analytic_distribution,null,null,false , $userComment);
 			$cashExpense->account_bank_statement_line_id=$result['account_bank_statement_line_id'];
 			$cashExpense->journal_entry_id=$result['journal_entry_id'];
 			$cashExpense->odoo_reference=$result['reference'];
@@ -444,7 +445,7 @@ class CashExpenseController
 		$cashExpense->deleteRelations();
 		$activeTab = $cashExpense->getType();
 		$cashExpense->delete();
-		return redirect()->route('view.cash.expense',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Money Received Has Been Updated Successfully'));
+		return redirect()->route('view.cash.expense',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Cash Expense Has Been Updated Successfully'));
 	}
 	protected function generateBranchId($nameOrId,$companyId){
 		$branch = Branch::where('id',$nameOrId)->first();

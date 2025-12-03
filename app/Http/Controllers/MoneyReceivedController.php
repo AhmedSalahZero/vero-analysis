@@ -498,12 +498,8 @@ class MoneyReceivedController
         /**
          * * For Money Received Only
          */
-        // if($partnerType == 'is_supplier' && $moneyReceived->journal_entry_id && $moneyReceived->account_bank_statement_line_id){
-        // 	$moneyReceived->unlinkNonCustomerOrSupplierOdooExpense();
-        // }
         
         $totalWithholdAmount = $moneyReceived->storeNewSettlement($request->get('settlements', []), $partnerId, $company, false, $syncWithOdoo);
-        // $totalWithholdAmount = $moneyReceived->storeNewSettlement($request->get('settlements',[]),$partnerId,$company,false,$syncWithOdoo);
         
         $moneyReceived->update([
             'total_withhold_amount'=>$totalWithholdAmount
