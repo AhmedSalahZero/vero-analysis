@@ -73,7 +73,7 @@ trait HasOdooMoneyTransfer
     {
         $company = $this->company;
 		$breakColumns = ['inbound_break_journal_entry_id','store_break_journal_entry_id'];
-		$storeColumns = ['inbound_journal_entry_id'] ;
+		$storeColumns = ['inbound_journal_entry_id','outbound_journal_entry_id'] ;
 		$columnsToDelete = $isBreakOrApplyDeposit ? $breakColumns : array_merge(
 			$breakColumns , 
 			$storeColumns

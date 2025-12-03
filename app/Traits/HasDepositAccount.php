@@ -72,13 +72,8 @@ trait HasDepositAccount
 		if($company->hasOdooIntegrationCredentials() && !$isOpeningBalance){
 			$referenceColumnName = $isBreakOrApplyDeposit ? 'inbound_break_odoo_reference' : 'inbound_odoo_reference';
 			$journalColumnName = $isBreakOrApplyDeposit ? 'store_break_journal_entry_id' : 'inbound_journal_entry_id';
-			// $storeAccountBankStatementLineColumnName = $isBreakOrApplyDeposit ? 'store_break_account_bank_statement_line_id' : 'store_account_bank_statement_line_id';
   			$timeOfCertificateOdooService = new TimeOrCertificateOfDepositOdooService($company);
-			
-		
-			// $odooSetting = $company->odooSetting ;
 			$fromFinancialInstitution = $this->financialInstitution;
-			// $toFinancialInstitution = $fromFinancialInstitution;
 			$fromAccountTypeId = 27 ;
 			$toAccountTypeId = $this instanceof TimeOfDeposit ? 28 : 29  ;
 			$toAccountNumber = $this->getAccountNumber() ;
