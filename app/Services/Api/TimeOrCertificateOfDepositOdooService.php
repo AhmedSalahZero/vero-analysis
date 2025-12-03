@@ -52,94 +52,6 @@ class TimeOrCertificateOfDepositOdooService
         ];
     }
     
-        
- 
-    // public function updateJournalEntry(
-    // 		int $moveId = 457,
-    // 		int $accountBankStatementLineOdooId = 1338, // move_id
-    // 		string $date = '2025-06-01',
-    // 		float $amount = 33000,
-    // 		int $currency_id = 74,
-    // 		int $journal_id = 23,
-    // 		int $debitOdooAccountId = 134,
-    // 		int $creditOdooAccountId = 229,
-    // 		?int $partnerId,
-    // 		string $ref ,
-    // 		bool $accountNumberHasChanged,
-    // 		$message = ''
-    // 	) {
-
-
-    // 	$this->execute(
-    // 			'account.bank.statement.line',
-    // 			'write',
-    // 			[[$accountBankStatementLineOdooId], ['state' => 'draft']],
-    // 		);
-    // 		$basicArr = [
-    // 		'journal_id' => $journal_id,
-    // 		'amount' => $amount * -1,
-    // 		'date' => $date,
-    // 		'ref' => $ref,
-            
-    // 		];
-    // 		if($accountNumberHasChanged){
-    // 			$basicArr['name'] = "/";
-    // 		}
-    // 		$this->execute(
-    // 			'account.bank.statement.line',
-    // 			'write',
-    // 			[[$accountBankStatementLineOdooId],
-    // 			$basicArr
-    // 			]
-    // 	);
-
-
-
-
-    // 		$line_ids= $this->fetchData('account.move',['id','line_ids'],[[['id', '=', $moveId]]]) [0]['line_ids']??[];
-    // 		if(!isset($line_ids[0])){
-    // 			throw new Exception("Line Ids not found: " . $moveId);
-    // 		}
-    // 		$this->execute(
-    // 			'account.move',
-    // 			'write',
-    // 			[[$moveId],
-    // 			[
-                    
-    // 			'line_ids' => [
-    // 				[1, $line_ids[0], [
-    // 					'account_id' => $debitOdooAccountId,
-    // 					'debit' => abs($amount),
-    // 					'credit' => 0.0,
-    // 					'currency_id' => $currency_id,
-    // 					'name' => $message,
-    // 					'partner_id' => $partnerId,
-    // 				]],
-    // 				[1, $line_ids[1], [
-    // 					'account_id' => $creditOdooAccountId,
-    // 					'debit' => 0.0,
-    // 					'credit' => abs($amount),
-    // 					'currency_id' => $currency_id,
-    // 					'name' => $message,
-    // 					'partner_id' => $partnerId,
-    // 				]],
-    // 			],
-    // 		]]
-    // 	);
-
-    // 	$context = [
-    // 			'check_move_validity' => true,
-    // 		];
-
-
-    // $this->execute(
-    // 			'account.move',
-    // 			'action_post',
-    // 			[[$moveId]],
-    // 			['context' => $context]
-    // 		);
-
-    // }
     
     protected function getDataFormatted(string $date, float $amount, int $odooCurrencyId, int $creditJournalId, int $creditOdooAccountId, int $debitOdooAccountId, ?string $ref, ?int $partnerId, ?string $message, int $id = null , $isBreakOrApplyDeposit = false  ):array
     {
@@ -149,7 +61,7 @@ class TimeOrCertificateOfDepositOdooService
 		$creditAmount = $isBreakOrApplyDeposit ? abs($amount) : 0  ;
         return [
                'journal_id' => $creditJournalId, // account journal id (safe or bank journal id )
-               'amount' =>$amount ,
+               'amount' =>$isBreakOrApplyDeposit ? -$amount : $amount ,
                'date' => $date,
                'partner_id' => $partnerId,
                'ref' =>  $ref, // create lg type
@@ -173,45 +85,6 @@ class TimeOrCertificateOfDepositOdooService
                 ],
             ];
     }
-    
-    
-    
-	// protected function getDataFormattedtest(string $date, float $amount, int $odooCurrencyId, int $creditJournalId, int $creditOdooAccountId, int $debitOdooAccountId, ?string $ref, ?int $partnerId, ?string $message, int $id = null):array
-    // {
-    //     $inEditMode = is_null($id) ? 0 : 1;
-    //     $id = is_null($id) ? 0 : $id ;
-    //     return [
-    //            'journal_id' => $creditJournalId, // account journal id (safe or bank journal id )
-    //            'amount' =>$amount ,
-    //            'date' => $date,
-    //            'partner_id' => $partnerId,
-    //            'ref' =>  $ref, // create lg type
-    //            'line_ids' => [
-    //                 [$inEditMode, $id, [
-    //                     'account_id' => $creditOdooAccountId, // lg cash cover odoo id (create lg cash cover)
-    //                     'debit' => 0,
-    //                     'credit' =>  abs($amount),
-    //                     'currency_id' => $odooCurrencyId,
-    //                     'name' => $message , // cash cover
-    //                     'partner_id' => $partnerId,
-    //                 ]],
-    //                 [$inEditMode, $id+1, [
-    //                     'account_id' => $debitOdooAccountId , // chart of account odoo id
-    //                     'debit' => abs($amount),
-    //                     'credit' => 0,
-    //                     'currency_id' => $odooCurrencyId,
-    //                     'name' => $message ,
-    //                     'partner_id' => $partnerId,
-    //                 ]],
-    //             ],
-    //         ];
-    // }
-	
-    
-    
-    
-    
-    
     public function createMoneyDepositInBank(string $date, float $amount, int $odooCurrencyId, int $debitJournalId, int $debitOdooAccountId, int $creditOdooAccountId, ?string $ref, ?int $partner_id, ?string $message)
     {
         $id = null ;  // in edit mode

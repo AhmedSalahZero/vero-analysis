@@ -350,7 +350,6 @@ class TimeOfDepositsController
 			'break_charge_amount'=>$breakChargeAmount
 		]);
 		$timeOfDeposit->handleTdOrCdStoreDepositForOdoo(true);
-		// $timeOfDeposit->storeOdooBreak(false);
 		
 		$accountType = AccountType::where('slug',AccountType::CURRENT_ACCOUNT)->first() ;
 		/**

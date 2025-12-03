@@ -54,8 +54,7 @@ trait HasDepositAccount
 		$date = $this->getStartDate();
 		$this->deleteOdooRelations($isBreakOrApplyDeposit);
 		if($company->hasOdooIntegrationCredentials() && $company->withinIntegrationDate($date) && ! $isOpeningBalance){
-				$this->handleTdOrCdStoreDepositWithoutJournalForOdoo($isBreakOrApplyDeposit);
-			
+			$this->handleTdOrCdStoreDepositWithoutJournalForOdoo($isBreakOrApplyDeposit);
 		}
 	}
 	
