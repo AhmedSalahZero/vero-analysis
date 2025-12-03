@@ -15,7 +15,6 @@ class OdooPayment
     
     public function createDownPayment($moneyModel)
     {
-      
         try {
             $company = $moneyModel->company ;
             $paymentDate = $moneyModel->getReceivingOrPaymentMoneyDate();
@@ -64,7 +63,8 @@ class OdooPayment
                     'partner_id' => $odooPartnerId,
                     'payment_type' => $inBoundOrOutBound,
                     'partner_type' => $customerOrSupplier ,
-                    'payment_method_line_id'=>(int)$moneyModel->getPaymentMethodLineId()
+                    'payment_method_line_id'=>(int)$moneyModel->getPaymentMethodLineId(),
+					// 'memo'=>'salah memo',
                 ]],
                 ['context' => $context]
             );

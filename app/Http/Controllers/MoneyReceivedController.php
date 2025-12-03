@@ -395,7 +395,6 @@ class MoneyReceivedController
         $data['currency'] = is_null($data['currency']) ?  $receivingCurrency : $data['currency'];
         $receivingDate = $data['receiving_date'];
         $currency = $data['currency'] ;
-        
         $companyId = $company->id;
         $receivingCurrency = $data['receiving_currency'] ;
         $isDownPayment = $request->get('is_down_payment') && $request->has('sales_orders_amounts');
@@ -451,26 +450,16 @@ class MoneyReceivedController
         $receivedBank = FinancialInstitution::find($financialInstitutionId);
         $receivedBankName = $receivedBank ? $receivedBank->getName() : $draweeBankName;
         $bankNameOrBranchName =  $moneyType == MoneyReceived::CASH_IN_SAFE ? Branch::find($relationData['receiving_branch_id'])->getName() : $receivedBankName ;
-        
-        // $mainFunctionalCurrency = $company->getMainFunctionalCurrency();
-        // $invoiceExchangeRate = $customer
         $data['received_amount'] =$amountInReceivingCurrency ;
-        // receiving_currency with main functional currency if not exist
-        
-    
         $data['amount_in_invoice_currency'] = $invoiceCurrencyAmount ;
         $data['exchange_rate'] =$exchangeRate ;
-    
-        //$data['money_type'] = $isDownPayment ? 'down-payment' : 'money-received' ;
         $data['contract_id'] = $contractId ;
-        // $data['money_received_id'] = $moneyReceivedId;
         /**
          * @var MoneyReceived $moneyReceived ;
          */
         $accountType = AccountType::find($request->input('account_type.'.$moneyType));
         $accountNumber = $request->input('account_number.'.$moneyType);
         $receivingDate = Carbon::make($receivingDate)->format('Y-m-d');
-        // $foreignExchangeRate = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currency,$mainFunctionCurrency,$receivingDate,$company->id);
         if (!$isDownPayment && !$isDownPaymentFromMoneyReceived) {
             unset($data['contract_id']);
         }
@@ -488,7 +477,6 @@ class MoneyReceivedController
          */
         $moneyReceived = $moneyReceived->refresh();
         $statementDate = $moneyReceived->getStatementDate();
-        // $isCustomer = $partnerType == 'is_customer';
         $moneyReceived->handleDebitStatement($financialInstitutionId, $accountType, $accountNumber, $moneyType, $statementDate, $amountInReceivingCurrency, $receivingCurrency, $receivingBranchId);
         if ($partnerType && $partnerType != 'is_customer') {
             $moneyReceived->handlePartnerCreditStatement($partnerType, $partnerId, $moneyReceived->id, $company->id, $statementDate, $amountInReceivingCurrency, $receivingCurrency, $bankNameOrBranchName, $accountType, $accountNumber);
@@ -691,11 +679,7 @@ class MoneyReceivedController
                 $moneyReceived->handleOdooDownPayments($OdooPaymentService, $hasOdooIntegration);
                 
             }
-            
-            // if($hasOdooIntegration && $moneyReceived->isDownPayment()){
-            // 	$OdooPaymentService->reCreateDownPayment($moneyReceived);
-            // }
-        
+
             
         }
         if ($request->ajax()) {

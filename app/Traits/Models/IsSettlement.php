@@ -15,7 +15,6 @@ trait IsSettlement
 		if($this instanceof Settlement){
 			$id = $this->money_received_id ;
 			return MoneyReceived::find($id);			
-			// return $this->moneyReceived();
 		}
 		if($this instanceof PaymentSettlement){
 			$id = $this->money_payment_id;

@@ -67,13 +67,14 @@ class TestCommand extends Command
 		// $company = $letterOfGuaranteeIssuance->company;
 		// $source = 'lg-facility';
 		// (new LetterOfGuaranteeIssuanceController)->backToRunningStatus($company,new Request , $letterOfGuaranteeIssuance,$source);
-		// $fetch = (new OdooPayment(Company::find(92)));
+		$fetch = (new OdooPayment(Company::find(92)));
 		// $x = $fetch->fetchData('account.bank.statement.line',[],[[['name','=','MISR/2025/00431']]]);
 		// dd($x);
 		// $x = $fetch->un('account.bank.statement.line',[],[[['name','=','MISR/2025/00431']]]);
 		// dd($x);
 		
-		// $x = $fetch->fetchData('account.bank.statement.line',[],[[['id','=',8946]]]);
+		$x = $fetch->fetchData('account.payment',[],[[['id','>',0]]])[0];
+		dd($x);
 		// dd($x);
 		// dd($x);
 		// $unlink = new OdooPayment(Company::find(92));

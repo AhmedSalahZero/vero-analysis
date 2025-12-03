@@ -271,7 +271,7 @@ class InvoicesAgainstAnalysisReport
 				
                   foreach($queryResult[$branch] as $result)
                   {
-                      $result =  json_decode(json_encode($result), true);
+                      $result =  (array)$result;
                       if(in_array($result['Month'] , $period  ) && $result['Year'] == $startYear && $result[$type] == $branch)
                       {
                           isset($results[$branch][$startYear][$periodName][$result['Month']]) ? 
