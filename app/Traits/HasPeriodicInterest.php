@@ -46,9 +46,10 @@ trait HasPeriodicInterest
     }
     public function deletePeriodInterestAmounts()
     {
-		$currentAccountBankStatements = $this->currentAccountBankStatements->where(function($q){
+		$currentAccountBankStatements = $this->currentAccountBankStatements()->where(function($q){
 			$q->where('is_period_cd_or_td_interest', 1)->orWhere('is_break_interest',1);
-		});
+		})->get();
+		
 		foreach($currentAccountBankStatements as $currentAccountBankStatement){
 			$this->deletePeriodInterest($currentAccountBankStatement);
 		}
