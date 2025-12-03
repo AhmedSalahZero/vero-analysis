@@ -128,7 +128,7 @@
 </style>
 @endsection
 @section('sub-header')
-<x-main-form-title :id="'main-form-title'" :class="''">{{ __('LG Report By Beneficiary Name ['  ) . $beneficiaryName . ' ] [' . $startDate . ' ] [ ' . $endDate . ' ] [ ' . __(touppercase($currency)) . ' ]' }}</x-main-form-title>
+<x-main-form-title :id="'main-form-title'" :class="''">{{ __('LG Report By Beneficiary Name ['  )  . $startDate . ' ]  [ ' . __(touppercase($currency)) . ' ]' }}</x-main-form-title>
 
 @endsection
 @section('content')
@@ -357,12 +357,12 @@
                                     @foreach($results as $index=>$modelAsStdClass)
                                     <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
                                         <td class="sub-text-bg  ">{{ $index+1 }}</td>
-                                        <td class="sub-text-bg  text-center ">{{ $modelAsStdClass->partner_name }}</td>
-                                        <td class="sub-text-bg  text-center ">{{ $modelAsStdClass->lg_type }}</td>
-                                        <td class="sub-text-bg  text-center ">{{ $modelAsStdClass->transaction_name }}</td>
-                                        <td class="sub-text-bg  text-center ">{{ $modelAsStdClass->lg_code }}</td>
-                                        <td class="sub-text-bg  text-center ">{{ $modelAsStdClass->source }}</td>
-                                        <td class="sub-text-bg  text-center ">{{ $modelAsStdClass->financial_institution_name }}</td>
+                                        <td class="sub-text-bg  text-left ">{{ $modelAsStdClass->partner_name }}</td>
+                                        <td class="sub-text-bg  text-left ">{{ $lgsTypes[$modelAsStdClass->lg_type] }}</td>
+                                        <td class="sub-text-bg  text-left ">{{ $modelAsStdClass->transaction_name }}</td>
+                                        <td class="sub-text-bg  text-center ">{{ $modelAsStdClass->lg_code  }}</td>
+                                        <td class="sub-text-bg  text-center ">{{ $lgsSources[$modelAsStdClass->source] }}</td>
+                                        <td class="sub-text-bg  text-left ">{{ $modelAsStdClass->financial_institution_name }}</td>
                                         <td class="sub-text-bg  text-center ">{{ number_format($modelAsStdClass->lg_amount) }}</td>
                                         <td class="sub-text-bg  text-center ">{{ $modelAsStdClass->renewal_date }}</td>
                                         <td class="sub-text-bg  text-center ">{{ number_format($modelAsStdClass->cash_cover_amount) }}</td>

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\LgSources;
+use App\Enums\LgTypes;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Models\Partner;
@@ -52,14 +54,18 @@ class LgByBankNameReportController
 		->join('financial_institutions','financial_institutions.id','=','letter_of_guarantee_issuances.financial_institution_id')
 		->join('banks','banks.id','=','financial_institutions.bank_id')
 		->selectRaw(
-			'letter_of_guarantee_issuances.id as id , partner_id , partners.name as partner_name , REPLACE(lg_type,"-"," ") as lg_type, transaction_name,lg_code, case when source = \'hundred-percentage-cash-cover\' then \'100% cash cover \' else REPLACE(source,"-"," ") END as source ,banks.name_en as financial_institution_name , lg_amount , case when status = \'cancelled\' then \'cancelled\' else (DATE_FORMAT(renewal_date,\'%d-%m-%Y\')) end as renewal_date , cash_cover_amount,lg_commission_rate '
+			'letter_of_guarantee_issuances.id as id , partner_id , partners.name as partner_name , lg_type , transaction_name,lg_code, source ,banks.name_en as financial_institution_name , lg_amount , case when status = \'cancelled\' then \'cancelled\' else (DATE_FORMAT(renewal_date,\'%d-%m-%Y\')) end as renewal_date , cash_cover_amount,lg_commission_rate '
 		)->get();
         if (!count($results)) {
             return redirect()->back()->with('fail', __('No Data Found'));
         }
 		$results = $this->paginate($results,50);
+		$lgsTypes = LgTypes::getAll();
+		$lgsSources = LgSources::getAll();
         return view('lg_by_bank_name_result', [
             'results' => $results,
+			'lgsTypes'=>$lgsTypes,
+			'lgsSources'=>$lgsSources,
             'currency' => $currencyName,
 		//	'bankName'=>$bankName,
 			'startDate'=>Carbon::make($startDate)->format('d-m-Y'),

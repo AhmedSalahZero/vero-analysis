@@ -24,7 +24,7 @@
                 <div class="kt-portlet__body">
                     <div class="form-group row">
                         <div class="col-md-2 mb-4">
-                            <label>{{ __('Start Date') }}</span> </label>
+                            <label>{{ __('Renewal Date (Greater Than Or Equal Date)') }}</span> </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <input required type="date" class="form-control" name="start_date" value="{{ now() }}">
@@ -32,14 +32,14 @@
                             </div>
                         </div>
 
-                        <div class="col-md-2 mb-4">
+                        {{-- <div class="col-md-2 mb-4">
                             <label>{{ __('End Date') }}  </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <input required type="date" class="form-control" name="end_date" value="{{ now()->addYear() }}">
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
 
 
 
@@ -59,19 +59,14 @@
                         </div>
 
                         <div class="col-md-4">
-                            <label>{{__('Benefiniciary')}} @include('star')</label>
+                            <label>{{__('Beneficiary')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-
-                                    <select data-live-search="true" data-actions-box="true" id="beneficiary-id"  name="beneficiary_id" class="form-control select2-select">
-                                       
+                                    <select multiple data-live-search="true" data-actions-box="true" id="beneficiary-id"  name="beneficiary_id[]" class="form-control select2-select">
                                     </select>
-
                                 </div>
                             </div>
                         </div>
-
-
                         
 
                         <div class="col-md-2">
