@@ -117,10 +117,10 @@ class CashExpenseOdooService
         return $data;
     }
     
-    public function createCashExpense(?string $subCategoryName, string $date, float $amountInCurrency, float $amountInMainFunctionalCurrency, int $journalId, int $odooCurrencyId, int $debitOdooAccountId, int $creditOdooAccountId, $analytic_distribution, $paymentRef=null, $odooPartnerId = null,$isMoneyReceived = false)
+    public function createCashExpense(?string $subCategoryName, string $date, float $amountInCurrency, float $amountInMainFunctionalCurrency, int $journalId, int $odooCurrencyId, int $debitOdooAccountId, int $creditOdooAccountId, $analytic_distribution, $paymentRef=null, $odooPartnerId = null,$isMoneyReceived = false , $message = null)
     {
-        $ref = $this->getRef();
-        $message =$this->getMessage();
+        $ref = is_null($paymentRef) ? $this->getRef() : $paymentRef;
+        $message = is_null($message) ?  $this->getMessage() : $message;
        
         return $this->createAndPostJournalEntry($subCategoryName, $date, $amountInCurrency, $amountInMainFunctionalCurrency, $odooCurrencyId, $journalId, $debitOdooAccountId, $creditOdooAccountId, $analytic_distribution, $ref, $odooPartnerId, $message, $paymentRef,$isMoneyReceived);
        

@@ -45,7 +45,6 @@ class CashExpenseController
 				 * @var CashExpense $cashExpense
 				 */
 				$currentValue = $cashExpense->{$searchFieldName} ;
-				// $cashExpenseRelationName cash-in-safe -> cashInSafe relation ship name
 				$cashExpenseRelationName = dashesToCamelCase(Request('active')) ;
 				$relationRecord = $cashExpense->$cashExpenseRelationName ;
 				/**
@@ -329,7 +328,7 @@ class CashExpenseController
 			$creditOdooAccountId=$cashExpenseOdooService->getChartOfAccountId($cashExpense);
 			$odooCurrencyId = Currency::getOdooId($currencyName);
 			$debitOdooAccountId = $cashExpenseCategoryName->getOdooId();
-			$result = $cashExpenseOdooService->createCashExpense($subCategoryName,$date,$amountInCurrency,$amountInMainFunctionalCurrency,$journalId,$odooCurrencyId,$debitOdooAccountId,$creditOdooAccountId,$analytic_distribution);
+			$result = $cashExpenseOdooService->createCashExpense($subCategoryName,$date,$amountInCurrency,$amountInMainFunctionalCurrency,$journalId,$odooCurrencyId,$debitOdooAccountId,$creditOdooAccountId,$analytic_distribution,'refff',null,false , 'messagge');
 			$cashExpense->account_bank_statement_line_id=$result['account_bank_statement_line_id'];
 			$cashExpense->journal_entry_id=$result['journal_entry_id'];
 			$cashExpense->odoo_reference=$result['reference'];
