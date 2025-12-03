@@ -324,7 +324,6 @@ class Partner extends Model
 	}
 	public static function handleTaxesColumnsToPartnerTable(Company $company)
 	{
-	//	dd(self::getTaxesNames());
 		foreach(self::getTaxesNames() as $name){
 			$row = Partner::where('company_id',$company->id)->where('is_tax',1)->where('name',$name)->first();
 			$data = [

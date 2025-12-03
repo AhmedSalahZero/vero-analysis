@@ -150,7 +150,6 @@ class OdooService
 			$secondWithholdOrVatName = $vatPlusWithholdArr[1]['name'] ?? null;
 			$isFirstWithhold = $firstWithholdOrVatName == 'Subtotal W/O WHTax';
 			$isSecondWithhold = $secondWithholdOrVatName == 'Subtotal W/O WHTax';
-			// dd($isFirstWithhold);
 			$withholdAmount = 0 ;
 			$withholdAmountInMainCurrency = 0 ;
 			$excludeIndex = -1 ;
@@ -166,7 +165,6 @@ class OdooService
 			}
 			
 			$vatAmount = 0 ;
-			// dd($vatPlusWithholdArr);
 			foreach($vatPlusWithholdArr as $vatIndex => $vatArr){
 				if($vatIndex != $excludeIndex){
 					$vatAmount+=($vatArr['tax_amount_currency']);
@@ -195,7 +193,6 @@ class OdooService
 			if($isCustomer){
 				$invoiceId =  CustomerInvoice::createForOdoo($odooInvoiceId,$partnerId,$odooPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$withholdAmountInMainCurrency,$collectedAmount,$collectedAmountInMainCurrency,$exchangeRate,$soNumber,$companyId);
 			}elseif($isSupplier){
-				// dd($odooInvoiceId,$partnerId,$odooPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$withholdAmountInMainCurrency,$collectedAmount,$collectedAmountInMainCurrency,$exchangeRate,$soNumber,$companyId);
 				$invoiceId= SupplierInvoice::createForOdoo($odooInvoiceId,$partnerId,$odooPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$withholdAmountInMainCurrency,$collectedAmount,$collectedAmountInMainCurrency,$exchangeRate,$soNumber,$companyId);
 			}
 			
@@ -349,8 +346,6 @@ class OdooService
 		
 		));
 		$invoices = $this->fetchData('account.move',$fields,$filters);
-		// $contracts = $this->fetchData('account.move',$fields,$filters);
-		// dd($invoices);
 		return $invoices;
 		// /**
 		//  * * الكود اللي تحت دا بيجيب المنتجات
