@@ -371,7 +371,6 @@ class CustomerInvoice extends Model implements IInvoice
 		 * * في حالة لو مرر العقد فا مش محتاجين عمله لان العقد الواحد مربوط بعملة واحدة
 		 */
 		$columnNames = $contractCode ? 'received_amount,name,invoice_number,down_payment_type,receiving_currency,receiving_date' : 'received_amount,name,down_payment_type,receiving_currency,receiving_date';
-		// $exchangeRate = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate();
 		$totalCashInFlowKey = __('Total Cash Inflow');
 		$currentTypeText = [
 			MoneyReceived::INCOMING_TRANSFER => __('Incoming Transfers'),
@@ -595,7 +594,7 @@ class CustomerInvoice extends Model implements IInvoice
 	public static function getProjectionOtherCashIn(array &$result  ,Company $company,int $cashflowReportId,int $isContract ):void
 	{
 		$currentTypeText = 'Projected Other Cash In Items';
-		
+		$totalCashInFlowKey = __('Total Cash Inflow');
 		$items = CashProjection::where('company_id',$company->id)->where('is_contract',$isContract)->where('cashflow_report_id',$cashflowReportId)->where('type','in')->get();
 		
 			foreach($items as $item){
@@ -605,7 +604,8 @@ class CustomerInvoice extends Model implements IInvoice
 					$result['customers'][$currentTypeText][$name]['total'] = isset($result['customers'][$currentTypeText][$name]['total']) ? $result['customers'][$currentTypeText][$name]['total']  + $value : $value;
 					$currentTotal = $value;
 					$result['customers'][$currentTypeText]['total'][$currentWeekYear] = isset($result['customers'][$currentTypeText]['total'][$currentWeekYear]) ? $result['customers'][$currentTypeText]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
-			
+			            $result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear] = isset($result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear]) ? $result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear] + $value :$value;
+
 				}
 			}
 	}

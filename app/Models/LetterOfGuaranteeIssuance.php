@@ -589,7 +589,7 @@ class LetterOfGuaranteeIssuance extends Model
         ->groupByRaw('letter_of_guarantee_issuances.lg_type,letter_of_guarantee_cash_cover_statements.currency')
         ->selectRaw('letter_of_guarantee_issuances.lg_type as lg_type ,sum(debit) as total_amount , letter_of_guarantee_cash_cover_statements.currency as currency,'.$dateFieldName)->get();
                     
-                        
+               $totalCashInFlowKey = __('Total Cash Inflow');         
         $subType = __('Cancelled LGs Cash Cover');
        $allRowsWithoutGrouping = $commonQueryBase->get();
         foreach ($rows as $row) {
@@ -602,6 +602,9 @@ class LetterOfGuaranteeIssuance extends Model
             $result[$mainType][$subType][$lgType]['total'] = isset($result[$mainType][$subType][$lgType]['total']) ? $result[$mainType][$subType][$lgType]['total']  + $currentPaidAmount : $currentPaidAmount;
             $currentTotal = $currentPaidAmount;
             $result[$mainType][$subType]['total'][$currentWeekYear] = isset($result[$mainType][$subType]['total'][$currentWeekYear]) ? $result[$mainType][$subType]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
+			
+			$result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear] = isset($result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear]) ? $result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear] + $currentPaidAmount :$currentPaidAmount;
+						
         }
 		/**
 		 * * دا هنعرضه في البوب اب

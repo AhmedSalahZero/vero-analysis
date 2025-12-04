@@ -294,7 +294,6 @@ class CashFlowReportController
 		
 		$totalCashOutFlowArray = $this->mergeTotal($totalCashOutFlowArray,$pastDueLoanInstallments,$datesWithWeekNumber);
 		$result['customers'][__('Total Cash Inflow')]['total'] = $totalCashInFlowArray ;
-		// $result['customers'][__('Total Cash Inflow')]['total']['total_of_total'] = array_sum($totalCashInFlowArray);
 		$outProjection = $result['cash_expenses'][__('Projected Other Cash Out Items')] ?? [];
 		unset($result['cash_expenses'][__('Projected Other Cash Out Items')]);
 		$result['cash_expenses'][__('Projected Other Cash Out Items')] =$outProjection;
@@ -659,6 +658,7 @@ class CashFlowReportController
 		// $request->merge([
 		// 	'reset_report'=>0
 		// ]);			
+		
 		if($cashflowReportId){
 	
 			$newResult =[];
