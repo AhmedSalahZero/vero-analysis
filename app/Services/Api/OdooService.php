@@ -136,7 +136,7 @@ class OdooService
 		}
 		$this->getPartners($startDate,$endDate,$companyId);
 		$invoices = $this->getInvoices($startDate,$endDate);
-		$this->syncDeletedInvoices($companyId,$startDate);
+		$this->syncDeletedInvoices($companyId,$endDate);
 		
 		foreach($invoices as $invoice){
 			$odooInvoiceId = $invoice['id'];
@@ -336,7 +336,6 @@ class OdooService
 		,array('state', '=', 'posted'),
 			array('write_date', '>=', $startDate),
 			array('write_date', '<=', $endDate),
-		//	array('id','=',14597)
 		));
 		$invoices = $this->fetchData('account.move',$fields,$filters);
 
@@ -362,10 +361,10 @@ class OdooService
 	
 
 
-	private function syncDeletedInvoices(int $companyId,string $odooStartDate)
+	private function syncDeletedInvoices(int $companyId,string $odooEndDate)
 	{
-		$startDate = Carbon::make($odooStartDate)->subDays(360)->format('Y-m-d');
-		$endDate = $odooStartDate;
+		$startDate = Carbon::make($odooEndDate)->subDays(450)->format('Y-m-d');
+		$endDate = $odooEndDate;
 		$customerInvoices  = CustomerInvoice::where('company_id',$companyId)->where('invoice_date','>=',$startDate)->where('invoice_date','<=',$endDate)->where('odoo_id','>',0)->get();
 		$supplierInvoices  = SupplierInvoice::where('company_id',$companyId)->where('invoice_date','>=',$startDate)->where('invoice_date','<=',$endDate)->where('odoo_id','>',0)->get();
 		
