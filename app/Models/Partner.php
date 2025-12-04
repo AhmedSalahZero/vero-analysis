@@ -82,6 +82,19 @@ class Partner extends Model
 			$q->where('is_supplier',1);
 		});
 	}
+	public function getTypeFormatted(string $partnerType):string
+	{
+
+		return [
+			'is_customer'=>__('Customer'),
+			'is_supplier'=>__('Supplier'),
+			'is_employee'=>__('Employee'),
+			'is_tax'=>__('Taxes'),
+			'is_shareholders'=>__('Shareholders'),
+			'is_subsidiary_company'=>__('Subsidiary Company'),
+			'is_other_partner'=>__('Other Partner'),
+		][$partnerType];
+	}
 	public function scopeOnlyEmployees(Builder $query){
 		return $query->where(function($q){
 			$q->where('is_employee',1);

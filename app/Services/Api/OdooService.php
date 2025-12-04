@@ -135,9 +135,8 @@ class OdooService
 			return ;
 		}
 		$this->getPartners($startDate,$endDate,$companyId);
-	//	$this->getContracts($startDate,$endDate,$companyId);
 		$invoices = $this->getInvoices($startDate,$endDate);
-		$this->syncDeletedInvoices($companyId,$startDate);
+		$this->syncDeletedInvoices($companyId,$endDate);
 		
 		foreach($invoices as $invoice){
 			$odooInvoiceId = $invoice['id'];
@@ -221,7 +220,6 @@ class OdooService
 				'date', //end date
 			]
 		]);
-		// dd($projects);
 		foreach($projects as $projectArr){
 			$projectAmount = 0 ;
 			$modelType = 'Customer';
@@ -229,10 +227,7 @@ class OdooService
 			$currentProjectEndDate = isset($projectArr['date']) && $projectArr['date'] ? $projectArr['date'] : now()->format('Y-m-d') ;
 			$currentOdooProjectId = $projectArr['id'];
 			$currentOdooCustomerId = $projectArr['partner_id'][0]??null ;
-			// if($currentOdooProjectId == 18){
-			// 	dd($projectArr,$currentOdooCustomerId);
-			// }
-			
+
 			if(is_null($currentOdooCustomerId)){
 				continue;
 			}
@@ -341,9 +336,7 @@ class OdooService
 		,array('state', '=', 'posted'),
 			array('write_date', '>=', $startDate),
 			array('write_date', '<=', $endDate),
-			// array('name','=','INV/2025/00005')
-			// array('name','=','BILL/2025/01/0015')
-		
+			array('id','=',14597)
 		));
 		$invoices = $this->fetchData('account.move',$fields,$filters);
 		return $invoices;
@@ -368,10 +361,10 @@ class OdooService
 	
 
 
-	private function syncDeletedInvoices(int $companyId,string $odooStartDate)
+	private function syncDeletedInvoices(int $companyId,string $odooEndDate)
 	{
-		$startDate = Carbon::make($odooStartDate)->subDays(360)->format('Y-m-d');
-		$endDate = $odooStartDate;
+		$startDate = Carbon::make($odooEndDate)->subDays(500)->format('Y-m-d');
+		$endDate = $odooEndDate;
 		$customerInvoices  = CustomerInvoice::where('company_id',$companyId)->where('invoice_date','>=',$startDate)->where('invoice_date','<=',$endDate)->where('odoo_id','>',0)->get();
 		$supplierInvoices  = SupplierInvoice::where('company_id',$companyId)->where('invoice_date','>=',$startDate)->where('invoice_date','<=',$endDate)->where('odoo_id','>',0)->get();
 		
@@ -611,14 +604,14 @@ class OdooService
 			$filters = [
 				[
 					array('write_date', '>=', $startDate),
-					array('write_date', '<=', $endDate)
+					array('write_date', '<=', $endDate),
+					array('memo','=','BILL/2025/12/0004')
 				]
 			];
 			$partners = $this->fetchData('res.partner',$fields,$filters);
             $partners = $this->execute('res.partner', 'read', [$partnerIds, $fields]);
 			unset($partners[0]); // هنشيل اول واحد لانه بيكون الادمن
             // Check for employee role by searching hr.employee
-			$test = [];
             // Add role information to each partner
 		
             foreach ($partners as &$partner) {
@@ -631,10 +624,6 @@ class OdooService
 				if(!$isEmployee && !$isCustomer && !$isSupplier){
 					$isOtherPartner = true;
 				}
-				if($isCustomer){
-					$test[]=$partner;
-				}
-		
 				Partner::handlePartnerForOdoo($currentOdooCustomerId ,$currentOdooCustomerName,$isCustomer,$isSupplier,$isEmployee,$isOtherPartner,$companyId  );
             }
             return $partners;

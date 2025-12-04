@@ -679,8 +679,6 @@ class MoneyReceivedController
                 $moneyReceived->handleOdooDownPayments($OdooPaymentService, $hasOdooIntegration);
                 
             }
-
-            
         }
         if ($request->ajax()) {
             return response()->json([

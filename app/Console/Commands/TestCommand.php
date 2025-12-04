@@ -3,10 +3,12 @@
 namespace App\Console\Commands;
 
 use App\Http\Controllers\LetterOfGuaranteeIssuanceController;
+use App\Http\Controllers\ReadOdooInvoices;
 use App\Models\Company;
 use App\Models\FinancialStatement;
 use App\Models\LetterOfGuaranteeIssuance;
 use App\Models\MoneyPayment;
+use App\Models\MoneyReceived;
 use App\Models\NonBankingService\Study;
 use App\Models\NonBankingService\TestCashFlowStatement;
 use App\Models\NonBankingService\TestIncomeStatement;
@@ -16,8 +18,8 @@ use App\Models\SupplierInvoice;
 use App\ReadyFunctions\ConvertFlatRateToDecreasingRate;
 use App\Services\Api\CashExpenseOdooService;
 use App\Services\Api\OdooPayment;
-use App\Services\Api\OdooService;
 
+use App\Services\Api\OdooService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Http\Request;
@@ -57,6 +59,9 @@ class TestCommand extends Command
 	}
 	public function handle()
 	{
+		// $money  = MoneyReceived::where('id',331)->first();
+		// // $money  = MoneyReceived::where('id',341)->first();
+		// dd($money->generateDownPaymentMessage());
 		
 	//	dd($this->getSupplierInvoicesWithout());
 		// SupplierInvoice::where('id','>',0)->update([
@@ -68,13 +73,21 @@ class TestCommand extends Command
 		// $source = 'lg-facility';
 		// (new LetterOfGuaranteeIssuanceController)->backToRunningStatus($company,new Request , $letterOfGuaranteeIssuance,$source);
 		$fetch = (new OdooPayment(Company::find(92)));
+		$request  = new Request;
+		$request->merge([
+			'odoo_start_date'=>'2025-01-01',
+			'odoo_end_date'=>'2025-12-31',
+		]);
+		$readInvoices = new ReadOdooInvoices();
+		$readInvoices->handle($request,Company::find(92));
+		dd($readInvoices);
 		// $x = $fetch->fetchData('account.bank.statement.line',[],[[['name','=','MISR/2025/00431']]]);
 		// dd($x);
 		// $x = $fetch->un('account.bank.statement.line',[],[[['name','=','MISR/2025/00431']]]);
 		// dd($x);
 		
-		$x = $fetch->fetchData('account.payment',[],[[['id','>',0]]])[0];
-		dd($x);
+		// $x = $fetch->fetchData('account.payment',[],[[['id','>',0]]])[0];
+		// dd($x);
 		// dd($x);
 		// dd($x);
 		// $unlink = new OdooPayment(Company::find(92));

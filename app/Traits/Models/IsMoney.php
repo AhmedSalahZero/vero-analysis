@@ -590,6 +590,21 @@ trait IsMoney
         }
                 
     }
+	public function generateDownPaymentMessage():string
+	{
+		$isReceiving = $this instanceof MoneyReceived ;
+		$receivingOrPaidText = $isReceiving ? __('Receiving')  : __('Paid');
+		$receivingOrPaidToText = $isReceiving ? __('Receiving From')  : __('Paid To');
+		$downPaymentFromOrToText = $isReceiving ? __('DownPayment From') : __('DownPayment To');
+		$partnerTypeFormatted = $this->partner->getTypeFormatted($this->partner_type);
+			if($this->isGeneralDownPayment() || $this->isOverContractDownPayment()){
+				return $receivingOrPaidText . ' '. __(' DownPayment');
+			}
+			if($this->isInvoiceSettlementWithDownPayment()){
+				return  $downPaymentFromOrToText . ' ' . $partnerTypeFormatted;
+			}
+			return $receivingOrPaidToText .' '. $partnerTypeFormatted ;
+	}
     
     // public function markOpeningReceivedChequeAsPaidInOdoo()
     // {

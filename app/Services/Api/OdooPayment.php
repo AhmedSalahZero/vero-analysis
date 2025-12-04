@@ -64,7 +64,7 @@ class OdooPayment
                     'payment_type' => $inBoundOrOutBound,
                     'partner_type' => $customerOrSupplier ,
                     'payment_method_line_id'=>(int)$moneyModel->getPaymentMethodLineId(),
-					// 'memo'=>'salah memo',
+					'memo'=>$moneyModel->generateDownPaymentMessage(),
                 ]],
                 ['context' => $context]
             );
