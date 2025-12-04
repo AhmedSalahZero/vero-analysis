@@ -338,7 +338,6 @@ class OdooService
 			array('write_date', '<=', $endDate),
 		));
 		$invoices = $this->fetchData('account.move',$fields,$filters);
-
 		return $invoices;
 		// /**
 		//  * * الكود اللي تحت دا بيجيب المنتجات
