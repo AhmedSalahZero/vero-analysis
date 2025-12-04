@@ -445,7 +445,6 @@ class CustomerInvoice extends Model implements IInvoice
 		}
 		
 		$rows = DB::table('money_received')->where('money_received.company_id',$companyId)
-		// ->where('receiving_currency',$currency)
 		->where('down_payment_type','over_contract')
 		->where('money_received.type','=',$moneyType)
 		->where('contract_id',$contractId)

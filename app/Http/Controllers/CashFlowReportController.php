@@ -287,12 +287,15 @@ class CashFlowReportController
 		
 		$totalCashInFlowArray = $result['customers'][__('Total Cash Inflow')]['total'] ?? [];
 		$totalCashInFlowArray = $this->mergeTotal($totalCashInFlowArray,$customerDueInvoices,$datesWithWeekNumber);
-		// $totalCashOutFlowArray =$result['suppliers']; 
 		$totalCashOutFlowArray = $this->sumAllTotalKeys( $result['suppliers']??[],$result['cash_expenses']??[]  , $datesWithWeekNumber);
-	
+		// dd($result['suppliers']??[],$result['cash_expenses']??[] , $totalCashOutFlowArray);
+		// dd($result['suppliers']??[]);
+		// dd($result['suppliers']??[],$result['cash_expenses']??[] );
+		
 		$totalCashOutFlowArray = $this->mergeTotal($totalCashOutFlowArray,$supplierDueInvoices,$datesWithWeekNumber,true);
 		
 		$totalCashOutFlowArray = $this->mergeTotal($totalCashOutFlowArray,$pastDueLoanInstallments,$datesWithWeekNumber);
+		// dd($result['suppliers']??[],$result['cash_expenses']);
 		$result['customers'][__('Total Cash Inflow')]['total'] = $totalCashInFlowArray ;
 		$outProjection = $result['cash_expenses'][__('Projected Other Cash Out Items')] ?? [];
 		unset($result['cash_expenses'][__('Projected Other Cash Out Items')]);
@@ -692,7 +695,7 @@ class CashFlowReportController
 	protected function sumAllTotalKeys(array $items,array $items2,array $datesWithWeekNumber){
 		
 		$totals=[];
-		foreach($datesWithWeekNumber as $week){
+		foreach(array_flip($datesWithWeekNumber) as $week=>$date){
 			foreach($items as $subItemName => $itemArr){
 				$currentTotal = $itemArr['total'][$week]??0 ;
 				$totals[$week]= isset($totals[$week]) ? $totals[$week] + $currentTotal:$currentTotal ;
