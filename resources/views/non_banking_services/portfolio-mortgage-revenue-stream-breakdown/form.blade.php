@@ -84,6 +84,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                         @php
                         $rowIndex = 0;
 						$currentYearRepeaterIndex = 0 ;
+					
                         @endphp
 
 
@@ -196,6 +197,8 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     @php
                                     $columnIndex = 0 ;
 									$currentYearRepeaterIndex = 0 ;
+										$currentYearTotal = 0;
+						$currentRowTotal = 0;
                                     @endphp
                                     @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                     @php
@@ -214,18 +217,21 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
                                     $currentMonthNumber = explode('-',$dateAsString)[1];
                                     $currentYear= explode('-',$dateAsString)[0];
+									$currentYearTotal+=$currentVal;
+									$currentRowTotal+=$currentVal;
                                     @endphp
 
 
                                     @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
                                     <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="0 " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="$currentYearTotal " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
                                         </div>
 
                                     </td>
                                     @php
                                     $currentYearRepeaterIndex++;
+									$currentYearTotal = 0;
                                     @endphp
                                     @endif
 									
@@ -237,7 +243,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="0">
+                                            <input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="{{ number_format($currentRowTotal) }}">
                                         </div>
                                     </td>
 

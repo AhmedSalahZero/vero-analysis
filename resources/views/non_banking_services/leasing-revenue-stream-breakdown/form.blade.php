@@ -233,10 +233,13 @@ use App\Models\NonBankingService\LeasingCategory;
 
                                 @php
                                 $currentLoanTotalPerYear = [];
+								
                                 @endphp
 
                                 @foreach ($study->leasingRevenueStreamBreakdown as $currentLeasingRevenueStreamBreakdown)
-
+								@php
+									$totalOfRow = 0; 
+								@endphp
 
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style total-row-tr>
 
@@ -251,6 +254,7 @@ use App\Models\NonBankingService\LeasingCategory;
                                     @php
                                     $columnIndex = 0 ;
                                     $currentYearRepeaterIndex = 0;
+									$currentYearTotal = 0 ;
                                     @endphp
                                     @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                     @php
@@ -267,18 +271,22 @@ use App\Models\NonBankingService\LeasingCategory;
                                     $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
                                     $currentMonthNumber = explode('-',$dateAsString)[1];
                                     $currentYear= explode('-',$dateAsString)[0];
+									$currentYearTotal+=$currentVal;
+									$totalOfRow+=$currentVal;
                                     @endphp
 
 
                                     @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
                                     <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="0 " :formattedInputClasses="'exclude-from-collapse exclude-from-total exclude-from-trigger-change-when-repeat expandable-amount-input'" :classes="'year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse exclude-from-total'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="$currentYearTotal" :formattedInputClasses="'exclude-from-collapse exclude-from-total exclude-from-trigger-change-when-repeat expandable-amount-input'" :classes="'year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse exclude-from-total'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
                                         </div>
 
                                     </td>
                                     @php
                                     $currentYearRepeaterIndex++;
+									
+									$currentYearTotal = 0 ;
                                     @endphp
                                     @endif
 
@@ -292,7 +300,7 @@ use App\Models\NonBankingService\LeasingCategory;
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="0">
+                                            <input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="{{ number_format($totalOfRow) }}">
                                         </div>
                                     </td>
                                 </tr>
@@ -304,46 +312,36 @@ use App\Models\NonBankingService\LeasingCategory;
 
 
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style total-row-tr data-row-total>
-
                                     <td>
                                         <div class="">
-
                                             <input value="{{ __('Total') }}" disabled class="form-control text-left mt-2 min-width-hover-300" type="text">
                                         </div>
                                     </td>
-
-
                                     @php
                                     $columnIndex = 0 ;
+									$totalOfRow = 0 ;
                                     $currentYearRepeaterIndex = 0;
+									$currentYearTotal=0;
                                     @endphp
 									
                                     @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                     @php
                                     $currentLoanTotal = $currentLoanTotalPerYear[$yearOrMonthAsIndex] ;
+									
                                     @endphp
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-
-
                                             <div class="form-group three-dots-parent">
                                                 <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
                                                     <div class="input-hidden-parent">
                                                         <input readonly class="form-control copy-value-to-his-input-hidden  expandable-amount-input  repeat-to-right-input-formatted  " type="text" value="{{ number_format($currentLoanTotal,0)  }}" data-column-index="{{ $columnIndex }}">
                                                         <input js-recalculate-equity-funding-value type="hidden" class="repeat-to-right-input-hidden input-hidden-with-name  total-loans-hidden repeater-with-collapse-input" value="{{ $currentLoanTotal  }}" data-group-index="{{ $currentYearRepeaterIndex }}" data-column-index="{{ $columnIndex }}" name="ee">
                                                     </div>
-
                                                     <span class="ml-2 currency-class">
                                                         {{ $company->getMainFunctionalCurrency() }}
                                                     </span>
-
-
                                                 </div>
-
                                             </div>
-
-
-
                                         </div>
                                     </td>
 									
@@ -355,18 +353,24 @@ use App\Models\NonBankingService\LeasingCategory;
                                     $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
                                     $currentMonthNumber = explode('-',$dateAsString)[1];
                                     $currentYear= explode('-',$dateAsString)[0];
+									$currentYearTotal+=$currentLoanTotal;
+									$totalOfRow+=$currentLoanTotal;
                                     @endphp
 
 
                                     @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+									
                                     <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="0 " :formattedInputClasses="'exclude-from-collapse exclude-from-total exclude-from-trigger-change-when-repeat expandable-amount-input'" :classes="'year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed  exclude-from-collapse '" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="$currentYearTotal" :formattedInputClasses="'exclude-from-collapse exclude-from-total exclude-from-trigger-change-when-repeat expandable-amount-input'" :classes="'year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed  exclude-from-collapse '" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
                                         </div>
 
                                     </td>
+								
                                     @php
                                     $currentYearRepeaterIndex++;
+									
+									$currentYearTotal = 0 ;
                                     @endphp
                                     @endif
 									
@@ -378,7 +382,7 @@ use App\Models\NonBankingService\LeasingCategory;
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="0">
+                                            <input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="{{ number_format($totalOfRow) }}">
                                         </div>
                                     </td>
 
