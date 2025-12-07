@@ -23,9 +23,7 @@ trait HasOdooMoneyTransfer
 		$secondCurrency = $isInternalMoneyTransfer ? $mainFunctionalCurrency : $secondCurrency;
 		$isBuyOrSellWithTwoForeignCurrencies= !$isInternalMoneyTransfer && ($secondCurrency != $mainFunctionalCurrency && $currencyName != $mainFunctionalCurrency ); 
         $receiveOdooCurrencyId = $isInternalMoneyTransfer ? $odooCurrencyId  : Currency::getOdooId($secondCurrency);
-		// ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currencyName, $secondCurrency, $date, $company->id)
         $amountInMainFunctionalCurrency = $currencyName != $secondCurrency  ? $amountInCurrency *  $exchangeRate : $amountInCurrency ;
-		// ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currencyName, $mainFunctionalCurrency, $date, $company->id)
 		$amountInMainFunctionalCurrencyInSend = $isBuyOrSellWithTwoForeignCurrencies ? $amountInCurrency * $exchangeRate : $amountInMainFunctionalCurrency;
 		$amountInMainFunctionalCurrencyInReceive= $amountInMainFunctionalCurrencyInSend;
 		

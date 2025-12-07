@@ -64,7 +64,7 @@ class OdooPayment
                     'payment_type' => $inBoundOrOutBound,
                     'partner_type' => $customerOrSupplier ,
                     'payment_method_line_id'=>(int)$moneyModel->getPaymentMethodLineId(),
-					'memo'=>$moneyModel->generateDownPaymentMessage(),
+                    'memo'=>$moneyModel->generateDownPaymentMessage(),
                 ]],
                 ['context' => $context]
             );
@@ -231,7 +231,7 @@ class OdooPayment
         $context = [
             'active_model' => 'account.move',
             'active_ids' => [$invoiceId],
-        ];
+		];
             
         $paymentWizardId = $this->models->execute_kw(
             $this->db,
@@ -241,7 +241,7 @@ class OdooPayment
             'create',
             [[
                 'amount' => $amountInInReceivingCurrency,
-                 'currency_id'=>$odooReceivingCurrencyId,
+                'currency_id'=>$odooReceivingCurrencyId,
                 'journal_id' => $journalId,
                 'payment_date' => $paymentDate,
                 'communication' => $invoiceNumber,
@@ -270,7 +270,6 @@ class OdooPayment
             ]);
             return ;
         }
-            
         $resId = $paymentResult['res_id'];
         if (is_numeric($resId)) {
             $odooAccountPayment = $this->fetchData('account.payment', ['id','name'], [[['id','=',$resId]]]);
@@ -321,6 +320,8 @@ class OdooPayment
         $this->createDownPayment($moneyModel);
 
     }
+    
+   
     
     
     public function chequeCollection(
@@ -397,7 +398,6 @@ class OdooPayment
                     'payment_ids' => [[6, 0, [$accountPayment_id]]], // Link payment using payment_ids
                     'name' => $message ,
                     'is_reconciled' => true,
-                    
                     'line_ids' => [
                         [0, 0, [
                             'account_id' => $debitOdooAccountId,
@@ -678,7 +678,7 @@ class OdooPayment
 
                 $statementMoveId = $statementData[0]['move_id'][0];
                 $statementLineIds = $statementData[0]['line_ids'][0] ?? [];
-				$bankReference = $statementData[0]['move_id'][1];
+                $bankReference = $statementData[0]['move_id'][1];
 
 
                 // Step 6: Reconcile payment and bank statement lines
