@@ -21,7 +21,7 @@
                                             <div class="modal fade" id="apply-periodic-interest-modal-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-md modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ $applyPeriodInterestRouteAction }}" method="post">
+                                                        <form onsubmit="this.querySelector('button[type=submit]').disabled = true;" action="{{ $applyPeriodInterestRouteAction }}" method="post">
                                                             @csrf
                                                             <div class="modal-header">
                                                                 <h5 class="modal-title text-left" id="exampleModalLongTitle">{{ $title }}</h5>

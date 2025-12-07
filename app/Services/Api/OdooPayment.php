@@ -291,14 +291,7 @@ class OdooPayment
         }
             
             
-        // }
-        // catch(\Exception $e){
-        // 	session()->put('fail',__('Error While Connecting With Odoo : ' . $e->getMessage()));
-        // 	$moneyModel->update([
-        // 		'synced_with_odoo'=>false ,
-        // 		'odoo_error_message'=>$e->getMessage()
-        // 	]);
-        // }
+       
     }
     
     public function reCreatePayment($customerInvoiceSettlement)
@@ -393,6 +386,7 @@ class OdooPayment
                     'journal_id' => $journal_id,
                     'amount' => $amount, // Positive for bank deposit
                     'date' => $date,
+					'payment_ref'=>__('Cheque Received'),
                     'ref' => $ref,
                     'partner_id' => $PartnerId,
                     'payment_ids' => [[6, 0, [$accountPayment_id]]], // Link payment using payment_ids
@@ -613,6 +607,7 @@ class OdooPayment
                     'date' => $date,
                     'ref' => $ref,
                     'partner_id' => $PartnerId,
+					'payment_ref'=>__('Cheque Paid'),
                     'payment_ids' => [[6, 0, [$accountPayment_id]]], // Link payment using payment_ids
                     'name' => $message ,
                     'is_reconciled' => true,

@@ -518,10 +518,10 @@ trait IsMoney
         foreach ($items as $settlementOrMoneyModel) {
             $odooId = $settlementOrMoneyModel->odoo_id ;
             $ref = 'Cheque Payment ' . $settlementOrMoneyModel->getInvoiceNumber();
-            $amount= $settlementOrMoneyModel->getAmount();
+            $amount= $settlementOrMoneyModel->getAmountInReceivingCurrency();
             $isMoneyPayment  = $settlementOrMoneyModel instanceof MoneyPayment ;
             if ($isMoneyPayment && $this->isInvoiceSettlementWithDownPayment()) {
-                $amount = $this->downPaymentSettlements->sum('down_payment_amount');
+                $amount = $this->downPaymentSettlements->sum('down_payment_amount')* $this->getExchangeRate();
             }
             if ($settlementOrMoneyModel->account_bank_statement_line_id) {
                 $odooPaymentService->unlinkBankCollection($settlementOrMoneyModel->account_bank_statement_line_id);
@@ -544,7 +544,7 @@ trait IsMoney
         //  $odooPaymentService = new OdooPayment($company);
         $odooSetting = $company->odooSetting;
         $financialInstitution = $isMoneyReceived ? $cheque->drawlBank : $cheque->deliveryBank;
-        $currency = $this->getCurrency();
+        $currency = $isMoneyReceived ? $this->getReceivingCurrency() :  $this->getPaymentCurrency();
         $hasSettlements = $this->settlements && $this->settlements->count()  ;
         $items = $hasSettlements ? $this->settlements : [$this];
         //      $debitAccountOdooId = $odooSetting->getChequesPayableId();
@@ -572,17 +572,18 @@ trait IsMoney
         foreach ($items as $settlementOrMoneyModel) {
             $ref = $isMoneyReceived ?  __('Cheque Collection') : __('Cheque Payment') ;
             $amount= $settlementOrMoneyModel->getAmount();
-            
             $isMoneyPayment  = $settlementOrMoneyModel instanceof MoneyPayment ;
             if ($isMoneyPayment && $this->isInvoiceSettlementWithDownPayment()) {
                 $amount = $this->downPaymentSettlements->sum('down_payment_amount');
             }
-            
+            /**
+			 * @var MoneyReceived|MoneyPayment $this
+			 */
             $cashExpenseOdooService = new CashExpenseOdooService($company);
-            $amountInMainFunctionalCurrency  = $currency != $mainFunctionalCurrency  ? $amount * ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currency, $mainFunctionalCurrency, $actualPaymentDate, $company->id) : $amount ;
+            $amountInMainFunctionalCurrency  = $currency != $mainFunctionalCurrency  ? $amount * $this->getExchangeRate() : $amount ;
             $result = $cashExpenseOdooService->createCashExpense('', $actualPaymentDate, $amount, $amountInMainFunctionalCurrency, $journalId, $odooCurrencyId, $debitOdooAccountId, $creditOdooAccountId, [], $ref, $odooPartnerId, $isMoneyReceived);
             $settlementOrMoneyModel->update([
-                    'account_bank_statement_line_id'=>$result['account_bank_statement_line_id'],
+                 'account_bank_statement_line_id'=>$result['account_bank_statement_line_id'],
                 'odoo_reference'=>$result['reference'],
                 'journal_entry_id'=>$result['journal_entry_id']
             ]);

@@ -61,7 +61,7 @@ use App\Models\LetterOfGuaranteeIssuance;
 <div class="row">
     <div class="col-md-12">
 
-        <form method="post" action="{{ isset($model) ?  route('update.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$source]) :route('store.letter.of.guarantee.issuance',['company'=>$company->id,'source'=>$source]) }}" class="kt-form kt-form--label-right">
+        <form method="post" onsubmit="this.querySelector('button[type=submit]').disabled = true;" action="{{ isset($model) ?  route('update.letter.of.guarantee.issuance',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$model->id,'source'=>$source]) :route('store.letter.of.guarantee.issuance',['company'=>$company->id,'source'=>$source]) }}" class="kt-form kt-form--label-right">
             <input type="hidden" name="id" value="{{ isset($model) ? $model->id : 0 }}">
             <input type="hidden" name="created_by" value="{{ auth()->user()->id }}">
             <input type="hidden" name="company_id" value="{{ $company->id }}">

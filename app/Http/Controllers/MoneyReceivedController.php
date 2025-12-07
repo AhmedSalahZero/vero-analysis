@@ -708,7 +708,7 @@ class MoneyReceivedController
         ]);
         $chequeNumber = $moneyReceived->cheque->getChequeNumber();
         $accountType = AccountType::find($moneyReceived->cheque->account_type) ;
-        $currency = $moneyReceived->getCurrency();
+        $currency = $moneyReceived->getReceivingCurrency();
         $receivedAmount = $moneyReceived->getReceivedAmount();
         // $receivingDate = $moneyReceived->getReceivingDate();
         $moneyType = MoneyReceived::CHEQUE;
@@ -747,15 +747,15 @@ class MoneyReceivedController
                 $debitAccountOdooId = $financialInstitution->getOdooIdForAccount($accountTypeId, $accountNumber);
                 $creditOdooAccountId = $odooSetting->getChequesReceivableId();
                 $odooPartnerId = $moneyReceived->getPartnerOdooId();
-                $amount= $settlementOrMoneyModel->getAmount();
+                $amountInMainFunctionalCurrency= $settlementOrMoneyModel->getAmountInReceivingCurrency();
 				if($isMoneyReceived && $moneyReceived->isInvoiceSettlementWithDownPayment() ){
-					$amount = $moneyReceived->downPaymentSettlements->sum('down_payment_amount');
+					$amountInMainFunctionalCurrency = $moneyReceived->downPaymentSettlements->sum('down_payment_amount') * $moneyReceived->getExchangeRate() ;
 				}
                 $ref = 'Cheque Collection ' . $settlementOrMoneyModel->getInvoiceNumber();
                 if ($isOpeningAndMoneyReceivedBalance) {
                     $settlementOrMoneyModel->markOpeningPayableChequeAsPaidInOdoo(true);
                 } else {
-                    $res =$OdooPaymentService->chequeCollection($odooId, $amount, $actualCollectionDate, $odooCurrencyId, $journalId, $debitAccountOdooId, $creditOdooAccountId, $odooPartnerId, $ref);
+                    $res =$OdooPaymentService->chequeCollection($odooId, $amountInMainFunctionalCurrency, $actualCollectionDate, $odooCurrencyId, $journalId, $debitAccountOdooId, $creditOdooAccountId, $odooPartnerId, $ref);
                     $settlementOrMoneyModel->update([
                         'account_bank_statement_line_id'=>$res['statement_entry_id']??null,
                         'odoo_reference'=>$res['bank_reference']??null
@@ -763,7 +763,6 @@ class MoneyReceivedController
                     
                 }
             }
-        
         }
         if ($request->ajax()) {
             return response()->json([

@@ -115,7 +115,7 @@ use App\Models\CashVeroBranch ;
                                             <div class="modal fade" id="delete-customer-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route($deleteRouteName,['company'=>$company->id,'branch'=>$model->id ]) }}" method="post">
+                                                        <form onsubmit="this.querySelector('button[type=submit]').disabled = true;" action="{{ route($deleteRouteName,['company'=>$company->id,'branch'=>$model->id ]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">

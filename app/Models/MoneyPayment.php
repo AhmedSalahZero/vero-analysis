@@ -208,7 +208,10 @@ class MoneyPayment extends Model
     {
         return $this->getPaidAmount();
     }
-    
+    public function getAmountInReceivingCurrency()
+	{
+		return $this->getPaidAmount();
+	}
     public function getPayableChequeDueDate()
     {
         return $this->payableCheque ? $this->payableCheque->getDueDate(): null;

@@ -7,7 +7,7 @@
  <div class="modal fade" id="apply-expense-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
      <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
          <div class="modal-content">
-             <form action="{{ route('apply.lc.issuance.expense',['company'=>$company->id,'letterOfCreditIssuance'=>$model->id]) }}" method="post">
+             <form onsubmit="this.querySelector('button[type=submit]').disabled = true;" action="{{ route('apply.lc.issuance.expense',['company'=>$company->id,'letterOfCreditIssuance'=>$model->id]) }}" method="post">
                  @csrf
                  <div class="modal-header">
                      <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Apply Expenses' )  }}</h5>

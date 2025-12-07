@@ -475,7 +475,7 @@ use Carbon\Carbon;
                                                                 <div class="modal-body">
                                                                     <h3>{{ __('Are You Sure To Delete This Item ? ') }}</h3>
                                                                 </div>
-                                                                <form action="{{ route('delete.time.of.deposit.renewal.date',[$company,$timeOfDeposit->id,$renewalDateHistory->id]) }}" method="post" id="delete_form">
+                                                                <form  onsubmit="this.querySelector('button[type=submit]').disabled = true;" action="{{ route('delete.time.of.deposit.renewal.date',[$company,$timeOfDeposit->id,$renewalDateHistory->id]) }}" method="post" id="delete_form">
                                                                     {{ csrf_field() }}
                                                                     {{ method_field('DELETE') }}
                                                                     <div class="modal-footer">

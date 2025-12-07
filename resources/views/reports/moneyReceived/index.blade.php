@@ -185,7 +185,7 @@ use App\Models\MoneyReceived;
                                             <div class="modal fade" id="delete-cheque-id-{{ $moneyReceived->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('delete.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}" method="post">
+                                                        <form onsubmit="this.querySelector('button[type=submit]').disabled = true;" action="{{ route('delete.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">
@@ -279,7 +279,7 @@ use App\Models\MoneyReceived;
                                             <div class="modal fade" id="delete-cheque-id-{{ $moneyReceived->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('delete.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}" method="post">
+                                                        <form onsubmit="this.querySelector('button[type=submit]').disabled = true;" action="{{ route('delete.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">
@@ -469,7 +469,7 @@ use App\Models\MoneyReceived;
                                             <div class="modal fade" id="delete-cheque-id-{{ $moneyReceived->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('delete.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}" method="post">
+                                                        <form onsubmit="this.querySelector('button[type=submit]').disabled = true;" action="{{ route('delete.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">
@@ -625,7 +625,7 @@ use App\Models\MoneyReceived;
                                             <div class="modal fade" id="delete-transfer-id-{{ $money->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('delete.money.receive',['company'=>$company->id,'moneyReceived'=>$money->id]) }}" method="post">
+                                                        <form onsubmit="this.querySelector('button[type=submit]').disabled = true;" action="{{ route('delete.money.receive',['company'=>$company->id,'moneyReceived'=>$money->id]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">
@@ -715,7 +715,7 @@ use App\Models\MoneyReceived;
                                             <div class="modal fade" id="delete-transfer-id-{{ $moneyReceived->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('delete.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}" method="post">
+                                                        <form onsubmit="this.querySelector('button[type=submit]').disabled = true;" action="{{ route('delete.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">
@@ -816,7 +816,7 @@ use App\Models\MoneyReceived;
                                             <div class="modal fade" id="delete-cash-in-bank-id-{{ $money->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('delete.money.receive',['company'=>$company->id,'moneyReceived'=>$money->id]) }}" method="post">
+                                                        <form onsubmit="this.querySelector('button[type=submit]').disabled = true;" action="{{ route('delete.money.receive',['company'=>$company->id,'moneyReceived'=>$money->id]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">

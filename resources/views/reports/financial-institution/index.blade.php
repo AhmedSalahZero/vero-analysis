@@ -141,7 +141,7 @@
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $financialInstitutionBank->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('delete.financial.institutions',['company'=>$company->id,'financialInstitution'=>$financialInstitutionBank->id]) }}" method="post">
+                                                        <form onsubmit="this.querySelector('button[type=submit]').disabled = true;" action="{{ route('delete.financial.institutions',['company'=>$company->id,'financialInstitution'=>$financialInstitutionBank->id]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">
@@ -223,7 +223,7 @@
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $financialInstitutionCompany->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('delete.financial.institutions',['company'=>$company->id,'financialInstitution'=>$financialInstitutionCompany->id]) }}" method="post">
+                                                        <form onsubmit="this.querySelector('button[type=submit]').disabled = true;" action="{{ route('delete.financial.institutions',['company'=>$company->id,'financialInstitution'=>$financialInstitutionCompany->id]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">

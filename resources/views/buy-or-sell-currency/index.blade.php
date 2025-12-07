@@ -150,7 +150,7 @@ use App\Models\BuyOrSellCurrency ;
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('buy-or-sell-currencies.destroy',['company'=>$company->id,'buy_or_sell_currency'=>$model->id ]) }}" method="post">
+                                                        <form onsubmit="this.querySelector('button[type=submit]').disabled = true;" action="{{ route('buy-or-sell-currencies.destroy',['company'=>$company->id,'buy_or_sell_currency'=>$model->id ]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">
@@ -266,7 +266,7 @@ use App\Models\BuyOrSellCurrency ;
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('buy-or-sell-currencies.destroy',['company'=>$company->id,'buy_or_sell_currency'=>$model->id ]) }}" method="post">
+                                                        <form onsubmit="this.querySelector('button[type=submit]').disabled = true;" action="{{ route('buy-or-sell-currencies.destroy',['company'=>$company->id,'buy_or_sell_currency'=>$model->id ]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">
@@ -375,7 +375,7 @@ use App\Models\BuyOrSellCurrency ;
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('buy-or-sell-currencies.destroy',['company'=>$company->id,'buy_or_sell_currency'=>$model->id ]) }}" method="post">
+                                                        <form onsubmit="this.querySelector('button[type=submit]').disabled = true;" action="{{ route('buy-or-sell-currencies.destroy',['company'=>$company->id,'buy_or_sell_currency'=>$model->id ]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">
@@ -498,7 +498,7 @@ use App\Models\BuyOrSellCurrency ;
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('buy-or-sell-currencies.destroy',['company'=>$company->id,'buy_or_sell_currency'=>$model->id ]) }}" method="post">
+                                                        <form onsubmit="this.querySelector('button[type=submit]').disabled = true;" action="{{ route('buy-or-sell-currencies.destroy',['company'=>$company->id,'buy_or_sell_currency'=>$model->id ]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">

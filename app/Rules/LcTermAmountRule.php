@@ -54,6 +54,8 @@ class LcTermAmountRule implements ImplicitRule
 		$accountNumberModel =  ('\App\Models\\'.$accountType->getModelName())::find($accountId);
 		$statementTableName = (get_class($accountNumberModel)::getStatementTableName()) ;
 		$foreignKeyName = get_class($accountNumberModel)::getForeignKeyInStatementTable();
+		
+
 		$balanceRow = DB::table($statementTableName)->where($foreignKeyName,$accountNumberModel->id)->whereDate('date','<=' , $statementDate)->orderByRaw('date desc,id desc')->first();
 		$currentAccountBalanceAtIssuanceDate = $balanceRow ? $balanceRow->end_balance : 0 ;
         $maxBetweenCommissionAmountAndFees = max($this->lc_commission_amount , $this->min_lc_commission_fees);

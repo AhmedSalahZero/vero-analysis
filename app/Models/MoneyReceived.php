@@ -296,7 +296,6 @@ class MoneyReceived extends Model
         return  $this->amount_in_invoice_currency?:0 ;
     }
 	
-	
     public function getReceivedAmount()
     {
         return  $this->received_amount?:0 ;
@@ -305,7 +304,10 @@ class MoneyReceived extends Model
 	{
 		return $this->getReceivedAmount();
 	}
-
+	public function getAmountInReceivingCurrency()
+	{
+		return $this->getReceivedAmount();
+	}
 	public function getChequeDueDate(){
 		return $this->cheque ? $this->cheque->getDueDate(): null;
 	}

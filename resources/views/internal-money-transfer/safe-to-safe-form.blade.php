@@ -65,7 +65,7 @@
     <div class="col-md-12">
         <!--begin::Portlet-->
 
-        <form method="post" action="{{ isset($model) ?  route('internal-money-transfers.update',['company'=>$company->id,'internal_money_transfer'=>$model->id,'type'=>$type]) :route('internal-money-transfers.store',['company'=>$company->id,'type'=>$type]) }}" class="kt-form kt-form--label-right">
+        <form  onsubmit="this.querySelector('button[type=submit]').disabled = true;" method="post" action="{{ isset($model) ?  route('internal-money-transfers.update',['company'=>$company->id,'internal_money_transfer'=>$model->id,'type'=>$type]) :route('internal-money-transfers.store',['company'=>$company->id,'type'=>$type]) }}" class="kt-form kt-form--label-right">
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
             <input  id="model-id" type="hidden" name="id" value="{{ isset($model) ? $model->id : 0 }}">
 			<input  type="hidden" name="modelId" value="{{ isset($model) ? $model->id : 0 }}">

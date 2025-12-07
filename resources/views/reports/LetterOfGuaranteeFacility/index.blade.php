@@ -213,7 +213,7 @@
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $letterOfGuaranteeFacility->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('delete.letter.of.guarantee.facility',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'letterOfGuaranteeFacility'=>$letterOfGuaranteeFacility]) }}" method="post">
+                                                        <form onsubmit="this.querySelector('button[type=submit]').disabled = true;" action="{{ route('delete.letter.of.guarantee.facility',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'letterOfGuaranteeFacility'=>$letterOfGuaranteeFacility]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">

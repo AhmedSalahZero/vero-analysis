@@ -124,7 +124,7 @@ use App\Models\LcSettlementInternalMoneyTransfer ;
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('lc-settlement-internal-money-transfers.destroy',['company'=>$company->id,'lc_settlement_internal_transfer'=>$model->id ]) }}" method="post">
+                                                        <form onsubmit="this.querySelector('button[type=submit]').disabled = true;" action="{{ route('lc-settlement-internal-money-transfers.destroy',['company'=>$company->id,'lc_settlement_internal_transfer'=>$model->id ]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">

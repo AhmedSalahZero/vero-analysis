@@ -73,7 +73,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
     <div class="col-md-12">
         <!--begin::Portlet-->
 
-        <form method="post" action="{{ isset($model) ?  route('buy-or-sell-currencies.update',['company'=>$company->id,'buy_or_sell_currency'=>$model->id]) :route('buy-or-sell-currencies.store',['company'=>$company->id]) }}" class="kt-form kt-form--label-right">
+        <form onsubmit="this.querySelector('button[type=submit]').disabled = true;" method="post" action="{{ isset($model) ?  route('buy-or-sell-currencies.update',['company'=>$company->id,'buy_or_sell_currency'=>$model->id]) :route('buy-or-sell-currencies.store',['company'=>$company->id]) }}" class="kt-form kt-form--label-right">
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
             <input id="model-id" type="hidden" name="id" value="{{ isset($model) ? $model->id : 0 }}">
             <input  type="hidden" name="modelId" value="{{ isset($model) ? $model->id : 0 }}">

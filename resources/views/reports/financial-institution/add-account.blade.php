@@ -55,7 +55,7 @@
     <div class="col-md-12">
         <!--begin::Portlet-->
 
-        <form method="post" action="{{ route('financial.institution.store.account',['company'=>$company->id ,'financialInstitution'=>$financialInstitution->id ]) }}" class="kt-form kt-form--label-right">
+        <form onsubmit="this.querySelector('button[type=submit]').disabled = true;" method="post" action="{{ route('financial.institution.store.account',['company'=>$company->id ,'financialInstitution'=>$financialInstitution->id ]) }}" class="kt-form kt-form--label-right">
             @csrf
             @if(isset($model))
             @method('put')

@@ -103,7 +103,7 @@
                                             <div class="modal fade" id="delete-financial-institution-bank-id-{{ $fullySecuredOverdraft->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('delete.fully.secured.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'fullySecuredOverdraft'=>$fullySecuredOverdraft]) }}" method="post">
+                                                        <form onsubmit="this.querySelector('button[type=submit]').disabled = true;" action="{{ route('delete.fully.secured.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'fullySecuredOverdraft'=>$fullySecuredOverdraft]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">

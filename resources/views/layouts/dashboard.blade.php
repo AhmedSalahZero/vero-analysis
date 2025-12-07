@@ -2204,7 +2204,7 @@ const isNonBanking = +("{{ hasMiddleware('isNonBankingService') }}");
 
             $(document).on('click', '.submit-form-btn', function(e) {
                 e.preventDefault();
-
+				  $('.submit-form-btn').prop('disabled',true) ;
                 // Validate form before submit
 
                 form = $(this).closest('form')[0]

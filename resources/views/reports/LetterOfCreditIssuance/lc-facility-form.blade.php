@@ -61,7 +61,7 @@ use App\Models\LetterOfCreditIssuance;
 <div class="row">
     <div class="col-md-12">
 
-        <form method="post" action="{{ isset($model) ?  route('update.letter.of.credit.issuance',['company'=>$company->id,'letterOfCreditIssuance'=>$model->id,'source'=>$source]) :route('store.letter.of.credit.issuance',['company'=>$company->id,'source'=>$source]) }}" class="kt-form kt-form--label-right">
+        <form onsubmit="this.querySelector('button[type=submit]').disabled = true;" method="post" action="{{ isset($model) ?  route('update.letter.of.credit.issuance',['company'=>$company->id,'letterOfCreditIssuance'=>$model->id,'source'=>$source]) :route('store.letter.of.credit.issuance',['company'=>$company->id,'source'=>$source]) }}" class="kt-form kt-form--label-right">
 
             <input type="hidden" name="id" value="{{ isset($model) ? $model->id : 0 }}">
             <input type="hidden" name="created_by" value="{{ auth()->user()->id }}">

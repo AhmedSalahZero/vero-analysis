@@ -184,7 +184,7 @@ td{
                                             <div class="modal fade" id="delete-cheque-id-{{ $cashExpense->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('delete.cash.expense',['company'=>$company->id,'cashExpense'=>$cashExpense->id]) }}" method="post">
+                                                        <form onsubmit="this.querySelector('button[type=submit]').disabled = true;" action="{{ route('delete.cash.expense',['company'=>$company->id,'cashExpense'=>$cashExpense->id]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">
@@ -287,7 +287,7 @@ td{
                                             <div class="modal fade" id="delete-transfer-id-{{ $money->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('delete.cash.expense',['company'=>$company->id,'cashExpense'=>$money->id]) }}" method="post">
+                                                        <form onsubmit="this.querySelector('button[type=submit]').disabled = true;" action="{{ route('delete.cash.expense',['company'=>$company->id,'cashExpense'=>$money->id]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">
@@ -387,7 +387,7 @@ td{
                                             <div class="modal fade" id="delete-transfer-id-{{ $cashExpense->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('delete.cash.expense',['company'=>$company->id,'cashExpense'=>$cashExpense->id]) }}" method="post">
+                                                        <form onsubmit="this.querySelector('button[type=submit]').disabled = true;" action="{{ route('delete.cash.expense',['company'=>$company->id,'cashExpense'=>$cashExpense->id]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">
