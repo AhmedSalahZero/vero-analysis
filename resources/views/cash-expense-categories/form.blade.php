@@ -65,7 +65,7 @@ use App\Models\MoneyReceived ;
 <div class="row">
     <div class="col-md-12">
 
-        <form method="post" action="{{ isset($model) ? route('cash.expense.category.update',['company'=>$company->id,'cashExpenseCategory'=>$model->id]) : route('cash.expense.category.store',['company'=>$company->id]) }}" class="kt-form kt-form--label-right">
+        <form  onsubmit="this.querySelector('button[type=submit]').disabled = true;" method="post" action="{{ isset($model) ? route('cash.expense.category.update',['company'=>$company->id,'cashExpenseCategory'=>$model->id]) : route('cash.expense.category.store',['company'=>$company->id]) }}" class="kt-form kt-form--label-right">
             @csrf
             @if(isset($model))
             @method('put')

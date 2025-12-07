@@ -59,6 +59,27 @@ class TestCommand extends Command
 	}
 	public function handle()
 	{
+		$partnerTables = getTableNamesThatHasColumn('partner_id');
+		$rows=[];
+		foreach([
+			// 250 ,
+			807,
+			// 249,
+			863
+		] as $partnerId){
+			foreach($partnerTables as $partnerTable){
+				$row = DB::table($partnerTable)->where('partner_id',$partnerId)->get() ;
+				if(count($row)){
+					$rows[$partnerId][$partnerTable] = $row;
+					
+				}
+			}
+		}
+		dd($rows);
+		$name = 'Arabia for Design and Engineering Consulting';
+		$name = 'Arabia for Design and Engineering Consulting';
+		$partner = Partner::findByName($name,92);
+		dd($partner);
 		// $money  = MoneyReceived::where('id',331)->first();
 		// // $money  = MoneyReceived::where('id',341)->first();
 		// dd($money->generateDownPaymentMessage());
