@@ -59,19 +59,19 @@ class TestCommand extends Command
 	}
 	public function handle()
 	{
-		$partnerTables = getTableNamesThatHasColumn('partner_id');
+		$columnName = 'partner_id';
+		$partnerTables = getTableNamesThatHasColumn($columnName);
 		$rows=[];
 		foreach([
-			// 250 ,
+			250 ,
 			807,
-			// 249,
+			249,
 			863
 		] as $partnerId){
 			foreach($partnerTables as $partnerTable){
-				$row = DB::table($partnerTable)->where('partner_id',$partnerId)->get() ;
+				$row = DB::table($partnerTable)->where($columnName,$partnerId)->get() ;
 				if(count($row)){
 					$rows[$partnerId][$partnerTable] = $row;
-					
 				}
 			}
 		}
