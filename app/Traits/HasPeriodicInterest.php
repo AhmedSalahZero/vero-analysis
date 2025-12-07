@@ -2,6 +2,7 @@
 namespace App\Traits;
 
 use App\Models\AccountType;
+use App\Models\Company;
 use App\Models\Currency;
 use App\Models\CurrentAccountBankStatement;
 use App\Models\FinancialInstitution;
@@ -56,14 +57,23 @@ trait HasPeriodicInterest
     }
     public function storePeriodInterestOdooRelations($accountStatement , string $periodInterestDate, float $amount , $financialInstitutionId = null , $financialInstitutionAccountId = null,$company = null)
     {
-        $company = is_null($company) ?  $this->company : $company;
+		/**
+		 * @var  Company $company
+		 */
+		 $company = is_null($company) ?  $this->company : $company;
+		$hasOdooIntegration = $company->hasOdooIntegrationCredentials();
+		$canBeIntegratedWithOdoo  = $hasOdooIntegration && $company->withinIntegrationDate($periodInterestDate) ;
+		if(!$canBeIntegratedWithOdoo){
+			return ;
+		}
+		$date = $periodInterestDate;
         $financialInstitutionId = is_null($financialInstitutionId) ?  $this->financial_institution_id : $financialInstitutionId;
 		$financialInstitutionAccountId = is_null($financialInstitutionAccountId) ? $this->maturity_amount_added_to_account_id : $financialInstitutionAccountId;
         $financialInstitutionAccount = FinancialInstitutionAccount::find($financialInstitutionAccountId);
         $journalId = $financialInstitutionAccount->journal_id ;
         $currencyName = $financialInstitutionAccount->getCurrency();
         $amountInCurrency = $amount;
-        $date = $periodInterestDate;
+    
         $mainFunctionalCurrency = $company->getMainFunctionalCurrency();
         $amountInMainFunctionalCurrency  = $currencyName != $mainFunctionalCurrency  ? $amountInCurrency * ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currencyName, $mainFunctionalCurrency, $date, $company->id) : $amountInCurrency ;
         $creditOdooAccountId = $company->interestRevenuesAccounts->where('financial_institution_id', $financialInstitutionId)->first()->odoo_id;

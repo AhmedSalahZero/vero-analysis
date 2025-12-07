@@ -72,14 +72,19 @@ class TestCommand extends Command
 		// $company = $letterOfGuaranteeIssuance->company;
 		// $source = 'lg-facility';
 		// (new LetterOfGuaranteeIssuanceController)->backToRunningStatus($company,new Request , $letterOfGuaranteeIssuance,$source);
-		$fetch = (new OdooPayment(Company::find(92)));
-		$request  = new Request;
-		$request->merge([
-			'odoo_start_date'=>'2025-01-01',
-			'odoo_end_date'=>'2025-12-31',
-		]);
-		$readInvoices = new ReadOdooInvoices();
-		$readInvoices->handle($request,Company::find(92));
+	// 	$fetch = (new OdooPayment(Company::find(92)));
+	// $x = 	$fetch->fetchData(
+	// 	'account.payment',[],[[['id','=',400]]]
+	// )[0];
+	// dd($x);
+		
+		// $request  = new Request;
+		// $request->merge([
+		// 	'odoo_start_date'=>'2025-01-01',
+		// 	'odoo_end_date'=>'2025-12-31',
+		// ]);
+		// $readInvoices = new ReadOdooInvoices();
+		// $readInvoices->handle($request,Company::find(92));
 		dd($readInvoices);
 		// $x = $fetch->fetchData('account.bank.statement.line',[],[[['name','=','MISR/2025/00431']]]);
 		// dd($x);

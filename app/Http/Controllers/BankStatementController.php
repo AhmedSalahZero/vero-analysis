@@ -248,6 +248,7 @@ class BankStatementController
     }
     public function updateBankStatementRow(Company $company, Request $request)
     {
+
         $statementModelName = $request->get('statement_model_name');
         $statementId = $request->get('statement_id');
         $credit = number_unformat($request->get('credit', 0));

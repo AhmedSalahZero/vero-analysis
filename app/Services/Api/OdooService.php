@@ -330,8 +330,7 @@ class OdooService
 		];
 		$filters = array(array(array('move_type', 'in', [
 			'in_invoice',
-		// ,
-		'out_invoice'
+			'out_invoice'
 		])
 		,array('state', '=', 'posted'),
 			array('write_date', '>=', $startDate),

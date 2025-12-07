@@ -2,7 +2,7 @@
  <div class="modal fade" id="edit-fees-modal-{{ $currentStatementId }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
      <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
          <div class="modal-content">
-             <form action="{{ route('update.commission.fees',['company'=>$company->id ]) }}" method="post">
+             <form  action="{{ route('update.commission.fees',['company'=>$company->id ]) }}" method="post" onsubmit="this.querySelector('button[type=submit]').disabled = true;" >
                  @csrf
                  <div class="modal-header">
                      <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Please Confirm Commission Fees Date & Amount ?') }}</h5>
