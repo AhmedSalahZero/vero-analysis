@@ -1,3 +1,15 @@
+function _debounce(func, delay) {
+	let timeoutId // لتخزين الـ timeout الحالي
+	return function (...args) {
+		const context = this
+		clearTimeout(timeoutId) // إلغاء أي timeout سابق
+		timeoutId = setTimeout(() => {
+			func.apply(context, args) // تنفيذ الدالة بعد انتهاء التأخير
+		}, delay)
+	}
+}
+
+
 $(document).on('click', '.repeat-to-right', function () {
 	let columnIndex = parseInt($(this).attr('data-column-index'))
 	let groupIndex = $(this).attr('data-group-index')
@@ -6,7 +18,7 @@ $(document).on('click', '.repeat-to-right', function () {
 	let numberFormatDecimalsForCurrentRow = parent.attr('data-repeat-formatting-decimals')
 	numberFormatDecimalsForCurrentRow = numberFormatDecimalsForCurrentRow ? numberFormatDecimalsForCurrentRow : 0
 	let input = parent.find('.repeat-to-right-input-formatted[data-column-index="' + columnIndex + '"][data-name="' + name + '"]')
-	// console.log(input);
+	//console.log(input)
 	let numberOfDecimalsForCurrentInput = $(input).attr('data-number-of-decimals')
 	numberOfDecimalsForCurrentInput = numberOfDecimalsForCurrentInput == undefined ? numberFormatDecimalsForCurrentRow : numberOfDecimalsForCurrentInput
 	let inputValue = input.val()
@@ -22,15 +34,19 @@ $(document).on('click', '.repeat-to-right', function () {
 		}
 	})
 })
-$(document).on('change','.repeat-to-right-input-hidden', function (event) {
-		// console.log('from2');
-		const val = $(this).val()
-		const columnIndex = $(this).attr('data-column-index')
-		const numberOfDecimals = $(this).closest('.input-hidden-parent').find('.copy-value-to-his-input-hidden[data-column-index="' + columnIndex + '"]').attr('data-number-of-decimals')
-		$(this).closest('.input-hidden-parent').find('.copy-value-to-his-input-hidden[data-column-index="' + columnIndex + '"]').val(number_format(val, numberOfDecimals))
+$(document).on('change', '.repeat-to-right-input-hidden', function (event) {
+	//console.log('from2')
+	const val = $(this).val()
+	const columnIndex = $(this).attr('data-column-index')
+	let numberOfDecimals = $(this).attr('data-number-of-decimals')
+	if (numberOfDecimals === undefined) {
+		alert('e')
+		numberOfDecimals = $(this).closest('.input-hidden-parent').find('.copy-value-to-his-input-hidden[data-column-index="' + columnIndex + '"]').attr('data-number-of-decimals')
+	}
+	$(this).closest('.input-hidden-parent').find('.copy-value-to-his-input-hidden[data-column-index="' + columnIndex + '"]').val(number_format(val, numberOfDecimals))
 })
 $(document).on('click', '.repeat-select-to-right', function () {
-	// console.log('from 3')
+	//console.log('from 3')
 	let columnIndex = parseInt($(this).attr('data-column-index'))
 	let parent = $(this).closest('tr')
 	let value = parent.find('.repeat-to-right-select[data-column-index="' + columnIndex + '"]').val()
@@ -49,7 +65,7 @@ $(document).on('change', '.input-hidden-parent .copy-value-to-his-input-hidden',
 
 
 $(document).on('change', '.is-leasing', function () {
-	// console.log('from 4')
+	//console.log('from 4')
 	const isTotalOthers = $('#is-leasing-1').is(':checked')
 	const parent = $(this).closest('.form-group.row')
 	if (isTotalOthers) {
@@ -66,7 +82,7 @@ $(function () {
 
 
 // $(document).on('change', 'select.revenue-stream-type-js', function () {
-// 	// console.log('from 5')
+// 	//console.log('from 5')
 // 	let revenueStreams = $(this).val()
 // 	let studyId = $('#study-id-js').val()
 // 	const that = this
@@ -107,27 +123,27 @@ $(function () {
 // })
 
 $(document).on('change', '[js-recalculate-equity-funding-value],.js-recalculate-equity-funding-value', function () {
-	const parent  = $(this).closest('table');
+	const parent = $(this).closest('table')
 	const columnIndex = parseInt($(this).attr('data-column-index'))
 	let total = $(parent).find('.total-loans-hidden[data-column-index="' + columnIndex + '"]').val()
-	if(total == undefined){
+	if (total == undefined) {
 		total = $('.total-loans-hidden[data-column-index="' + columnIndex + '"]').val()
 	}
 	let equityFundingRate = $(parent).find('.equity-funding-rates[data-column-index="' + columnIndex + '"]').val()
-	if(equityFundingRate == undefined){
-		equityFundingRate = $('.equity-funding-rates[data-column-index="' + columnIndex + '"]').val();
+	if (equityFundingRate == undefined) {
+		equityFundingRate = $('.equity-funding-rates[data-column-index="' + columnIndex + '"]').val()
 	}
 	let equityFundingValue = equityFundingRate / 100 * total
 	let newLoanFundingValue = (1 - (equityFundingRate / 100)) * total
-	
-	if($(parent).find('input.equity-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').length){
+
+	if ($(parent).find('input.equity-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').length) {
 		$(parent).find('input.equity-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').val(number_format(equityFundingValue)).trigger('change')
 		$(parent).find('input.new-loans-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').val(number_format(newLoanFundingValue)).trigger('change')
-	}else{
+	} else {
 		$('input.equity-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').val(number_format(equityFundingValue)).trigger('change')
 		$('input.new-loans-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').val(number_format(newLoanFundingValue)).trigger('change')
 	}
-	
+
 
 })
 
@@ -157,7 +173,7 @@ $(function () {
 	$('select.revenue-stream-type-js').trigger('change')
 })
 $(document).on('change', 'select.js-update-positions-for-department', function () {
-	// console.log('from 9')
+	//console.log('from 9')
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
 	let studyId = $('#study-id-js').val()
@@ -183,30 +199,12 @@ $(document).on('change', 'select.js-update-positions-for-department', function (
 })
 $('select.js-update-positions-for-department').trigger('change')
 
-// $(document).on('change', '.is-percentage-from-total,.is-percentage-total-of', function () {
-// 	// console.log('from 10')
-// 	let commonClass = $(this).attr('data-common-percentage-of-class')
-// 	let columnIndex = $(this).attr('data-column-index')
-
-
-// 	let totalOfAmount = $('.is-percentage-total-of[data-common-percentage-of-class="' + commonClass + '"][data-column-index="' + columnIndex + '"]').val()
-// 	let currentRow = $(this).closest('tr')
-// 	let tableRows = $(this).closest('table').find('tbody tr')
-// 	let rowIndex = $(tableRows).index(currentRow)
-// 	let percentage = $('.is-percentage-from-total[data-common-percentage-of-class="' + commonClass + '"][data-column-index="' + columnIndex + '"]').eq(rowIndex).val()
-// 	let result = percentage / 100 * totalOfAmount
-// 	let resultRow = $('.is-result-total-of[data-common-percentage-of-class="' + commonClass + '"][data-column-index="' + columnIndex + '"]').eq(rowIndex)
-// 	let numberOfDecimals = resultRow.closest('.input-hidden-parent').find('.copy-value-to-his-input-hidden[data-column-index="' + columnIndex + '"]').attr('data-number-of-decimals')
-// 	resultRow.closest('.input-hidden-parent').find('.copy-value-to-his-input-hidden[data-column-index="' + columnIndex + '"]').val(number_format(result, numberOfDecimals)).val(result)
-// 	resultRow.val(result)
-// })
-
 
 $(document).on('click', '.collapse-before-me', function () {
-	// console.log('from 11')
+	//console.log('from 11')
 	let columnIndex = $(this).attr('data-column-index')
 	hide = true
-//	// console.log(columnIndex)
+	//	//console.log(columnIndex)
 	let counter = 0
 	while (hide) {
 		if (counter != 0) {
@@ -216,7 +214,7 @@ $(document).on('click', '.collapse-before-me', function () {
 				return
 			}
 		}
-		$(this).closest('table').find('[data-column-index="' + columnIndex + '"]:not(.exclude-from-collapse):not(.total-td):not(.total-td-formatted)').closest('th,td').toggle();
+		$(this).closest('table').find('[data-column-index="' + columnIndex + '"]:not(.exclude-from-collapse):not(.total-td):not(.total-td-formatted)').closest('th,td').toggle()
 		columnIndex--
 		counter++
 		if (counter == 12) {
@@ -224,24 +222,64 @@ $(document).on('click', '.collapse-before-me', function () {
 		}
 	}
 })
-$(document).on('change', '.repeater-with-collapse-input', function () {
-	let groupIndex = $(this).attr('data-group-index')
-	let total = 0
-	$(this).closest('tr').find('input[data-group-index="' + groupIndex + '"]').each(function (index, element) {
-		total += parseFloat(number_unformat($(element).val()))
+let calculateEachGroupYearTotal = function () {
+	//console.log('----------------------------------------------')
+	//console.log('calculate year total')
+	//console.log(this)
+	var lastOfGroup = {} // object لتخزين آخر عنصر لكل group لكل tbody أو tr حسب حاجتك
+
+	$(this).closest('tbody').find('tr').each(function (currentTrIndex, currentTr) {
+		$(currentTr).find('input[data-group-index]').each(function (currentInputIndex, currentInput) {
+			var group = $(currentInput).attr('data-group-index')
+
+			// تأكد أن lastOfGroup[currentTrIndex] موجودة
+			if (!lastOfGroup[currentTrIndex]) {
+				lastOfGroup[currentTrIndex] = {}
+			}
+			// تحديث العنصر الأخير لكل مجموعة
+			lastOfGroup[currentTrIndex][group] = currentInput
+		})
 	})
-	// console.log(total);
-	$(this).closest('tr').find('.year-repeater-index-' + groupIndex).val(number_format(total)).trigger('change')
-})
-$('input[type="hidden"].exclude-from-collapse').on('change', function () {
-	var total = 0
-	$(this).closest('tr').find('.repeat-group-year').each(function (index, element) {
-		total += parseFloat(number_unformat($(element).val()))
+	for (const trIndex in lastOfGroup) {
+		const groups = lastOfGroup[trIndex]
+
+		for (const groupIndex in groups) {
+			const inputElement = groups[groupIndex] // هذا هو العنصر الأخير لكل مجموعة
+
+			// مثال: نغير قيمة input
+			//  $(inputElement).trigger('change');
+
+			let total = 0
+			$(inputElement).closest('tr').find('input[data-group-index="' + groupIndex + '"]').each(function (index, element) {
+				total += parseFloat(number_unformat($(element).val()))
+			})
+
+			$(inputElement).closest('tr').find('.year-repeater-index-' + groupIndex).val(number_format(total)).trigger('change')
+
+		}
+	}
+
+
+}
+let debounceYearTotal = _debounce(calculateEachGroupYearTotal, 500)
+$(document).on('change', '.repeater-with-collapse-input', debounceYearTotal)
+
+
+let recalculateAllRowTotal = function () {
+	//console.log('from qqq')
+	$(this).closest('tbody').find('tr').each(function(trIndex,tr){
+		var total = 0
+		$(tr).find('.repeat-group-year').each(function (index, element) {
+				total += parseFloat(number_unformat($(element).val()))
+		})
+		$(tr).find('.total-td').val(number_format(total)).trigger('change')
 	})
-	$(this).closest('tr').find('.total-td').val(number_format(total)).trigger('change')
-})
+} ;
+
+
+$('input[type="hidden"].exclude-from-collapse').on('change', _debounce(recalculateAllRowTotal,500))
 $(document).on('click', '.add-btn-js', function (e) {
-	// console.log('from 13')
+	//console.log('from 13')
 	e.preventDefault()
 	$(this).toggleClass('rotate-180')
 	$(this).closest('[data-is-main-row]').nextUntil('[data-is-main-row]').toggleClass('hidden')
@@ -249,51 +287,51 @@ $(document).on('click', '.add-btn-js', function (e) {
 
 
 $(document).on('change', '.recalculate-gr', function () {
-   
-  
-        const $table = $(this).closest('table');
-        const columnIndex = parseInt($(this).attr('data-column-index'));
-        const growthRate = number_unformat($(this).val()) / 100;
 
-        if (columnIndex === 0) return;
 
-        const prevCol = columnIndex - 1;
-        let hasChanges = false;
-	
-        $table.find('tr[total-row-tr]').not(':has(.gr-field)').each(function() {
-            const $prevCell = $(this).find(`.current-growth-rate-result-value[data-column-index="${prevCol}"]`);
-            const $currCell = $(this).find(`.current-growth-rate-result-value[data-column-index="${columnIndex}"]`);
-            const $currFormatted = $(this).find(`.current-growth-rate-result-value-formatted[data-column-index="${columnIndex}"]`);
+	const $table = $(this).closest('table')
+	const columnIndex = parseInt($(this).attr('data-column-index'))
+	const growthRate = number_unformat($(this).val()) / 100
 
-            const prevVal = number_unformat($prevCell.val());
-            if (prevVal > 0) {
-                const newVal = prevVal * (1 + growthRate);
-                $currCell.val(newVal);
-                $currFormatted.val(number_format(newVal, 0)).trigger('change');
-                hasChanges = true;
-            }
-        });
+	if (columnIndex === 0) return
 
-        if (hasChanges) {
-            // Only trigger next year once
-            const nextGr = $table.find(`.recalculate-gr[data-column-index="${columnIndex + 1}"]`);
-			// console.log(nextGr.length);
-            if (nextGr.length){
-				// console.log(nextGr);
-				 nextGr.trigger('change');
-			}
-        }
-  
-});
+	const prevCol = columnIndex - 1
+	let hasChanges = false
+
+	$table.find('tr[total-row-tr]').not(':has(.gr-field)').each(function () {
+		const $prevCell = $(this).find(`.current-growth-rate-result-value[data-column-index="${prevCol}"]`)
+		const $currCell = $(this).find(`.current-growth-rate-result-value[data-column-index="${columnIndex}"]`)
+		const $currFormatted = $(this).find(`.current-growth-rate-result-value-formatted[data-column-index="${columnIndex}"]`)
+
+		const prevVal = number_unformat($prevCell.val())
+		if (prevVal > 0) {
+			const newVal = prevVal * (1 + growthRate)
+			$currCell.val(newVal)
+			$currFormatted.val(number_format(newVal, 0)).trigger('change')
+			hasChanges = true
+		}
+	})
+
+	if (hasChanges) {
+		// Only trigger next year once
+		const nextGr = $table.find(`.recalculate-gr[data-column-index="${columnIndex + 1}"]`)
+		//console.log(nextGr.length)
+		if (nextGr.length) {
+			//console.log(nextGr)
+			nextGr.trigger('change')
+		}
+	}
+
+})
 
 // $(document).on('change', '.recalculate-gr', function () {
-// 	// console.log('from 14')
+// 	//console.log('from 14')
 // 	const columnIndex = parseInt($(this).attr('data-column-index'))
 // 	const previousColumnIndex = columnIndex - 1
 // 	const nextColumnIndex = columnIndex + 1
 // 	const growthRateOfCurrentYear = $('.gr-field[data-column-index="' + columnIndex + '"]').val()
 // 	allElements = $('.current-growth-rate-result-value-formatted[data-column-index="' + columnIndex + '"]')
-// 	// console.log('lennnnnnnn',allElements.length)
+// 	//console.log('lennnnnnnn',allElements.length)
 // 	allElements.each(function (index, element) {
 // 		const loanAmount = $(element).closest('tr').find('.current-growth-rate-result-value[data-column-index="' + previousColumnIndex + '"]').val()
 // 		if (loanAmount != undefined) {
@@ -306,11 +344,11 @@ $(document).on('change', '.recalculate-gr', function () {
 // })
 $(document).on('change', '.current-growth-rate-result-value-formatted', function (event) {
 	if (event.originalEvent && event.originalEvent.isTrusted) {
-		// console.log('from 15')
+		//console.log('from 15')
 		const columnIndex = parseInt($(this).attr('data-column-index'))
 		const nextColumnIndex = columnIndex + 1
 		const previousColumnIndex = columnIndex - 1
-		// console.log('if');
+		//console.log('if')
 		let previousValue = $(this).closest('tr').find('.current-growth-rate-result-value[data-column-index="' + previousColumnIndex + '"]').val()
 		if (previousValue !== undefined) {
 			let currentValue = number_unformat($(this).val())
@@ -318,20 +356,20 @@ $(document).on('change', '.current-growth-rate-result-value-formatted', function
 			$(this).closest('table').find('.gr-field[data-column-index="' + columnIndex + '"]').val(currentGrowthRate).trigger('change')
 		} else {
 			$(this).closest('table').find('.gr-field[data-column-index="' + nextColumnIndex + '"]').trigger('change')
-			
+
 		}
 	} else {
-		// console.log('else---------')
-		// console.log("Input was changed programmatically.")
+		//console.log('else---------')
+		//console.log("Input was changed programmatically.")
 
 	}
 })
 $(document).on('click', '#enable-editing-btn', function (e) {
-	// console.log('from 16')
+	//console.log('from 16')
 	e.preventDefault()
 	var isEnableEditing = +$(this).attr('data-is-enable-editing')
 	if (isEnableEditing) {
-		// console.log('if')
+		//console.log('if')
 		var disableText = $(this).attr('data-disable-edit-text')
 		$(this).attr('data-is-enable-editing', 0)
 		$(this).closest('form').find('input').prop('disabled', false)
@@ -341,15 +379,15 @@ $(document).on('click', '#enable-editing-btn', function (e) {
 		$(this).html(disableText)
 		$('#leasing-loans').hide()
 	} else {
-		// console.log('else')
+		//console.log('else')
 		$(this).closest('form').find('input').prop('disabled', true)
 		$(this).closest('form').find('[data-repeater-create]').hide()
-	//	$(this).closest('form').find('[data-repeater-delete]').hide()
+		//	$(this).closest('form').find('[data-repeater-delete]').hide()
 		$(this).closest('form').find('select').prop('disabled', true).selectpicker('refresh')
 
 		var enableText = $(this).attr('data-enable-edit-text')
 		$(this).attr('data-is-enable-editing', 1)
-		// console.log(enableText)
+		//console.log(enableText)
 		$('#leasing-loans').show()
 		$(this).html(enableText)
 	}
@@ -357,7 +395,7 @@ $(document).on('click', '#enable-editing-btn', function (e) {
 })
 $('#enable-editing-btn').trigger('click')
 // $(document).on('change', '.is-fully-funded-checkbox', function () {
-// 		// console.log('from 17')
+// 		//console.log('from 17')
 // 	const value = parseInt($(this).val())
 // 	//	const canViewFundingStructure = parseInt($('#toggleEditBtn').attr('can-show-funding-structure'));
 // 	const canViewFundingStructure = 1
@@ -384,7 +422,7 @@ $('#enable-editing-btn').trigger('click')
 
 // })
 $(document).on('change', '.recalculate-monthly-increase-amounts', function () {
-	// console.log('from 18')
+	//console.log('from 18')
 	var currentRow = $(this).closest('tr')
 	var itemCost = currentRow.find('.ffe-item-cost').val()
 	// var vat = currentRow.find('dd');
@@ -413,7 +451,7 @@ $(document).on('change', '.recalculate-monthly-increase-amounts', function () {
 
 })
 let calculateBranchIncreaseAmounts = function () {
-	// console.log('from 19')
+	//console.log('from 19')
 	var currentRow = $(this).closest('tr')
 	var itemCost = parseFloat(currentRow.find('.ffe-item-cost').val())
 	itemCost = itemCost ? itemCost : 0
@@ -453,7 +491,7 @@ let calculateBranchIncreaseAmounts = function () {
 $(document).on('change', '.recalculate-monthly-increase-amounts-branches', calculateBranchIncreaseAmounts)
 $('.recalculate-monthly-increase-amounts-branches').trigger('change')
 $(document).on('change', 'select.department-class', function () {
-	// console.log('from 20')
+	//console.log('from 20')
 	const departmentIds = $(this).val()
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
@@ -503,8 +541,8 @@ $(document).ready(function () {
 		const table = $(repeaterId)
 		const isReadonly = table.hasClass('readonly')
 
-		// // console.log('save form',saveForm);
-		// console.log('from 21')
+		// //console.log('save form',saveForm);
+		//console.log('from 21')
 		if (isReadonly) {
 			table.removeClass('readonly').addClass('editable')
 			$(this).text('Disabled Editing')
@@ -526,36 +564,36 @@ $(document).ready(function () {
 })
 // خارج الـ event
 function recalculateRowTotal($row) {
-    let total = 0;
-    let $inputs = $row.find('input.input-hidden-with-name:not(.exclude-from-total)');
-    let numberOfDecimals = $row.attr('data-repeat-formatting-decimals') || 2;
+	let total = 0
+	let $inputs = $row.find('input.input-hidden-with-name:not(.exclude-from-total)')
+	let numberOfDecimals = $row.attr('data-repeat-formatting-decimals') || 2
 
-    $inputs.each(function () {
-        let val = $(this).val();
-        if (val !== '' && val !== null) {
-            total += parseFloat(number_unformat(val)) || 0;
-        }
-    });
+	$inputs.each(function () {
+		let val = $(this).val()
+		if (val !== '' && val !== null) {
+			total += parseFloat(number_unformat(val)) || 0
+		}
+	})
 
-    $row.find('input.sum-total-row').val(number_format(total, numberOfDecimals));
+	$row.find('input.sum-total-row').val(number_format(total, numberOfDecimals))
 }
 
 // Debounce 100ms فقط
 
 // أو بدون lodash:
-const debouncedRecalc = function(fn, wait) {
-    let timeout;
-    return function($row) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => fn($row), wait);
-    };
-}(recalculateRowTotal, 100);
+const debouncedRecalc = function (fn, wait) {
+	let timeout
+	return function ($row) {
+		clearTimeout(timeout)
+		timeout = setTimeout(() => fn($row), wait)
+	}
+}(recalculateRowTotal, 100)
 
 // في الـ event
 $(document).on('change input', '[total-row-tr] input.input-hidden-with-name', function () {
-    let $row = $(this).closest('tr');
-    debouncedRecalc($row);
-});
+	let $row = $(this).closest('tr')
+	debouncedRecalc($row)
+})
 //$('[total-row-tr] input.input-hidden-with-name').trigger('change')
 
 
@@ -563,7 +601,7 @@ $(document).on('change input', '[total-row-tr] input.input-hidden-with-name', fu
 
 
 $(document).on('change', '.percentage_field,.number_field', function () {
-	// console.log('from 23')
+	//console.log('from 23')
 	const parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendColumnIndex = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -573,7 +611,7 @@ $(document).on('change', '.percentage_field,.number_field', function () {
 	$(parent).find('.number_multiple_percentage' + appendColumnIndex).val(result).trigger('change')
 })
 $(document).on('change', '.percentage_field2,.number_field2', function () {
-	// console.log('from 24')
+	//console.log('from 24')
 	const parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendColumnIndex = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -583,7 +621,7 @@ $(document).on('change', '.percentage_field2,.number_field2', function () {
 	$(parent).find('.number_multiple_percentage2' + appendColumnIndex).val(result).trigger('change')
 })
 $(document).on('change', '.percentage_field3,.number_field3', function () {
-	// console.log('from 25')
+	//console.log('from 25')
 	const parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendColumnIndex = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -593,7 +631,7 @@ $(document).on('change', '.percentage_field3,.number_field3', function () {
 	$(parent).find('.number_multiple_percentage3' + appendColumnIndex).val(result).trigger('change')
 })
 $(document).on('change', '.number_field_1,.number_field_2', function () {
-	// console.log('from 26')
+	//console.log('from 26')
 	const parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendQuery = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -610,7 +648,7 @@ $(document).on('change', '.number_field_1,.number_field_2', function () {
 
 
 $(document).on('change', '.sum-num1,.sum-num2,.sum-num3', function () {
-	// console.log('from 27')
+	//console.log('from 27')
 	const parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendQuery = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -628,7 +666,7 @@ $(document).on('change', '.sum-num1,.sum-num2,.sum-num3', function () {
 
 
 $(document).on('change', '.number_minus_field_1,.number_minus_field_2', function () {
-	// console.log('from 28')
+	//console.log('from 28')
 	const parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendQuery = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -644,7 +682,7 @@ $(document).on('change', '.number_minus_field_1,.number_minus_field_2', function
 })
 
 $(document).on('change', '.growth_percentage', function (event) {
-	// console.log('from 29')
+	//console.log('from 29')
 	const parent = $(this).closest('.closest-parent')
 	let percentage = $(parent).find('.growth_percentage').val()
 	percentage = percentage ? percentage : 0
@@ -656,14 +694,14 @@ $(document).on('change', '.growth_percentage', function (event) {
 	}
 })
 $(document).on('change', '.number_growth_amount', function (event) {
-	// console.log('from 30')
+	//console.log('from 30')
 	const parent = $(this).closest('.closest-parent')
 	$(parent).next('.closest-parent').find('.growth_percentage').trigger('change')
 })
 
 
 $(document).on('change', '.growth_percentage_in_diff_parent', function (event) {
-	// console.log('from 31')
+	//console.log('from 31')
 	$('.parent-for-salary-amount .number_growth_amount_in_diff_parent').each(function (index, input) {
 		$(input).trigger('change')
 	})
@@ -672,18 +710,18 @@ $(document).on('change', '.growth_percentage_in_diff_parent', function (event) {
 
 
 $(document).on('change', '.total_input', function () {
-	// console.log('from 32')
+	//console.log('from 32')
 	const parent = $(this).closest('.closest-parent')
 	let total = 0
 	$(parent).find('.total_input').each(function (index, input) {
-		// console.log($(input).val() , input)
+		//console.log($(input).val(), input)
 		total += parseFloat(number_unformat($(input).val()))
 	})
 	$(parent).find('.total_row_result').val(number_format(total, 2)).trigger('change')
 })
 
 document.addEventListener('DOMContentLoaded', function () {
-	// console.log('from 33')
+	//console.log('from 33')
 	// Select all elements with class target_last_value
 	document.querySelectorAll('.target_last_value').forEach(icon => {
 		icon.addEventListener('click', function () {
@@ -721,7 +759,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	})
 })
 $(document).ready(function () {
-	// console.log('from 34')
+	//console.log('from 34')
 	$('.target_last_value_to_right').on('click', function () {
 
 		// Find the closest form-group and the input within it
@@ -749,7 +787,7 @@ $(document).on('click', '.toggle-show-hide', function () {
 	$(query).toggleClass('hidden')
 })
 $(document).ready(function () {
-	// console.log('from 35')
+	//console.log('from 35')
 	$('.target_last_value_to_right_until_end').on('click', function () {
 		let parentDiv = $(this).closest('.parent-for-salary-amount')
 		let currentElement = $(this).closest('.common-parent').find('.repeat-to-right-element')
@@ -769,12 +807,12 @@ $(document).ready(function () {
 
 
 $(function () {
-	// console.log('from 36')
+	//console.log('from 36')
 	$('.is-leasing:checked').trigger('change')
 })
 
 $(document).on('change', '.sum_product_value_1,.sum_product_quantity_1,.sum_product_value_2,.sum_product_quantity_2', function () {
-	// console.log('from 37')
+	//console.log('from 37')
 
 	const parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
@@ -796,13 +834,13 @@ $(document).on('change', '.sum_product_value_1,.sum_product_quantity_1,.sum_prod
 
 
 $(document).on('click', '.parent-checkbox', function () {
-	// console.log('from 38')
+	//console.log('from 38')
 	$(this).closest('.closest-parent').find('input[type="checkbox"]').prop('checked', false).trigger('change')
 	$(this).closest('td').find('input[type="checkbox"]').prop('checked', true).trigger('change')
 
 })
 $(document).on('change', '.name-required-when-greater-than-zero-js', function () {
-	// console.log('from 39')
+	//console.log('from 39')
 	const value = $(this).val()
 	const parent = $(this).closest('.closest-parent')
 	if (value > 0) {
@@ -818,7 +856,7 @@ $(function () {
 	$('.delay-button').prop('disabled', false)
 })
 $(document).on('change', '.allocate-checkbox', function () {
-	// console.log('from 38')
+	//console.log('from 38')
 	const modal = $(this).closest('.modal')
 	const isChecked = $(this).is(':checked')
 	if (isChecked) {
@@ -835,7 +873,7 @@ $(document).on('change', '.allocate-checkbox', function () {
 })
 
 $(document).on('change', '.fg-beginning-inventory-original-value-class', function () {
-	// console.log('from 39')
+	//console.log('from 39')
 	const value = number_unformat($(this).val())
 	$('.fg-beginning-inventory-value-class').val(value).trigger('change')
 })
@@ -856,7 +894,7 @@ function replaceRepeaterIndex(element) {
 
 
 $(document).on('change', 'select.expense-category-class', function () {
-	// console.log('from 41')
+	//console.log('from 41')
 	const value = $(this).val()
 	const hasAllocation = +$(this).find('option:selected').attr('data-has-allocation')
 	const parent = $(this).closest('.common-parent')
@@ -868,7 +906,7 @@ $(document).on('change', 'select.expense-category-class', function () {
 })
 
 $(document).on('change', '.hundred-minus-number', function () {
-	// console.log('from 42')
+	//console.log('from 42')
 	let parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendColumnIndex = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -878,7 +916,7 @@ $(document).on('change', '.hundred-minus-number', function () {
 })
 
 $(document).on('change', '.hundred-minus-number-one', function () {
-	// console.log('from 43')
+	//console.log('from 43')
 	let parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendColumnIndex = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -888,7 +926,7 @@ $(document).on('change', '.hundred-minus-number-one', function () {
 })
 
 $(document).on('change', '.hundred-minus-number1,.hundred-minus-number2', function () {
-	// console.log('from 44')
+	//console.log('from 44')
 	let parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendColumnIndex = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -900,7 +938,7 @@ $(document).on('change', '.hundred-minus-number1,.hundred-minus-number2', functi
 
 
 let handlePaymentTermModal = function () {
-	// console.log('from 45')
+	//console.log('from 45')
 	const parentTermsType = $(this).closest('select').val()
 	const tableId = $(this).closest('table').attr('id')
 	const parent = $(this).closest('td')
@@ -915,7 +953,7 @@ $(document).on('change', 'select.payment_terms', handlePaymentTermModal)
 
 
 $(document).on('change', '.rate-element', function () {
-	// console.log('from 46')
+	//console.log('from 46')
 	let total = 0
 	const parent = $(this).closest('tbody')
 
@@ -931,7 +969,7 @@ $(document).on('change', '.rate-element', function () {
 
 $(document).ready(function () {
 
-	// console.log('from 47')
+	//console.log('from 47')
 	$(document).on('select2:select', '.js-select2-with-one-selection', function (e) {
 		// Keep only the last selected option
 		let selected = e.params.data.id
@@ -949,8 +987,8 @@ function initMultiselect(container) {
 	if (!$dropdown.length) {
 		return
 	}
-	// console.log($container)
-	// console.log($dropdown.length)
+	//console.log($container)
+	//console.log($dropdown.length)
 	const $searchInput = $container.find('.search-input')
 	const $addOptionInput = $container.find('.add-option-input')
 	const $addOptionBtn = $container.find('.btn-add-option')
@@ -1038,7 +1076,7 @@ $(function () {
 
 
 $(document).on('change', '[js-main-select]', function () {
-	// console.log('from 48')
+	//console.log('from 48')
 	const value = $(this).val()
 	const isChecked = $(this).is(':checked')
 	if (isChecked) {
@@ -1048,7 +1086,7 @@ $(document).on('change', '[js-main-select]', function () {
 	}
 })
 $(document).on('changed.bs.select', 'select.js-due_in_days', function (e, clickedIndex, isSelected, previousValue) {
-	// console.log('from 49')
+	//console.log('from 49')
 	if (isSelected) {
 		let currentValue = $(this).find('option').eq(clickedIndex).val()
 		setTimeout(() => {
@@ -1141,7 +1179,7 @@ $('.microfinance-checkbox-js').trigger('change')
 $(document).on('change', '.microfinance-sub-checkbox-js', function () {
 	var isWholeCompany = $(this).hasClass('is-whole-company')
 	var isByBranch = $(this).hasClass('is-by-branch')
-	// console.log(isByBranch)
+	//console.log(isByBranch)
 	if (isByBranch) {
 		$('.no-branch-div').removeClass('hidden')
 	} else {
@@ -1154,7 +1192,7 @@ $('.microfinance-sub-checkbox-js:checked').trigger('change')
 $(document).on('change', '.create-product-or-existing-branch-js', function () {
 	const isChecked = $(this).is(':checked')
 	const value = $(this).val()
-	// console.log(value)
+	//console.log(value)
 	if (value == 'product-mix') {
 		$('.product-mix-count-parent-js').removeClass('hidden')
 	} else {
@@ -1165,57 +1203,57 @@ $('.create-product-or-existing-branch-js:checked').trigger('change')
 
 
 function calculateResult(input) {
-        //        let baseValue = input.value.trim();
-		baseValue = $(input).val();
-	
-          //      let multiplier = parseFloat(multiplierValue);
+	//        let baseValue = input.value.trim();
+	baseValue = $(input).val()
 
-                if (baseValue.startsWith("=")) {
-                    try {
-                        baseValue = math.evaluate(baseValue.substring(1)); // Evaluate formula
-                    } catch (e) {
-                        baseValue = 0;
-                    }
-                } else {
-                    baseValue = parseFloat(baseValue);
-                }
-			//	// console.log('after',baseValue);
-                if (!isNaN(baseValue)) {
-					baseValueHidden = baseValue.toFixed(10); // Format to 5 decimals
-                    baseValue = baseValue.toFixed(3); // Format to 5 decimals
-                   $(input).val(baseValue).trigger('change'); // Update input field
-				   $(input).closest('.input-hidden-parent').find('input.input-hidden-with-name').val(baseValueHidden);
-                }
-		
+	//      let multiplier = parseFloat(multiplierValue);
 
-            }
-			$(document).on('blur','.calcField',function(){
-				calculateResult($(this));
-			})
-       
-$(document).on('click','.recalculate-decrease-rates',function(){
-	const parent = $(this).closest('td');
-	const productId = parent.attr('data-product-id');
-	const tenor = $('.tenor-class'+productId).val();
-	const flatRate = $(parent).find('.flat-rate-input').val();
-	// console.log(flatRate)
-	parent.find('.flat-rate-id').val(flatRate);
-	
+	if (baseValue.startsWith("=")) {
+		try {
+			baseValue = math.evaluate(baseValue.substring(1)) // Evaluate formula
+		} catch (e) {
+			baseValue = 0
+		}
+	} else {
+		baseValue = parseFloat(baseValue)
+	}
+	//	//console.log('after',baseValue);
+	if (!isNaN(baseValue)) {
+		baseValueHidden = baseValue.toFixed(10) // Format to 5 decimals
+		baseValue = baseValue.toFixed(3) // Format to 5 decimals
+		$(input).val(baseValue).trigger('change') // Update input field
+		$(input).closest('.input-hidden-parent').find('input.input-hidden-with-name').val(baseValueHidden)
+	}
+
+
+}
+$(document).on('blur', '.calcField', function () {
+	calculateResult($(this))
+})
+
+$(document).on('click', '.recalculate-decrease-rates', function () {
+	const parent = $(this).closest('td')
+	const productId = parent.attr('data-product-id')
+	const tenor = $('.tenor-class' + productId).val()
+	const flatRate = $(parent).find('.flat-rate-input').val()
+	//console.log(flatRate)
+	parent.find('.flat-rate-id').val(flatRate)
+
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
 	let studyId = $('#study-id-js').val()
-	const url = '/' + lang + '/' + companyId + '/non-banking-financial-services/study/' + studyId + '/get-decrease-rate-based-on-flat-rate';
-	
-	
+	const url = '/' + lang + '/' + companyId + '/non-banking-financial-services/study/' + studyId + '/get-decrease-rate-based-on-flat-rate'
+
+
 	$.ajax({
-		url ,
-		data:{
+		url,
+		data: {
 			flatRate,
 			tenor
 		},
-		success:function(res){
-			parent.find('.decreasing-rate-id').val(res.decreaseRate);
+		success: function (res) {
+			parent.find('.decreasing-rate-id').val(res.decreaseRate)
 		}
 	})
-	
+
 })

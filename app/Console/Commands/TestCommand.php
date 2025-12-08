@@ -59,27 +59,27 @@ class TestCommand extends Command
 	}
 	public function handle()
 	{
-		$columnName = 'partner_id';
-		$partnerTables = getTableNamesThatHasColumn($columnName);
-		$rows=[];
-		foreach([
-			250 ,
-			807,
-			249,
-			863
-		] as $partnerId){
-			foreach($partnerTables as $partnerTable){
-				$row = DB::table($partnerTable)->where($columnName,$partnerId)->get() ;
-				if(count($row)){
-					$rows[$partnerId][$partnerTable] = $row;
-				}
-			}
-		}
-		dd($rows);
-		$name = 'Arabia for Design and Engineering Consulting';
-		$name = 'Arabia for Design and Engineering Consulting';
-		$partner = Partner::findByName($name,92);
-		dd($partner);
+		// $columnName = 'partner_id';
+		// $partnerTables = getTableNamesThatHasColumn($columnName);
+		// $rows=[];
+		// foreach([
+		// 	250 ,
+		// 	807,
+		// 	249,
+		// 	863
+		// ] as $partnerId){
+		// 	foreach($partnerTables as $partnerTable){
+		// 		$row = DB::table($partnerTable)->where($columnName,$partnerId)->get() ;
+		// 		if(count($row)){
+		// 			$rows[$partnerId][$partnerTable] = $row;
+		// 		}
+		// 	}
+		// }
+		// dd($rows);
+		// $name = 'Arabia for Design and Engineering Consulting';
+		// $name = 'Arabia for Design and Engineering Consulting';
+		// $partner = Partner::findByName($name,92);
+		// dd($partner);
 		// $money  = MoneyReceived::where('id',331)->first();
 		// // $money  = MoneyReceived::where('id',341)->first();
 		// dd($money->generateDownPaymentMessage());
@@ -95,8 +95,10 @@ class TestCommand extends Command
 		// (new LetterOfGuaranteeIssuanceController)->backToRunningStatus($company,new Request , $letterOfGuaranteeIssuance,$source);
 	// 	$fetch = (new OdooPayment(Company::find(92)));
 	// $x = 	$fetch->fetchData(
-	// 	'account.payment',[],[[['id','=',400]]]
-	// )[0];
+	// 			'account.bank.statement.line',[],[[['id','!=',0],['payment_ref','=','Mahmoud']]]
+	// 			);
+	// $lastIndex = count($x) -1 ;
+	// dd($x[$lastIndex]);
 	// dd($x);
 		
 		// $request  = new Request;
