@@ -291,6 +291,9 @@ trait IsMoney
     {
         $totalWithhold = 0 ;
         foreach ($this->settlements as $settlement) {
+			if(is_null($settlement->invoice)){
+				dd($settlement,$settlement->invoice);
+			}
             $invoiceExchangeRate = $settlement->invoice->getExchangeRate();
             $totalWithhold+= $settlement->getWithhold() * $invoiceExchangeRate;
         }
