@@ -40,7 +40,6 @@ $(document).on('change', '.repeat-to-right-input-hidden', function (event) {
 	const columnIndex = $(this).attr('data-column-index')
 	let numberOfDecimals = $(this).attr('data-number-of-decimals')
 	if (numberOfDecimals === undefined) {
-		alert('e')
 		numberOfDecimals = $(this).closest('.input-hidden-parent').find('.copy-value-to-his-input-hidden[data-column-index="' + columnIndex + '"]').attr('data-number-of-decimals')
 	}
 	$(this).closest('.input-hidden-parent').find('.copy-value-to-his-input-hidden[data-column-index="' + columnIndex + '"]').val(number_format(val, numberOfDecimals))
