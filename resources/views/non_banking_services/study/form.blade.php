@@ -280,11 +280,11 @@
                                                     <span></span>
                                                 </label>
 												
-												<label class="kt-radio kt-radio--danger text-black font-size-14px font-weight-bold">
+												{{-- <label class="kt-radio kt-radio--danger text-black font-size-14px font-weight-bold">
                                                     <input type="checkbox" value="1" name="has_consumer_finance" @if(isset($model) && $model->hasConsumerFinance()) checked @endisset
                                                     > {{ __('Consumer Finance') }}
                                                 <span></span>
-                                                </label>
+                                                </label> --}}
                                                
 											   
 
