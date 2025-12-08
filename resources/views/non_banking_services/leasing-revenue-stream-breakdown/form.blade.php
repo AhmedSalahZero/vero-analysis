@@ -236,7 +236,7 @@ use App\Models\NonBankingService\LeasingCategory;
 								
                                 @endphp
 
-                                @foreach ($study->leasingRevenueStreamBreakdown as $currentLeasingRevenueStreamBreakdown)
+                                @foreach ($study->leasingRevenueStreamBreakdown->load('category') as $currentLeasingRevenueStreamBreakdown)
 								@php
 									$totalOfRow = 0; 
 								@endphp
