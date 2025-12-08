@@ -57,7 +57,7 @@ class Handler extends ExceptionHandler
 				Mail::to($mail)->send(new SendExceptionMail($content));
 			}
 		} catch (Throwable $exception) {
-			Log::error($exception);
+	//		Log::error($exception);
 		}
 	}
 }
