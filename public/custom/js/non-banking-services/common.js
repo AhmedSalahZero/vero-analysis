@@ -350,7 +350,6 @@ $(document).on('click', '#enable-editing-btn', function (e) {
 		var enableText = $(this).attr('data-enable-edit-text')
 		$(this).attr('data-is-enable-editing', 1)
 		// console.log(enableText)
-		// console.log(enableText)
 		$('#leasing-loans').show()
 		$(this).html(enableText)
 	}
