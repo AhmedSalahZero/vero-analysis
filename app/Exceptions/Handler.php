@@ -30,7 +30,7 @@ class Handler extends ExceptionHandler
 		if ($this->shouldReport($exception) && env('APP_ENV') != 'local') {
 			$this->sendEmail($exception);
 		}
-		parent::report($exception);
+		// parent::report($exception);
 	}
 
 	public function render($request, Throwable $exception)
