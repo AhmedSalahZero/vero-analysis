@@ -620,6 +620,10 @@ class Company extends Model implements HasMedia
 	{
 		return $this->hasMany(ConsumerfinanceProduct::class,'company_id','id');
 	}
+	public function activeConsumerfinanceProducts()
+	{
+		return $this->hasMany(ConsumerfinanceProduct::class,'company_id','id')->where('is_active',1);
+	}
 	public function getConsumerfinanceProductsFormattedForSelect():array 
 	{
 		return (new Select2Formatter)->formatForAssocArr($this->consumerfinanceProducts->pluck('title','id')->toArray());

@@ -1045,7 +1045,8 @@ class MoneyReceived extends Model
 		if($this->isCashInBank()){
 			return $this->cashInBank->getAccountTypeId();
 		}
-		throw new \Exception('Custom Exception .. getAccountTypeId .. This Method Is Only For Incoming Transfer Or Payable Cheque');
+		return null ;
+		// throw new \Exception('Custom Exception .. getAccountTypeId .. This Method Is Only For Incoming Transfer Or Payable Cheque');
 	}
 	
 	public function getAccountNumber()
@@ -1059,7 +1060,8 @@ class MoneyReceived extends Model
 		if($this->isCashInBank()){
 			return $this->cashInBank->getAccountNumber();
 		}
-		throw new \Exception('Custom Exception .. getAccountNumber .. This Method Is Only For Incoming Transfer Or Payable Cheque');
+		return null ;
+		// throw new \Exception('Custom Exception .. getAccountNumber .. This Method Is Only For Incoming Transfer Or Payable Cheque');
 	}	
 	public function getBankAccountOdooId():int
 	{

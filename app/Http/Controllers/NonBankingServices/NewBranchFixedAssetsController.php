@@ -21,7 +21,7 @@ class NewBranchFixedAssetsController extends Controller
 	}
 	protected function getViewVars(Company $company, Study $study){
 		$studyMonthsForViews = $study->getStudyDurationPerYearFromIndexesForView();
-		$yearWithItsIndexes = $study->getOperationDurationPerYearFromIndexes();
+		$yearWithItsIndexes = $study->getStudyDurationPerYearFromIndexes();
 		$newBranchCountPerDateIndex = $study->getNewBranchCountPerDateIndex();
 			$fundingStructureCounts = $study->getFixedAssetsWithCountsDates(FixedAsset::NEW_BRANCH);
 		return [
@@ -32,7 +32,7 @@ class NewBranchFixedAssetsController extends Controller
 			'model'=>$study ,
 			'expenseType'=>HHelpers::getClassNameWithoutNameSpace((new Expense())),
 			'title'=>__('New Branches Fixed Assets'),
-			'monthsWithItsYear' => $study->getMonthsWithItsYear($yearWithItsIndexes),
+			'monthsWithItsYear' => $yearWithItsIndexes,
 			'studyMonthsForViews'=>$studyMonthsForViews,
 			'financialYearEndMonthNumber'=>$study->getFinancialYearEndMonthNumber(),
 			'fixedAssetType'=>FixedAsset::NEW_BRANCH,

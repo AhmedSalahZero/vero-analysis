@@ -87,20 +87,13 @@ class MicrofinanceLoanController extends Controller
 		
 		$isMonthlyStudy = $study->isMonthlyStudy();
 		 $salesProjects =$study->microfinanceProductSalesProjects ;
-		//  $salesProjects =$branchId ? $study->microfinanceProductSalesProjects->where('branch_id',$branchId)  :$study->microfinanceProductSalesProjects ;
 	
         $salesProjectsPerFundedBy= [];
-		// $isMonthlyIndex = $study->isMonthlyStudy();
         foreach ($salesProjects as $salesProject) {
-            // $productId = $salesProject-> microfinance_product_id;
             $fundedBy = $salesProject->funded_by;
-            // $type = $salesProject->type;
             $monthlyLoanAmounts = $salesProject->monthly_loan_amounts?:[];
-			// $yearOrMonthsIndexes = $study->getYearOrMonthIndexes();
-	
             foreach ($monthlyLoanAmounts as $dateAsIndex => $monthlyLoanAmount) {
                 $salesProjectsPerFundedBy[$fundedBy][$dateAsIndex] =  isset($salesProjectsPerFundedBy[$fundedBy][$dateAsIndex]) ? $salesProjectsPerFundedBy[$fundedBy][$dateAsIndex] + $monthlyLoanAmount:$monthlyLoanAmount;
-                // $salesProjectsPerFundedBy[$fundedBy]['total'][$dateAsIndex] = isset($salesProjectsPerFundedBy[$fundedBy]['total'][$dateAsIndex]) ? $salesProjectsPerFundedBy[$fundedBy]['total'][$dateAsIndex] + $monthlyLoanAmount   : $monthlyLoanAmount  ;
             }
         }
 		$totalMonthlyLoanPerMtls = $salesProjectsPerFundedBy['by-mtls']??[];
@@ -123,7 +116,7 @@ class MicrofinanceLoanController extends Controller
 	   $study->updateExpensesPercentageAndCostPerUnitsOfSales();
         
         return response()->json([
-                'redirectTo'=>$study->getRevenueRoute(Study::SECURITIZATION)
+                'redirectTo'=>$study->getRevenueRoute(Study::CONSUMER_FINANCE)
             ]);
     }
 

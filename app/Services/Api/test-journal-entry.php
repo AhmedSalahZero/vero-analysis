@@ -40,7 +40,7 @@ public function testCreateAndPostJournalEntry(float $amount = 30000, string $dat
                 [$statementEntryData],
                 ['context' => $context]
             );
-		dd('good',$statementEntryId);
+	
             // if (!is_numeric($journalEntryId)) {
             //     throw new Exception("Failed to create journal entry: " . json_encode($journalEntryId));
             // }

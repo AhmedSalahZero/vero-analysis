@@ -2,20 +2,13 @@
 
 namespace App\Http\Controllers\NonBankingServices;
 
-use App\Equations\ExpenseAsPercentageEquation;
-use App\Equations\MonthlyFixedRepeatingAmountEquation;
-use App\Equations\OneTimeExpenseEquation;
-use App\Helpers\HArr;
 use App\Helpers\HHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreExpensesRequest;
 use App\Models\Company;
 use App\Models\NonBankingService\Expense;
 use App\Models\NonBankingService\ExpenseName;
-use App\Models\NonBankingService\Manpower;
-use App\Models\NonBankingService\Position;
 use App\Models\NonBankingService\Study;
-use App\ReadyFunctions\CollectionPolicyService;
 use App\Traits\NonBankingService;
 use Arr;
 use Illuminate\Http\Request;
@@ -27,10 +20,6 @@ class ExpensesController extends Controller
     {
         return view('non_banking_services.expenses.form', $this->getViewVars($company, $study));
     }
-    //   protected function getViewVars(Company $company, Study $study)
-    // {
-    //     return $study->getExpensesViewVars();
-    // }
     
     protected function getViewVars(Company $company, Study $study)
     {
@@ -74,10 +63,6 @@ class ExpensesController extends Controller
             $model->generateRelationDynamically($tableId, $expenseType)->delete();
             foreach ($request->get($tableId,[]) as $tableDataArr) {
                 $tableDataArr['study_id'] = $study->id;
-				// $dateWithDateIndex = $study->getDateWithDateIndex();
-				
-                // $withholdRate = $tableDataArr['withhold_tax_rate']??0;
-            
                 if (isset($tableDataArr['start_date']) && count(explode('-', $tableDataArr['start_date'])) == 2) {
                     $tableDataArr['start_date'] = $tableDataArr['start_date'].'-01';
                     

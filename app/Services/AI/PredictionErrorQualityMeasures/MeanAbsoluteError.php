@@ -4,9 +4,8 @@ class MeanAbsoluteError
 {
 	function calculate(array $actual, array $predicted): float {
 		// Check if both arrays have the same length
-		if (count($actual) !== count($predicted)) {
-			dd('eeeee');
-		}
+		// if (count($actual) !== count($predicted)) {
+		// }
 	
 		$n = count($actual);
 		$absoluteErrorSum = 0;

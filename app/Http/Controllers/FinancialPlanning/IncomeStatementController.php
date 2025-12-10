@@ -13,11 +13,7 @@ class IncomeStatementController extends Controller
 {
     public function index(Company $company , Request $request,Study $study){
 		
-		// $studyMonths = $study->getStudyDurationPerYearFromIndexes() ;
-		// $studyMonthsForViews = $study->getStudyMonthsForView($studyMonths,$study->getDurationInYears()) ;
 		$studyMonthsForViews=$study->getStudyDurationPerYearFromIndexesForView();
-		$result=[];
-		$salariesExpenses = [];
 		$sumQuery = '';
 		foreach($studyMonthsForViews as 	$dateAsIndex => $dateAsString){
 				$sumQuery .= 'SUM(JSON_UNQUOTE(JSON_EXTRACT(salary_expenses, "$['.$dateAsIndex.']"))) as salary_expenses_'.$dateAsIndex.',';
@@ -71,14 +67,7 @@ class IncomeStatementController extends Controller
 			'study_start_date'=>Carbon::make($request->get('study_start_date'))->format('Y-m-d'),
 			'study_end_date'=>Carbon::make($request->get('study_end_date'))->format('Y-m-d'),
 			'operation_start_date'=>Carbon::make($request->get('operation_start_date'))->format('Y-m-d'),
-			// 'has_leasing'=>$request->boolean('has_leasing'),
-			// 'has_direct_factoring'=>$request->boolean('has_direct_factoring'),
-			// 'has_reverse_factoring'=>$request->boolean('has_reverse_factoring'),
-			// 'has_ijara_mortgage'=>$request->boolean('has_ijara_mortgage'),
-			// 'has_portfolio_mortgage'=>$request->boolean('has_portfolio_mortgage'),
-			// 'has_micro_finance'=>$request->boolean('has_micro_finance'),
-			// 'has_securitization'=>$request->boolean('has_securitization'),
-			// 'has_consumer_finance'=>$request->boolean('has_consumer_finance'),
+	
 			
 		]);
 		$data = $request->except(['_token']) ;

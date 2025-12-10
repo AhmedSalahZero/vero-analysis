@@ -220,7 +220,6 @@ $months = $study->getMicrofinanceMonths() ;
 
 
                         </tr>
-						{{-- {{ dd($study->getRevenuesTypesWithTitles()) }} --}}
                         @foreach($study->getRevenuesTypesWithTitles() as $revenueTypeId => $revenueOptionArr)
                         @php
                         $leasingEclAndNewPortfolioFundingRate = $leasingEclAndNewPortfolioFundingRates[$revenueTypeId]??null;

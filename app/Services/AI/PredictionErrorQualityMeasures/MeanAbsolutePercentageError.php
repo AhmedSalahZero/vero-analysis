@@ -5,9 +5,8 @@ class MeanAbsolutePercentageError
 
 public function calculate($actual, $forecasted) {
     // Ensure both arrays have the same length
-    if(count($actual) !== count($forecasted)) {
-      dd('qqqqq');
-    }
+    // if(count($actual) !== count($forecasted)) {
+    // }
 
     $n = count($actual);
     $sumAbsPercentageError = 0;

@@ -43,7 +43,6 @@ class AmountCanNotBeGreaterThanEndBalanceAtPaymentDate implements ImplicitRule
 		if(is_null($this->delivery_date)){
 			return false;
 		}
-
 		if($this->type == MoneyPayment::OUTGOING_TRANSFER || $this->type == 'ACTUAL_PAYMENT_DATE' || $this->type == BuyOrSellCurrency::BANK_TO_BANK || $this->type == BuyOrSellCurrency::BANK_TO_SAFE){
 			$response = (new MoneyReceivedController)->updateNetBalanceBasedOnAccountNumber(Request(),$this->company,$this->account_type_id,$this->account_number,$this->financial_institution_id,$this->delivery_date);
 			$balance = $response->getData(true)['balance'] ;	

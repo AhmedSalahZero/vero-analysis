@@ -70,12 +70,7 @@ class LeasingController extends Controller
         }
         $study->updateExpensesPercentageAndCostPerUnitsOfSales();
 		
-		// $redirectRoute = $study->runIncomeStatementIfFromCashflow();
-		// if($redirectRoute)
-		// {
-		// 	return $redirectRoute;
-		// }
-		
+	
         
         return response()->json([
             'redirectTo'=>$study->getRevenueRoute(Study::DIRECT_FACTORING)

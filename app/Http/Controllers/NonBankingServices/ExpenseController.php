@@ -62,60 +62,12 @@ class ExpenseController extends Controller
 					$items[$expenseCategoryId]['sub_items'][$expense->id]['id'] =$expense->id ;
 				}
 		}
-		
-		// $numberOfMonthsBetweenEndDateAndStartDate = 18 ;
-		// $currentType = $request->get('active',ExpenseName::EXPENSE);
-		
-		// $filterDates = [];
-		// foreach([ExpenseName::EXPENSE] as $type){
-		// 	$startDate = $request->has('startDate') ? $request->input('startDate.'.$type) : now()->subMonths($numberOfMonthsBetweenEndDateAndStartDate)->format('Y-m-d');
-		// 	$endDate = $request->has('endDate') ? $request->input('endDate.'.$type) : now()->format('Y-m-d');
-			
-		// 	$filterDates[$type] = [
-		// 		'startDate'=>$startDate,
-		// 		'endDate'=>$endDate
-		// 	];
-		// }
-		
-		
-		 
-		//   /**
-		//  * * start of bank to safe internal money transfer 
-		//  */
-		
-		// $startDate = $filterDates[ExpenseName::EXPENSE]['startDate'] ?? null ;
-		// $endDate = $filterDates[ExpenseName::EXPENSE]['endDate'] ?? null ;
-		// $expenseNames = $company->expenseNames ;
-	
-		// $expenseNames =  $currentType == ExpenseName::EXPENSE ? $this->applyFilter($request,$expenseNames):$expenseNames ;
-
-		// /**
-		//  * * end of bank to safe internal money transfer 
-		//  */
-		 
-		
-		//  $searchFields = [
-		// 	ExpenseName::EXPENSE=>[
-		// 		'name'=>__('Name'),
-		// 	],
-		// ];
-	
-		// $models = [
-		// 	ExpenseName::EXPENSE =>$expenseNames ,
-		// ];
-
         return view('non_banking_services.expense-structure.index', [
 			'company'=>$company,
 			'items'=>$items,
-			// 'searchFields'=>$searchFields,
-			// 'models'=>$models,
-			// 'filterDates'=>$filterDates,
 			'title'=>__('Expenses'),
 			'tableTitle'=>__('Expenses')
 		]);
-		
-		
-		
 	}
 	public function create(Company $company , Request $request){
 		
@@ -159,9 +111,7 @@ class ExpenseController extends Controller
 		return [
 			'name'=>$request->get('name'),
 			'expense_type'=>$expenseType,
-			// 'type'=>'manpower',
 			'company_id'=>$company->id ,
-			// 'cashExpenses'=>$cashExpenses
 		];
 	}
 	public function edit(Request $request , Company $company , string $expenseType ){
@@ -169,7 +119,6 @@ class ExpenseController extends Controller
 		return view('non_banking_services.expense-structure.form', array_merge(['inEditMode'=>true],$this->getViewVars($company,$expenseType,$expenseNames)));
 	}
 	public function update(Request $request , Company $company , string $expenseType){
-		// $company->update($this->getCommonData($request,$company,$request->get('expense_type')));
 			$oldIdsFromDatabase = $company->expenseNamesFor($expenseType,$company->id)->pluck('id')->toArray();
 		$additionalData = [
 			'expense_type'=>$request->get('expense_type'),

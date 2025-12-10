@@ -46,6 +46,7 @@ use App\Models\NonBankingService\FixedAssetName;
                 unset($subModel);
                 }
                 @endphp
+				
                 <tr data-repeater-item data-repeat-formatting-decimals="2" data-repeater-style>
 
                     <td class="text-center">
@@ -110,7 +111,6 @@ use App\Models\NonBankingService\FixedAssetName;
                     @endphp
 
                     @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
-
                     <td data-column-index="{{ $dateAsIndex }}">
                         <div class="d-flex align-items-center justify-content-center">
                             @php

@@ -35,7 +35,7 @@ class SalesGathering extends Model
 	public static function getTrendAnalysisTabs(int $companyId)
 	{
 		$trendTabs = TablesField::where('is_sales_trend',1)->pluck('field_name','view_name')->toArray();
-		dd($trendTabs);
+
 		
 		return [
 			$mainReportName = 'zone'=>[

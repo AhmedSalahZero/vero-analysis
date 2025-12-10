@@ -19,7 +19,6 @@ class BalancesController
     use GeneralFunctions;
 	protected function sumNetBalancePerCurrency(array $items, string $mainCurrency,string $clientNameColumnName ):array 
 	{
-		
 		$total = [];
 
 		$id = 0 ;

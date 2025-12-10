@@ -27,7 +27,9 @@ class FfeFixedAssetsController extends Controller
     protected function getViewVars(Company $company, Study $study)
     {
         $studyMonthsForViews = $study->getStudyDurationPerYearFromIndexesForView();
-        $yearWithItsIndexes = $study->getOperationDurationPerYearFromIndexes();
+        $yearWithItsIndexes = $study->getStudyDurationPerYearFromIndexes();
+
+		
 		$fundingStructureCounts = $study->getFixedAssetsWithCountsDates(FixedAsset::FFE);
 		
         return [
@@ -40,7 +42,7 @@ class FfeFixedAssetsController extends Controller
             'title'=>__('General Fixed Assets'),
             'storeRoute'=>route('store.ffe.fixed.assets', ['company'=>$company->id , 'study'=>$study->id]),
             'storeFundingRoute'=>route('store.ffe.funding.structure.fixed.assets', ['company'=>$company->id , 'study'=>$study->id]),
-            'monthsWithItsYear' => $study->getMonthsWithItsYear($yearWithItsIndexes),
+            'monthsWithItsYear' => $yearWithItsIndexes,
             'studyMonthsForViews'=>$studyMonthsForViews,
             'financialYearEndMonthNumber'=>$study->getFinancialYearEndMonthNumber(),
             'fixedAssetType'=>FixedAsset::FFE

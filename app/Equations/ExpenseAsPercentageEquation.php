@@ -17,6 +17,8 @@ class ExpenseAsPercentageEquation
         $hasPortfolioMortgage = in_array('has_portfolio_mortgage', $revenueStreamType) ;
         $hasDirectFactoring = in_array('has_direct_factoring', $revenueStreamType) ;
         $hasMicrofinance = in_array('has_micro_finance', $revenueStreamType) ;
+        $hasConsumerfinance = in_array('has_consumer_finance', $revenueStreamType) ;
+
 
         $dates = range($startDateAsIndex, $endDateAsIndex);
         $resultArrs = [];
@@ -30,7 +32,7 @@ class ExpenseAsPercentageEquation
         if ($percentageOf == 'contract') {
             $resultArrs = $expensePerContract['result'];
         } else {
-            if ($hasLeasing || $hasIjara || $hasReverseFactoring || $hasPortfolioMortgage || $hasMicrofinance) {
+            if ($hasLeasing || $hasIjara || $hasReverseFactoring || $hasPortfolioMortgage || $hasMicrofinance || $hasConsumerfinance) {
                 $calculationColumn = [
                     'revenue'=>'interestAmount',
                     'outstanding'=>'endBalance',
@@ -48,6 +50,7 @@ class ExpenseAsPercentageEquation
 				->pluck($calculationColumn)->map(function ($item) {
                     return (array)json_decode($item);
                 })->toArray();
+
             }
             if ($hasDirectFactoring) {
                 $calculationColumn = [

@@ -72,22 +72,17 @@ trait HasBasicStoreRequest
 		
 		$elementsToUpdate = array_intersect($idsFromRequest,$oldIdsFromDatabase);
 		$this->$relationName()->whereIn($relationTableName.'.id',$elementsToDelete)->delete();
+		
 		foreach($elementsToUpdate as $id){
 			$dataToUpdate = findByKey($relationDataArray,'id',$id);
 			$this->$relationName()->where($relationTableName.'.id',$id)->first()->update(array_merge($dataToUpdate,$additionRelationData));
 		}
 		
-		
 		foreach($relationDataArray as $data){
 			if(!isset($data['id']) || $data['id'] == 0){
 				unset($data['id']);
 				$currentDataArr = $this->filterTableColumnThatExistsOnly($connectionName,$relationTableName,array_merge($data,$additionRelationData));
-				
 				$this->$relationName()->create($currentDataArr);
-				// }
-				// catch(\Exception $e){
-				// 	$this->$relationName()->create($currentDataArr);
-				// }
 			}
 		}
 		$this->refresh();
@@ -117,7 +112,7 @@ trait HasBasicStoreRequest
 			if(!is_array($values) || !method_exists($this,$relationName) ){
 				continue ;
 			}
-
+	
 			foreach($values as $columnName => $payload){
 				if(is_numeric($columnName)){
 					continue;
@@ -128,7 +123,6 @@ trait HasBasicStoreRequest
 			
 		}
 		foreach($columnsWithPayload as $relationName => $values){
-			// dd($relationName,$this->{$relationName},is_null($this->{$relationName}));
 			if(is_null($this->{$relationName})){
 				$this->{$relationName}()->create($values);
 			}else{

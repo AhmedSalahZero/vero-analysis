@@ -930,7 +930,7 @@ class MoneyReceivedController
                 'net_balance'=>0 ,
             ]);
         }
-    
+   
         $accountNumberModel =  ('\App\Models\\'.$accountType->getModelName())::findByAccountNumber($accountNumber, $company->id, $financialInstitutionId);
         
         if (!$accountNumberModel) {
@@ -955,7 +955,6 @@ class MoneyReceivedController
             // $oldFinancialInstitution = $model ? $model->getAccountTypeId() : null;
             if ($oldAccountNumber && $oldAccountNumber == $accountNumber
             && $oldAccountTypeId && $oldAccountTypeId == $accountTypeId
-                // 	&&  == $financialInstitutionId
             ) {
                 $additionalAmountInEditMode =  $model->getPaidAmount();
             }

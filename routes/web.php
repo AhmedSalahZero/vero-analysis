@@ -448,6 +448,9 @@ Route::middleware([])->group(function () {
                             route::post('securitization', 'SecuritizationController@store')->name('store.securitization');
                         
                         
+                            route::get('consumer-finance', 'ConsumerFinanceController@create')->name('create.consumer.finance');
+                            route::post('consumer-finance', 'ConsumerFinanceController@store')->name('store.consumer.finance');
+                            
                             route::get('microfinance/all-branches/{branch_id?}', 'AllBranchesMicrofinanceControllerController@create')->name('create.all-branches.microfinance');
                             route::post('microfinance/all-branches/{branch_id?}', 'AllBranchesMicrofinanceControllerController@store')->name('store.all-branches.microfinance');
                         
@@ -1339,7 +1342,7 @@ Route::middleware([])->group(function () {
                 Route::get('down-payments/get-contracts-for-supplier', 'MoneyPaymentController@getContractsForSupplier')->name('get.contracts.for.supplier'); // ajax request
                 Route::get('down-payments/get-sales-orders-for-contract/{contract_id}/{currency?}', 'MoneyReceivedController@getSalesOrdersForContract'); // ajax request
                 Route::get('down-payments/get-purchases-orders-for-contract/{contract_id}/{currency?}', 'MoneyPaymentController@getSalesOrdersForContract'); // ajax request
-				Route::post('update-payable-cheques/{moneyPayment}/{payableCheque}','MoneyPaymentController@updateOpeningPayableCheque')->name('update.opening.payable.cheque');
+                Route::post('update-payable-cheques/{moneyPayment}/{payableCheque}', 'MoneyPaymentController@updateOpeningPayableCheque')->name('update.opening.payable.cheque');
                 Route::get('/filter-labeling-items', 'SalesGatheringController@filterLabelingItems')->name('filter.labeling.item');
                 Route::get('/create-labeling-items', 'DynamicItemsController@createLabelingItems')->name('create.labeling.items');
                 Route::get('/create-labeling-form', 'DynamicItemsController@createLabelingForm')->name('create.labeling.form');

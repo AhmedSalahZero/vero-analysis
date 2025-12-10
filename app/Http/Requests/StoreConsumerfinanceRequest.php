@@ -3,13 +3,11 @@
 namespace App\Http\Requests;
 
 use App\Rules\ExpenseStartDateAndEndDateRule;
-use App\Rules\ExpenseStartDateAndOperationDateRule;
 use App\Rules\ProductMixRule;
 use App\Rules\ProductSeasonalityRule;
-use App\Rules\StartDateAndOperationDateRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreAllBranchesMicrofinanceRequest extends FormRequest
+class StoreConsumerfinanceRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,9 +27,9 @@ class StoreAllBranchesMicrofinanceRequest extends FormRequest
     public function rules()
     {
         return [
-            'microfinanceProductSalesProjects'=>['required',new ProductMixRule($this->study)],
-            'microfinanceProductSalesProjects'=>['required',new ProductSeasonalityRule($this->study)],
-			'fixed_monthly_repeating_amount'=>['required', new ExpenseStartDateAndEndDateRule($this->study) ]
+            // 'microfinanceProductSalesProjects'=>['required',new ProductMixRule($this->study)],
+            // 'microfinanceProductSalesProjects'=>['required',new ProductSeasonalityRule($this->study)],
+			// 'fixed_monthly_repeating_amount'=>['required', new ExpenseStartDateAndEndDateRule($this->study) ]
         ];
     }
 }

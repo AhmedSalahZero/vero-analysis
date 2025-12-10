@@ -6299,7 +6299,7 @@ function getNonBankingNavigation(Company $company, User $user):array
                 [
                     'title'=>__('Consumer Finance Projection'),
                     'show'=>$study->hasConsumerFinance(),
-                    'link'=>'#',
+                    'link'=>route('create.consumer.finance', ['company'=>$company->id,'study'=>$studyId]),
                     'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
                 ],
                 

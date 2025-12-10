@@ -279,14 +279,14 @@
                                                     > {{ __('Portfolio Mortgage') }}
                                                     <span></span>
                                                 </label>
-												
-												{{-- <label class="kt-radio kt-radio--danger text-black font-size-14px font-weight-bold">
+
+                                                {{-- <label class="kt-radio kt-radio--danger text-black font-size-14px font-weight-bold">
                                                     <input type="checkbox" value="1" name="has_consumer_finance" @if(isset($model) && $model->hasConsumerFinance()) checked @endisset
                                                     > {{ __('Consumer Finance') }}
                                                 <span></span>
                                                 </label> --}}
-                                               
-											   
+
+
 
                                                 <label class="kt-radio kt-radio--success text-black font-size-14px font-weight-bold">
 
@@ -295,7 +295,7 @@
                                                     <span></span>
                                                 </label>
 
-                                                
+
 
 
 
@@ -341,11 +341,8 @@
                                                     @endif
                                                     class="microfinance-checkbox-js" type="checkbox" value="1" name="has_micro_finance" @if(isset($model) && $model->hasMicroFinance()) checked @endisset
                                                     > {{ __('Micro Finance') }}
-
-
                                                     <span></span>
                                                 </label>
-
 
 
                                                 <label class="kt-radio kt-radio--success text-black font-size-14px font-weight-bold show-only-with-microfinance ">
@@ -382,95 +379,36 @@
                 <div class="kt-portlet__body">
                     <h5 class="text-red">
                         Heads up!!!
-                        
-						Before you can choose Microfinance Revenue Stream, please go to the Study Table Page and create a least one Microfinance Product 😊 (click Microfinance Products Button)
+
+                        Before you can choose Microfinance Revenue Stream, please go to the Study Table Page and create a least one Microfinance Product 😊 (click Microfinance Products Button)
                 </div>
             </div>
             @endif
-			
-			   @if(!$company->hasAtLeastOneExistingBranch())
+
+            @if(!$company->hasAtLeastOneExistingBranch())
             <div class="kt-portlet">
                 <div class="kt-portlet__body">
                     <h5 class="text-red">
                         Heads up!!!
-						Before you can apply Microfinance planning by Branch, please go to the Study Table Page and create a least one Branch 😊 (click Existing Branches Button)
+                        Before you can apply Microfinance planning by Branch, please go to the Study Table Page and create a least one Branch 😊 (click Existing Branches Button)
                 </div>
             </div>
             @endif
-			
-            {{-- <div class="kt-portlet">
+
+
+            <div class="kt-portlet">
                 <div class="kt-portlet__body">
-                    <div class="row">
-                        <div class="col-md-10">
-                            <div class="d-flex align-items-center ">
-                                <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style=""> {{ __('Existing Branches Info') }} </h3>
+                    <x-save-or-back :btn-text="__('Create')" />
+                </div>
+            </div>
+
+
+
+
+            <!--end::Form-->
+
+            <!--end::Portlet-->
     </div>
-</div>
-
-</div>
-<div class="row">
-    <hr style="flex:1;background-color:lightgray">
-</div>
-<div class="row">
-
-    <div class="form-group row" style="flex:1;">
-        <div class="col-md-3 mb-4">
-            <label class="form-label font-weight-bold">{{ __('Microfinance Branches Count') }} </label>
-            <div class="kt-input-icon">
-                <div class="input-group">
-                    <input type="number" class="form-control only-greater-than-or-equal-zero-allowed" name="microfinance_branches_count" value="{{ isset($model) ? $model->getMicrofinanceBranchesCount() : 0 }}" step="1">
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-4">
-            <label class="form-label font-weight-bold">{{ __('Microfinance Loan Officer Count') }} </label>
-            <div class="kt-input-icon">
-                <div class="input-group">
-                    <input type="number" class="form-control only-greater-than-or-equal-zero-allowed" name="microfinance_loan_officer_count" value="{{ isset($model) ? $model->getMicrofinanceLoanOfficerCount() : 0 }}" step="1">
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3 mb-4">
-            <label class="form-label font-weight-bold">{{ __('Consumer Finance Branches Count') }} </label>
-            <div class="kt-input-icon">
-                <div class="input-group">
-                    <input type="number" class="form-control only-greater-than-or-equal-zero-allowed" name="consumerfinance_branches_count" value="{{ isset($model) ? $model->getConsumerfinanceBranchesCount() : 0 }}" step="1">
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-4">
-            <label class="form-label font-weight-bold">{{ __('Consumer Finance Loan Officer Count') }} </label>
-            <div class="kt-input-icon">
-                <div class="input-group">
-                    <input type="number" class="form-control only-greater-than-or-equal-zero-allowed" name="consumerfinance_loan_officer_count" value="{{ isset($model) ? $model->getConsumerfinanceLoanOfficerCount() : 0 }}" step="1">
-                </div>
-            </div>
-        </div>
-
-
-    </div>
-</div>
-
-</div>
-</div> --}}
-
-
-
-
-<div class="kt-portlet">
-    <div class="kt-portlet__body">
-        <x-save-or-back :btn-text="__('Create')" />
-    </div>
-</div>
-
-
-
-
-<!--end::Form-->
-
-<!--end::Portlet-->
-</div>
 
 
 </div>
@@ -572,6 +510,7 @@
 
 </script>
 <script>
-	$('.study-duration').trigger('change')
+    $('.study-duration').trigger('change')
+
 </script>
 @endsection

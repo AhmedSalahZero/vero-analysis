@@ -70,6 +70,7 @@ class DownPaymentContractsController extends Controller
 		$models = [
 			$contractsWithDownPayments =>$moneyModels ,
 		];
+	
 
         return view('contracts-down-payment.index', [
 			'company'=>$company,
@@ -103,6 +104,7 @@ class DownPaymentContractsController extends Controller
 		$currencies = array_filter($currencies,function($item) use ($contractCurrency){
 			return $item == $contractCurrency;
 		});
+		
 		$invoices =  $fullClassName::
 		when($contract,function($q) use ($contract){
 			$q->where('contract_code',$contract->getCode());
@@ -112,10 +114,15 @@ class DownPaymentContractsController extends Controller
 		->where('company_id',$company->id)
 		->where('net_invoice_amount','>',0);
 		if(!$inEditMode){
+			/**
+			 * ! $inEditMode always returns false 
+			 * * وبالتالي لو بتحاول تعدل مش هيجيب اللي اتقفلت خالص
+			 */
 			$invoices->where('net_balance','>',0);
 		}
-	
+
 		$invoices = $invoices->orderBy('invoice_date','asc')->get() ; 
+		
 		$downPaymentAmount =  $downPayment->getDownPaymentAmount();
 		$isDownPaymentFromMoneyPayment = $downPayment->isInvoiceSettlementWithDownPayment();
 		$hasProjectNameColumn = $fullClassName::hasProjectNameColumn();

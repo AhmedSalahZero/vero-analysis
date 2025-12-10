@@ -63,7 +63,8 @@ class CashExpense extends Model
 		if($this->isPayableCheque()){
 			return $this->payableCheque->getAccountTypeId();
 		}
-		throw new \Exception('Custom Exception .. getAccountTypeId .. This Method Is Only For Outgoing Transfer Or Payable Cheque');
+		return null;
+		// throw new \Exception('Custom Exception .. getAccountTypeId .. This Method Is Only For Outgoing Transfer Or Payable Cheque');
 	}
 	public function getAccountNumber()
 	{

@@ -58,6 +58,7 @@ $(document).on('click', '.repeat-select-to-right', function () {
 })
 
 $(document).on('change', '.input-hidden-parent .copy-value-to-his-input-hidden', function () {
+	//console.log('fff')
 	let val = $(this).val()
 	$(this).closest('.input-hidden-parent').find('input.input-hidden-with-name').val(number_unformat(val)).trigger('change')
 })
@@ -80,49 +81,10 @@ $(function () {
 })
 
 
-// $(document).on('change', 'select.revenue-stream-type-js', function () {
-// 	//console.log('from 5')
-// 	let revenueStreams = $(this).val()
-// 	let studyId = $('#study-id-js').val()
-// 	const that = this
-// 	const companyId = $('body').attr('data-current-company-id')
-// 	const lang = $('body').attr('data-lang')
-// 	const url = '/' + lang + '/' + companyId + '/non-banking-financial-services/study/' + studyId + '/get-stream-category-based-on-revenue-stream'
-// 	if (revenueStreams.length) {
-// 		var streamCategoryElement = $(that).closest('tr').find('select.stream-category-class')
-// 		var currentSelected = $(streamCategoryElement).attr('data-current-selected-items') ? JSON.parse($(streamCategoryElement).attr('data-current-selected-items')) : null
-// 		$.ajax({
-// 			url,
-// 			data: {
-// 				revenueStreams
-// 			},
-// 			method: "post",
-// 			success: function (res) {
-// 				var options = ''
-// 				var selected = ''
-// 				if (currentSelected ? currentSelected.includes('all') : false) {
-// 					selected = 'selected'
-// 				}
-// 				options += `<option ${selected} value="all">All</option>`
-
-// 				for (id in res.result) {
-// 					var title = res.result[id]
-// 					selected = ''
-// 					if (currentSelected ? currentSelected.includes(id) : null) {
-// 						selected = 'selected'
-// 					}
-// 					options += `<option ${selected} value="${id}">${title}</option>`
-// 				}
-// 				streamCategoryElement.empty().append(options).trigger('change')
-// 			}
-// 		})
-// 	} else {
-
-// 	}
-// })
 
 $(document).on('change', '[js-recalculate-equity-funding-value],.js-recalculate-equity-funding-value', function () {
 	const parent = $(this).closest('table')
+	//console.log('errr')
 	const columnIndex = parseInt($(this).attr('data-column-index'))
 	let total = $(parent).find('.total-loans-hidden[data-column-index="' + columnIndex + '"]').val()
 	if (total == undefined) {
@@ -134,7 +96,6 @@ $(document).on('change', '[js-recalculate-equity-funding-value],.js-recalculate-
 	}
 	let equityFundingValue = equityFundingRate / 100 * total
 	let newLoanFundingValue = (1 - (equityFundingRate / 100)) * total
-
 	if ($(parent).find('input.equity-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').length) {
 		$(parent).find('input.equity-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').val(number_format(equityFundingValue)).trigger('change')
 		$(parent).find('input.new-loans-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').val(number_format(newLoanFundingValue)).trigger('change')
@@ -142,11 +103,10 @@ $(document).on('change', '[js-recalculate-equity-funding-value],.js-recalculate-
 		$('input.equity-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').val(number_format(equityFundingValue)).trigger('change')
 		$('input.new-loans-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').val(number_format(newLoanFundingValue)).trigger('change')
 	}
-
-
 })
 
 function convertDateToDefaultDateFormat(dateStr) {
+	//console.log('ffa')
 	const [month, day, year] = dateStr.split("/") // Split the string by "/";
 	return `${year}-${month}-${day}` // Rearrange to YYYY-MM-DD
 }
@@ -266,17 +226,17 @@ $(document).on('change', '.repeater-with-collapse-input', debounceYearTotal)
 
 let recalculateAllRowTotal = function () {
 	//console.log('from qqq')
-	$(this).closest('tbody').find('tr').each(function(trIndex,tr){
+	$(this).closest('tbody').find('tr').each(function (trIndex, tr) {
 		var total = 0
 		$(tr).find('.repeat-group-year').each(function (index, element) {
-				total += parseFloat(number_unformat($(element).val()))
+			total += parseFloat(number_unformat($(element).val()))
 		})
 		$(tr).find('.total-td').val(number_format(total)).trigger('change')
 	})
-} ;
+}
 
 
-$('input[type="hidden"].exclude-from-collapse').on('change', _debounce(recalculateAllRowTotal,500))
+$('input[type="hidden"].exclude-from-collapse').on('change', _debounce(recalculateAllRowTotal, 500))
 $(document).on('click', '.add-btn-js', function (e) {
 	//console.log('from 13')
 	e.preventDefault()
@@ -1168,7 +1128,7 @@ $(document).on('change', '.microfinance-checkbox-js', function () {
 		$('.show-only-with-microfinance').hide()
 		$('.show-only-with-microfinance input').prop('checked', false).trigger('change')
 		$('.no-branch-div').addClass('hidden')
-		//	$('.no-branch-input-js').val(0).trigger('change')
+
 
 	}
 })
@@ -1256,3 +1216,157 @@ $(document).on('click', '.recalculate-decrease-rates', function () {
 	})
 
 })
+
+// const recalculateMtlAndOdasLoans = function (e) {
+
+// 	let groups = {
+// 		'by-odas': [],
+// 		'by-mtls': []
+// 	}
+// 	$('[data-current-product-id]').each(function (index, tr) {
+// 		var productId = $(tr).attr('data-current-product-id')
+// 		var loanType = $(tr).find('select.recalculate-mtl-and-odas-loans').val()
+// 		groups[loanType].push(productId)
+// 	})
+// 	let totalsPerGroup = {
+// 		'by-odas': [],
+// 		'by-mtls': []
+// 	}
+// 	for (type in groups) {
+// 		var productIds = groups[type]
+// 		for (productId of productIds) {
+
+// 			$('[data-consumer-projection-product-id="' + productId + '"]').each(function (index, td) {
+// 				let currentVal = parseFloat($(td).val())
+// 				currentVal = currentVal ? currentVal : 0
+// 				let columnIndex = $(td).attr('data-column-index')
+// 				if (totalsPerGroup[type][columnIndex] !== undefined) {
+// 					totalsPerGroup[type][columnIndex] += currentVal
+// 				} else {
+// 					totalsPerGroup[type][columnIndex] = currentVal
+// 				}
+
+// 			})
+// 		}
+
+// 	}
+// 	for (var type in totalsPerGroup) {
+// 		//	$('[data-total-projection="'+type+'"]').val(0).trigger('change'); // to rest
+// 		var totalForType = totalsPerGroup[type]
+// 		for (dateAsIndex in totalForType) {
+// 			var value = totalForType[dateAsIndex]
+// 			$('[data-total-projection="' + type + '"][data-column-index="' + dateAsIndex + '"]').val(value).trigger('change')
+// 			$('.equity-funding-rate-input-hidden-class[data-column-index="' + dateAsIndex + '"').trigger('change')
+// 		}
+// 	}
+
+
+// }
+// $(document).on('change', '.recalculate-mtl-and-odas-loans', _debounce(recalculateMtlAndOdasLoans, 500))
+// recalculateMtlAndOdasLoans()
+
+
+
+const recalculateMtlAndOdasLoans = function () {
+
+    // Cache DOM elements once (massive speed improvement)
+    const $rows = $('[data-current-product-id]');
+    const $consumerProjections = $('[data-consumer-projection-product-id]');
+    const $totals = $('[data-total-projection]');
+    const $equityInputs = $('.equity-funding-rate-input-hidden-class');
+
+    // Group product IDs by type
+    let groups = {
+        'by-odas': [],
+        'by-mtls': []
+    };
+
+    $rows.each(function () {
+        const productId = $(this).attr('data-current-product-id');
+        const loanType = $(this).find('select.recalculate-mtl-and-odas-loans').val();
+        groups[loanType].push(productId);
+    });
+
+    // Prepare totals
+    let totalsPerGroup = {
+        'by-odas': [],
+        'by-mtls': []
+    };
+
+    // Loop through each group
+    for (let type in groups) {
+
+        const productIds = groups[type];
+
+        // Filter only the needed consumer projections once
+        const filteredConsumers = $consumerProjections.filter(function () {
+            const id = $(this).attr('data-consumer-projection-product-id');
+            return productIds.includes(id);
+        });
+
+        // Accumulate totals
+        filteredConsumers.each(function () {
+            const $td = $(this);
+            const currentVal = parseFloat($td.val()) || 0;
+            const columnIndex = $td.attr('data-column-index');
+
+            if (!totalsPerGroup[type][columnIndex]) {
+                totalsPerGroup[type][columnIndex] = 0;
+            }
+            totalsPerGroup[type][columnIndex] += currentVal;
+        });
+    }
+
+    // Now update totals inputs (Batching DOM writes)
+    let columnsChanged = new Set();
+
+    for (let type in totalsPerGroup) {
+        let totalForType = totalsPerGroup[type];
+
+        for (let dateAsIndex in totalForType) {
+
+            const value = totalForType[dateAsIndex];
+
+            // Update total fields
+            $totals
+                .filter(`[data-total-projection="${type}"][data-column-index="${dateAsIndex}"]`)
+                .val(value).trigger('change');
+
+            // Track which columns changed for equity inputs
+            columnsChanged.add(dateAsIndex);
+        }
+    }
+	console.log(columnsChanged)
+    // Finally, trigger equity inputs ONLY for changed columns (not inside loop!)
+    columnsChanged.forEach((colIndex) => {
+	
+     	   $equityInputs
+            .filter(`[type="hidden"][data-column-index="${colIndex}"]`)
+            .trigger('change');
+    });
+};
+
+$(document).on('change', '.recalculate-mtl-and-odas-loans', _debounce(recalculateMtlAndOdasLoans, 500));
+recalculateMtlAndOdasLoans();
+
+
+let recalculateEquityFunding = function() {
+
+    
+        for (fundedById of ['by-odas', 'by-mtls']) {
+             $('[data-total-projection="' + fundedById + '"]').each(function(index, element) {
+				total  = number_unformat($(element).val());
+				columnIndex = $(element).attr('data-column-index');
+			//	console.log(total,'columnIndex');
+			//	console.log('eee')
+                equityFundingRate = $('.equity-funding-rates-' + fundedById + '[data-column-index="' + columnIndex + '"]').val()
+                let equityFundingValue = equityFundingRate / 100 * total
+                let newLoanFundingValue = (1 - (equityFundingRate / 100)) * total
+                $('input.equity-funding-formatted-value-class-' + fundedById + '[data-column-index="' + columnIndex + '"]').val(number_format(equityFundingValue)).trigger('change')
+                $('input.new-loans-funding-formatted-value-class-' + fundedById + '[data-column-index="' + columnIndex + '"]').val(number_format(newLoanFundingValue)).trigger('change')
+            })
+        }
+
+    };
+    $(document).on('change', '[js-recalculate-equity-funding-value2]', _debounce(recalculateEquityFunding, 300))
+	recalculateEquityFunding();

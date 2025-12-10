@@ -16,8 +16,7 @@ class PerEmployeeFixedAssetsController extends Controller
 		return view('non_banking_services.per-employee-fixed-assets.form', $this->getViewVars($company,$study));
 	}
 	protected function getViewVars(Company $company, Study $study){
-		// $studyMonthsForViews = $study->getStudyDurationPerYearFromIndexesForView();
-		// $yearWithItsIndexes = $study->getOperationDurationPerYearFromIndexes();
+		
 		$newBranchCountPerDateIndex = $study->getNewBranchCountPerDateIndex();
 	
 		return [
@@ -25,14 +24,9 @@ class PerEmployeeFixedAssetsController extends Controller
 			'type'=>'create',
 			'study'=>$study,
 			'model'=>$study ,
-			// 'expenseType'=>HHelpers::getClassNameWithoutNameSpace((new Expense())),
 			'title'=>__('Per Employee Fixed Assets'),
-			// 'monthsWithItsYear' => $study->getMonthsWithItsYear($yearWithItsIndexes),
-			// 'studyMonthsForViews'=>$studyMonthsForViews,
-			// 'financialYearEndMonthNumber'=>$study->getFinancialYearEndMonthNumber(),
 			'fixedAssetType'=>FixedAsset::PER_EMPLOYEE,
 			'storeRoute'=>route('store.per.employee.fixed.assets',['company'=>$company->id,'study'=>$study->id]),
-			// 'storeFundingRoute'=>route('store.per.employee.funding.structure.fixed.assets', ['company'=>$company->id , 'study'=>$study->id]),
 			'newBranchCountPerDateIndex'=>$newBranchCountPerDateIndex,
 			'departmentFormattedForSelect2'=>Department::where('company_id',$company->id)->get()->formattedForSelect(false,'id','name'),
 			

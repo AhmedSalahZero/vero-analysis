@@ -232,6 +232,7 @@ class Expense extends Model
         $hasPortfolioMortgage = in_array('has_portfolio_mortgage', $revenueStreamType) ;
         $hasDirectFactoring = in_array('has_direct_factoring', $revenueStreamType) ;
         $hasMicrofinance = in_array('has_micro_finance', $revenueStreamType) ;
+        $hasConsumerfinance = in_array('has_consumer_finance', $revenueStreamType) ;
         
    //     $revenueStreamTypesWheres = [];
 		
@@ -251,6 +252,8 @@ class Expense extends Model
             $selectedRevenueStreamTypes[] = Study::DIRECT_FACTORING;
         }  if ($hasMicrofinance) {
             $selectedRevenueStreamTypes[] = Study::MICROFINANCE;
+        }if ($hasConsumerfinance) {
+            $selectedRevenueStreamTypes[] = Study::CONSUMER_FINANCE;
         }
 		if(!count($selectedRevenueStreamTypes)){
 			return [
@@ -258,7 +261,6 @@ class Expense extends Model
 				'selectedRevenueStreamTypes'=>[]
 			];
 		}
-   //     $revenueStreamTypesWheres = HStr::generateWhereFromMultipleArrs($revenueStreamTypesWheres, 'OR');
 	        $resultArr = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('revenue_contracts')
             ->where('study_id', $studyId)
             ->when(count($categoryIds), function (Builder $builder) use ($categoryIds) {
