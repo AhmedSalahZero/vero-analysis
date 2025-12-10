@@ -48,7 +48,9 @@ class CashflowStatementReport extends Model
                             , "microfinance_loan_withdrawal_amount"=>'array'
                             , "microfinance_payment"=>'array'
                             , "consumer-finance_payment"=>'array'
-                            , "oda_withdrawals"=>'array'
+                            , "microfinance_oda_withdrawals"=>'array'
+                            , "consumer-finance_oda_withdrawals"=>'array'
+                            , "oda_withdrawals"=>'array' // total_oda_withdrawals
                             , "other_long_term_asset_collections"=>'array'
                             , "portfolio-mortgage_collection"=>'array'
                             , "portfolio-mortgage_loan_withdrawal_amount"=>'array'

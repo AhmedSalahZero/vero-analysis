@@ -5451,7 +5451,6 @@ class Study extends Model
         $totals = [];
         $studyMonthsForViews = $this->getStudyDates();
         $studyMonthsForViews = array_slice($studyMonthsForViews, 0, $this->getViewStudyEndDateAsIndex()+1);
-        $yearWithItsMonths=$this->getYearIndexWithItsMonths();
         $sumKeys = array_keys($studyMonthsForViews);
         $securitizationLoanSchedules = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('securitization_loan_schedules')->where('study_id', $this->id)->get();
         $totalCollectionRevenueAmounts = [];
@@ -5567,7 +5566,7 @@ class Study extends Model
         DB::connection('non_banking_service')->table('cashflow_statement_reports')->where('study_id', $this->id)->update([
             $revenueStreamType.'_collection'=>json_encode($totalInterests['total_schedule_payments']),
             $revenueStreamType.'_payment'=>json_encode($totalBankInterests['total_schedule_payments']),
-            'oda_withdrawals'=>json_encode($odasWithdrawal)
+            $revenueStreamType.'_oda_withdrawals'=>json_encode($odasWithdrawal)
         ]);
         
     }
@@ -5695,10 +5694,27 @@ class Study extends Model
         DB::connection('non_banking_service')->table('cashflow_statement_reports')->where('study_id', $this->id)->update([
             $revenueStreamType.'_collection'=>json_encode($totalInterests['total_schedule_payments']),
             $revenueStreamType.'_payment'=>json_encode($totalBankInterests['total_schedule_payments']),
-            'oda_withdrawals'=>json_encode($odasWithdrawal)
+            $revenueStreamType.'_oda_withdrawals'=>json_encode($odasWithdrawal)
         ]);
+		
+	
+		$this->updateTotalOdaWithdrawals();
         
     }
+	protected function updateTotalOdaWithdrawals()
+	{
+		logger('update');
+		$this->refresh();
+		   $studyMonthsForViews = $this->getStudyDates();
+        $studyMonthsForViews = array_slice($studyMonthsForViews, 0, $this->getViewStudyEndDateAsIndex()+1);
+        $sumKeys = array_keys($studyMonthsForViews);
+		$microfinanceOdaWithdrawals = (array)$this->cashflowStatementReport['microfinance_oda_withdrawals'];
+		$consumerFinanceOdaWithdrawals = (array)$this->cashflowStatementReport['consumer-finance_oda_withdrawals'];
+		$this->cashflowStatementReport->update([
+			'oda_withdrawals'=>HArr::sumAtDates([$microfinanceOdaWithdrawals,$consumerFinanceOdaWithdrawals],$sumKeys)
+		]);
+		
+	}
 	
 	private function calculateConsumerfinanceForType(bool $isPortfolio)
     {
