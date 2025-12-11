@@ -108,7 +108,7 @@ use App\Models\NonBankingService\Study;
                             @foreach($subItems as $subItemId => $subItemArr)
                             @include('non_banking_services.income-statement.multiple.sub_items')
                             @endforeach
-							@if($tableIndex == 0 || $tableIndex == 1)
+							@if($tableIndex == 0 || $tableIndex == 1) 
                             @include('non_banking_services.income-statement.multiple.sub_items',['subItemArr'=>[],'enabled'=>true,'subItemId'=>__('Adjusted')])
 							@endif
 							
