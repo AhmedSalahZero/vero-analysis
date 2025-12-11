@@ -249,10 +249,10 @@ use App\Models\NonBankingService\Study;
 
 
 
-                    {{-- <a href="{{ route('create.consumerfinance.products',['company'=>$company->id]) }}" class="btn w-200px new-record-class new-study-item rounded btn-icon-sm align-self-center">
+                    <a href="{{ route('create.consumerfinance.products',['company'=>$company->id]) }}" class="btn w-200px new-record-class new-study-item rounded btn-icon-sm align-self-center">
                     <i class="fas fa-plus exclude-icon"></i>
-                    {{ __('Consumer Finance Products') }}
-                    </a> --}}
+                   		 {{ __('Consumer Finance Products') }}
+                    </a>
 
 
 

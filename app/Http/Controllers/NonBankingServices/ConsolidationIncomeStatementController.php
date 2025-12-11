@@ -15,7 +15,7 @@ class ConsolidationIncomeStatementController extends Controller
     {
 		$studyIds = $consolidation->study_ids ;
 		// dd($studyIds);
-		$studyIds = [92,92];
+	//	$studyIds = [92,92];
 		$onlyViewVars= true;
 		$subIncomeStatements = [];
 		$mergedResult=[];
@@ -40,8 +40,6 @@ class ConsolidationIncomeStatementController extends Controller
 			 * * subitems in  $mergedResult has not effect ignore them
 			 */
 		}
-		// dd($mergedResult,$subIncomeStatements);
-		// dd($mergedResult,$subIncomeStatements);
         return view('non_banking_services.income-statement.multiple.multi-incomestatement',[
 			'company'=>$company,
 			'studyMonthsForViews'=>$studyMonthsForViews,
