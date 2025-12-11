@@ -390,21 +390,21 @@ use App\Models\NonBankingService\Study;
             </div>
 
 
-		@if(isset($nextButton))
+            @if(isset($nextButton))
             <div class="text-right mt-4 cash-flow-btn">
-					<a href="{{ $nextButton['link'] }}" class="btn btn-primary ">{{ $nextButton['title'] }}</a>
+                <a href="{{ $nextButton['link'] }}" class="btn btn-primary ">{{ $nextButton['title'] }}</a>
+            </div>
+            @endif
+
+
+
+            <!--End:: Tab Content-->
+
+
+
+            <!--End:: Tab Content-->
         </div>
-		@endif
-
-
-
-        <!--End:: Tab Content-->
-
-
-
-        <!--End:: Tab Content-->
     </div>
-</div>
 
 </div>
 

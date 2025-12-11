@@ -29,13 +29,13 @@ class HArr
         }
         return $result;
     }
-    public static function sumAtDates(array $items, array $dates , bool $debug = false )
+    public static function sumAtDates(array $items, array $dates, bool $debug = false)
     {
         $itemsCount = count($items);
         if (!$itemsCount) {
             return [];
         }
-	
+    
         if (!isset($items[0])) {
             throw new Exception('Custom Exception .. First Parameter Must Be Indexes Array That Contains Arrays like [ [] , [] , [] ]');
         }
@@ -903,7 +903,7 @@ class HArr
         }
         return $newItems ;
     }
-	 public static function MultiplyWithNumberIfOnlyPositive(array $items, float $number)
+    public static function MultiplyWithNumberIfOnlyPositive(array $items, float $number)
     {
         $newItems = [];
         foreach ($items as $key=>$value) {
@@ -949,11 +949,11 @@ class HArr
         }
         return $result;
     }
-	public static function slice_from_start_index_and_end_index(array $arr, int $startIndex , $endIndex)
+    public static function slice_from_start_index_and_end_index(array $arr, int $startIndex, $endIndex)
     {
         $result = [];
         foreach ($arr as $currentIndex => $value) {
-            if ($currentIndex >= $startIndex && $currentIndex<= $endIndex ) {
+            if ($currentIndex >= $startIndex && $currentIndex<= $endIndex) {
                 $result[$currentIndex] = $value;
             }
         }
@@ -1189,45 +1189,80 @@ class HArr
         return $result;
 
     }
-	public static function fillMissedKeysByZero(array $items , array $dates , $value = 0 ){
-		$result = [];
-		foreach($dates as $dateAsIndex){
-			$currentValue = $items[$dateAsIndex] ?? $value ;
-			$result[$dateAsIndex] =$currentValue; 
-		}
-		return $result;
-	}
-	public static function zeroIfAtRange(array $items , int $min , int $max ){
-		foreach($items as $dateAsIndex => &$value){
-			if($value >= $min && $value <= $max){
-				$value = 0;
-			}
-		}
-		return $items;
-	}
-	public static function divideTwoArrAtSameIndex(array $firstArr , array $secondArr){
-	$result = [];
-	foreach($firstArr as $index => $value){
-		$secondAtValue = $secondArr[$index]??0;
-		$result[$index] = $secondAtValue ?  $value / $secondAtValue  : 0;
-	}
-	return $result ; 
-}
-	public static function allValuesZeroIfTotalIsLessThanOrEqualZero($calculatedCorporateTaxesPerYear, $ebt):array 
-	{
-		if(array_sum($ebt) <= 0){
-			foreach($calculatedCorporateTaxesPerYear as $dateAsIndex => &$value){
-				$value = 0 ;
-			}
-		}
-		return $calculatedCorporateTaxesPerYear;
-		
-	}
-	public static function sumFormattedArr(array $items){
-		$sum = 0 ;
-		foreach($items as $no){
-			$sum+=number_unformat($no);
-		}
-		return $sum;
-	}
+    public static function fillMissedKeysByZero(array $items, array $dates, $value = 0)
+    {
+        $result = [];
+        foreach ($dates as $dateAsIndex) {
+            $currentValue = $items[$dateAsIndex] ?? $value ;
+            $result[$dateAsIndex] =$currentValue;
+        }
+        return $result;
+    }
+    public static function zeroIfAtRange(array $items, int $min, int $max)
+    {
+        foreach ($items as $dateAsIndex => &$value) {
+            if ($value >= $min && $value <= $max) {
+                $value = 0;
+            }
+        }
+        return $items;
+    }
+    public static function divideTwoArrAtSameIndex(array $firstArr, array $secondArr)
+    {
+        $result = [];
+        foreach ($firstArr as $index => $value) {
+            $secondAtValue = $secondArr[$index]??0;
+            $result[$index] = $secondAtValue ?  $value / $secondAtValue  : 0;
+        }
+        return $result ;
+    }
+    public static function allValuesZeroIfTotalIsLessThanOrEqualZero($calculatedCorporateTaxesPerYear, $ebt):array
+    {
+        if (array_sum($ebt) <= 0) {
+            foreach ($calculatedCorporateTaxesPerYear as $dateAsIndex => &$value) {
+                $value = 0 ;
+            }
+        }
+        return $calculatedCorporateTaxesPerYear;
+        
+    }
+    public static function sumFormattedArr(array $items)
+    {
+        $sum = 0 ;
+        foreach ($items as $no) {
+            $sum+=number_unformat($no);
+        }
+        return $sum;
+    }
+    public  static function deepMergeAndSum($arr1, $arr2)
+    {
+        foreach ($arr2 as $key => $value) {
+
+            // key exists in arr1
+            if (array_key_exists($key, $arr1)) {
+
+                // 1) both values arrays → merge recursively
+                if (is_array($arr1[$key]) && is_array($value)) {
+                    $arr1[$key] = self::deepMergeAndSum($arr1[$key], $value);
+                }
+
+                // 2) both values numeric → sum
+                elseif (is_numeric($arr1[$key]) && is_numeric($value)) {
+                    $arr1[$key] += $value;
+                }
+
+                // 3) if type mismatch or not summable → keep arr1 value
+                else {
+                    // do nothing
+                }
+
+            } else {
+                // key missing in arr1 → copy from arr2
+                $arr1[$key] = $value;
+            }
+        }
+
+        return $arr1;
+    }
+
 }

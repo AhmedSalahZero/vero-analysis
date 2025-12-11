@@ -712,7 +712,9 @@ class IncomeStatementController extends Controller
 		if($onlyViewVars){
 			return [
 				'tableDataFormatted'=>$tableDataFormatted,
-				'resultPerRevenueStreamType'=>$resultPerRevenueStreamType??[]
+				'resultPerRevenueStreamType'=>$resultPerRevenueStreamType??[],
+				'studyMonthsForViews'=>$studyMonthsForViews,
+				'defaultClasses'=>$defaultClasses
 			];
 		}
 		$viewVars = [

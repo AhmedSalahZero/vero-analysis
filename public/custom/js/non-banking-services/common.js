@@ -245,6 +245,7 @@ $(document).on('click', '.add-btn-js', function (e) {
 })
 
 
+
 $(document).on('change', '.recalculate-gr', function () {
 
 

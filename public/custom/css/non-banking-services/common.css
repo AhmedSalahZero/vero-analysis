@@ -1313,3 +1313,6 @@ td > .kt-radio.kt-radio--single {
 {
 		border-color: #4d9afa !important;
 }
+.ml--2{
+	margin-left: -10px !important;
+}
