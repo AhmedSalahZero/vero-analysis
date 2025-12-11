@@ -343,7 +343,6 @@
         clearTimeout(wto);
         wto = setTimeout(() => {
 
-            //    alert("{{ $name_of_selector_label }}")
             if (tryParseJSONObject($(this).val()[0])) {
                 categoriesData = JSON.parse($(this).val()[0]);
             } else {
@@ -356,16 +355,12 @@
 
 
                 if ("{{ isCustomerExceptionalCase($type , $name_of_selector_label) }}") {
-                    // alert('if')
                     getCategories(categoriesData, 'category');
                 } else if ("{{ isCustomerExceptionalForProducts($type , $name_of_selector_label) }}") {
-                    // alert('else if')
                     getProductsForCustomers(categoriesData, 'product_or_service', 'product_or_service');
                 } else if ("{{ isCustomerExceptionalForProductsItems($type , $name_of_selector_label) }}") {
-                    // alert('else if')
                     getProductItemsForCustomers(categoriesData, 'product_item');
                 } else {
-                    // alert('else')
                     getSalesChannales(categoriesData, type_of_data);
 
                 }
@@ -557,7 +552,6 @@
 
 
     function getProductsForCustomers(categories, type_of_data, type) {
-        // alert('q');
         $.ajax({
             type: 'POST'
             , data: {
@@ -571,13 +565,9 @@
             , dataType: 'json'
             , accepts: 'application/json'
         }).done(function(data) {
-            // if($('#data_type').val()  == 'value'){
+           
             var data_type = 'multiple';
-            // }
-            // else{
-            //     var data_type = '';
-            // }
-            // alert(type);
+         
             if (type == 'product_or_service') {
 
                 row = '<select data-live-search="true" data-actions-box="true" name="sales_channels[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select"  ' + data_type + '  required >\n';

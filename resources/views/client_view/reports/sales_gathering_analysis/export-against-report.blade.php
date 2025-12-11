@@ -110,7 +110,6 @@
 
                                             let div = $('<div id="comparing__id"></div>');
                                             $('input[name="start_date"]').closest('.row').after(div);
-                                            // alert($(document).find('#comparing__id').length);
                                             $('#comparing__id').empty();
                                             $('#comparing__id').append(clonedField);
 

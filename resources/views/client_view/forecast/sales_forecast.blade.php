@@ -724,16 +724,10 @@
 
             let oldNewProductsItems = parseFloat($('#number_of_products_field').attr('data-old-value'));
             let newProductsItems = parseFloat($('#number_of_products').val());
-// alert(oldIsChedked);
-// alert(newIsChecked);
-// alert(oldIsChedked != newIsChecked);
-// alert(oldNewProductsItems != newProductsItems);
             if(oldIsChedked != newIsChecked  || oldNewProductsItems != newProductsItems) {
-                // alert('hide')
                 $('#subkit_summary_report_id').addClass('hideit');
             }
             else{
-                // alert('show')
                 $('#subkit_summary_report_id').removeClass('hideit');
             }
 

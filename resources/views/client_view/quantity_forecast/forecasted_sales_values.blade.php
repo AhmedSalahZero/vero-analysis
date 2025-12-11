@@ -379,11 +379,9 @@
             let newProductsItems = parseFloat($('#number_of_products').val());
 
             if(oldIsChedked != newIsChecked  || oldNewProductsItems != newProductsItems) {
-                // alert('hide')
                 $('#subkit_summary_report_id').addClass('hideit');
             }
             else{
-                // alert('show')
                 $('#subkit_summary_report_id').removeClass('hideit');
             }
 

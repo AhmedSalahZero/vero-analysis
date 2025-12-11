@@ -1108,7 +1108,6 @@ tbody td{
                 interval = 1;
                 break;
         }
-        // alert(interval);
 
         let installmentStartDate = getInstallmentStartDate(new Date(start_date_formatted.getTime()), gracePeriod, installment_payment_interval);
         let stepFactor = calcStepFactor(period, interval, new Date(installmentStartDate.getTime()), addMonths(new Date(start_date_formatted.getTime()), (period ? period : 0))); // object
@@ -1526,8 +1525,6 @@ tbody td{
             ${number_format(intresetAmount,2)}
             </td>
             <td class="text-center"> `;
-            // alert(schedulePayment)
-            // alert(intresetAmount)
             principleAmout = parseFloat(schedulePayment) - intresetAmount;
 		
             // principleAmout = data[i].val.InstallmentAmount - intresetAmount ;

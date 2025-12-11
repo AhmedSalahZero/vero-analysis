@@ -2213,7 +2213,6 @@ const isNonBanking = +("{{ hasMiddleware('isNonBankingService') }}");
                 var formData = new FormData(form);
 
                 if ($(form).attr('action') == undefined) {
-                    alert('not action attr for this form');
                     return;
                 }
 		

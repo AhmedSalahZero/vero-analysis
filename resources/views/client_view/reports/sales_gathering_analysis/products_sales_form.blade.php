@@ -141,7 +141,6 @@
     $(document).on('change', '#categoriesData', function() {
 
         if (tryParseJSONObject($(this).val()[0])) {
-            alert($(this).val());
             categoriesData = JSON.parse($(this).val()[0]);
         } else {
             categoriesData = $(this).val();

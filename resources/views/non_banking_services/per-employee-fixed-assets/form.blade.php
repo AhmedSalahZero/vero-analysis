@@ -184,7 +184,6 @@ use App\Models\NonBankingService\Expense;
   
 
     $(function() {
-        // alert($('.reapter-select').length)
         $('.repeater-with-select2').closest('.repeater-class').find('[data-repeater-delete]').trigger('click');
         $('.repeater-with-select2').closest('.repeater-class').find('[data-repeater-create]').trigger('click');
     });

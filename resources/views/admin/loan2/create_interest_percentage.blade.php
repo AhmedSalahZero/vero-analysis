@@ -725,7 +725,6 @@
             )
         ) ? parseFloat($('#step_down_rate').val()) : 0;
         stepRate = stepRate / 100;
-        // alert(stepRate);
 
         let applied_step =
             (fixedType == 'step-up' || fixedType == 'grace_step-up_with_capitalization' ||
@@ -817,7 +816,6 @@
             if (getLoanVal == givenLoanAmount) {
                 break;
             } else if (getLoanVal != 0 && (getLoanVal < givenLoanAmount)) {
-                // alert('minus')
                 operation = '-';
             }
             calcedPrice = pricing;
@@ -871,7 +869,6 @@
                 return item.date == getDateFormatted(new Date(FormattedData.daysCount[index].date))
             });
 
-            // alert('66');
 
             // return ;
             obj.val = {
@@ -917,7 +914,6 @@
             return currentValue + previousValue;
         }, 0);
 
-        // alert(totalGivenInstallment);
 
 
         let flatInterestAmount = ((totalGivenInstallment - givenLoanAmount) / givenLoanAmount) / (period / 12);
@@ -928,11 +924,9 @@
     }
 
 
-    // alert()
 
     function calcIntersetFactor(daysCount, pricing) {
         intersetFactor = [];
-        // alert(daysCount);
         for (let i = 0; i < daysCount.daysCount.length; i++) {
             interset = (pricing / 360) * (daysCount.daysCount[i].daysDiff);
             obj = {};
@@ -1035,8 +1029,6 @@
         counter = 0;
         let stepFactor = [];
 
-        // alert(period)
-        // alert(installment_payment_interval)
         for (let i = 0; i < period; i++) {
             if (i % interval == 0 && i != 0) {
                 counter = counter + 1;
@@ -1084,7 +1076,6 @@
         let loanFactoriesArr = [];
 
         obj = {};
-        // alert(start_date);
 
         obj.date = getDateFormatted((new Date(start_date)));
         obj.loanFactor = 0;
@@ -1097,8 +1088,6 @@
         loanFactoriesArr.push(obj);
 
 
-        // alert(installment_payment_interval);
-        // alert(interval/installment_payment_interval);
 
         for (let i = 0; i <= interval / installment_payment_interval; i++) {
             // firstMonth = new Date(loanFactorStartDate.getTime()) ;
@@ -1109,12 +1098,7 @@
                 return item.date == getDateFormatted(loopDate)
             });
 
-            // let diffInDays = getDifferenceBetweenTwoDatesInDays(firstMonth , secondMonth) ;
-            // if(! searchedInterestFactor){
-            //     alert(end_date_end);
-            //     alert(loopDate);
-            //     break ;
-            // }
+        
 
 
 
@@ -1203,8 +1187,6 @@
         installmentFactorAtEndDate = InstallmentFactor['installmentFactors'].find((item) => {
             return item.date == getDateFormatted(end_date)
         });
-        //    alert(loanFactoryAtEndDate.loanFactor)
-        // alert(loanAmount *(installmentFactorAtEndDate.installmentFactor * -1 ) / loanFactoryAtEndDate.loanFactor)
         return loanAmount * (installmentFactorAtEndDate.installmentFactor * -1) / loanFactoryAtEndDate.loanFactor;
     }
 
@@ -1229,10 +1211,6 @@
             if (!stepFactorOfDate) {
                 break
             } else {
-                //    alert(i);
-                //    alert(period);
-                //    alert(interval);
-                // alert(i % period/interval);
                 if ((i % (interval / installment_payment_interval)) == 0 && i != 0) {
                     loanAmount = loanAmount * (parseFloat(Math.pow((1 + parseFloat(stepRate)), 1)))
                 } else {
@@ -1323,8 +1301,6 @@
             ${number_format(intresetAmount,2)}
             </td>
             <td> `;
-            // alert(schedulePayment)
-            // alert(intresetAmount)
             principleAmout = parseFloat(schedulePayment) - intresetAmount;
             // principleAmout = data[i].val.InstallmentAmount - intresetAmount ;
             totalPrincpleAmount = totalPrincpleAmount + principleAmout;

@@ -30,7 +30,6 @@ function updateField(route, parent = null) {
                         } else {
                             if (res.isFullQuerySelector) {
 
-                                // alert()
                                 if (res.addNew != '0') {
 
                                     $(res.append_id).find('option:not(.add-new-item)').remove();

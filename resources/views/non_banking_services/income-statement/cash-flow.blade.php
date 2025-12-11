@@ -431,7 +431,6 @@ use App\Models\NonBankingService\Study;
 <script>
     $(function() {
         const studyDuration = $('#study-duration').attr('data-duration');
-        //alert(studyDuration)
         if (studyDuration > 1) {
             $('.collapse-before-me').trigger('click')
         }

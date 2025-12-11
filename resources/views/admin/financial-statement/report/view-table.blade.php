@@ -376,7 +376,6 @@ $tableId = 'kt_table_1';
                                                 , "text": '<svg style="margin-right:10px;position:relative;" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" class="kt-svg-icon"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><rect id="bound" x="0" y="0" width="24" height="24"/><path d="M5,4 L19,4 C19.2761424,4 19.5,4.22385763 19.5,4.5 C19.5,4.60818511 19.4649111,4.71345191 19.4,4.8 L14,12 L14,20.190983 C14,20.4671254 13.7761424,20.690983 13.5,20.690983 C13.4223775,20.690983 13.3458209,20.6729105 13.2763932,20.6381966 L10,19 L10,12 L4.6,4.8 C4.43431458,4.5790861 4.4790861,4.26568542 4.7,4.1 C4.78654809,4.03508894 4.89181489,4 5,4 Z" id="Path-33" fill="#000000"/></g></svg>' + '{{ __("Interval View") }}'
                                                 , 'className': 'btn btn-bold btn-secondary filter-table-btn ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away'
                                                 , "action": function() {
-                                                    // alert();
                                                     $('#filter_form-for-' + tableId.replace('#', '')).toggleClass('d-none');
                                                 }
                                             }
@@ -776,8 +775,6 @@ $tableId = 'kt_table_1';
                                     , contentType: false
                                     , processData: false
                                     , success: function(res) {
-                                        // alert('good')
-                                        // alert('reload1')
 
                                         $('.main-table-class').DataTable().ajax.reload(null, false)
                                         if (res.status) {
@@ -820,7 +817,6 @@ $tableId = 'kt_table_1';
                                     , contentType: false
                                     , processData: false
                                     , success: function(res) {
-                                        // alert('reload47')
 
                                         $('.main-table-class').DataTable().ajax.reload(null, false)
                                         if (res.status) {
@@ -869,9 +865,7 @@ $tableId = 'kt_table_1';
                                     , contentType: false
                                     , processData: false
                                     , success: function(res) {
-                                        // alert('good')
                                         $(this).prop('disabled', false);
-                                        // alert('reload8')
 
                                         $('.main-table-class').DataTable().ajax.reload(null, false)
                                         if (res.status) {
@@ -1158,7 +1152,6 @@ $tableId = 'kt_table_1';
                                     , contentType: false
                                     , processData: false
                                     , success: function(res) {
-                                        // alert('reload2')
 
                                         $('.main-table-class').DataTable().ajax.reload(null, false)
 
