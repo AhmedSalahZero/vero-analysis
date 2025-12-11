@@ -528,10 +528,10 @@ class Study extends Model
     public function getOperationDurationPerYearFromIndexes()
     {
         $datesAsStringAndIndex = $this->getDatesAsStringAndIndex();
-        $datesIndexWithYearIndex = App('datesIndexWithYearIndex');
-        $yearIndexWithYear = App('yearIndexWithYear');
-        $dateIndexWithDate = App('dateIndexWithDate');
-        $dateWithMonthNumber = App('dateWithMonthNumber');
+        $datesIndexWithYearIndex = $this->getDatesIndexWithYearIndex();
+        $yearIndexWithYear = $this->getYearIndexWithYear();
+        $dateIndexWithDate = $this->getDateIndexWithDate();
+        $dateWithMonthNumber = $this->getDateWithMonthNumber();
         return $this->getOperationDurationPerYear($datesAsStringAndIndex, $datesIndexWithYearIndex, $yearIndexWithYear, $dateIndexWithDate, $dateWithMonthNumber);
     }
     public function getActiveTab():string
@@ -1869,6 +1869,7 @@ class Study extends Model
                 $this->incomeStatementReport->update([
                     'corporate_taxes'=>$calculateCorporateTaxes,
                 ]);
+				
                 $cashflowStatement = $this->cashflowStatementReport;
             }
             $cashInBeforeOdasAndExtraCapital = $openingCash;
@@ -2162,10 +2163,10 @@ class Study extends Model
     public function getStudyDurationPerYearFromIndexesForView()
     {
         $datesAsStringAndIndex = $this->getDatesAsStringAndIndex();
-        $datesIndexWithYearIndex = App('datesIndexWithYearIndex');
-        $yearIndexWithYear = App('yearIndexWithYear');
-        $dateIndexWithDate = App('dateIndexWithDate');
-        $dateWithMonthNumber = App('dateWithMonthNumber');
+        $datesIndexWithYearIndex = $this->getDatesIndexWithYearIndex() ;
+        $yearIndexWithYear = $this->getYearIndexWithYear();
+        $dateIndexWithDate = $this->getDateIndexWithDate();
+        $dateWithMonthNumber = $this->getDateWithMonthNumber();
         return $this->getStudyDurationPerMonth($datesAsStringAndIndex, $datesIndexWithYearIndex, $yearIndexWithYear, $dateIndexWithDate, $dateWithMonthNumber, true, false);
         
     }
@@ -2709,6 +2710,7 @@ class Study extends Model
         return $datesAndIndexesHelpers['dateIndexWithDate'];
         ;
     }
+	
     public function getMonthIndexWithMonthNumber():array
     {
         $result = [];

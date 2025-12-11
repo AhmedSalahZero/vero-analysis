@@ -6,12 +6,9 @@ use App\Http\Controllers\LetterOfGuaranteeIssuanceController;
 use App\Http\Controllers\ReadOdooInvoices;
 use App\Models\Company;
 use App\Models\FinancialStatement;
-use App\Models\LetterOfGuaranteeIssuance;
+
 use App\Models\MoneyPayment;
-use App\Models\MoneyReceived;
-use App\Models\NonBankingService\Study;
-use App\Models\NonBankingService\TestCashFlowStatement;
-use App\Models\NonBankingService\TestIncomeStatement;
+
 use App\Models\Partner;
 use App\Models\Settlement;
 use App\Models\SupplierInvoice;
@@ -93,10 +90,10 @@ class TestCommand extends Command
 		// $company = $letterOfGuaranteeIssuance->company;
 		// $source = 'lg-facility';
 		// (new LetterOfGuaranteeIssuanceController)->backToRunningStatus($company,new Request , $letterOfGuaranteeIssuance,$source);
-	// 	$fetch = (new OdooPayment(Company::find(92)));
-	// $x = 	$fetch->fetchData(
-	// 			'account.bank.statement.line',[],[[['id','!=',0],['payment_ref','=','Mahmoud']]]
-	// 			);
+		$fetch = (new OdooPayment(Company::find(92)));
+	$x = 	$fetch->fetchData(
+				'account.bank.statement.line',[],[[['id','!=',0],['payment_ref','=','Mahmoud']]]
+				);
 	// $lastIndex = count($x) -1 ;
 	// dd($x[$lastIndex]);
 	// dd($x);

@@ -188,7 +188,7 @@ class OdooService
 			$invoiceCurrency = $invoice['currency_id'][1];
 			$isSupplier = $invoice['move_type'] == 'in_invoice';
 			$isCustomer = $invoice['move_type'] == 'out_invoice';
-			$partnerId = Partner::handlePartnerForOdoo($odooPartnerId ,$odooPartnerName,$isSupplier ,$isCustomer,false,false,$companyId  );
+			$partnerId = Partner::handlePartnerForOdoo($odooPartnerId ,$odooPartnerName,$isCustomer,$isSupplier ,false,false,$companyId  );
 			if($isCustomer){
 				$invoiceId =  CustomerInvoice::createForOdoo($odooInvoiceId,$partnerId,$odooPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$withholdAmountInMainCurrency,$collectedAmount,$collectedAmountInMainCurrency,$exchangeRate,$soNumber,$companyId);
 			}elseif($isSupplier){
@@ -233,7 +233,7 @@ class OdooService
 			}
 			$currentOdooCustomerName = $projectArr['partner_id'][1] ;
 			$code = Contract::generateRandomContract($companyId,$currentOdooCustomerName,$startDate,$modelType);
-			$partnerId = Partner::handlePartnerForOdoo($currentOdooCustomerId ,$currentOdooCustomerName,0, 1,false,false,$companyId  );
+			$partnerId = Partner::handlePartnerForOdoo($currentOdooCustomerId ,$currentOdooCustomerName,1,0,false,false,$companyId  );
 			$oldProject = Contract::where('odoo_id',$currentOdooProjectId)->first();
 			
 			$projectFormatted = [
@@ -599,16 +599,17 @@ class OdooService
             }
 
             // Read partner details with role-related fields
-			$filters = [
-				[
-					array('write_date', '>=', $startDate),
-					array('write_date', '<=', $endDate),
-					array('memo','=','BILL/2025/12/0004')
-				]
-			];
-			$partners = $this->fetchData('res.partner',$fields,$filters);
-            $partners = $this->execute('res.partner', 'read', [$partnerIds, $fields]);
+			// $filters = [
+			// 	[
+			// 		array('write_date', '>=', $startDate),
+			// 		array('write_date', '<=', $endDate),
+			// 	]
+			// ];
+			// $partners = $this->fetchData('res.partner',$fields,$filters);
+           $partners = $this->execute('res.partner', 'read', [$partnerIds, $fields]);
 			unset($partners[0]); // هنشيل اول واحد لانه بيكون الادمن
+			
+			
             // Check for employee role by searching hr.employee
             // Add role information to each partner
 		
@@ -622,6 +623,7 @@ class OdooService
 				if(!$isEmployee && !$isCustomer && !$isSupplier){
 					$isOtherPartner = true;
 				}
+				
 				Partner::handlePartnerForOdoo($currentOdooCustomerId ,$currentOdooCustomerName,$isCustomer,$isSupplier,$isEmployee,$isOtherPartner,$companyId  );
             }
             return $partners;

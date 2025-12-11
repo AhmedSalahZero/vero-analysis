@@ -655,7 +655,6 @@ use App\Models\NonBankingService\Study;
                             @php
                             $currentLoanTotalPerYear = [];
                             @endphp
-
                             @foreach ($models[$currentType] as $index=>$model)
 
                             <tr data-repeat-formatting-decimals="0" data-repeater-style>
@@ -681,7 +680,7 @@ use App\Models\NonBankingService\Study;
                                 <td>
                                     <div class="d-flex align-items-center flex-column " style="gap:10px;">
                                         <div class="d-flex mr-auto" style="gap:10px;">
-                                            <a href="{{ route('view.non.banking.forecast.income.statement',['company'=>$company->id,'study'=>$model->id]) }}" class="btn btn-md-width btn-1-bg btn-sm btn-brand btn-pill">{{ __('Income Statement') }}</a>
+                                            <a href="{{ route('view.non.banking.consolidation.income.statement',['company'=>$company->id,'consolidation'=>$model->id]) }}" class="btn btn-md-width btn-1-bg btn-sm btn-brand btn-pill">{{ __('Income Statement') }}</a>
                                             <a href="{{ route('balance.sheet.result',['company'=>$company->id,'study'=>$model->id]) }}" class="btn btn-md-width btn-2-bg btn-sm btn-brand btn-pill">{{ __('Balance Sheet') }}</a>
                                         </div>
                                         <div class="d-flex mr-auto" style="gap:10px;">

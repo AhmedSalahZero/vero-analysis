@@ -223,57 +223,71 @@ class Partner extends Model
 	public static function findByName(string $name,int $companyId){
 		return self::where('name',$name)->where('is_tax',0)->where('company_id',$companyId)->first();
 	}
-	public static function handlePartnerForOdoo($odooPartnerId ,$odooPartnerName,$isSupplier ,$isCustomer,$isEmployee,$isOtherPartner,$companyId  ):int
+	public static function handlePartnerForOdoo($odooPartnerId ,$odooPartnerName,$isCustomer,$isSupplier ,$isEmployee,$isOtherPartner,$companyId  ):int
 	{
 			$partner = Partner::findByOdooId($odooPartnerId,$companyId);
-			if(is_null($partner)){
-				$partner = Partner::findByName($odooPartnerName,$companyId);
-				if($partner){
-					$oldIsCustomer = $partner->is_customer;
-					$oldIsSupplier = $partner->is_supplier;
-					$oldIsEmployee = $partner->is_employee;
-					$oldIsOtherPartner = $partner->is_other_partner;
-					$partner->update([
-						'odoo_id'=>$odooPartnerId,
-						'is_customer'=>$oldIsCustomer?:$isCustomer,
-						'is_supplier'=>$oldIsSupplier?:$isSupplier,
-						'is_employee'=>$oldIsEmployee?:$isEmployee,
-						'is_other_partner'=>$oldIsOtherPartner?:$isOtherPartner,
-					]);
-					return $partner->id;
-				}
-			}
+			// if(is_null($partner)){
+			// 	// $partner = Partner::findByName($odooPartnerName,$companyId);
+			// 	// if($partner){
+			// 		// $oldIsCustomer = $partner->is_customer;
+			// 		// $oldIsSupplier = $partner->is_supplier;
+			// 		// $oldIsEmployee = $partner->is_employee;
+			// 		// $oldIsOtherPartner = $partner->is_other_partner;
+			// 		$partner->update([
+			// 			'odoo_id'=>$odooPartnerId,
+			// 			'is_customer'=>$isCustomer,
+			// 			'is_supplier'=>$isSupplier,
+			// 			'is_employee'=>$isEmployee,
+			// 			'is_other_partner'=>$isOtherPartner,	
+						
+			// 			// 'is_customer'=>$oldIsCustomer?:$isCustomer,
+			// 			// 'is_supplier'=>$oldIsSupplier?:$isSupplier,
+			// 			// 'is_employee'=>$oldIsEmployee?:$isEmployee,
+			// 			// 'is_other_partner'=>$oldIsOtherPartner?:$isOtherPartner,
+			// 		]);
+			// 		return $partner->id;
+			// 	// }
+			// }
 			if(is_null($partner)){
 				$partner = Partner::createNewForOdoo($odooPartnerId,$odooPartnerName,$companyId,$isCustomer,$isSupplier,$isEmployee,$isOtherPartner);
-			}
-			if($isSupplier){
+			}else{
 				$partner->update([
-					'is_supplier'=>1 ,
+					'name'=>$odooPartnerName,
 					'odoo_id'=>$odooPartnerId,
-					'name'=>$odooPartnerName
+					'is_customer'=>$isCustomer,
+					'is_supplier'=>$isSupplier ,
+					'is_employee'=>$isEmployee,
+					'is_other_partner'=>$isOtherPartner,
 				]);
 			}
-			if($isCustomer){
-				$partner->update([
-					'is_customer'=>1 ,
-					'odoo_id'=>$odooPartnerId,
-					'name'=>$odooPartnerName
-				]);
-			}
-			if($isEmployee){
-				$partner->update([
-					'is_employee'=>1 ,
-					'odoo_id'=>$odooPartnerId,
-					'name'=>$odooPartnerName
-				]);
-			}
-			if($isOtherPartner){
-				$partner->update([
-					'is_other_partner'=>1 ,
-					'odoo_id'=>$odooPartnerId,
-					'name'=>$odooPartnerName
-				]);
-			}
+			// if($isSupplier){
+			// 	$partner->update([
+			// 		'is_supplier'=>1 ,
+			// 		'odoo_id'=>$odooPartnerId,
+			// 		'name'=>$odooPartnerName
+			// 	]);
+			// }
+			// if($isCustomer){
+			// 	$partner->update([
+			// 		'is_customer'=>1 ,
+			// 		'odoo_id'=>$odooPartnerId,
+			// 		'name'=>$odooPartnerName
+			// 	]);
+			// }
+			// if($isEmployee){
+			// 	$partner->update([
+			// 		'is_employee'=>1 ,
+			// 		'odoo_id'=>$odooPartnerId,
+			// 		'name'=>$odooPartnerName
+			// 	]);
+			// }
+			// if($isOtherPartner){
+			// 	$partner->update([
+			// 		'is_other_partner'=>1 ,
+			// 		'odoo_id'=>$odooPartnerId,
+			// 		'name'=>$odooPartnerName
+			// 	]);
+			// }
 			return $partner->id ;
 	}
 	public static function createNewForOdoo(int $id,string $partnerName,int $companyId,int $isCustomer,int $isSupplier,int $isEmployee,int $isOtherPartner){

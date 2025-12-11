@@ -11,8 +11,6 @@ use App\Models\NonBankingService\Expense;
 use App\Models\NonBankingService\Manpower;
 use App\Models\NonBankingService\SecuritizationLoanSchedule;
 use App\Models\NonBankingService\Study;
-use Carbon\Carbon;
-use Exception;
 use Illuminate\Support\Facades\DB;
 
 class IncomeStatementController extends Controller
@@ -20,15 +18,14 @@ class IncomeStatementController extends Controller
     public function index(Company $company, Study $study,$onlyViewVars = false )
     {
 		$study->recalculateCashflowStatement();
-        // $start = microtime(true);
-        $dateIndexWithDate = app('dateIndexWithDate');
+		$dateIndexWithDate = $study->getDateIndexWithDate();
         $formattedExpenses = [];
         $formattedResult = [];
         $salesRevenuePerTypes = [];
         $yearWithItsIndexes = $study->getOperationDurationPerYearFromIndexes();
         $monthsWithItsYear = $study->getMonthsWithItsYear($yearWithItsIndexes) ;
         $tableDataFormatted = [];
-			$yearIndexWithYear = app('yearIndexWithYear');
+		$yearIndexWithYear = $study->getYearIndexWithYear();
         $expenseMainTitlesMapping = getExpenseTypes();
         $loanSchedulePayments = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->selectRaw('portfolio_loan_type,revenue_stream_type,interestAmount,securitization_date_index,endBalance')->where('study_id', $study->id)->get()->toArray();
         $defaultNumericInputClasses = [
@@ -150,12 +147,6 @@ class IncomeStatementController extends Controller
         $tableDataFormatted[1]['sub_items'][$existingPortfolioInterestExpenseTitle]['data'] = $totalInterestExpense;
         $tableDataFormatted[1]['sub_items'][$existingPortfolioInterestExpenseTitle]['year_total'] = HArr::sumPerYearIndex($totalInterestExpense, $yearWithItsMonths);
     
-		
-		// $totalLongTermLoans = $incomeStatementReport ? $incomeStatementReport->existing_loans_interests_expense : [];
-        // $tableDataFormatted[1]['sub_items'][$existingLongTermLoanInterestTitle]['data'] = $totalLongTermLoans;
-        // $tableDataFormatted[1]['sub_items'][$existingLongTermLoanInterestTitle]['year_total'] = HArr::sumPerYearIndex($totalLongTermLoans, $yearWithItsMonths);
-    
-		
 		
         $tableDataFormatted[$grossProfitOrderIndex]['main_items']['gross-profit']['options']['title'] = __('Gross Profit');
         $tableDataFormatted[$grossProfitOrderIndex]['main_items']['% Of Revenue']['options']['title'] = __('% Of Revenue');
