@@ -130,6 +130,7 @@ class HDate
 		return $datesAsIndexString[$nextIndex]??null;
 	}
 	public static function calculateDaysCountAtEnd(array $items,int $intervalValue,int $currentDaysCount = null):array{
+		
 		$currentDayCount = 0 ; 
 		$dayCounts = [];
 		$secondDate = null ;

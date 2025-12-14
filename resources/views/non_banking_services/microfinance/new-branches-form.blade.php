@@ -489,7 +489,6 @@ $months = $study->getMicrofinanceMonths() ;
                                             @endphp
 
 
-
                                             @php
                                             $currentModalId = 'current-modal-id'.($columnIndex+1).$product->id
                                             @endphp
@@ -573,6 +572,9 @@ $months = $study->getMicrofinanceMonths() ;
 
 
                                     </tr>
+									
+									 @include('non_banking_services.microfinance._setup-fees-trs')
+									 
                                     @endforeach
 
 

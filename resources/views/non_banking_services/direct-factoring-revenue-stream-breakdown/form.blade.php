@@ -721,7 +721,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
                                 </tr>
 
-@include('loan-structure-trs')
+							@include('loan-structure-trs')
 
 
 

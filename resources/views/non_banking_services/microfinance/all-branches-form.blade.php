@@ -391,7 +391,7 @@ $months = $study->getMicrofinanceMonths() ;
                                         <td class="td-classes">
                                             <div>
 
-                                                <input value="{{ $product->getName() }}" disabled="" class="form-control text-left min-w-300" type="text">
+                                                <input  value="{{ $product->getName() }}" disabled="" class="form-control text-left min-w-300" type="text">
                                             </div>
 
                                         </td>
@@ -403,24 +403,14 @@ $months = $study->getMicrofinanceMonths() ;
                                         @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                         <td data-product-id="{{ $product->id }}">
-
-
                                             @php
                                             $currentVal = $subModel ? $subModel->getFlatRateAtYearOrMonthIndex($yearOrMonthAsIndex) : 0;
                                             $currentVal = $isByBranch ? $productMix->getFlatRateAtYearOrMonthIndex($yearOrMonthAsIndex) : $currentVal;
-
                                             @endphp
-
-
-
                                             @php
                                             $currentModalId = 'current-modal-id'.($columnIndex+1) . $product->id
                                             @endphp
                                             <x-repeat-with-calc :removeThreeDots="$isByBranch" :readonly="$isByBranch" :currentModalId="$currentModalId" :showIcon="true" :numberFormatDecimals="2" :formattedInputClasses="'calcField flat-rate-input'" :mark="'%'" :removeCurrency="true" :currentVal="number_format($currentVal,1)" :classes="''" :is-percentage="true" :name="'microfinanceProductSalesProjects['.$product->id.'][flat_rates]['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-with-calc>
-                                            {{-- <x-repeat-with-calc :currentModalId="$currentModalId" :showIcon="true" :numberFormatDecimals="2" :formattedInputClasses="'calcField flat-rate-input'" :mark="'%'" :removeThreeDots="false" :removeCurrency="true" :currentVal="number_format($currentVal,1)" :classes="''" :is-percentage="true" :name="'flat_rates['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-with-calc> --}}
-
-
-
 
                                             <div class="modal fade " id="{{ $currentModalId }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-md modal-dialog-centered" role="document">
@@ -496,6 +486,24 @@ $months = $study->getMicrofinanceMonths() ;
 
 
                                     </tr>
+									
+									
+									
+									
+									
+									
+									
+									
+									
+									
+									
+									
+									
+									
+									
+									 @include('non_banking_services.microfinance._setup-fees-trs')
+									
+									
                                     @endforeach
 
 
@@ -553,19 +561,13 @@ $months = $study->getMicrofinanceMonths() ;
                             @endphp
 
                             <tr data-repeater-style>
-
-
                                 <input type="hidden" name="microfinanceLoanOfficerCases[{{ $currentIndex }}][id]" value="{{ isset($subModel) ? $subModel->id : 0 }}">
                                 <input type="hidden" name="microfinanceLoanOfficerCases[{{ $currentIndex }}][type]" value="{{ $branchPlanningBaseType }}">
                                 <input type="hidden" name="microfinanceLoanOfficerCases[{{ $currentIndex }}][company_id]" value="{{ $company->id }}">
-
-
                                 <td>
-                                    @php
-                                    $currentVal = $subModel ? $subModel->getExistingCount() : 0;
-                                    // $product->name
-                                    @endphp
-
+										@php
+										$currentVal = $subModel ? $subModel->getExistingCount() : 0;
+										@endphp
                                     <x-repeat-right-dot-inputs :formattedInputClasses="'min-w-90'" :numberFormatDecimals="0" :removeThreeDots="true" :removeCurrency="true" :currentVal="number_format($currentVal,0)" :classes="'only-greater-than-zero-or-equal-allowed'" :is-percentage="false" :name="'microfinanceLoanOfficerCases['.$currentIndex.'][existing_count]'" :columnIndex="-1"></x-repeat-right-dot-inputs>
                                 </td>
 
@@ -577,8 +579,6 @@ $months = $study->getMicrofinanceMonths() ;
                                 $columnIndex = 0 ;
                                 @endphp
                                 @for($i = 0 ; $i<= $months ; $i++) @php $currentVal=isset($subModel) ? $subModel->getHiringAtYearOrMonthIndex($i) : 0 ;
-                                    // $currentVal=isset($subModel) ? $subModel->getExistingLoanCasesAtYearOrMonthIndex($yearOrMonthAsIndex) : 0 ;
-
                                     @endphp
                                     <td>
                                         <x-repeat-right-dot-inputs :numberFormatDecimals="0" :multiple="true" :removeCurrency="true" :name="'microfinanceLoanOfficerCases['.$currentIndex.'][hiring]['.$i.']'" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>

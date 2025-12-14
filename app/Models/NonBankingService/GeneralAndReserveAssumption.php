@@ -41,12 +41,10 @@ class  GeneralAndReserveAssumption extends Model
 				if($generalAndReserveAssumption->isDirty('cbe_lending_corridor_rates') || $generalAndReserveAssumption->isDirty('bank_lending_margin_rates')){
 					
 					
-					// $study->recalculateAllRevenuesLoans(new Request);
+					$study->recalculateAllRevenuesLoans(new Request);
 					
 					
-					/**
-					 * ! Recalculate  Microfinance Bank Loans
-					 */
+					
 					
 					
 					

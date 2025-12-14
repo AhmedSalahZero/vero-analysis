@@ -1579,6 +1579,7 @@ class Study extends Model
         $this->storeFixedLoans($request, Study::IJARA, 'ijaraMortgageBreakdowns', $isSensitivity);
         $this->recalculatePortfolioMortgage($request);
         $this->calculateMicrofinanceLoans($request);
+        $this->calculateConsumerfinanceLoans($request);
         
         
         
@@ -5572,8 +5573,12 @@ class Study extends Model
         ]);
         
     }
+	// private function generateDecreasingRate(int $startDateAsIndex){
+	// 	foreach($this->flat_rates)
+	// }
     private function calculateMicrofinanceForType(bool $isPortfolio)
     {
+		$daysCount = 30;
 		$productColumnName  = 'microfinance_product_id';
         $totalInterests=[];
         $totalSchedulePayments=[];
@@ -5586,7 +5591,7 @@ class Study extends Model
         $microfinanceSalesProjects  = $isPortfolio ? $this->microfinanceProductSalesProjects : $this->microfinanceProductSalesProjects->where('funded_by', 'by-mtls');
         $eclAndNewPortfolioFundingRate = $this->getEclAndNewPortfolioFundingRatesForStreamType(Study::MICROFINANCE);
         $eclAndNewPortfolioFundingRates = $eclAndNewPortfolioFundingRate->new_loans_funding_rates['by-mtls']??[];
-        $microfinanceSalesProjects->each(function (MicrofinanceProductSalesProject $microfinanceProductSalesProject) use ($isPortfolio, &$portfolioLoans, $operationDates, &$totalPortfolioEndBalance, $dateWithDateIndex, $dateIndexWithDate, $eclAndNewPortfolioFundingRates, &$totalInterests, &$totalSchedulePayments, &$totalEndBalances,$productColumnName) {
+        $microfinanceSalesProjects->each(function (MicrofinanceProductSalesProject $microfinanceProductSalesProject) use ($isPortfolio, &$portfolioLoans, $operationDates, &$totalPortfolioEndBalance, $dateWithDateIndex, $dateIndexWithDate, $eclAndNewPortfolioFundingRates, &$totalInterests, &$totalSchedulePayments, &$totalEndBalances,$productColumnName,$daysCount) {
             $microfinanceProductSalesProject = $microfinanceProductSalesProject->refresh();
             $tenor  = $microfinanceProductSalesProject->tenor ;
             $productId  = $microfinanceProductSalesProject->{$productColumnName} ;
@@ -5594,22 +5599,25 @@ class Study extends Model
             $decreasingRates  = $microfinanceProductSalesProject->decrease_rates ;
             $baseRatesPerMonths = [];
             $isMonthlyStudy = $this->isMonthlyStudy();
-            $operationDurationPerYear = $this->getOperationDurationPerYearFromIndexes();
-            foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
-                foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
-                    $yearOrMonthIndex = $this->isMonthlyStudy() ? $monthIndex : $yearIndex;
-                    $baseRatesPerMonths[Carbon::make($dateIndexWithDate[$monthIndex])->format('Y-m-d')] = $decreasingRates[$yearOrMonthIndex];
-                }
-            }
+         //   $operationDurationPerYear = $this->getOperationDurationPerYearFromIndexes();
+            // foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
+            //     foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
+            //         $yearOrMonthIndex = $this->isMonthlyStudy() ? $monthIndex : $yearIndex;
+            //         $baseRatesPerMonths[Carbon::make($dateIndexWithDate[$monthIndex])->format('Y-m-d')] = ;
+            //     }
+            // }
             $rates = [];
             if ($isPortfolio) {
-                $rates = $baseRatesPerMonths;
+          //      $rates = $baseRatesPerMonths;
             } else {
                 $rates = $this->generalAndReserveAssumption->getBaseRatesPerMonths();
                 
             }
-           
+         //   dd($baseRatesPerMonths);
             foreach ($monthlyPortfolioLoanAmounts as $loanStartDateAsIndex => $monthlyLoanAmount) {
+				if($isPortfolio){
+					$rates = $microfinanceProductSalesProject->generateDecreasingRate($loanStartDateAsIndex);
+				}
                 $yearOrMonthIndex = $isMonthlyStudy ? $loanStartDateAsIndex : $this->getYearIndexFromDateIndex($loanStartDateAsIndex);
                 $fundingRate = ($eclAndNewPortfolioFundingRates[$yearOrMonthIndex]??0) /100 ;
                 $marginRate=  $isPortfolio ? 0 : $this->generalAndReserveAssumption->getBankLendingMarginRatesAtYearOrMonthIndex($yearOrMonthIndex);
@@ -5617,18 +5625,25 @@ class Study extends Model
                 $monthlyLoanAmount = $isPortfolio ? $monthlyLoanAmount : $monthlyLoanAmount* $fundingRate ;
                 $loanStartDateAsString = $this->getDateFromDateIndex($loanStartDateAsIndex);
             
-             
+          
                 $currentPortfolioLoans = [];
                 if ($isPortfolio) {
                     $baseRate = is_array($rates) ?  ($rates[$loanStartDateAsString]??0) : $rates;
-                    $currentPortfolioLoans = (new CalculateFixedLoanAtBeginningService)->__calculate([], -1, 'normal', $loanStartDateAsString, $monthlyLoanAmount, $baseRate, $marginRate, $tenor, 'monthly', 1, null, 0, null, 0, $loanStartDateAsIndex);
+                    // $currentPortfolioLoans = (new CalculateFixedLoanAtBeginningService)->__calculate([], -1, 'normal', $loanStartDateAsString, $monthlyLoanAmount, $baseRate, $marginRate, $tenor, 'monthly', 1, null, 0, null, 0, $loanStartDateAsIndex);
+					$currentPortfolioLoans = (new CalculateFixedLoanAtEndService)->__calculateBasedOnDiffBaseRates($rates, 'normal', $loanStartDateAsString, $monthlyLoanAmount, $marginRate, $tenor, 'monthly', 1, 0, null, 0, null, 0, $loanStartDateAsIndex, $dateWithDateIndex, $dateIndexWithDate,$daysCount);
+					if(isset($currentPortfolioLoans['interestAmount'][0])){
+						$currentPortfolioLoans['interestAmount'][0] = $monthlyLoanAmount * $microfinanceProductSalesProject->getSetupFeesRateAtYearOrMonthIndex($loanStartDateAsIndex)/100;
+						$currentPortfolioLoans['schedulePayment'][0] = $monthlyLoanAmount * $microfinanceProductSalesProject->getSetupFeesRateAtYearOrMonthIndex($loanStartDateAsIndex)/100;
+					}
+
+					
                 } else {
              
                     if (is_array($rates)) {
-                        $currentPortfolioLoans = (new CalculateFixedLoanAtBeginningService)->__calculateBasedOnDiffBaseRates($rates, 'normal', $loanStartDateAsString, $monthlyLoanAmount, $marginRate, $tenor, 'monthly', 1, 0, null, 0, null, 0, $loanStartDateAsIndex, $dateWithDateIndex, $dateIndexWithDate);
+                        $currentPortfolioLoans = (new CalculateFixedLoanAtEndService)->__calculateBasedOnDiffBaseRates($rates, 'normal', $loanStartDateAsString, $monthlyLoanAmount, $marginRate, $tenor, 'monthly', 1, 0, null, 0, null, 0, $loanStartDateAsIndex, $dateWithDateIndex, $dateIndexWithDate);
                     } else {
                         $baseRate = $rates;
-                        $currentPortfolioLoans = (new CalculateFixedLoanAtBeginningService)->__calculate([], -1, 'normal', $loanStartDateAsString, $monthlyLoanAmount, $baseRate, $marginRate, $tenor, 'monthly', 1, null, 0, null, 0, $loanStartDateAsIndex);
+                        $currentPortfolioLoans = (new CalculateFixedLoanAtEndService)->__calculate([], -1, 'normal', $loanStartDateAsString, $monthlyLoanAmount, $baseRate, $marginRate, $tenor, 'monthly', 1, null, 0, null, 0, $loanStartDateAsIndex);
                     }
                 }
                 $finalResult = isset($currentPortfolioLoans['final_result']) ?  $currentPortfolioLoans['final_result'] : $currentPortfolioLoans;
@@ -6111,6 +6126,7 @@ class Study extends Model
         // $currentTabIndex++;
         
     }
+	
     
     // public function cashFlowForExtraCapitalInjections()
     // {

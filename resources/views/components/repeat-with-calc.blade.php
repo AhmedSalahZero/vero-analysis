@@ -18,7 +18,9 @@
 'disabled'=>false,
 'dataCurrentYear'=>null,
 'showIcon'=>false,
-'currentModalId'=>''
+'currentModalId'=>'',
+'justifyLeft'=>false,
+'bgColor'=>null
 ])
 <div class="
 @if(!$removeThreeDotsClass)
@@ -27,10 +29,23 @@ three-dots-parent
 @endif 
 
 ">
-    <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+    <div class="input-group input-group-sm align-items-center  flex-nowrap
+	@if($justifyLeft)
+		justify-content-start
+		@else 
+		
+		justify-content-center
+		
+	@endif 
+	
+	">
         <div class="input-hidden-parent">
 
-            <input data-number-of-decimals="{{ $numberFormatDecimals }}" @if($readonly) readonly @endif @if($disabled) disabled @endif @if($name) data-name="{{ removeSquareBrackets($name) }}" @endif onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+            <input
+				@if($bgColor)
+				style="background-color:{{ $bgColor }}"
+				@endif 
+			 data-number-of-decimals="{{ $numberFormatDecimals }}" @if($readonly) readonly @endif @if($disabled) disabled @endif @if($name) data-name="{{ removeSquareBrackets($name) }}" @endif onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
 
 			 @if($isPercentage) expandable-percentage-input  @else expandable-amount-input @endif
 			  repeat-to-right-input-formatted  {{ $formattedInputClasses }} " type="text" value="{{ $isNumber ?  number_format($currentVal,$numberFormatDecimals) : $currentVal  }}" @if(!is_null($columnIndex)) data-column-index="{{ $columnIndex }}" @endif>

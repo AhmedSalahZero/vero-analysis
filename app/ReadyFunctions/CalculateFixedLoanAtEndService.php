@@ -13,9 +13,9 @@ use Carbon\Carbon;
 class CalculateFixedLoanAtEndService
 {
     
-	 public function __calculateBasedOnDiffBaseRates(array $baseRatesMapping, string $loanType, string $loanStartDate, float $loanAmount, float $marginRate, float $tenor, string $installmentPaymentIntervalName, int $installmentPaymentIntervalValue, float $stepUpRate = 0, string $stepUpIntervalName = null, float $stepDownRate = 0, string $stepDownIntervalName = null, float $gracePeriod  = 0, int $monthIndex = 0, array $datesAsStringAndIndex = [], array $dateWithDateIndex = []):array
+	 public function __calculateBasedOnDiffBaseRates(array $baseRatesMapping, string $loanType, string $loanStartDate, float $loanAmount, float $marginRate, float $tenor, string $installmentPaymentIntervalName, int $installmentPaymentIntervalValue, float $stepUpRate = 0, string $stepUpIntervalName = null, float $stepDownRate = 0, string $stepDownIntervalName = null, float $gracePeriod  = 0, int $monthIndex = 0, array $datesAsStringAndIndex = [], array $dateWithDateIndex = [] , $daysCount = null):array
     {
-        
+      
         $currentStartDateAsIndex=$monthIndex ;
         $originalTenor = $tenor;
         if ($loanAmount <= 0) {
@@ -40,7 +40,7 @@ class CalculateFixedLoanAtEndService
             }
             $currentResultArr = [];
             if ($tenor >= 1) {
-                $currentResultArr =$this->__calculate($previousResult, $i, $loanType, $loanStartDate, $loanAmount, $currentBaseRate, $marginRate, $tenor, $installmentPaymentIntervalName, $stepUpRate, $stepUpIntervalName, $stepDownRate, $stepDownIntervalName, $gracePeriod, $currentStartDateAsIndex);
+                $currentResultArr =$this->__calculate($previousResult, $i, $loanType, $loanStartDate, $loanAmount, $currentBaseRate, $marginRate, $tenor, $installmentPaymentIntervalName, $stepUpRate, $stepUpIntervalName, $stepDownRate, $stepDownIntervalName, $gracePeriod, $currentStartDateAsIndex , $daysCount);
                 $previousResult =$currentResultArr['final_result']??[];
                 $fixedAtEndResult['current_result'][]= $currentResultArr['result']??[]  ;
                 $fixedAtEndResult['final_result']= $currentResultArr['final_result']??[]  ;

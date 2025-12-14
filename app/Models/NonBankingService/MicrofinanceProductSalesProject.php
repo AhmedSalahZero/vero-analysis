@@ -23,9 +23,9 @@ class MicrofinanceProductSalesProject extends Model
             $study = $model->study ;
             $decreaseRates =[];
             $convertFlatRateToDecreasingRate = new ConvertFlatRateToDecreasingRate();
-            foreach ($model->flat_rates as $dateAsIndex => $value) {
+            foreach ($model->flat_rates as $dateAsIndex => $flatRate) {
                 $tenor = $model->tenor;
-                $decreaseRates[$dateAsIndex] = $convertFlatRateToDecreasingRate->excel_rate($value, $tenor);
+                $decreaseRates[$dateAsIndex] = $convertFlatRateToDecreasingRate->excel_rate($flatRate, $tenor);
             }
             $model->decrease_rates = $decreaseRates;
                 
@@ -79,6 +79,8 @@ class MicrofinanceProductSalesProject extends Model
         'seasonality'=>'array',
         'monthly_seasonality'=>'array',
         'flat_rates'=>'array',
+        'fees_rates'=>'array',
+        'setup_fees_durations'=>'array',
         'decrease_rates'=>'array',
         'monthly_amounts'=>'array',
         'monthly_loan_amounts'=>'array',
@@ -124,8 +126,20 @@ class MicrofinanceProductSalesProject extends Model
 		if($this->type =='by-branch'){
 			return $this->study->microfinanceByBranchProductMixes->where('microfinance_product_id',$this->microfinance_product_id)->first()->getFlatRateAtYearOrMonthIndex($yearOrDateIndex);
 		}
-		
         return $this->flat_rates[$yearOrDateIndex]??0;
+    }  
+	public function getSetupFeesRateAtYearOrMonthIndex(int $yearOrDateIndex):float
+    {
+		// if($this->type =='by-branch'){
+		// 	return $this->study->microfinanceByBranchProductMixes->where('microfinance_product_id',$this->microfinance_product_id)->first()->getFlatRateAtYearOrMonthIndex($yearOrDateIndex);
+		// }
+        return $this->fees_rates[$yearOrDateIndex]??0;
+    }public function getSetupFeesDurationAtYearOrMonthIndex(int $yearOrDateIndex):float
+    {
+		// if($this->type =='by-branch'){
+		// 	return $this->study->microfinanceByBranchProductMixes->where('microfinance_product_id',$this->microfinance_product_id)->first()->getFlatRateAtYearOrMonthIndex($yearOrDateIndex);
+		// }
+        return $this->setup_fees_durations[$yearOrDateIndex]??0;
     }
     public function getIncreaseRateAtYearIndex($yearIndex)
     {
@@ -136,5 +150,26 @@ class MicrofinanceProductSalesProject extends Model
     {
         return $this->seasonality[$monthNumber] ?? 0;
     }
-
+	public function generateDecreasingRate(int $dateAsIndex)
+	{
+		$currentSetupFeesDuration =$this->getSetupFeesDurationAtYearOrMonthIndex($dateAsIndex) ;
+		$currentSetupFeesRate = $this->getSetupFeesRateAtYearOrMonthIndex($dateAsIndex) ;
+		$currentFlatRate = $this->getFlatRateAtYearOrMonthIndex($dateAsIndex) ;
+		 $convertFlatRateToDecreasingRate = new ConvertFlatRateToDecreasingRate();
+		$decreasedRate = $convertFlatRateToDecreasingRate->excel_rate($currentFlatRate,$this->tenor);
+		$setupDecreaseRate = $convertFlatRateToDecreasingRate->excel_rate($currentFlatRate-$currentSetupFeesRate,$this->tenor); ;
+		$result = [];
+		$counter = 1 ;
+		$dateIndexWithDate = $this->study->getDateIndexWithDate();
+		for($i = $dateAsIndex ; $i< $this->tenor ; $i++){
+			$dateAsString = $dateIndexWithDate[$i] ;
+			if($counter<= $currentSetupFeesDuration){
+				$result[$dateAsString] =$setupDecreaseRate ;
+			}else{
+				$result[$dateAsString] = $decreasedRate;
+			}
+			$counter++;
+		}
+		return $result;
+	}
 }

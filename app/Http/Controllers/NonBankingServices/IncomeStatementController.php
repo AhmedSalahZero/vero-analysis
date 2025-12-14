@@ -670,6 +670,9 @@ class IncomeStatementController extends Controller
                 $value =0 ;
             }
         }
+		
+		// min('','');
+		// array_merge('');
         $corporateTaxesPayable = $study->getCorporateTaxesPayable();
         $studyStartDateAsMonthNumber = array_values($study->getDateWithMonthNumber())[0];
 		$dates = $study->getStudyDates();
