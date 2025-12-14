@@ -45,6 +45,7 @@ class DirectFactoringController extends Controller
 	{
 			
 			$studyHasDirectFactoringBreakdowns = $study->refresh()->directFactoringBreakdowns->count(); 
+			$reloadPage = $request->get('save') == 'calculate-net-disbursement' ;
 			$study->storeRelationsWithNoRepeater($request,$company,['seasonality']);
 			$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
 			$study->syncSeasonality($request->get('seasonality',[]),Study::DIRECT_FACTORING , $company->id );
@@ -53,7 +54,7 @@ class DirectFactoringController extends Controller
 			$study->refreshDirectFactoringLoans($request);
 			
 			$study->updateExpensesPercentageAndCostPerUnitsOfSales();
-			if($request->get('save') == 'calculate-net-disbursement'){
+			if($reloadPage){
 				return response()->json([
 					'redirectTo'=>route('create.direct.factoring.revenue.stream.breakdown',['company'=>$company->id,'study'=>$study->id]) 
 				]);

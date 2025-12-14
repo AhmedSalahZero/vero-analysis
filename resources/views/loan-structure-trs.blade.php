@@ -204,17 +204,11 @@
                                     @endphp
 
                                     @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
-
-
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
                                             <x-repeat-right-dot-inputs :readonly="true" :numberFormatDecimals="0" :formatted-input-classes="'new-loans-funding-formatted-value-class'" :currentVal="$currentVal=$eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getNewLoansFundingValuesAtYearOrMonthIndex($yearOrMonthAsIndex):0" data-group-index="{{ $currentYearRepeaterIndex }}" :classes="'only-greater-than-or-equal-zero-allowed repeater-with-collapse-input'" :is-percentage="false" :name="'new_loans_funding_values['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                         </div>
                                     </td>
-									
-									
-									
-									
 									  @php
                                     $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
                                     $currentMonthNumber = explode('-',$dateAsString)[1];

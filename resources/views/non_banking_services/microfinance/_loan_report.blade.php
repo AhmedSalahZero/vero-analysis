@@ -9,7 +9,6 @@ $titleFormatted = [
 ][$type];
 
 @endphp
-{{-- {{ dd($salesProjectsPerProducts) }} --}}
 @if(isset($salesProjectsPerProducts['total']) && array_sum($salesProjectsPerProducts['total']))
 <div class="kt-portlet">
     <div class="kt-portlet__body">
@@ -20,9 +19,9 @@ $titleFormatted = [
             <hr style="flex:1;background-color:lightgray">
         </div>
         <div class="row reserve-and-profit-distribution-assumption">
-@php
-                    $currentYearRepeaterIndex = 0 ;
-                    @endphp
+            @php
+            $currentYearRepeaterIndex = 0 ;
+            @endphp
 
             <div class="table-responsive">
                 <table class="table table-white repeater-class repeater ">
@@ -30,11 +29,11 @@ $titleFormatted = [
                         <tr>
                             <th class=" form-label font-weight-bold text-center align-middle  header-border-down">{!! __('Product <br> Name') !!}</th>
                             @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
-							
-							
+
+
                             <th data-column-index="{{ $yearOrMonthAsIndex }}" class=" form-label font-weight-bold text-center align-middle  header-border-down">{!! $yearOrMonthFormatted .' <br> ' . __('Loan <br> Amount') !!}</th>
-							
-							  @php
+
+                            @php
                             $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
                             $currentMonthNumber = explode('-',$dateAsString)[1];
                             $currentYear= explode('-',$dateAsString)[0];
@@ -44,12 +43,12 @@ $titleFormatted = [
 
 
 
-@if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
-<x-tables.repeater-table-th :icon="true" data-column-index="{{ $yearOrMonthAsIndex }}" :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down {{ 'year-repeater-index-'.$currentYearRepeaterIndex }} collapse-before-me exclude-from-collapse" :title="__('Total Yr.').' <br> '. $currentYear"></x-tables.repeater-table-th>
-@php
-$currentYearRepeaterIndex ++;
-@endphp
-@endif
+                            @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                            <x-tables.repeater-table-th :icon="true" data-column-index="{{ $yearOrMonthAsIndex }}" :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down {{ 'year-repeater-index-'.$currentYearRepeaterIndex }} collapse-before-me exclude-from-collapse" :title="__('Total Yr.').' <br> '. $currentYear"></x-tables.repeater-table-th>
+                            @php
+                            $currentYearRepeaterIndex ++;
+                            @endphp
+                            @endif
 
                             @endforeach
                             <th class=" form-label font-weight-bold text-center align-middle  header-border-down">{{ __('Total') }}</th>
@@ -77,10 +76,10 @@ $currentYearRepeaterIndex ++;
                             </td>
 
 
-@php
-                                $currentYearRepeaterIndex = 0;
-								$currentYearTotal = 0 ;
-                                @endphp
+                            @php
+                            $currentYearRepeaterIndex = 0;
+                            $currentYearTotal = 0 ;
+                            @endphp
 
                             @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
@@ -90,35 +89,35 @@ $currentYearRepeaterIndex ++;
                                 $currentVal = $monthlyLoanAmounts[$yearOrMonthAsIndex]??0;
                                 $columnsTotals[$yearOrMonthAsIndex] = isset($columnsTotals[$yearOrMonthAsIndex] ) ? $columnsTotals[$yearOrMonthAsIndex] +$currentVal : $currentVal;
                                 $rowsTotals[$product->id] = isset($rowsTotals[$product->id] ) ? $rowsTotals[$product->id] +$currentVal : $currentVal;
-								$currentYearTotal+=$currentVal;
+                                $currentYearTotal+=$currentVal;
                                 @endphp
                                 <x-repeat-right-dot-inputs data-group-index="{{ $currentYearRepeaterIndex }}" :disabled="true" :numberFormatDecimals="0" :formattedInputClasses="' '" :mark="''" :removeThreeDots="true" :removeCurrency="true" :currentVal="$currentVal" :classes="'repeater-with-collapse-input'" :is-percentage="false" :name="''" :columnIndex="-1"></x-repeat-right-dot-inputs>
                             </td>
-							
-							
-							
-							
-							
-							 @php
-                                $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
-                                $currentMonthNumber = explode('-',$dateAsString)[1];
-                                $currentYear= explode('-',$dateAsString)[0];
-                                @endphp
 
 
-                                @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
-                                <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
-                                    <div class="d-flex align-items-center justify-content-center">
-                                        <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="$currentYearTotal " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
-                                    </div>
 
-                                </td>
-                                @php
-                                $currentYearRepeaterIndex++;
-								$currentYearTotal = 0;
-                                @endphp
-                                @endif
-								
+
+
+                            @php
+                            $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                            $currentMonthNumber = explode('-',$dateAsString)[1];
+                            $currentYear= explode('-',$dateAsString)[0];
+                            @endphp
+
+
+                            @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                            <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="$currentYearTotal " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
+                                </div>
+
+                            </td>
+                            @php
+                            $currentYearRepeaterIndex++;
+                            $currentYearTotal = 0;
+                            @endphp
+                            @endif
+
 
 
                             @endforeach
@@ -199,9 +198,9 @@ $fundedByFormatted = [
         </div>
         <div class="row reserve-and-profit-distribution-assumption">
 
-@php
-                    $currentYearRepeaterIndex = 0 ;
-                    @endphp
+            @php
+            $currentYearRepeaterIndex = 0 ;
+            @endphp
             <div class="table-responsive">
                 <table class="table table-white repeater-class repeater ">
                     <thead>
@@ -209,18 +208,18 @@ $fundedByFormatted = [
                             <th class=" form-label font-weight-bold text-center align-middle  header-border-down">{!! __('Product <br> Name') !!}</th>
                             @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                             <th data-column-index="{{ $yearOrMonthAsIndex }}" class=" form-label font-weight-bold text-center align-middle  header-border-down">{!! $yearOrMonthFormatted .' <br> ' . __('Loan <br> Amount') !!}</th>
-							
-							@php
+
+                            @php
                             $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
                             $currentMonthNumber = explode('-',$dateAsString)[1];
                             $currentYear= explode('-',$dateAsString)[0];
                             @endphp
-							@if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
-<x-tables.repeater-table-th :icon="true" data-column-index="{{ $yearOrMonthAsIndex }}" :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down {{ 'year-repeater-index-'.$currentYearRepeaterIndex }} collapse-before-me exclude-from-collapse" :title="__('Total Yr.').' <br> '. $currentYear"></x-tables.repeater-table-th>
-@php
-$currentYearRepeaterIndex ++;
-@endphp
-@endif
+                            @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                            <x-tables.repeater-table-th :icon="true" data-column-index="{{ $yearOrMonthAsIndex }}" :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down {{ 'year-repeater-index-'.$currentYearRepeaterIndex }} collapse-before-me exclude-from-collapse" :title="__('Total Yr.').' <br> '. $currentYear"></x-tables.repeater-table-th>
+                            @php
+                            $currentYearRepeaterIndex ++;
+                            @endphp
+                            @endif
 
                             @endforeach
                             <th class=" form-label font-weight-bold text-center align-middle  header-border-down">{{ __('Total') }}</th>
@@ -247,10 +246,10 @@ $currentYearRepeaterIndex ++;
                             </td>
 
 
-@php
-	$currentYearRepeaterIndex = 0;
-	$currentYearTotal = 0 ;
-@endphp
+                            @php
+                            $currentYearRepeaterIndex = 0;
+                            $currentYearTotal = 0 ;
+                            @endphp
 
                             @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
@@ -260,31 +259,31 @@ $currentYearRepeaterIndex ++;
                                 $currentVal = $monthlyLoanAmounts[$yearOrMonthAsIndex]??0;
                                 $columnsTotals[$yearOrMonthAsIndex] = isset($columnsTotals[$yearOrMonthAsIndex] ) ? $columnsTotals[$yearOrMonthAsIndex] +$currentVal : $currentVal;
                                 $rowsTotals[$product->id] = isset($rowsTotals[$product->id] ) ? $rowsTotals[$product->id] +$currentVal : $currentVal;
-								$currentYearTotal+=$currentVal;
+                                $currentYearTotal+=$currentVal;
                                 @endphp
                                 <x-repeat-right-dot-inputs data-group-index="{{ $currentYearRepeaterIndex }}" :disabled="true" :numberFormatDecimals="0" :formattedInputClasses="' '" :mark="''" :removeThreeDots="true" :removeCurrency="true" :currentVal="$currentVal" :classes="'repeater-with-collapse-input'" :is-percentage="false" :name="''" :columnIndex="-1"></x-repeat-right-dot-inputs>
                             </td>
-							
-							
-							  @php
-                                $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
-                                $currentMonthNumber = explode('-',$dateAsString)[1];
-                                $currentYear= explode('-',$dateAsString)[0];
-                                @endphp
 
 
-                                @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
-                                <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
-                                    <div class="d-flex align-items-center justify-content-center">
-                                        <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="$currentYearTotal " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
-                                    </div>
+                            @php
+                            $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                            $currentMonthNumber = explode('-',$dateAsString)[1];
+                            $currentYear= explode('-',$dateAsString)[0];
+                            @endphp
 
-                                </td>
-                                @php
-                                $currentYearRepeaterIndex++;
-								$currentYearTotal = 0 ;
-                                @endphp
-                                @endif
+
+                            @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                            <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="$currentYearTotal " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
+                                </div>
+
+                            </td>
+                            @php
+                            $currentYearRepeaterIndex++;
+                            $currentYearTotal = 0 ;
+                            @endphp
+                            @endif
 
 
                             @endforeach
@@ -339,11 +338,11 @@ $currentYearRepeaterIndex ++;
 
     </div>
 </div>
-@endif 
+@endif
 
 @if(!isset($hideFundingStructure))
 
-<div class="kt-portlet  " id="loan-portfolio"> 
+<div class="kt-portlet  " id="loan-portfolio">
     <div class="kt-portlet__body">
         <div class="row">
 
@@ -364,35 +363,33 @@ $currentYearRepeaterIndex ++;
         <div class="row new-portfolio-funding">
             @php
             $rowIndex = 0;
-                    $currentYearRepeaterIndex = 0 ;
+            $currentYearRepeaterIndex = 0 ;
             @endphp
 
             <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden overflow-scroll'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                 <x-slot name="ths">
                     <x-tables.repeater-table-th class="  header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
                     @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
-                    <x-tables.repeater-table-th  data-column-index="{{ $yearOrMonthAsIndex }}" class="  header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
-					
-				
+                    <x-tables.repeater-table-th data-column-index="{{ $yearOrMonthAsIndex }}" class="  header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
 
 
 
 
 
-                            @php
-                            $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
-                            $currentMonthNumber = explode('-',$dateAsString)[1];
-                            $currentYear= explode('-',$dateAsString)[0];
-                            @endphp
-							
-							@if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
-<x-tables.repeater-table-th :icon="true" data-column-index="{{ $yearOrMonthAsIndex }}" :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down {{ 'year-repeater-index-'.$currentYearRepeaterIndex }} collapse-before-me exclude-from-collapse" :title="__('Total Yr.').' <br> '. $currentYear"></x-tables.repeater-table-th>
-@php
-$currentYearRepeaterIndex ++;
-@endphp
-@endif
 
-							
+
+                    @php
+                    $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                    $currentMonthNumber = explode('-',$dateAsString)[1];
+                    $currentYear= explode('-',$dateAsString)[0];
+                    @endphp
+
+                    @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                    <x-tables.repeater-table-th :icon="true" data-column-index="{{ $yearOrMonthAsIndex }}" :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down {{ 'year-repeater-index-'.$currentYearRepeaterIndex }} collapse-before-me exclude-from-collapse" :title="__('Total Yr.').' <br> '. $currentYear"></x-tables.repeater-table-th>
+                    @php
+                    $currentYearRepeaterIndex ++;
+                    @endphp
+                    @endif
                     @endforeach
                     <x-tables.repeater-table-th class="  header-border-down " :title="__('Total')"></x-tables.repeater-table-th>
                 </x-slot>
@@ -410,8 +407,8 @@ $currentYearRepeaterIndex ++;
                         @php
                         $columnIndex = 0 ;
                         $currentYearRepeaterIndex = 0 ;
-						$currentYearTotal = 0;
-						$currentRowTotal = 0;
+                        $currentYearTotal = 0;
+                        $currentRowTotal = 0;
                         @endphp
                         @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
@@ -420,33 +417,34 @@ $currentYearRepeaterIndex ++;
                                 <x-repeat-right-dot-inputs data-group-index="{{ $currentYearRepeaterIndex }}" :numberFormatDecimals="0" :readonly="true" :removeThreeDots="true" :inputHiddenAttributes="''" :currentVal="$currentVal=$columnsTotals[$yearOrMonthAsIndex]??0" :classes="'js-recalculate-equity-funding-value repeater-with-collapse-input total-loans-hidden'" :is-percentage="false" :name="''" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                             </div>
                         </td>
-						
-						
-						   @php
-                                $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
-                                $currentMonthNumber = explode('-',$dateAsString)[1];
-                                $currentYear= explode('-',$dateAsString)[0];
-								$currentYearTotal+=$currentVal;
-								$currentRowTotal+=$currentVal;
-                                @endphp
 
 
-                                @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
-                                <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
-                                    <div class="d-flex align-items-center justify-content-center">
-                                        <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="$currentYearTotal " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
-                                    </div>
+                        @php
+                        $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                        $currentMonthNumber = explode('-',$dateAsString)[1];
+                        $currentYear= explode('-',$dateAsString)[0];
+						$currentTotalPortfolioAmount[$yearOrMonthAsIndex] = $currentVal ;
+                        $currentYearTotal+=$currentVal;
+                        $currentRowTotal+=$currentVal;
+                        @endphp
 
-                                </td>
-                                @php
-                                $currentYearRepeaterIndex++;
-                                $currentYearTotal=0;
-                                @endphp
-                                @endif
-								
-						
-						
-						
+
+                        @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                        <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
+                            <div class="d-flex align-items-center justify-content-center">
+                                <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="$currentYearTotal " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
+                            </div>
+
+                        </td>
+                        @php
+                        $currentYearRepeaterIndex++;
+                        $currentYearTotal=0;
+                        @endphp
+                        @endif
+
+
+
+
                         @php
                         $columnIndex++;
                         @endphp
@@ -462,7 +460,7 @@ $currentYearRepeaterIndex ++;
 
 
 
-  <tr data-repeat-formatting-decimals="0" data-repeater-style>
+                    <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
 
 
@@ -473,43 +471,44 @@ $currentYearRepeaterIndex ++;
                         </td>
                         @php
                         $columnIndex = 0 ;
-						$currentYearRepeaterIndex = 0 ;
+                        $currentYearRepeaterIndex = 0 ;
                         @endphp
                         @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                         <td>
                             <div class="d-flex align-items-center justify-content-center">
-                                <x-repeat-right-dot-inputs data-group-index="{{ $currentYearRepeaterIndex }}" data-column-index="{{ $yearOrMonthAsIndex }}" :inputHiddenAttributes="'js-recalculate-equity-funding-value'" :currentVal="$eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getEquityFundingRatesAtYearOrMonthIndex($yearOrMonthAsIndex,$fundedBy):0" :classes="'repeater-with-collapse-input only-greater-than-or-equal-zero-allowed equity-funding-rates equity-funding-rate-input-hidden-class'" :is-percentage="true" :name="'equity_funding_rates['.$fundedBy.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                <x-repeat-right-dot-inputs data-group-index="{{ $currentYearRepeaterIndex }}" data-column-index="{{ $yearOrMonthAsIndex }}" :inputHiddenAttributes="'js-recalculate-equity-funding-value'" :currentVal="$currentFundingRate = $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getEquityFundingRatesAtYearOrMonthIndex($yearOrMonthAsIndex,$fundedBy):0" :classes="'repeater-with-collapse-input only-greater-than-or-equal-zero-allowed equity-funding-rates equity-funding-rate-input-hidden-class'" :is-percentage="true" :name="'equity_funding_rates['.$fundedBy.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                             </div>
                         </td>
-						
-						
-						
-						
-						
-@php
-$dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
-$currentMonthNumber = explode('-',$dateAsString)[1];
-$currentYear= explode('-',$dateAsString)[0];
-@endphp
 
 
 
- @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
-                                <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
-                                    <div class="d-flex align-items-center justify-content-center">
-                                        <x-repeat-right-dot-inputs :isNumber="false" :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="'-' " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
-                                    </div>
 
-                                </td>
-                                @php
-                                $currentYearRepeaterIndex++;
-                                @endphp
-                                @endif
-								
-								
-						
-						
+
+                        @php
+                        $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                        $currentMonthNumber = explode('-',$dateAsString)[1];
+                        $currentYear= explode('-',$dateAsString)[0];
+						$currentFundingRates[$yearOrMonthAsIndex] = $currentFundingRate;
+                        @endphp
+
+
+
+                        @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                        <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
+                            <div class="d-flex align-items-center justify-content-center">
+                                <x-repeat-right-dot-inputs :isNumber="false" :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="'-' " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
+                            </div>
+
+                        </td>
+                        @php
+                        $currentYearRepeaterIndex++;
+                        @endphp
+                        @endif
+
+
+
+
                         @php
                         $columnIndex++;
                         @endphp
@@ -537,40 +536,40 @@ $currentYear= explode('-',$dateAsString)[0];
                         @php
                         $columnIndex = 0 ;
                         $currentYearRepeaterIndex = 0;
-						$currentYearTotal = 0;
-						$currentRowTotal=0;
+                        $currentYearTotal = 0;
+                        $currentRowTotal=0;
                         @endphp
                         @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                         <td>
                             <div class="d-flex align-items-center justify-content-center">
 
-                                <x-repeat-right-dot-inputs  data-group-index="{{ $currentYearRepeaterIndex }}" :readonly="true" :numberFormatDecimals="0" :currentVal="$currentVal=$eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getEquityFundingValuesAtYearOrMonthIndex($yearOrMonthAsIndex,$fundedBy):0" :classes="'repeater-with-collapse-input only-greater-than-or-equal-zero-allowed '" :formatted-input-classes="'equity-funding-formatted-value-class'" :is-percentage="false" :name="'equity_funding_values['.$fundedBy.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                <x-repeat-right-dot-inputs data-group-index="{{ $currentYearRepeaterIndex }}" :readonly="true" :numberFormatDecimals="0" :currentVal="$currentTotalPortfolioAmount[$yearOrMonthAsIndex] * $currentFundingRates[$yearOrMonthAsIndex]/100 " :classes="'repeater-with-collapse-input only-greater-than-or-equal-zero-allowed '" :formatted-input-classes="'equity-funding-formatted-value-class'" :is-percentage="false" :name="'equity_funding_values['.$fundedBy.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                             </div>
                         </td>
-						
-						 @php
-                                $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
-                                $currentMonthNumber = explode('-',$dateAsString)[1];
-                                $currentYear= explode('-',$dateAsString)[0];
-								$currentYearTotal+=$currentVal;
-								$currentRowTotal+=$currentVal;
-                                @endphp
+
+                        @php
+                        $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                        $currentMonthNumber = explode('-',$dateAsString)[1];
+                        $currentYear= explode('-',$dateAsString)[0];
+                        $currentYearTotal+=$currentVal;
+                        $currentRowTotal+=$currentVal;
+                        @endphp
 
 
-                                @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
-                                <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
-                                    <div class="d-flex align-items-center justify-content-center">
-                                        <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="$currentYearTotal " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
-                                    </div>
+                        @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                        <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
+                            <div class="d-flex align-items-center justify-content-center">
+                                <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="$currentYearTotal " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
+                            </div>
 
-                                </td>
-                                @php
-                                $currentYearRepeaterIndex++;
-								$currentYearTotal = 0 ;
-                                @endphp
-                                @endif
-								
+                        </td>
+                        @php
+                        $currentYearRepeaterIndex++;
+                        $currentYearTotal = 0 ;
+                        @endphp
+                        @endif
+
                         @php
                         $columnIndex++;
                         @endphp
@@ -592,7 +591,7 @@ $currentYear= explode('-',$dateAsString)[0];
                         </td>
                         @php
                         $columnIndex = 0 ;
-                       $currentYearRepeaterIndex = 0;
+                        $currentYearRepeaterIndex = 0;
                         @endphp
 
                         @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
@@ -600,33 +599,34 @@ $currentYear= explode('-',$dateAsString)[0];
 
                         <td>
                             <div class="d-flex align-items-center justify-content-center">
-                                <input type="text" data-column-index="{{ $columnIndex }}" readonly class="form-control expandable-percentage-input new-loan-function-rates-js" name="new_loans_funding_rates[{{ $fundedBy }}][{{ $yearOrMonthAsIndex }}]" value="{{ $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getNewLoansFundingRatesAtYearOrMonthIndex($yearOrMonthAsIndex,$fundedBy):100 }}"> <span class="ml-2">%</span>
+                                <input type="text" data-column-index="{{ $columnIndex }}" readonly class="form-control expandable-percentage-input new-loan-function-rates-js" name="new_loans_funding_rates[{{ $fundedBy }}][{{ $yearOrMonthAsIndex }}]" value="{{ $currentBorrowingRate = $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getNewLoansFundingRatesAtYearOrMonthIndex($yearOrMonthAsIndex,$fundedBy):100 }}"> <span class="ml-2">%</span>
                             </div>
                         </td>
-						
-						
-						
-							@php
-							$dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
-							$currentMonthNumber = explode('-',$dateAsString)[1];
-							$currentYear= explode('-',$dateAsString)[0];
-							@endphp
 
 
 
- 							@if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
-                                <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
-                                    <div class="d-flex align-items-center justify-content-center">
-                                        <x-repeat-right-dot-inputs :isNumber="false" :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="'-' " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
-                                    </div>
+                        @php
+                        $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                        $currentMonthNumber = explode('-',$dateAsString)[1];
+                        $currentYear= explode('-',$dateAsString)[0];
+						$currentBorrowingRates[$yearOrMonthAsIndex] = $currentBorrowingRate;
+                        @endphp
 
-                                </td>
-                                @php
-                                $currentYearRepeaterIndex++;
-                                @endphp
-                                @endif
-								
-								
+
+
+                        @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                        <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
+                            <div class="d-flex align-items-center justify-content-center">
+                                <x-repeat-right-dot-inputs :isNumber="false" :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="'-' " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
+                            </div>
+
+                        </td>
+                        @php
+                        $currentYearRepeaterIndex++;
+                        @endphp
+                        @endif
+
+
                         @php
                         $columnIndex++;
                         @endphp
@@ -655,41 +655,40 @@ $currentYear= explode('-',$dateAsString)[0];
                         </td>
                         @php
                         $columnIndex = 0 ;
-                         $currentYearRepeaterIndex = 0;
-						 $currentYearTotal = 0 ;
-						 $currentRowTotal = 0 ;
+                        $currentYearRepeaterIndex = 0;
+                        $currentYearTotal = 0 ;
+                        $currentRowTotal = 0 ;
                         @endphp
-
                         @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                         <td>
                             <div class="d-flex align-items-center justify-content-center">
-                                <x-repeat-right-dot-inputs data-group-index="{{ $currentYearRepeaterIndex }}" :readonly="true" :numberFormatDecimals="0" :formatted-input-classes="'new-loans-funding-formatted-value-class'" :currentVal="$currentVal=$eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getNewLoansFundingValuesAtYearOrMonthIndex($yearOrMonthAsIndex,$fundedBy):0 " :classes="'repeater-with-collapse-input only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'new_loans_funding_values['.$fundedBy.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                <x-repeat-right-dot-inputs data-group-index="{{ $currentYearRepeaterIndex }}" :readonly="true" :numberFormatDecimals="0" :formatted-input-classes="'new-loans-funding-formatted-value-class'" :currentVal="$currentTotalPortfolioAmount[$yearOrMonthAsIndex] * $currentBorrowingRates[$yearOrMonthAsIndex]/100" :classes="'repeater-with-collapse-input only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'new_loans_funding_values['.$fundedBy.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                             </div>
                         </td>
-						
-						@php
-                                $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
-                                $currentMonthNumber = explode('-',$dateAsString)[1];
-                                $currentYear= explode('-',$dateAsString)[0];
-								$currentYearTotal+=$currentVal;
-								$currentRowTotal+=$currentVal;
-                                @endphp
+
+                        @php
+                        $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                        $currentMonthNumber = explode('-',$dateAsString)[1];
+                        $currentYear= explode('-',$dateAsString)[0];
+                        $currentYearTotal+=$currentVal;
+                        $currentRowTotal+=$currentVal;
+                        @endphp
 
 
-                                @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
-                                <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
-                                    <div class="d-flex align-items-center justify-content-center">
-                                        <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="$currentYearTotal " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
-                                    </div>
+                        @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                        <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
+                            <div class="d-flex align-items-center justify-content-center">
+                                <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="$currentYearTotal " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
+                            </div>
 
-                                </td>
-                                @php
-                                $currentYearRepeaterIndex++;
-								$currentYearTotal = 0 ;
-                                @endphp
-                                @endif
-								
+                        </td>
+                        @php
+                        $currentYearRepeaterIndex++;
+                        $currentYearTotal = 0 ;
+                        @endphp
+                        @endif
+
                         @php
                         $columnIndex++;
                         @endphp

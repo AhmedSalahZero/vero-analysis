@@ -32,14 +32,12 @@ class MicrofinanceLoanController extends Controller
         $salesProjectsPerProducts= [];
         $salesProjectsPerFundedBy= [];
         $salesProjectsPerTypes= [];
-	//	$isMonthlyIndex = $study->isMonthlyStudy();
         foreach ($salesProjects as $salesProject) {
-            $productId = $salesProject-> microfinance_product_id;
+            $productId = $salesProject->microfinance_product_id;
             $fundedBy = $salesProject->funded_by;
             $type = $salesProject->type;
             $monthlyLoanAmounts = $salesProject->monthly_loan_amounts?:[];
 			$yearOrMonthsIndexes = $study->getYearOrMonthIndexes();
-	
             foreach ($monthlyLoanAmounts as $dateAsIndex => $monthlyLoanAmount) {
 				$currentYearOrMonthIndex = $isYearsStudy ? $study->getYearIndexFromDateIndex($dateAsIndex) : $dateAsIndex;
                 $salesProjectsPerProducts[$productId][$currentYearOrMonthIndex] =  isset($salesProjectsPerProducts[$productId][$currentYearOrMonthIndex]) ? $salesProjectsPerProducts[$productId][$currentYearOrMonthIndex] + $monthlyLoanAmount:$monthlyLoanAmount;

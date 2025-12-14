@@ -925,6 +925,7 @@ class Study extends Model
                 }
             }
         });
+		
         return [
             'sum'=>$sum ,
             'per_category'=>$resultPerCategory
@@ -2383,7 +2384,7 @@ class Study extends Model
         }
         return $result;
     }
-    public function refreshDirectFactoringLoans($request)
+    public function refreshDirectFactoringLoans($request )
     {
         
         $this->storeAdminFeesAndFundingStructureFor($request, Study::DIRECT_FACTORING);
@@ -3284,21 +3285,20 @@ class Study extends Model
 
         return $result;
     }
-    public function storeAdminFeesAndFundingStructureFor(Request $request, string $revenueStreamType, array $portfolioMonthlyNewLoansFundingValues = [], array $occurrenceDates = [], array $totalMonthlyLoanPerMtls = [], array $totalMonthlyLoanPerOdas = [])
+    public function storeAdminFeesAndFundingStructureFor(Request $request, string $revenueStreamType, array $portfolioMonthlyNewLoansFundingValues = [], array $occurrenceDates = [], array $totalMonthlyLoanPerMtls = [], array $totalMonthlyLoanPerOdas = [] )
     {
-        $eclAndNewPortfolioFundingRate = $this->getEclAndNewPortfolioFundingRatesForStreamType($revenueStreamType);
+        $eclAndNewPortfolioFundingRate =  $this->getEclAndNewPortfolioFundingRatesForStreamType($revenueStreamType) ;
     
         $monthlyNewOdasFundingValues = [];
         $isPortfolio = $revenueStreamType == Study::PORTFOLIO_MORTGAGE ;
         $isMicrofinance = $revenueStreamType == Study::MICROFINANCE || $revenueStreamType == Study::CONSUMER_FINANCE ;
-        $oldAdminFeesRates = $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->admin_fees_rates:[];
-        $oldNewLoansFundingValues = $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->new_loans_funding_values:[];
-        $oldEquityFundingValues = $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->equity_funding_values : [];
+        $oldAdminFeesRates = $eclAndNewPortfolioFundingRate  ? $eclAndNewPortfolioFundingRate->admin_fees_rates:[];
+        $oldNewLoansFundingValues = $eclAndNewPortfolioFundingRate  ? $eclAndNewPortfolioFundingRate->new_loans_funding_values:[];
+        $oldEquityFundingValues = $eclAndNewPortfolioFundingRate  ? $eclAndNewPortfolioFundingRate->equity_funding_values : [];
         $adminFeesRates = $request->has('admin_fees_rates') ?  $request->get('admin_fees_rates', []) : $oldAdminFeesRates;
-        $newLoansFundingValues = $request->has('new_loans_funding_values') ?  $request->get('new_loans_funding_values', []) : $oldNewLoansFundingValues ;
-        $equityFundingValues = $request->has('equity_funding_values') ? $request->get('equity_funding_values') : $oldEquityFundingValues ;
+        $newLoansFundingValues = $request->has('new_loans_funding_values')  ?  $request->get('new_loans_funding_values', []) : $oldNewLoansFundingValues ;
+        $equityFundingValues = $request->has('equity_funding_values')  ? $request->get('equity_funding_values') : $oldEquityFundingValues ;
         $newLoansFundingValuesFormatted =  $newLoansFundingValues ;
-        // $newLoansFundingValuesForOdasFormatted =  $newLoansFundingValues ;
         $loanAmounts = $this->getLoanAmountForAdminFeesForRevenueStreamType($revenueStreamType);
         $monthlyAdminFeesAmount = $this->calculateMonthlyAdminFeesAmounts($revenueStreamType, $adminFeesRates, $loanAmounts, $occurrenceDates);
         $monthlyNewLoansFundingValues = [];

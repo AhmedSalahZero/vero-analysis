@@ -133,13 +133,13 @@ class MicrofinanceProductSalesProject extends Model
 		// if($this->type =='by-branch'){
 		// 	return $this->study->microfinanceByBranchProductMixes->where('microfinance_product_id',$this->microfinance_product_id)->first()->getFlatRateAtYearOrMonthIndex($yearOrDateIndex);
 		// }
-        return $this->fees_rates[$yearOrDateIndex]??0;
+        return $this->fees_rates[$yearOrDateIndex]??1;
     }public function getSetupFeesDurationAtYearOrMonthIndex(int $yearOrDateIndex):float
     {
 		// if($this->type =='by-branch'){
 		// 	return $this->study->microfinanceByBranchProductMixes->where('microfinance_product_id',$this->microfinance_product_id)->first()->getFlatRateAtYearOrMonthIndex($yearOrDateIndex);
 		// }
-        return $this->setup_fees_durations[$yearOrDateIndex]??0;
+        return $this->setup_fees_durations[$yearOrDateIndex]??12;
     }
     public function getIncreaseRateAtYearIndex($yearIndex)
     {

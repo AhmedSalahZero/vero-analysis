@@ -53,7 +53,16 @@ class  EclAndNewPortfolioFundingRate extends Model
 		if($microfinanceFundedBy){
 			return $this->equity_funding_values[$microfinanceFundedBy][$yearOrMonthIndex]??0;
 		}
+		if($this->isDirectFactoring()){
+			$total = $this->study->getTotalDirectFactoringNewPortfolioAmountsAtYearOrMonthIndex($yearOrMonthIndex)['sum'];
+			$rate = $this->getEquityFundingRatesAtYearOrMonthIndex($yearOrMonthIndex);
+			return $total * $rate/100;
+		}
 		return $this->equity_funding_values[$yearOrMonthIndex]??0;
+	}
+	public function isDirectFactoring()
+	{
+		return $this->revenue_stream_type==Study::DIRECT_FACTORING;
 	}
 	public function getNewLoansFundingRatesAtYearOrMonthIndex(int $yearOrMonthIndex,$microfinanceFundedBy= null)
 	{
@@ -65,6 +74,11 @@ class  EclAndNewPortfolioFundingRate extends Model
 	}
 	public function getNewLoansFundingValuesAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
+		if($this->isDirectFactoring()){
+			$total = $this->study->getTotalDirectFactoringNewPortfolioAmountsAtYearOrMonthIndex($yearOrMonthIndex)['sum'];
+			$rate = $this->getNewLoansFundingRatesAtYearOrMonthIndex($yearOrMonthIndex);
+			return $total * $rate/100;
+		}
 		return $this->new_loans_funding_values[$yearOrMonthIndex]??0;
 	}
 }

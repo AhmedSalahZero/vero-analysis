@@ -701,7 +701,6 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                                         <div class="d-flex align-items-center justify-content-center">
                                             <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="0 " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
                                         </div>
-
                                     </td>
                                     @php
                                     $currentYearRepeaterIndex++;
