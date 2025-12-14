@@ -15,7 +15,6 @@ class CreateIncomeStatementsTable extends Migration
     {
         Schema::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->create('income_statements', function (Blueprint $table) {
             $table->id();
-			// $table->json('monthly_cash_and_banks')->nullable();
 			$table->json('accumulated_retained_earnings')->nullable();
 			$table->json('monthly_corporate_taxes_statements')->nullable();
 			$table->json('monthly_net_profit')->nullable();

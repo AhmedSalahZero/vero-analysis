@@ -43,7 +43,7 @@ use App\Models\NonBankingService\Study;
 {{ $title }}
 @endsection
 @section('content')
-<div id="study-duration" data-duration="{{ $study->duration_in_years }}"></div>
+
 <div class="kt-portlet kt-portlet--tabs">
     <div class="kt-portlet__head">
         <div class="kt-portlet__head-toolbar justify-content-between flex-grow-1">
@@ -68,9 +68,7 @@ use App\Models\NonBankingService\Study;
             <!--Begin:: Tab Content-->
             <div class="tab-pane {{  !Request('active') || Request('active') == $currentType ?'active':'' }}" id="{{ $currentType }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-
                     @include('non_banking_services.income-statement._valuation',['formattedDcfMethod'=>$formattedDcfMethod])
-
                 </div>
 
 

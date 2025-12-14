@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\FlatRateRule;
 use App\Rules\ProductMixRule;
 use App\Rules\ProductSeasonalityRule;
 use App\Rules\StartDateAndOperationDateRule;
@@ -28,8 +29,7 @@ class StoreNewBranchesMicrofinanceRequest extends FormRequest
     {
         return [
             'newBranchMicrofinanceOpeningProjections'=>['required',new StartDateAndOperationDateRule($this->study)],
-            'microfinanceProductSalesProjects'=>['required',new ProductMixRule($this->study)],
-			'microfinanceProductSalesProjects'=>['required',new ProductSeasonalityRule($this->study)],
+            'microfinanceProductSalesProjects'=>['required',new ProductMixRule($this->study) , new ProductSeasonalityRule($this->study) , new FlatRateRule($this->study)],
         ];
     }
 }

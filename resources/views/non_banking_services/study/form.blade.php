@@ -179,7 +179,7 @@
                                 <label class="form-label font-weight-bold">{{ __('Revenues Multiplier') }} @include('star') </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
-                                        <input type="number" class="form-control only-greater-than-or-equal-zero-allowed" name="investment_return_rate" value="{{ isset($model) ? $model->getInvestmentReturnRate() : 1 }}" step="0.1">
+                                        <input type="number" class="form-control only-greater-than-or-equal-zero-allowed multipliers-field-class" name="revenue_multiplier" value="{{ isset($model) ? $model->getRevenueMultiplier() : 1 }}" step="0.1">
                                     </div>
                                 </div>
                             </div>
@@ -189,7 +189,7 @@
                                 <label class="form-label font-weight-bold">{{ __('EBITDA Multiplier') }} @include('star') </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
-                                        <input type="number" class="form-control only-greater-than-or-equal-zero-allowed" name="perpetual_growth_rate" value="{{ isset($model) ? $model->getPerpetualGrowthRate() : 0 }}" step="0.1">
+                                        <input type="number" class="form-control only-greater-than-or-equal-zero-allowed multipliers-field-class" name="ebitda_multiplier" value="{{ isset($model) ? $model->getEbitdaMultiplier() : 0 }}" step="0.1">
                                     </div>
                                 </div>
                             </div>
@@ -199,10 +199,32 @@
                                 <label class="form-label font-weight-bold">{{ __('Shareholder Equity Multiplier') }} @include('star') </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
-                                        <input type="number" class="form-control only-greater-than-or-equal-zero-allowed" name="shareholder_equity_multiplier" value="{{ isset($model) ? $model->getShareholderEquityMultiplier() : 0 }}" step="0.1">
+                                        <input type="number" class="form-control only-greater-than-or-equal-zero-allowed multipliers-field-class" name="shareholder_equity_multiplier" value="{{ isset($model) ? $model->getShareholderEquityMultiplier() : 0 }}" step="0.1">
                                     </div>
                                 </div>
                             </div>
+							
+							
+							 <div class="col-md-2 mb-4">
+                                <label class="form-label font-weight-bold">{{ __('Cost Of Equity %') }} @include('star') </label>
+                                <div class="kt-input-icon">
+                                    <div class="input-group">
+                                        <input type="number" class="form-control only-greater-than-or-equal-zero-allowed multipliers-field-class" name="cost_of_equity_rate" value="{{ isset($model) ? $model->getCostOfEquityRate() : 0 }}" step="0.1">
+                                    </div>
+                                </div>
+                            </div>
+							
+								 <div class="col-md-2 mb-4">
+                                <label class="form-label font-weight-bold">{{ __('Perpetual Growth Rate %') }} @include('star') </label>
+                                <div class="kt-input-icon">
+                                    <div class="input-group">
+                                        <input type="number" class="form-control only-greater-than-or-equal-zero-allowed multipliers-field-class" name="perpetual_growth_rate" value="{{ isset($model) ? $model->getPerpetualGrowthRate() : 0 }}" step="0.1">
+                                    </div>
+                                </div>
+                            </div>
+							
+							
+							
 
 
                         </div>
@@ -445,6 +467,11 @@
         let startDate = $('.study-start-date').val() + '-01';
         const studyStartDate = new Date($('.study-start-date').val());
         const studyDuration = parseFloat($('.study-duration option:selected').attr('value'));
+		if(studyDuration  > 2 ){
+			$('.multipliers-field-class').prop('readonly',false)
+		}else{
+			$('.multipliers-field-class').val(0).prop('readonly',true)
+		}
         if (studyDuration || studyDuration == '0') {
             const numberOfMonths = (studyDuration * 12) - 1
             let studyEndDate = studyStartDate.addMonths(numberOfMonths)

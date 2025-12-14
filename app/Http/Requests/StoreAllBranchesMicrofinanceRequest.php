@@ -3,11 +3,10 @@
 namespace App\Http\Requests;
 
 use App\Rules\ExpenseStartDateAndEndDateRule;
-use App\Rules\ExpenseStartDateAndOperationDateRule;
 use App\Rules\ProductMixRule;
 use App\Rules\ProductSeasonalityRule;
-use App\Rules\StartDateAndOperationDateRule;
 use Illuminate\Foundation\Http\FormRequest;
+use App\Rules\FlatRateRule;
 
 class StoreAllBranchesMicrofinanceRequest extends FormRequest
 {
@@ -29,8 +28,7 @@ class StoreAllBranchesMicrofinanceRequest extends FormRequest
     public function rules()
     {
         return [
-            'microfinanceProductSalesProjects'=>['required',new ProductMixRule($this->study)],
-            'microfinanceProductSalesProjects'=>['required',new ProductSeasonalityRule($this->study)],
+            'microfinanceProductSalesProjects'=>['required',new ProductMixRule($this->study) , new ProductSeasonalityRule($this->study) , new FlatRateRule($this->study) ],
 			'fixed_monthly_repeating_amount'=>['required', new ExpenseStartDateAndEndDateRule($this->study) ]
         ];
     }

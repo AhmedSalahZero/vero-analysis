@@ -1,8 +1,8 @@
 @php
-$tableClasses =  'col-md-12';
+$tableClasses =  'col-md-12 overflow-scroll';
 @endphp
 
-<x-tables.repeater-table :scrollable="false" :table-class="$tableClasses" :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+<x-tables.repeater-table :scrollable="true" :table-class="$tableClasses" :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
     <x-slot name="ths">
         <x-tables.repeater-table-th class="  header-border-down max-column-th-class" :title="__('Item')"></x-tables.repeater-table-th>
         @foreach($studyDates as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
@@ -19,14 +19,13 @@ $tableClasses =  'col-md-12';
             @endphp
             <td>
                 <div class="d-flex align-items-center ">
-                    <input value="{{ __('+/- EBIT') }}" disabled class="form-control text-left " type="text">
-                    <div>
+                    <input value="{{ __('+/- EBIT') }}" disabled class="form-control text-left min-w-300" type="text">
+                    {{-- <div>
                         <i data-toggle="modal" data-target="#{{ $currentModalId }}" class="flaticon2-information kt-font-primary exclude-icon ml-2 cursor-pointer "></i>
                         @include('non_banking_services.income-statement._expense-modal',['currentModalId'=>$currentModalId,'modalTitle'=>$currentModalTitle,'modalData'=>$formattedDcfMethod[$key] ?? []])
-                    </div>
+                    </div> --}}
 
-                    {{-- <button class="btn btn-sm btn-brand btn-elevate btn-pill text-white ml-3" data-toggle="modal" data-target="#id">
-													</button>   --}}
+              
 
                 </div>
             </td>
@@ -62,10 +61,10 @@ $tableClasses =  'col-md-12';
             <td>
                 <div class="d-flex align-items-center ">
                     <input value="{{ __('(-) Taxes') }}" disabled class="form-control text-left " type="text">
-                    <div>
+                    {{-- <div>
                         <i data-toggle="modal" data-target="#{{ $currentModalId }}" class="flaticon2-information kt-font-primary exclude-icon ml-2 cursor-pointer "></i>
                         @include('non_banking_services.income-statement._expense-modal',['currentModalId'=>$currentModalId,'modalTitle'=>$currentModalTitle,'modalData'=>$formattedDcfMethod[$key] ?? []])
-                    </div>
+                    </div> --}}
 
 
 
@@ -104,10 +103,10 @@ $tableClasses =  'col-md-12';
             <td>
                 <div class="d-flex align-items-center ">
                     <input value="{{ __('(+) Depreciation') }}" disabled class="form-control text-left " type="text">
-                    <div>
+                    {{-- <div>
                         <i data-toggle="modal" data-target="#{{ $currentModalId }}" class="flaticon2-information kt-font-primary exclude-icon ml-2 cursor-pointer "></i>
                         @include('non_banking_services.income-statement._expense-modal',['currentModalId'=>$currentModalId,'modalTitle'=>$currentModalTitle,'modalData'=>$formattedDcfMethod[$key] ?? []])
-                    </div>
+                    </div> --}}
 
 
 
@@ -146,10 +145,10 @@ $tableClasses =  'col-md-12';
             <td>
                 <div class="d-flex align-items-center ">
                     <input value="{{ __('(+) Net Change In Working Capital') }}" disabled class="form-control text-left " type="text">
-                    <div>
+                    {{-- <div>
                         <i data-toggle="modal" data-target="#{{ $currentModalId }}" class="flaticon2-information kt-font-primary exclude-icon ml-2 cursor-pointer "></i>
                         @include('non_banking_services.income-statement._expense-modal',['currentModalId'=>$currentModalId,'modalTitle'=>$currentModalTitle,'modalData'=>$formattedDcfMethod[$key] ?? []])
-                    </div>
+                    </div> --}}
 				
 
 
@@ -191,10 +190,10 @@ $tableClasses =  'col-md-12';
             <td>
                 <div class="d-flex align-items-center ">
                     <input value="{{ __('(-) CAPEX') }}" disabled class="form-control text-left " type="text">
-                    <div>
+                    {{-- <div>
                         <i data-toggle="modal" data-target="#{{ $currentModalId }}" class="flaticon2-information kt-font-primary exclude-icon ml-2 cursor-pointer "></i>
                         @include('non_banking_services.income-statement._expense-modal',['currentModalId'=>$currentModalId,'modalTitle'=>$currentModalTitle,'modalData'=>$formattedDcfMethod[$key] ?? []])
-                    </div>
+                    </div> --}}
 
 
 
@@ -233,10 +232,10 @@ $tableClasses =  'col-md-12';
             <td>
                 <div class="d-flex align-items-center ">
                     <input value="{{ __('(+/-) Free Cash flow') }}" disabled class="form-control text-left " type="text">
-                    <div>
+                    {{-- <div>
                         <i data-toggle="modal" data-target="#{{ $currentModalId }}" class="flaticon2-information kt-font-primary exclude-icon ml-2 cursor-pointer "></i>
                         @include('non_banking_services.income-statement._expense-modal',['currentModalId'=>$currentModalId,'modalTitle'=>$currentModalTitle,'modalData'=>$formattedDcfMethod[$key] ?? []])
-                    </div>
+                    </div> --}}
 
 
 
@@ -275,10 +274,10 @@ $tableClasses =  'col-md-12';
             <td>
                 <div class="d-flex align-items-center ">
                     <input value="{{ __('(+) Terminal Value') }}" disabled class="form-control text-left " type="text">
-                    <div>
+                    {{-- <div>
                         <i data-toggle="modal" data-target="#{{ $currentModalId }}" class="flaticon2-information kt-font-primary exclude-icon ml-2 cursor-pointer "></i>
                         @include('non_banking_services.income-statement._expense-modal',['currentModalId'=>$currentModalId,'modalTitle'=>$currentModalTitle,'modalData'=>$formattedDcfMethod[$key] ?? []])
-                    </div>
+                    </div> --}}
 
 
 
@@ -316,10 +315,10 @@ $tableClasses =  'col-md-12';
             <td>
                 <div class="d-flex align-items-center ">
                     <input value="{{ __('(+) Free Cashflow With Terminal') }}" disabled class="form-control text-left " type="text">
-                    <div>
+                    {{-- <div>
                         <i data-toggle="modal" data-target="#{{ $currentModalId }}" class="flaticon2-information kt-font-primary exclude-icon ml-2 cursor-pointer "></i>
                         @include('non_banking_services.income-statement._expense-modal',['currentModalId'=>$currentModalId,'modalTitle'=>$currentModalTitle,'modalData'=>$formattedDcfMethod[$key] ?? []])
-                    </div>
+                    </div> --}}
 
 
 
@@ -358,10 +357,10 @@ $tableClasses =  'col-md-12';
             <td>
                 <div class="d-flex align-items-center ">
                     <input value="{{ __('Discount Factor') }}" disabled class="form-control text-left " type="text">
-                    <div>
+                    {{-- <div>
                         <i data-toggle="modal" data-target="#{{ $currentModalId }}" class="flaticon2-information kt-font-primary exclude-icon ml-2 cursor-pointer "></i>
                         @include('non_banking_services.income-statement._expense-modal',['currentModalId'=>$currentModalId,'modalTitle'=>$currentModalTitle,'modalData'=>$formattedDcfMethod[$key] ?? []])
-                    </div>
+                    </div> --}}
 
 
 
@@ -400,10 +399,10 @@ $tableClasses =  'col-md-12';
             <td>
                 <div class="d-flex align-items-center ">
                     <input value="{{ __('Net Present Value (NPV)') }}" disabled class="form-control text-left " type="text">
-                    <div>
+                    {{-- <div>
                         <i data-toggle="modal" data-target="#{{ $currentModalId }}" class="flaticon2-information kt-font-primary exclude-icon ml-2 cursor-pointer "></i>
                         @include('non_banking_services.income-statement._expense-modal',['currentModalId'=>$currentModalId,'modalTitle'=>$currentModalTitle,'modalData'=>$formattedDcfMethod[$key] ?? []])
-                    </div>
+                    </div> --}}
 
 
 
@@ -450,10 +449,10 @@ $tableClasses =  'col-md-12';
             <td>
                 <div class="d-flex align-items-center ">
                     <input value="{{ __('IRR %') }}" disabled class="form-control text-left " type="text">
-                    <div>
+                    {{-- <div>
                         <i data-toggle="modal" data-target="#{{ $currentModalId }}" class="flaticon2-information kt-font-primary exclude-icon ml-2 cursor-pointer "></i>
                         @include('non_banking_services.income-statement._expense-modal',['currentModalId'=>$currentModalId,'modalTitle'=>$currentModalTitle,'modalData'=>$formattedDcfMethod[$key] ?? []])
-                    </div>
+                    </div> --}}
 
 
 
@@ -500,10 +499,10 @@ $tableClasses =  'col-md-12';
             <td>
                 <div class="d-flex align-items-center ">
                     <input value="{{ __('Payback Period') }}" disabled class="form-control text-left " type="text">
-                    <div>
+                    {{-- <div>
                         <i data-toggle="modal" data-target="#{{ $currentModalId }}" class="flaticon2-information kt-font-primary exclude-icon ml-2 cursor-pointer "></i>
                         @include('non_banking_services.income-statement._expense-modal',['currentModalId'=>$currentModalId,'modalTitle'=>$currentModalTitle,'modalData'=>$formattedDcfMethod[$key] ?? []])
-                    </div>
+                    </div> --}}
 
 
 

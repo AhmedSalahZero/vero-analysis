@@ -1264,5 +1264,16 @@ class HArr
 
         return $arr1;
     }
-
+public static function MultiplyWithNumberIfPositive(array $items , float $number)
+	{
+		$newItems = [];
+		foreach($items as $key=>$value){
+			if($value < 0){
+				$newItems[$key]=0;
+			}else{
+				$newItems[$key]=$value * $number ;
+			}
+		}
+		return $newItems ;
+	}
 }

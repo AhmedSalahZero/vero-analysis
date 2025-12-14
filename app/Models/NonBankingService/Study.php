@@ -138,18 +138,30 @@ class Study extends Model
     {
         return $this->social_insurance_rate ?: 0 ;
     }
-    public function getInvestmentReturnRate()
+    // public function getInvestmentReturnRate()
+    // {
+    //     return $this->investment_return_rate ?: 0 ;
+    // }   
+	public function getRevenueMultiplier()
     {
-        return $this->investment_return_rate ?: 0 ;
+        return $this->revenue_multiplier ?: 0 ;
     }
     public function getPerpetualGrowthRate()
     {
         return $this->perpetual_growth_rate ?: 0 ;
     }
+	public function getEbitdaMultiplier()
+	{
+		return $this->ebitda_multiplier?:0;
+	}
     public function getShareholderEquityMultiplier()
     {
         return $this->shareholder_equity_multiplier ?: 0 ;
     }
+    public function getCostOfEquityRate()
+    {
+        return $this->cost_of_equity_rate ?: 0 ;
+    }	
     
     // 	public function getOperationDates(): array
     // {
@@ -267,14 +279,14 @@ class Study extends Model
     }
     public function getStudyEndDate(): ?string
     {
-			
+            
         return $this->study_end_date;
     }
-	public function getStudyEndDateWithoutDay()
-	{
-		$studyEndDates = explode('-',$this->study_end_date);
-		return 'Dec-'.$studyEndDates[0];
-	}
+    public function getStudyEndDateWithoutDay()
+    {
+        $studyEndDates = explode('-', $this->study_end_date);
+        return 'Dec-'.$studyEndDates[0];
+    }
     public function getEndDateFormatted()
     {
         return $this->study_end_date;
@@ -542,6 +554,9 @@ class Study extends Model
     }
     public function isMonthlyStudy():bool
     {
+		if($this->force_yearly){
+			return false;
+		}
         return $this->duration_in_years < 8 ;
     }
     /**
@@ -733,9 +748,9 @@ class Study extends Model
         $mainTitleMapping = $this->getRevenueStreamTypes();
         $result = [];
         foreach ($selected as $revenueId) {
-			if($revenueId =='has_securitization'){
-				continue;
-			}
+            if ($revenueId =='has_securitization') {
+                continue;
+            }
             $result[] = [
                 'value'=>$revenueId,
                 'title'=>$mainTitleMapping[$revenueId]
@@ -761,9 +776,9 @@ class Study extends Model
     {
         $result = [];
         foreach (self::getRevenueStreamTypes() as $type=>$title) {
-			if($type =='has_securitization'){
-				continue;
-			}
+            if ($type =='has_securitization') {
+                continue;
+            }
             if ($this->{$type}) {
                 $result[] = ['title'=>$title,'value'=>$type];
             }
@@ -925,7 +940,7 @@ class Study extends Model
                 }
             }
         });
-		
+        
         return [
             'sum'=>$sum ,
             'per_category'=>$resultPerCategory
@@ -1416,12 +1431,12 @@ class Study extends Model
             }
             $totalPerTypes[$expenseCategory][$expenseNameId] = isset($totalPerTypes[$expenseCategory][$expenseNameId]) ? HArr::sumAtDates([$totalPerTypes[$expenseCategory][$expenseNameId],$currentSubItem], $studyDates) : $currentSubItem;
         }
-		$totalPerCategory = [];
+        $totalPerCategory = [];
         foreach ($totalPerTypes as $expenseCategory => &$totalPerType) {
             $totalPerCategory['total_'.$expenseCategory] = HArr::sumAtDates(array_values($totalPerType), $sumKeys);
             $totalPerType = json_encode($totalPerType);
         }
-	
+    
         DB::connection('non_banking_service')->table('income_statement_reports')->where('study_id', $this->id)->update($totalPerTypes);
         foreach ($totalPerCategory as $columnName => $currentTotalPerCategory) {
             DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('income_statement_reports')->where('study_id', $this->id)->update([
@@ -1616,7 +1631,7 @@ class Study extends Model
                 'ijara_revenue',
                 'portfolio-mortgage_revenue',
                 'microfinance_revenue',
-				'consumer-finance_revenue',
+                'consumer-finance_revenue',
                 'interest_cash_surplus',
                 'securitization_gain_or_loss',
                 'total_admin_fees'
@@ -1665,8 +1680,8 @@ class Study extends Model
         $totalExpenses = HArr::sumAtDates($expenseColumnArr, $sumKeys);
         $ebt = HArr::subtractAtDates([$totalRevenues,$totalExpenses], $sumKeys);
         $corporateTaxesRate = $this->corporate_taxes_rate/100;
-		$calculatedCorporateTaxesPerYear = HArr::MultiplyWithNumber($ebt, $corporateTaxesRate);
-		$calculatedCorporateTaxesPerYear = HArr::allValuesZeroIfTotalIsLessThanOrEqualZero($calculatedCorporateTaxesPerYear, $ebt);
+        $calculatedCorporateTaxesPerYear = HArr::MultiplyWithNumber($ebt, $corporateTaxesRate);
+        $calculatedCorporateTaxesPerYear = HArr::allValuesZeroIfTotalIsLessThanOrEqualZero($calculatedCorporateTaxesPerYear, $ebt);
         $corporateTaxesPayable = $this->getCorporateTaxesPayable();
         $studyStartDateAsMonthNumber = array_values($this->getDateWithMonthNumber())[0];
         $dates = $this->getStudyDates();
@@ -1871,7 +1886,7 @@ class Study extends Model
                 $this->incomeStatementReport->update([
                     'corporate_taxes'=>$calculateCorporateTaxes,
                 ]);
-				
+                
                 $cashflowStatement = $this->cashflowStatementReport;
             }
             $cashInBeforeOdasAndExtraCapital = $openingCash;
@@ -1897,8 +1912,8 @@ class Study extends Model
             return route('cash.in.out.flow.result', ['company'=>$this->company->id,'study'=>$this->id]);
         }
     }
-	
-	
+    
+    
     protected function sumBaseRateWithMarginRate(array $baseRates, float $marginRate)
     {
         $result = [];
@@ -2384,7 +2399,7 @@ class Study extends Model
         }
         return $result;
     }
-    public function refreshDirectFactoringLoans($request )
+    public function refreshDirectFactoringLoans($request)
     {
         
         $this->storeAdminFeesAndFundingStructureFor($request, Study::DIRECT_FACTORING);
@@ -2621,7 +2636,7 @@ class Study extends Model
         
         return $result;
     }
-	 public function getTotalConsumerfinanceMonthlyLoanAmounts():array
+    public function getTotalConsumerfinanceMonthlyLoanAmounts():array
     {
         $result = [];
         foreach ($this->consumerfinanceProductSalesProjects as $consumerfinanceProductSalesProject) {
@@ -2643,7 +2658,7 @@ class Study extends Model
             self::PORTFOLIO_MORTGAGE => $this->portfolioMortgageRevenueProjectionByCategories->count() ? $this->getPortfolioMortgageTotalLoanAmounts() : [],
             self::MICROFINANCE => $this->microfinanceProductSalesProjects->count() ? $this->getTotalMicrofinanceMonthlyLoanAmounts() : [],
             self::CONSUMER_FINANCE => $this->consumerfinanceProductSalesProjects->count() ? $this->getTotalConsumerfinanceMonthlyLoanAmounts() : [],
-			
+            
         ][$revenueStreamType];
     }
   
@@ -2712,7 +2727,7 @@ class Study extends Model
         return $datesAndIndexesHelpers['dateIndexWithDate'];
         ;
     }
-	
+    
     public function getMonthIndexWithMonthNumber():array
     {
         $result = [];
@@ -3057,7 +3072,7 @@ class Study extends Model
             'has_portfolio_mortgage'=>'portfolioMortgageRevenueProjectionByCategories',
             'has_micro_finance'=>'microfinanceProductSalesProjects',
             'has_consumer_finance'=>'consumerfinanceProductSalesProjects',
-			
+            
         ];
         $result = [];
         foreach ($revenueStreams as $currentRevenueType) {
@@ -3080,7 +3095,7 @@ class Study extends Model
                     $currentRevenues[$id] = MicrofinanceProduct::find($title)->getName();
                 }
             }
-			if ($currentRelationName == 'consumerfinanceProductSalesProjects') {
+            if ($currentRelationName == 'consumerfinanceProductSalesProjects') {
                 foreach ($currentRevenues as $id => $title) {
                     $currentRevenues[$id] = ConsumerfinanceProduct::find($title)->getName();
                 }
@@ -3248,7 +3263,7 @@ class Study extends Model
     }
     public function getEndDate(): ?string
     {
-	
+    
         return $this->getStudyEndDate();
     }
     public function convertDateStringToDateIndex(string $dateAsString):int
@@ -3285,7 +3300,7 @@ class Study extends Model
 
         return $result;
     }
-    public function storeAdminFeesAndFundingStructureFor(Request $request, string $revenueStreamType, array $portfolioMonthlyNewLoansFundingValues = [], array $occurrenceDates = [], array $totalMonthlyLoanPerMtls = [], array $totalMonthlyLoanPerOdas = [] )
+    public function storeAdminFeesAndFundingStructureFor(Request $request, string $revenueStreamType, array $portfolioMonthlyNewLoansFundingValues = [], array $occurrenceDates = [], array $totalMonthlyLoanPerMtls = [], array $totalMonthlyLoanPerOdas = [])
     {
         $eclAndNewPortfolioFundingRate =  $this->getEclAndNewPortfolioFundingRatesForStreamType($revenueStreamType) ;
     
@@ -3464,7 +3479,7 @@ class Study extends Model
         $tableDataFormatted[0]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($interestCashSurplusAmounts, $yearWithItsMonths);
         
         $securitizationLoanSchedules = SecuritizationLoanSchedule::where('study_id', $this->id)->get();
-		
+        
         $securitizationNetPresentValues = [];
         $securitizationCollectionRevenues = [];
         //	 $securitizationGainOrLosses =[];
@@ -4976,7 +4991,7 @@ class Study extends Model
     {
         return $this->hasMany(MicrofinanceProductSalesProject::class, 'study_id', 'id');
     }
-	 public function consumerfinanceProductSalesProjects()
+    public function consumerfinanceProductSalesProjects()
     {
         return $this->hasMany(ConsumerfinanceProductSalesProject::class, 'study_id', 'id');
     }
@@ -5362,7 +5377,7 @@ class Study extends Model
         return $this->hasMany(Securitization::class, 'study_id', 'id');
     }
 
-	 public function calculateSecuritizationLoans():array
+    public function calculateSecuritizationLoans():array
     {
         $result = [];
         $result = [];
@@ -5395,13 +5410,13 @@ class Study extends Model
                     $principlePayments = json_decode($loanSchedulePayment->principleAmount, true);
                     $beginningBalance = json_decode($loanSchedulePayment->beginning, true);
                     $currentBeginningBalance = $beginningBalance[$monthAsIndex]??0;
-					$currentAccuredInterest = json_decode($loanSchedulePayment->accured_interest, true);
-					 $previousPortfolioAccuredInterest += ($currentAccuredInterest['monthly']['end_balance'][$securitizationDate-1]??0);
-					 
+                    $currentAccuredInterest = json_decode($loanSchedulePayment->accured_interest, true);
+                    $previousPortfolioAccuredInterest += ($currentAccuredInterest['monthly']['end_balance'][$securitizationDate-1]??0);
+                     
                     $result[$securitization->id]['portfolio_disbursement_amount'] = isset($result[$securitization->id]['portfolio_disbursement_amount']) ? $result[$securitization->id]['portfolio_disbursement_amount'] + $currentBeginningBalance : $currentBeginningBalance;
                     foreach ($schedulePayments as $dateAsIndex => $value) {
                         if ($dateAsIndex >=$securitizationDate) {
-							
+                            
                            
                             $currentPrincipleAmount = $principlePayments[$dateAsIndex]??0;
                             $currentPortfolioValue = isset($result[$securitization->id]['portfolio_result'][$dateAsIndex]) ? $result[$securitization->id]['portfolio_result'][$dateAsIndex] + $value : $value ;
@@ -5426,11 +5441,11 @@ class Study extends Model
                 }
            
             }
-			    $currentBankPortfolioEndBalance =  $currentBankBeginningBalance  + $previousAccuredInterest;
-					
-                    $result[$securitization->id]['bank_portfolio_end_balance_sum'] = $currentBankPortfolioEndBalance ;
-                    $result[$securitization->id]['early_settlements_expense_amount'] = ($earlySettlementExpenseRate * $currentBankPortfolioEndBalance) ;
-					
+            $currentBankPortfolioEndBalance =  $currentBankBeginningBalance  + $previousAccuredInterest;
+                    
+            $result[$securitization->id]['bank_portfolio_end_balance_sum'] = $currentBankPortfolioEndBalance ;
+            $result[$securitization->id]['early_settlements_expense_amount'] = ($earlySettlementExpenseRate * $currentBankPortfolioEndBalance) ;
+                    
             $result[$securitization->id]['securitization_id'] = $securitization->id;
             $result[$securitization->id]['study_id'] = $this->id;
             $result[$securitization->id]['company_id'] = $this->company->id;
@@ -5484,12 +5499,12 @@ class Study extends Model
                     $endBalance=  0;
                 }
                 $portfolioEndBalancePerType[$revenueStreamType][$dateAsIndex] = isset($portfolioEndBalancePerType[$revenueStreamType][$dateAsIndex]) ? $portfolioEndBalancePerType[$revenueStreamType][$dateAsIndex] +  $endBalance :$endBalance;
-				
+                
             }
         }
 
         foreach ($securitizationRevenueTypes as $revenueStreamType) {
-			$totalPortfolioEndBalance = $portfolioEndBalancePerType[$revenueStreamType]??[];
+            $totalPortfolioEndBalance = $portfolioEndBalancePerType[$revenueStreamType]??[];
             $this->recalculateMonthlyAndAccumulatedEcl($revenueStreamType, $totalPortfolioEndBalance);
         }
         
@@ -5543,8 +5558,8 @@ class Study extends Model
         // $this->recalculateMonthlyAndAccumulatedEcl();
         return $result;
     }
-	
-	
+    
+    
     public function calculateMicrofinanceLoans()
     {
         
@@ -5573,13 +5588,13 @@ class Study extends Model
         ]);
         
     }
-	// private function generateDecreasingRate(int $startDateAsIndex){
-	// 	foreach($this->flat_rates)
-	// }
+    // private function generateDecreasingRate(int $startDateAsIndex){
+    // 	foreach($this->flat_rates)
+    // }
     private function calculateMicrofinanceForType(bool $isPortfolio)
     {
-		$daysCount = 30;
-		$productColumnName  = 'microfinance_product_id';
+        $daysCount = 30;
+        $productColumnName  = 'microfinance_product_id';
         $totalInterests=[];
         $totalSchedulePayments=[];
         $totalEndBalances=[];
@@ -5591,7 +5606,7 @@ class Study extends Model
         $microfinanceSalesProjects  = $isPortfolio ? $this->microfinanceProductSalesProjects : $this->microfinanceProductSalesProjects->where('funded_by', 'by-mtls');
         $eclAndNewPortfolioFundingRate = $this->getEclAndNewPortfolioFundingRatesForStreamType(Study::MICROFINANCE);
         $eclAndNewPortfolioFundingRates = $eclAndNewPortfolioFundingRate->new_loans_funding_rates['by-mtls']??[];
-        $microfinanceSalesProjects->each(function (MicrofinanceProductSalesProject $microfinanceProductSalesProject) use ($isPortfolio, &$portfolioLoans, $operationDates, &$totalPortfolioEndBalance, $dateWithDateIndex, $dateIndexWithDate, $eclAndNewPortfolioFundingRates, &$totalInterests, &$totalSchedulePayments, &$totalEndBalances,$productColumnName,$daysCount) {
+        $microfinanceSalesProjects->each(function (MicrofinanceProductSalesProject $microfinanceProductSalesProject) use ($isPortfolio, &$portfolioLoans, $operationDates, &$totalPortfolioEndBalance, $dateWithDateIndex, $dateIndexWithDate, $eclAndNewPortfolioFundingRates, &$totalInterests, &$totalSchedulePayments, &$totalEndBalances, $productColumnName, $daysCount) {
             $microfinanceProductSalesProject = $microfinanceProductSalesProject->refresh();
             $tenor  = $microfinanceProductSalesProject->tenor ;
             $productId  = $microfinanceProductSalesProject->{$productColumnName} ;
@@ -5599,7 +5614,7 @@ class Study extends Model
             $decreasingRates  = $microfinanceProductSalesProject->decrease_rates ;
             $baseRatesPerMonths = [];
             $isMonthlyStudy = $this->isMonthlyStudy();
-         //   $operationDurationPerYear = $this->getOperationDurationPerYearFromIndexes();
+            //   $operationDurationPerYear = $this->getOperationDurationPerYearFromIndexes();
             // foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
             //     foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
             //         $yearOrMonthIndex = $this->isMonthlyStudy() ? $monthIndex : $yearIndex;
@@ -5608,16 +5623,16 @@ class Study extends Model
             // }
             $rates = [];
             if ($isPortfolio) {
-          //      $rates = $baseRatesPerMonths;
+                //      $rates = $baseRatesPerMonths;
             } else {
                 $rates = $this->generalAndReserveAssumption->getBaseRatesPerMonths();
                 
             }
-         //   dd($baseRatesPerMonths);
+            //   dd($baseRatesPerMonths);
             foreach ($monthlyPortfolioLoanAmounts as $loanStartDateAsIndex => $monthlyLoanAmount) {
-				if($isPortfolio){
-					$rates = $microfinanceProductSalesProject->generateDecreasingRate($loanStartDateAsIndex);
-				}
+                if ($isPortfolio) {
+                    $rates = $microfinanceProductSalesProject->generateDecreasingRate($loanStartDateAsIndex);
+                }
                 $yearOrMonthIndex = $isMonthlyStudy ? $loanStartDateAsIndex : $this->getYearIndexFromDateIndex($loanStartDateAsIndex);
                 $fundingRate = ($eclAndNewPortfolioFundingRates[$yearOrMonthIndex]??0) /100 ;
                 $marginRate=  $isPortfolio ? 0 : $this->generalAndReserveAssumption->getBankLendingMarginRatesAtYearOrMonthIndex($yearOrMonthIndex);
@@ -5630,13 +5645,13 @@ class Study extends Model
                 if ($isPortfolio) {
                     $baseRate = is_array($rates) ?  ($rates[$loanStartDateAsString]??0) : $rates;
                     // $currentPortfolioLoans = (new CalculateFixedLoanAtBeginningService)->__calculate([], -1, 'normal', $loanStartDateAsString, $monthlyLoanAmount, $baseRate, $marginRate, $tenor, 'monthly', 1, null, 0, null, 0, $loanStartDateAsIndex);
-					$currentPortfolioLoans = (new CalculateFixedLoanAtEndService)->__calculateBasedOnDiffBaseRates($rates, 'normal', $loanStartDateAsString, $monthlyLoanAmount, $marginRate, $tenor, 'monthly', 1, 0, null, 0, null, 0, $loanStartDateAsIndex, $dateWithDateIndex, $dateIndexWithDate,$daysCount);
-					if(isset($currentPortfolioLoans['interestAmount'][0])){
-						$currentPortfolioLoans['interestAmount'][0] = $monthlyLoanAmount * $microfinanceProductSalesProject->getSetupFeesRateAtYearOrMonthIndex($loanStartDateAsIndex)/100;
-						$currentPortfolioLoans['schedulePayment'][0] = $monthlyLoanAmount * $microfinanceProductSalesProject->getSetupFeesRateAtYearOrMonthIndex($loanStartDateAsIndex)/100;
-					}
+                    $currentPortfolioLoans = (new CalculateFixedLoanAtEndService)->__calculateBasedOnDiffBaseRates($rates, 'normal', $loanStartDateAsString, $monthlyLoanAmount, $marginRate, $tenor, 'monthly', 1, 0, null, 0, null, 0, $loanStartDateAsIndex, $dateWithDateIndex, $dateIndexWithDate, $daysCount);
+                    if (isset($currentPortfolioLoans['interestAmount'][0])) {
+                        $currentPortfolioLoans['interestAmount'][0] = $monthlyLoanAmount * $microfinanceProductSalesProject->getSetupFeesRateAtYearOrMonthIndex($loanStartDateAsIndex)/100;
+                        $currentPortfolioLoans['schedulePayment'][0] = $monthlyLoanAmount * $microfinanceProductSalesProject->getSetupFeesRateAtYearOrMonthIndex($loanStartDateAsIndex)/100;
+                    }
 
-					
+                    
                 } else {
              
                     if (is_array($rates)) {
@@ -5683,13 +5698,13 @@ class Study extends Model
         ];
         
     }
-	
-	
-	
-	 public function calculateConsumerfinanceLoans()
+    
+    
+    
+    public function calculateConsumerfinanceLoans()
     {
         
-		$revenueStreamType = Study::CONSUMER_FINANCE;
+        $revenueStreamType = Study::CONSUMER_FINANCE;
         DB::connection('non_banking_service')->table('loan_schedule_payments')->where('study_id', $this->id)->where('revenue_stream_type', $revenueStreamType)->delete();
         $totalInterests = $this->calculateConsumerfinanceForType(true);
         $totalBankInterests = $this->calculateConsumerfinanceForType(false);
@@ -5713,29 +5728,29 @@ class Study extends Model
             $revenueStreamType.'_payment'=>json_encode($totalBankInterests['total_schedule_payments']),
             $revenueStreamType.'_oda_withdrawals'=>json_encode($odasWithdrawal)
         ]);
-		
-	
-		$this->updateTotalOdaWithdrawals();
+        
+    
+        $this->updateTotalOdaWithdrawals();
         
     }
-	protected function updateTotalOdaWithdrawals()
-	{
-		logger('update');
-		$this->refresh();
-		   $studyMonthsForViews = $this->getStudyDates();
+    protected function updateTotalOdaWithdrawals()
+    {
+        logger('update');
+        $this->refresh();
+        $studyMonthsForViews = $this->getStudyDates();
         $studyMonthsForViews = array_slice($studyMonthsForViews, 0, $this->getViewStudyEndDateAsIndex()+1);
         $sumKeys = array_keys($studyMonthsForViews);
-		$microfinanceOdaWithdrawals = (array)$this->cashflowStatementReport['microfinance_oda_withdrawals'];
-		$consumerFinanceOdaWithdrawals = (array)$this->cashflowStatementReport['consumer-finance_oda_withdrawals'];
-		$this->cashflowStatementReport->update([
-			'oda_withdrawals'=>HArr::sumAtDates([$microfinanceOdaWithdrawals,$consumerFinanceOdaWithdrawals],$sumKeys)
-		]);
-		
-	}
-	
-	private function calculateConsumerfinanceForType(bool $isPortfolio)
+        $microfinanceOdaWithdrawals = (array)$this->cashflowStatementReport['microfinance_oda_withdrawals'];
+        $consumerFinanceOdaWithdrawals = (array)$this->cashflowStatementReport['consumer-finance_oda_withdrawals'];
+        $this->cashflowStatementReport->update([
+            'oda_withdrawals'=>HArr::sumAtDates([$microfinanceOdaWithdrawals,$consumerFinanceOdaWithdrawals], $sumKeys)
+        ]);
+        
+    }
+    
+    private function calculateConsumerfinanceForType(bool $isPortfolio)
     {
-		$productColumnName = 'consumerfinance_product_id';
+        $productColumnName = 'consumerfinance_product_id';
         $totalInterests=[];
         $totalSchedulePayments=[];
         $totalEndBalances=[];
@@ -5747,7 +5762,7 @@ class Study extends Model
         $microfinanceSalesProjects  = $isPortfolio ? $this->consumerfinanceProductSalesProjects : $this->consumerfinanceProductSalesProjects->where('funded_by', 'by-mtls');
         $eclAndNewPortfolioFundingRate = $this->getEclAndNewPortfolioFundingRatesForStreamType(Study::CONSUMER_FINANCE);
         $eclAndNewPortfolioFundingRates = $eclAndNewPortfolioFundingRate->new_loans_funding_rates['by-mtls']??[];
-        $microfinanceSalesProjects->each(function (ConsumerfinanceProductSalesProject $consumerfinanceProductSalesProject) use ($isPortfolio, &$portfolioLoans, $operationDates, &$totalPortfolioEndBalance, $dateWithDateIndex, $dateIndexWithDate, $eclAndNewPortfolioFundingRates, &$totalInterests, &$totalSchedulePayments, &$totalEndBalances,$productColumnName) {
+        $microfinanceSalesProjects->each(function (ConsumerfinanceProductSalesProject $consumerfinanceProductSalesProject) use ($isPortfolio, &$portfolioLoans, $operationDates, &$totalPortfolioEndBalance, $dateWithDateIndex, $dateIndexWithDate, $eclAndNewPortfolioFundingRates, &$totalInterests, &$totalSchedulePayments, &$totalEndBalances, $productColumnName) {
             $consumerfinanceProductSalesProject = $consumerfinanceProductSalesProject->refresh();
             $tenor  = $consumerfinanceProductSalesProject->tenor ;
             $productId  = $consumerfinanceProductSalesProject->{$productColumnName} ;
@@ -5828,7 +5843,7 @@ class Study extends Model
         ];
         
     }
-	
+    
     public function getMicrofinanceMonths():int
     {
         return $this->duration_in_years == 1 ? 11 : 23;
@@ -5843,14 +5858,14 @@ class Study extends Model
     {
         $microfinanceFirstPageRouteName = 'create.all-branches.microfinance';
         $microfinanceFirstPageRoute = route($microfinanceFirstPageRouteName, ['company'=>$this->company->id,'study'=>$this->id]);
-        if ($this->isByBranchMicrofinance() ) {
+        if ($this->isByBranchMicrofinance()) {
             $microfinanceFirstPageRouteName = 'create.microfinance.product.mix';
             $microfinanceFirstPageRoute = route($microfinanceFirstPageRouteName, ['company'=>$this->company->id,'study'=>$this->id]);
         }
-		if(!$this->company->hasAtLeastOneExistingBranch()){
-			$microfinanceFirstPageRouteName = 'create.new-branches.microfinance';
-			 $microfinanceFirstPageRoute = route($microfinanceFirstPageRouteName, ['company'=>$this->company->id,'study'=>$this->id]);
-		}
+        if (!$this->company->hasAtLeastOneExistingBranch()) {
+            $microfinanceFirstPageRouteName = 'create.new-branches.microfinance';
+            $microfinanceFirstPageRoute = route($microfinanceFirstPageRouteName, ['company'=>$this->company->id,'study'=>$this->id]);
+        }
  
         return [
             'name'=>$microfinanceFirstPageRouteName ,
@@ -6126,7 +6141,7 @@ class Study extends Model
         // $currentTabIndex++;
         
     }
-	
+    
     
     // public function cashFlowForExtraCapitalInjections()
     // {
@@ -6211,6 +6226,17 @@ class Study extends Model
 ]
      *
      */
-	 
+     
+
+
+public function replaceMonthIndexWithYearIndex(array $items)
+	{
+		$newResult = [];
+		foreach($items as $dateIndex => $value){
+			$yearIndex = $this->getYearIndexFromDateIndex($dateIndex) ;
+			$newResult[$yearIndex] = $value; 
+		}
+		return $newResult;
+	}
 	
 }

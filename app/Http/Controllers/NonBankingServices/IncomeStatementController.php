@@ -489,9 +489,8 @@ class IncomeStatementController extends Controller
 	
         $totalFixedAssetAdminDepreciation = HArr::sumAtDates([$fixedAssetOpeningBalancesAdminDepreciations,$totalDepreciationExpenses], $sumKeys);
 		
-		
         $tableDataFormatted[$eclAndDepreciationOrderIndex]['sub_items'][$depreciationKey]['data'] = $totalFixedAssetAdminDepreciation;
-        $tableDataFormatted[$eclAndDepreciationOrderIndex]['sub_items'][$depreciationKey]['year_total'] = HArr::sumPerYearIndex($totalFixedAssetAdminDepreciation, $yearWithItsMonths);
+        $tableDataFormatted[$eclAndDepreciationOrderIndex]['sub_items'][$depreciationKey]['year_total'] = $totalDepreciationExpensesPerYears = HArr::sumPerYearIndex($totalFixedAssetAdminDepreciation, $yearWithItsMonths);
         $totalEclAndDepreciationExpenses = Harr::calculateTotalFromSubItems($tableDataFormatted[$eclAndDepreciationOrderIndex]['sub_items']??[]);
         
         $tableDataFormatted[$eclAndDepreciationOrderIndex]['main_items'][$eclAndDepreciationKey]['data'] =  $totalEclAndDepreciationExpenses ;
@@ -565,6 +564,7 @@ class IncomeStatementController extends Controller
       
         $totalDepreciation = HArr::sumAtDates([$totalFixedAssetAdminDepreciation,$totalGrossProfit], $sumKeys);
         $editda = HArr::subtractAtDates([$totalDepreciation,$totalSGANDA], $sumKeys) ;
+	
         $tableDataFormatted[$ebitdaOrderIndex]['main_items']['ebitda']['data'] = $editda;
         $tableDataFormatted[$ebitdaOrderIndex]['main_items']['ebitda']['year_total'] =$ebitdaTotalPerYear= HArr::sumPerYearIndex($editda, $yearWithItsMonths);
         $tableDataFormatted[$ebitdaOrderIndex]['main_items']['% Of Revenue']['data'] =  HArr::calculatePercentageOf($totalSalesRevenues, $editda);
@@ -707,7 +707,9 @@ class IncomeStatementController extends Controller
             'monthly_corporate_taxes_statements'=>$corporateTaxesStatement,
             'monthly_net_profit'=>$netProfit,
              'accumulated_retained_earnings'=>$retainedEarning,
-            'study_id'=>$study->id
+            'study_id'=>$study->id,
+			'ebit'=>$ebitTotalPerYear,
+			'total_depreciation'=>$totalDepreciationExpensesPerYears,
         ];
         $study->incomeStatement ?  $study->incomeStatement->update($statementData) : $study->incomeStatement()->create($statementData);
         $studyMonthsForViews=$study->getStudyDurationPerYearFromIndexesForView();
