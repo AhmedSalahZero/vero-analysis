@@ -2658,7 +2658,6 @@ class Study extends Model
             self::PORTFOLIO_MORTGAGE => $this->portfolioMortgageRevenueProjectionByCategories->count() ? $this->getPortfolioMortgageTotalLoanAmounts() : [],
             self::MICROFINANCE => $this->microfinanceProductSalesProjects->count() ? $this->getTotalMicrofinanceMonthlyLoanAmounts() : [],
             self::CONSUMER_FINANCE => $this->consumerfinanceProductSalesProjects->count() ? $this->getTotalConsumerfinanceMonthlyLoanAmounts() : [],
-            
         ][$revenueStreamType];
     }
   
