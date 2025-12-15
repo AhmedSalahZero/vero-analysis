@@ -51,6 +51,10 @@ class LongTermLoanOpeningBalance extends Model
     {
         return $this->amount ;
     }
+	public function getInterestRate():float
+    {
+        return $this->interest_rate?:0 ;
+    }
     public function getInterest():array
     {
         return $this->interests??[] ;

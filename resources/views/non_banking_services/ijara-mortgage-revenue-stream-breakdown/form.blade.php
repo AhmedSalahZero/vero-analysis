@@ -40,7 +40,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
                         <div class="col-md-10">
                             <div class="d-flex align-items-center ">
                                 <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
-                                    {{ __('Ijara Mortgage Revenue Projection By Category') }}  {{ getThreeDotsHint() }}
+                                    {{ __('Ijara Mortgage Revenue Projection By Category') }} {{ getThreeDotsHint() }}
                                 </h3>
                             </div>
                         </div>
@@ -223,8 +223,8 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
                                     @php
                                     $columnIndex = 0 ;
                                     $currentYearRepeaterIndex = 0 ;
-									$currentYearTotal = 0 ;
-									$currentRowTotal = 0;
+                                    $currentYearTotal = 0 ;
+                                    $currentRowTotal = 0;
                                     @endphp
                                     @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                     @php
@@ -240,8 +240,8 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
                                     $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
                                     $currentMonthNumber = explode('-',$dateAsString)[1];
                                     $currentYear= explode('-',$dateAsString)[0];
-									$currentYearTotal+=$currentVal;
-									$currentRowTotal+=$currentVal;
+                                    $currentYearTotal+=$currentVal;
+                                    $currentRowTotal+=$currentVal;
                                     @endphp
 
 
@@ -254,7 +254,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
                                     </td>
                                     @php
                                     $currentYearRepeaterIndex++;
-									$currentYearTotal = 0;
+                                    $currentYearTotal = 0;
                                     @endphp
                                     @endif
 
@@ -400,8 +400,8 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
                                     @php
                                     $columnIndex = 0 ;
                                     $currentYearRepeaterIndex = 0 ;
-									$currentYearTotal = 0;
-									$currentRowTotal = 0 ;
+                                    $currentYearTotal = 0;
+                                    $currentRowTotal = 0 ;
                                     @endphp
                                     @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
@@ -415,8 +415,8 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
                                     $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
                                     $currentMonthNumber = explode('-',$dateAsString)[1];
                                     $currentYear= explode('-',$dateAsString)[0];
-									$currentYearTotal+=$currentVal;
-									$currentRowTotal+=$currentVal;
+                                    $currentYearTotal+=$currentVal;
+                                    $currentRowTotal+=$currentVal;
                                     @endphp
 
 
@@ -434,7 +434,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
                                     </td>
                                     @php
                                     $currentYearRepeaterIndex++;
-									$currentYearTotal=0;
+                                    $currentYearTotal=0;
                                     @endphp
                                     @endif
 
@@ -641,8 +641,8 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
                                 <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Total')"></x-tables.repeater-table-th>
                             </x-slot>
                             <x-slot name="trs">
-							
-									@include('loan-structure-trs')
+
+                                @include('loan-structure-trs')
 
                                 {{-- <tr data-repeat-formatting-decimals="2" data-repeater-style>
 
@@ -652,28 +652,28 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
                                     <td>
                                         <input value="{{ __('Equity Funding Rate (%)') }}" disabled class="form-control max-w-300 text-left mt-2" type="text">
 
-                                    </td>
-                                    @php
-                                    $columnIndex = 0 ;
-                                    @endphp
-                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                </td>
+                                @php
+                                $columnIndex = 0 ;
+                                @endphp
+                                @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
+                                <td>
+                                    <div class="d-flex align-items-center justify-content-center">
 
-                                            <x-repeat-right-dot-inputs :inputHiddenAttributes="'js-recalculate-equity-funding-value'" :currentVal="$eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getEquityFundingRatesAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed equity-funding-rates equity-funding-rate-input-hidden-class'" :is-percentage="true" :name="'equity_funding_rates['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                        <x-repeat-right-dot-inputs :inputHiddenAttributes="'js-recalculate-equity-funding-value'" :currentVal="$eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getEquityFundingRatesAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed equity-funding-rates equity-funding-rate-input-hidden-class'" :is-percentage="true" :name="'equity_funding_rates['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
-                                        </div>
-                                    </td>
-                                    @php
-                                    $columnIndex++;
-                                    @endphp
-                                    @endforeach
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <input type="text" class="form-control expandable-amount-input  sum-percentage-css" disabled value="-">
-                                        </div>
-                                    </td>
+                                    </div>
+                                </td>
+                                @php
+                                $columnIndex++;
+                                @endphp
+                                @endforeach
+                                <td>
+                                    <div class="d-flex align-items-center justify-content-center">
+                                        <input type="text" class="form-control expandable-amount-input  sum-percentage-css" disabled value="-">
+                                    </div>
+                                </td>
 
 
 

@@ -66,7 +66,72 @@ $incomeStatement = $study->incomeStatement;
 		 $formattedDcfMethod['ebit'] =  $incomeStatement ? $incomeStatement->ebit : [];
 		
 			$years = range(0 , $study->getDurationInYears()-1);
-        $balanceSheet = null;
+        $balanceSheet = $study->balanceSheet;
+		 $yearWithItsMonths=$study->getYearIndexWithItsMonths();
+
+		/**
+		 * * start changeInCustomerOutstanding
+		 */
+		$yearIndexWithLastMonth = HArr::getLastMonthOfYear($yearWithItsMonths);
+		$customerOutstandingOpeningBalance=$study->getCustomerReceivableAmount();
+		$changeInCustomerOutstanding = HArr::calculateChangeInAfter($balanceSheet->yearly_customer_outstanding,$customerOutstandingOpeningBalance,$yearIndexWithLastMonth);
+		$changeInCustomerOutstanding = array_values($changeInCustomerOutstanding);
+		
+		/**
+		 * * end changeInCustomerOutstanding
+		 */
+		
+		
+			/**
+		 * * start changeIn otherDebtors
+		 */
+		$yearIndexWithLastMonth = HArr::getLastMonthOfYear($yearWithItsMonths);
+		$otherDebtorsOpeningBalance=$study->getTotalOtherDebtors();
+		$changeInOtherDebtors = HArr::calculateChangeInAfter($balanceSheet->yearly_other_debtors,$otherDebtorsOpeningBalance,$yearIndexWithLastMonth);
+		$changeInOtherDebtors = array_values($changeInOtherDebtors);
+		/**
+		 * * end changeIn otherDebtors
+		 */
+		
+		/**
+		 * * start changeIn portfolio loan outstanding
+		 */
+		$yearIndexWithLastMonth = HArr::getLastMonthOfYear($yearWithItsMonths);
+		$portfolioLoanOutstandingOpeningBalance = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('supplier_payable_opening_balances')->where('study_id', $study->id)->first();
+		$portfolioLoanOutstandingOpeningBalance = $portfolioLoanOutstandingOpeningBalance ? $portfolioLoanOutstandingOpeningBalance->amount : 0 ;
+		$changeInPortfolioLoanOutstanding = HArr::calculateChangeInBefore($balanceSheet->yearly_portfolio_loan_outstanding,$portfolioLoanOutstandingOpeningBalance,$yearIndexWithLastMonth);
+		$changeInPortfolioLoanOutstanding = array_values($changeInPortfolioLoanOutstanding);
+		/**
+		 * * end changeIn portfolio loan outstanding
+		 */
+		
+		
+			/**
+		 * * start changeIn otherCreditors
+		 */
+		$yearIndexWithLastMonth = HArr::getLastMonthOfYear($yearWithItsMonths);
+		$otherCreditorsOpeningBalance=$study->getTotalOtherCreditors();
+		$changeInOtherCreditors = HArr::calculateChangeInAfter($balanceSheet->yearly_other_creditors,$otherCreditorsOpeningBalance,$yearIndexWithLastMonth);
+		$changeInOtherCreditors = array_values($changeInOtherCreditors);
+		
+		/**
+		 * * end changeIn otherCreditors
+		 */
+		
+		$netChangeInWorkingCapital = HArr::sumAtDates([$changeInCustomerOutstanding,$changeInOtherDebtors,$changeInPortfolioLoanOutstanding,$changeInOtherCreditors],$years);
+		
+		
+		
+	
+		
+		
+		
+	
+		
+		
+		
+		
+		
         $cashflowReport = $study->cashflowStatementReport;
         $taxRate = $study->getCorporateTaxesRate() / 100 ;
 		$formattedDcfMethod['ebit']=$study->replaceMonthIndexWithYearIndex($formattedDcfMethod['ebit']);
@@ -75,8 +140,7 @@ $incomeStatement = $study->incomeStatement;
         $formattedDcfMethod['depreciation'] =  $incomeStatement ? $incomeStatement->total_depreciation : [];
 		$formattedDcfMethod['depreciation'] = $study->replaceMonthIndexWithYearIndex($formattedDcfMethod['depreciation']);
 		$depreciation = $formattedDcfMethod['depreciation'];
-		
-        $formattedDcfMethod['net-change-in-working-capital'] = $netChangeInWorkingCapital = $balanceSheet ? $balanceSheet->net_change_in_working_capital : [];
+        $formattedDcfMethod['net-change-in-working-capital'] = $netChangeInWorkingCapital ;
         // $formattedDcfMethod['net-change-in-working-capital'] = $netChangeInWorkingCapital = $balanceSheet ? $study->replaceMonthIndexWithYearIndex($balanceSheet->net_change_in_working_capital) : [];
 		 $studyDates = array_keys($study->getStudyDates()) ;
         $sumKeys = $studyDates;
@@ -117,8 +181,8 @@ $incomeStatement = $study->incomeStatement;
         //     }
         // }
         $costOfDebit = array_sum($totalAfterInterest);
-        $debitFundingPercentages = $balanceSheet ? $balanceSheet->debit_funding_percentages  : [];
-        $equityFundingPercentages = $balanceSheet ? $balanceSheet->equity_funding_percentages  : [1,1,1,1,1];
+        $debitFundingPercentages = $balanceSheet ? (array)$balanceSheet->debit_funding_percentages  : [];
+        $equityFundingPercentages = $balanceSheet ? (array)$balanceSheet->equity_funding_percentages  : [1,1,1,1,1];
         $debitFundingPercentages = HArr::MultiplyWithNumber($debitFundingPercentages, $costOfDebit);
         $equityFundingPercentages = HArr::MultiplyWithNumber($equityFundingPercentages, $returnRate);
         $wacc = HArr::sumAtDates([$equityFundingPercentages,$debitFundingPercentages],$years);
@@ -143,7 +207,7 @@ $incomeStatement = $study->incomeStatement;
         $formattedDcfMethod['npv'] = [0=>array_sum(HArr::divideTwoArrAtSameIndex($freeCashflowWithTerminal, array_values($newWacc)))] ;
 
         $formattedDcfMethod['irr'] = [Finance::irr($freeCashflowWithTerminal)*100] ;
-		$title  = __('Valuation');
+		$title  = __('Discounted Cashflow Valuation');
         return view('non_banking_services.income-statement.valuation',[
 			'company'=>$company ,
 			'study'=>$study , 

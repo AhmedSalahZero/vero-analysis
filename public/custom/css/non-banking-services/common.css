@@ -1316,3 +1316,6 @@ td > .kt-radio.kt-radio--single {
 .ml--2{
 	margin-left: -10px !important;
 }
+.min-250-w{
+	min-width:250px !important; 
+}

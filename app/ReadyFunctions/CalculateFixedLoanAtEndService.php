@@ -93,8 +93,12 @@ class CalculateFixedLoanAtEndService
         $appliedStepValue = $this->getAppliedStepIntervalValue($appliedStepName);
         $gracePlusInstallmentIntervalValue = (int) ($gracePeriod+$installmentPaymentIntervalValue);
         $dateAfterIndex = HDate::getDateAfterIndex($datesAsIndexString, $datesAsStringIndex, $startDate, $gracePlusInstallmentIntervalValue/$installmentPaymentIntervalValue);
-        
         $installmentStartDateAsIndex = $datesAsStringIndex[$dateAfterIndex] ;
+		// if(is_null($installmentStartDateAsIndex)){
+		// 	dd($currentStartDateAsIndex, $startDate, $tenor);
+		// 	dd($datesAsIndexString,$datesAsStringIndex,$dateAfterIndex,$currentStartDateAsIndex ,$startDate );
+		// }
+     
         $endDateAsIndex = array_key_last($datesAsIndexString);
         $stepFactors = [];
         $currentStepFactorCounterValue = 0;
@@ -375,7 +379,7 @@ class CalculateFixedLoanAtEndService
         
 
             
-        if ($equityFundingRate < 100) {
+        if ($equityFundingRate < 100 &&  $ffeLoan->getTenorsAtMonthIndex($currentDateIndex) >0 ){
             $ffeLoanType = $ffeLoan->getLoanType();
             $ffeBaseRate = 0;
             $ffeMarginRate = $ffeLoan->getMarginRateAtMonthIndex($currentDateIndex);
@@ -401,6 +405,7 @@ class CalculateFixedLoanAtEndService
                 $currentEndBalances = $ffeLoanCalculations['endBalance']??[] ;
                 $ffeLoanCalculations['endBalance'] =HArr::fillMissedKeysFromPreviousKeys($currentEndBalances, $study->getCalculatedExtendedStudyDates());
                 $ffeLoanCalculations['month_as_index'] = $ffeLoanStartDateAsIndex;
+                $ffeLoanCalculations['interest_rate'] = $ffeMarginRate;
                 $ffeLoanCalculations['loan_type'] = $ffeLoanType;
                 $ffeLoanInterestAmounts = $ffeLoanCalculations['interestAmount'] ?? [];
                 $ffeLoanEndBalanceAtStudyEndDate = $ffeLoanCalculations['endBalance'][$study->getStudyEndDateFormatted()] ?? 0;

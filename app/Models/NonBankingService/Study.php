@@ -3373,7 +3373,11 @@ class Study extends Model
         $cashAndBankAmount   = $this->cashAndBankOpeningBalances->first();
         return $cashAndBankAmount ? $cashAndBankAmount->cash_and_bank_amount : 0 ;
     }
-    
+       public function getCustomerReceivableAmount():float
+    {
+        $cashAndBankAmount   = $this->cashAndBankOpeningBalances->first();
+        return $cashAndBankAmount ? $cashAndBankAmount->customer_receivable_amount : 0 ;
+    }
     public function getCashInOutFlowViewVars()
     {
         $cashflowStatementReport = $this->cashflowStatementReport;
@@ -4057,9 +4061,9 @@ class Study extends Model
             }
         }
         $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['data'] = $totalFixedAssets; // with subs [fixed asset statement end balance]
-        $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['year_total'] = HArr::getPerYearIndexForEndBalance($totalFixedAssets, $yearWithItsMonths);
+        $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['year_total'] =$totalFixedAssetsPerYears= HArr::getPerYearIndexForEndBalance($totalFixedAssets, $yearWithItsMonths);
         $currentTabIndex++;
-            
+
             
         //     $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['options']['title'] = $title;
         //     $endBalance =$depreciationStatement['end_balance']??[];
@@ -4079,15 +4083,15 @@ class Study extends Model
         $totalOtherLongTermAssets= HArr::formatMultiSubItems($totalOtherLongTermAssets, $sumKeys, ['monthly','end_balance']);
         $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['options']['title'] = __('Other Long Term Assets');  // statement from other long term assets [statement]
         $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['data'] = $totalOtherLongTermAssets;  // statement from other long term assets [statement]
-        $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['year_total'] = HArr::getPerYearIndexForEndBalance($totalOtherLongTermAssets, $yearWithItsMonths);  // statement from other long term assets [statement]
+        $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['year_total'] =$totalOtherLongTermAssetsPerYears= HArr::getPerYearIndexForEndBalance($totalOtherLongTermAssets, $yearWithItsMonths);  // statement from other long term assets [statement]
         $currentTabIndex++;
         /**
           * * End Other Long Term Assets
           */
           
         $tableDataFormatted[$nonCurrentAssetTabIndex]['main_items'][$nonCurrentAssetTabIndex]['data'] =  $totalNonCurrentAssets = HArr::sumAtDates([$totalFixedAssets ,$totalOtherLongTermAssets], $sumKeys) ;
-        $tableDataFormatted[$nonCurrentAssetTabIndex]['main_items'][$nonCurrentAssetTabIndex]['year_total'] =  HArr::getPerYearIndexForEndBalance($totalNonCurrentAssets, $yearWithItsMonths);
-          
+        $tableDataFormatted[$nonCurrentAssetTabIndex]['main_items'][$nonCurrentAssetTabIndex]['year_total'] =  $totalNonCurrentAssetsPerYears = HArr::getPerYearIndexForEndBalance($totalNonCurrentAssets, $yearWithItsMonths);
+         
         /**
          * * Start Other Long Term Assets
          */
@@ -4108,7 +4112,7 @@ class Study extends Model
         $monthlyCashAndBanks = $this->cashflowStatementReport ? (array)$this->cashflowStatementReport->cash_end_balances : [];
         $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['options']['title'] = __('Cash & banks');   // من cash in out // save it
         $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['data'] = $monthlyCashAndBanks;
-        $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['year_total'] = HArr::getPerYearIndexForEndBalance($monthlyCashAndBanks, $yearWithItsMonths);
+        $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['year_total'] = $monthlyCashAndBanksPerYears=HArr::getPerYearIndexForEndBalance($monthlyCashAndBanks, $yearWithItsMonths);
         $currentTabIndex++;
         /**
          * *  End Cash & banks
@@ -4173,7 +4177,7 @@ class Study extends Model
         $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['year_total'] = HArr::getPerYearIndexForEndBalance($totalEcl, $yearWithItsMonths);
         $totalCustomerReceivables = HArr::sumAtDates([$cashAndBankOpeningBalances,$totalLoanBalances,$loanDirectFactoringEndBalances,$totalEcl], $sumKeys);
         $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['data'] = $totalCustomerReceivables ;
-        $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['year_total'] = HArr::getPerYearIndexForEndBalance($totalCustomerReceivables, $yearWithItsMonths) ;
+        $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['year_total'] = $totalCustomerReceivablesPerYears=HArr::getPerYearIndexForEndBalance($totalCustomerReceivables, $yearWithItsMonths) ;
         $currentTabIndex++;
      
         
@@ -4251,16 +4255,16 @@ class Study extends Model
         $totalOtherDebtors = HArr::sumAtDates([$totalOtherDebtorsOpeningBalances ,$totalAccruedInterestRevenues ], $sumKeys);
         $totalCurrentAssets = HArr::sumAtDates([$totalOtherDebtors , $totalCustomerReceivables , $monthlyCashAndBanks], $sumKeys);
         $tableDataFormatted[$currentAssetOrderIndex]['main_items'][$currentAssetOrderIndex]['data'] = $totalCurrentAssets;
-        $tableDataFormatted[$currentAssetOrderIndex]['main_items'][$currentAssetOrderIndex]['year_total'] = HArr::getPerYearIndexForEndBalance($totalCurrentAssets, $yearWithItsMonths);
+        $tableDataFormatted[$currentAssetOrderIndex]['main_items'][$currentAssetOrderIndex]['year_total'] =$totalCurrentAssetsPerYears= HArr::getPerYearIndexForEndBalance($totalCurrentAssets, $yearWithItsMonths);
         ;
         $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['data'] = $totalOtherDebtors;  // statement from other long term assets [statement]
-        $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['year_total'] = HArr::getPerYearIndexForEndBalance($totalOtherDebtors, $yearWithItsMonths);  // statement from other long term assets [statement]
+        $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['year_total'] =$totalOtherDebtorsPerYears= HArr::getPerYearIndexForEndBalance($totalOtherDebtors, $yearWithItsMonths);  // statement from other long term assets [statement]
         $currentTabIndex++;
         
         $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['options']['title'] = __('Total Assets');
         $totalAssets = HArr::sumAtDates([$totalNonCurrentAssets , $totalCurrentAssets], $sumKeys);
         $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['data'] = $totalAssets;
-        $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['year_total'] = HArr::getPerYearIndexForEndBalance($totalAssets, $yearWithItsMonths);
+        $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['year_total'] =$totalAssetsPerYears= HArr::getPerYearIndexForEndBalance($totalAssets, $yearWithItsMonths);
         $currentTabIndex++;
                 
                 
@@ -4321,7 +4325,7 @@ class Study extends Model
         
         $totalBankLoanPayable =  HArr::sumAtDates([$supplierPayableOpeningBalances,$totalLoanBalances,$loanDirectFactoringEndBalances,$odaEndBalances], $sumKeys);
         $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['data'] = $totalBankLoanPayable;
-        $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['year_total'] = HArr::getPerYearIndexForEndBalance($totalBankLoanPayable, $yearWithItsMonths);
+        $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['year_total'] = $totalBankLoanPayablePerYears=HArr::getPerYearIndexForEndBalance($totalBankLoanPayable, $yearWithItsMonths);
         $currentTabIndex++;
         
         
@@ -4496,11 +4500,11 @@ class Study extends Model
         
         $totalExistOtherCreditors = HArr::sumAtDates([$totalOtherCreditorsOpeningBalances,$totalAccruedInterestExpenses,$totalExpenses,$totalWithholdEndBalancePerCategories,$totalCorporateTaxes,$salaryStatementEndBalances,$totalDirectFactoringUnearnedRevenues,$portfolioEndBalances,$totalFixedAssetPayables], $sumKeys);
         $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['data'] = $totalExistOtherCreditors;
-        $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['year_total'] =HArr::getPerYearIndexForEndBalance($totalExistOtherCreditors, $yearWithItsMonths);
+        $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['year_total'] =$totalExistOtherCreditorsPerYears=HArr::getPerYearIndexForEndBalance($totalExistOtherCreditors, $yearWithItsMonths);
 
         $totalCurrentLiabilities = HArr::sumAtDates([$totalExistOtherCreditors , $totalBankLoanPayable], $sumKeys);
         $tableDataFormatted[$totalCurrentLiabilitiesTabIndex]['main_items'][$totalCurrentLiabilitiesTabIndex]['data'] = $totalCurrentLiabilities;
-        $tableDataFormatted[$totalCurrentLiabilitiesTabIndex]['main_items'][$totalCurrentLiabilitiesTabIndex]['year_total'] = HArr::getPerYearIndexForEndBalance($totalCurrentLiabilities, $yearWithItsMonths);
+        $tableDataFormatted[$totalCurrentLiabilitiesTabIndex]['main_items'][$totalCurrentLiabilitiesTabIndex]['year_total'] =$totalCurrentLiabilitiesPerYears= HArr::getPerYearIndexForEndBalance($totalCurrentLiabilities, $yearWithItsMonths);
         $currentTabIndex++;
       
         
@@ -4543,32 +4547,53 @@ class Study extends Model
         /**
          * * End Key
          */
-        
+        		$totalLoanSubs=[];
         $totalLoansOpening = [];
-        $loansOpeningBalanceEndBalances =  DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('long_term_loan_opening_balances')->where('study_id', $this->id)->pluck('statement')->toArray();
-        foreach ($loansOpeningBalanceEndBalances as $loansOpeningBalanceEndBalance) {
+        $loansOpeningBalanceEndBalances =  DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('long_term_loan_opening_balances')->where('study_id', $this->id)->get();
+	
+        foreach ($loansOpeningBalanceEndBalances as $row) {
+			$loansOpeningBalanceEndBalance =$row->statement;
+			$interestRate =$row->interest_rate;
             $loansOpeningBalanceEndBalance= ((array)((array)json_decode($loansOpeningBalanceEndBalance))['monthly']??[])['end_balance']??[];
             $totalLoansOpening = HArr::sumAtDates([$totalLoansOpening,$loansOpeningBalanceEndBalance], $sumKeys);
+			$loansOpeningBalanceEndBalancePerYear = HArr::getPerYearIndexForEndBalance($loansOpeningBalanceEndBalance,$yearWithItsMonths);
+			$totalLoanSubs[]= [
+				'data'=>$loansOpeningBalanceEndBalancePerYear ,
+				'interest_rate'=>$interestRate
+			];
         }
         
         
       
-        $fixedAssetStatements = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('fixed_assets_loan_schedule_payments')->where('fixed_assets_loan_schedule_payments.study_id', $this->id)->join('fixed_assets', 'fixed_assets.id', '=', 'fixed_assets_loan_schedule_payments.fixed_asset_id')->join('fixed_asset_names', 'fixed_asset_names.id', '=', 'fixed_assets.name_id')->get(['endBalance','name as title','fixed_asset_names.id as fixed_asset_name_id'])->toArray();
+        $fixedAssetStatements = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('fixed_assets_loan_schedule_payments')->where('fixed_assets_loan_schedule_payments.study_id', $this->id)->join('fixed_assets', 'fixed_assets.id', '=', 'fixed_assets_loan_schedule_payments.fixed_asset_id')->join('fixed_asset_names', 'fixed_asset_names.id', '=', 'fixed_assets.name_id')->get(['endBalance','name as title','fixed_asset_names.id as fixed_asset_name_id','fixed_assets.id as fixed_asset_id','interest_rate'])->toArray();
         $totalFixedAssets = [];
         $totalFixedAssetPerId = [];
         foreach ($fixedAssetStatements as $fixedAssetStatement) {
             $fixedAssetId = $fixedAssetStatement->fixed_asset_name_id ;
+            $rate = $fixedAssetStatement->interest_rate ;
+			// $fixedAsset = FixedAsset::find($fixedAssetStatement->fixed_asset_id);
+			// $fundingStructure = $fixedAsset->getFixedAssetStructureForFixAssetType($fixedAsset->getType());
+			// dd($fundingStructure);
+			
             $currentEndBalance = json_decode($fixedAssetStatement->endBalance, true);
             $totalFixedAssetPerId[$fixedAssetId] = HArr::sumAtDates([($totalFixedAssetPerId[$fixedAssetId]??[]) ,$currentEndBalance], $sumKeys);
+			$currentEndBalancePerYear = HArr::getPerYearIndexForEndBalance($currentEndBalance,$yearWithItsMonths);
+			 $totalLoanSubs[] = [
+				'data'=>$currentEndBalancePerYear ,
+				'interest_rate'=>$rate
+			 ];
+
         }
+
         foreach ($totalFixedAssetPerId as $fixedAssetNameId => $totalFixedAssetEndBalance) {
             $title = FixedAssetName::find($fixedAssetNameId)->getName();
             $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['options']['title'] = $title;
             $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['data']= $totalFixedAssetEndBalance;
             $totalFixedAssets = HArr::sumAtDates([$totalFixedAssets , $totalFixedAssetEndBalance  ], $sumKeys);
-            $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['year_total']= HArr::getPerYearIndexForEndBalance($totalFixedAssetEndBalance, $yearWithItsMonths);
-            
+            $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['year_total']=  HArr::getPerYearIndexForEndBalance($totalFixedAssetEndBalance, $yearWithItsMonths);
+           
         }
+		
         // foreach ($fixedAssetStatements as $fixedAssetStatement) {
         //     $title = $fixedAssetStatement->title;
         //     $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['options']['title'] = $title;
@@ -4580,7 +4605,7 @@ class Study extends Model
      
         $totalLongTermLiabilities = HArr::sumAtDates([$totalLoansOpening,$totalOtherLongTermsOpening,$totalFixedAssets], $sumKeys);
         $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['data'] = $totalLongTermLiabilities;
-        $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['year_total'] = HArr::getPerYearIndexForEndBalance($totalLongTermLiabilities, $yearWithItsMonths);
+        $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['year_total'] = $totalLongTermLiabilitiesPerYears=HArr::getPerYearIndexForEndBalance($totalLongTermLiabilities, $yearWithItsMonths);
         
         /**
          * * Start Key
@@ -4712,7 +4737,7 @@ class Study extends Model
         $tableDataFormatted[$currentTabIndex]['sub_items'][$currentTabId]['year_total'] =HArr::sumPerYearIndex($currentDataArr, $yearWithItsMonths) ;
         
         $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['data'] = $totalShareholderEquity = HArr::sumAtDates([$paidUpCapitals,$additionalPaidUpCapital,$legalReserve,$accumulatedRetainedEarnings,$netProfit], $sumKeys);
-        $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['year_total'] = HArr::getPerYearIndexForEndBalance($totalShareholderEquity, $yearWithItsMonths);
+        $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['year_total'] = $totalShareholderEquityPerYears=HArr::getPerYearIndexForEndBalance($totalShareholderEquity, $yearWithItsMonths);
         
         $currentTabIndex++;
         $sum = HArr::sumAtDates([$totalCurrentLiabilities,$totalLongTermLiabilities,$totalShareholderEquity], $sumKeys);
@@ -4751,6 +4776,42 @@ class Study extends Model
         /**
          * *
          */
+		$data = [
+			'monthly_non_currency_assets'=>$totalNonCurrentAssets,
+			'total_non_currency_assets'=>$totalNonCurrentAssetsPerYears,
+			'monthly_fixed_assets'=>$totalFixedAssets,
+			'yearly_fixed_assets'=>$totalFixedAssetsPerYears,
+			'monthly_other_long_term_assets'=>$totalOtherLongTermAssets,
+			'yearly_other_long_term_assets'=>$totalOtherLongTermAssetsPerYears,
+			'monthly_current_assets'=>$totalCurrentAssets,
+			'total_current_assets'=>$totalCurrentAssetsPerYears,
+			'monthly_cash_and_banks'=>$monthlyCashAndBanks,
+			'yearly_cash_and_banks'=>$monthlyCashAndBanksPerYears,
+			'monthly_customer_outstanding'=>$totalCustomerReceivables,
+			'yearly_customer_outstanding'=>$totalCustomerReceivablesPerYears,
+			'monthly_other_debtors'=>$totalOtherDebtors,
+			'yearly_other_debtors'=>$totalOtherDebtorsPerYears,
+			'monthly_total_assets'=>$totalAssets,
+			'yearly_total_assets'=>$totalAssetsPerYears,
+			'monthly_current_liabilities'=>$totalCurrentLiabilities,
+			'yearly_current_liabilities'=>$totalCurrentLiabilitiesPerYears,
+			'monthly_portfolio_loan_outstanding'=>$totalBankLoanPayable,
+			'yearly_portfolio_loan_outstanding'=>$totalBankLoanPayablePerYears,
+			'monthly_other_creditors'=>$totalExistOtherCreditors,
+			'yearly_other_creditors'=>$totalExistOtherCreditorsPerYears,
+			'monthly_long_term_liabilities'=>$totalLongTermLiabilities,
+			'yearly_long_term_liabilities'=>$totalLongTermLiabilitiesPerYears,
+			'monthly_shareholder_equity'=>$totalShareholderEquity,
+			'yearly_shareholder_equity'=>$totalShareholderEquityPerYears,
+			'mtls_structures'=>$totalLoanSubs,
+			'company_id'=>$this->company->id
+		];
+		if($this->balanceSheet){
+			$this->balanceSheet->update($data);
+		}else{
+			$this->balanceSheet()->create($data);
+		}
+		  
        
         return  [
             
@@ -4936,6 +4997,10 @@ class Study extends Model
     public function incomeStatement():HasOne
     {
         return $this->hasOne(IncomeStatement::class, 'study_id', 'id');
+    }
+	 public function balanceSheet():HasOne
+    {
+        return $this->hasOne(BalanceSheet::class, 'study_id', 'id');
     }
     public function getFixedAssetsWithCountsDates(string $fixedAssetType)
     {
@@ -6237,5 +6302,36 @@ public function replaceMonthIndexWithYearIndex(array $items)
 		}
 		return $newResult;
 	}
+	public function getTotalOtherDebtors()
+	{
+		$total = 0;
+        $otherDebtorsOpeningBalances = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('other_debtors_opening_balances')->where('study_id', $this->id)->pluck('amount', 'name')->toArray();
+        foreach ($otherDebtorsOpeningBalances as $title => $amount) {
+            $total+= $amount;
+        }
+		return $total;
+		
+	}
 	
+	public function getTotalOtherCreditors()
+	{
+		$total = 0;
+        $otherCreditorsOpeningBalances = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('other_credits_opening_balances')->where('study_id', $this->id)->pluck('amount', 'name')->toArray();
+        foreach ($otherCreditorsOpeningBalances as $title => $amount) {
+            $total+= $amount;
+        }
+		return $total;
+		
+	}
+	
+	// public function getTotalPortfolioLoanOutstanding()
+	// {
+	// 	$total = 0;
+    //     $otherDebtorsOpeningBalances = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('other_debtors_opening_balances')->where('study_id', $this->id)->pluck('amount', 'name')->toArray();
+    //     foreach ($otherDebtorsOpeningBalances as $title => $amount) {
+    //         $total+= $amount;
+    //     }
+	// 	return $total;
+		
+	// }
 }

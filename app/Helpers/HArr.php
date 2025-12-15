@@ -1276,4 +1276,55 @@ public static function MultiplyWithNumberIfPositive(array $items , float $number
 		}
 		return $newItems ;
 	}
+	public static function calculateChangeInAfter(array $customerReceivables , float $openingBalance ,array $yearIndexWithLastMonth,$debug=false){
+		
+		$isFirst = true ; 
+		$result = [];
+		foreach($yearIndexWithLastMonth as $yearIndex => $lastMonthAsDateIndex){
+			$currentCustomerReceivables = $customerReceivables[$lastMonthAsDateIndex]??0;
+			if($isFirst){
+				$currentCustomerReceivables= $openingBalance - $currentCustomerReceivables ;
+				$isFirst = false ; 
+			}else{
+				$nextIndex = $lastMonthAsDateIndex - 12 ;
+				$nextYearValue = $customerReceivables[$nextIndex]??0;
+				$currentCustomerReceivables = $nextYearValue - $currentCustomerReceivables ;
+			}
+				
+			$result[$lastMonthAsDateIndex] = $currentCustomerReceivables ;
+			
+		}
+		
+		return $result;
+	}
+	public static function calculateChangeInBefore(array $customerReceivables , float $openingBalance ,array $yearIndexWithLastMonth){
+		
+		$isFirst = true ; 
+		$result = [];
+		foreach($yearIndexWithLastMonth as $yearIndex => $lastMonthAsDateIndex){
+			$currentCustomerReceivables = $customerReceivables[$lastMonthAsDateIndex]??0;
+			if($isFirst){
+				$currentCustomerReceivables= $currentCustomerReceivables- $openingBalance  ;
+				$isFirst = false ; 
+			}else{
+				$nextIndex = $lastMonthAsDateIndex - 12 ;
+				$nextYearValue = $customerReceivables[$nextIndex]??0;
+				$currentCustomerReceivables = $currentCustomerReceivables- $nextYearValue  ;
+			}
+				
+			$result[$lastMonthAsDateIndex] = $currentCustomerReceivables ;
+			
+		}
+		
+		return $result;
+		
+	}
+	public static function getLastMonthOfYear(array $yearWithItsMonths){
+		$result = [];
+		foreach($yearWithItsMonths as $yearAsIndex => $itsMonths){
+			$result[$yearAsIndex]  = array_key_last($itsMonths);
+		}	
+		return $result;
+	}
+	
 }

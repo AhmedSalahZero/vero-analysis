@@ -630,4 +630,11 @@ use MathPHP\Statistics\Correlation ;
 
 <!--end::Page Scripts -->
 
+<script src="/custom/js/non-banking-services/common.js"></script>
+<script>
+$(function(){
+$('.collapse-before-me').trigger('click')
+	
+})
+</script>
 @endsection

@@ -647,6 +647,12 @@ $hiringPopModels[] =$repeaterId;
                     <label>{{ __('Amount') }}</label>
                     <input type="text" name="amount" class="form-control" value="{{ $model ? $model->getAmount() : 0 }}">
                 </div>
+
+                <div class="col-1">
+                    <label>{{ __('Interest Rate %') }}</label>
+                    <input type="text" name="interest_rate" class="form-control" value="{{ $model ? $model->getInterestRate() : 0 }}">
+                </div>
+				
                 <div class="col-1 common-parent">
                     <label class="visible-hidden">{{ __('Installments') }}</label>
                     <div>
@@ -933,10 +939,10 @@ $hiringPopModels[] = $repeaterId;
                 $('.hundred-minus-number').trigger('change')
                 //     $('.allocate-checkbox').trigger('change')
                 $('.number_minus_field_1').trigger('change')
-				
-				          $(this).find('.dropdown-toggle').remove();
-            $(this).find('select.repeater-select').selectpicker("refresh");
-			
+
+                $(this).find('.dropdown-toggle').remove();
+                $(this).find('select.repeater-select').selectpicker("refresh");
+
             }
             , ready: function(setIndexes) {
 

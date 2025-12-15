@@ -60,14 +60,14 @@ class FfeFixedAssetsController extends Controller
 		$oldIdsFromDatabase = $study->fixedAssets->where('type',$fixedAssetType)->pluck('id')->toArray();
 		$study->storeRepeaterRelations($request, $this->getRepeaterRelations(), $company, ['type'=>$fixedAssetType],$oldIdsFromDatabase);
 		$fundingStructureCounts = $study->getFixedAssetsWithCountsDates(FixedAsset::FFE);
-		
 		$loanStructure = $study->getLoanStructure($fixedAssetType);
         $isFullyFundedThroughEquity = $request->input('generalFixedAssetsFundingStructure.is_fully_funded_though_equity') ;
+		$goToFundingStructure = !$isFullyFundedThroughEquity && count($fundingStructureCounts);
 		if($isFullyFundedThroughEquity && $loanStructure){
 			 $loanStructure->delete();
 		}
 		$study->recalculateFixedAssets($fixedAssetType);
-        if (!$isFullyFundedThroughEquity && count($fundingStructureCounts)) {
+        if ($goToFundingStructure) {
             return response()->json([
             'redirectTo'=>route('create.ffe.funding.structure.fixed.assets', ['company'=>$company->id,'study'=>$study->id])
         ]);

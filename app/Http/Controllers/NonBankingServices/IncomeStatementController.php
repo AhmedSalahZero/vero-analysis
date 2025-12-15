@@ -221,6 +221,7 @@ class IncomeStatementController extends Controller
                 }
             }
         }
+		
 		$totalEndBalanceForPortfolioPerRevenueType = [];
 		$studyDates = $study->getDateWithDateIndex();
         foreach ($loanSchedulePayments as $loanSchedulePaymentAsStdClass) {

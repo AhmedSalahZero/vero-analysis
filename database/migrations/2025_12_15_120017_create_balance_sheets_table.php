@@ -1,20 +1,22 @@
 <?php
 
-namespace App\Models\NonBankingService;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use App\Models\Traits\Scopes\BelongsToCompany;
-use App\Models\Traits\Scopes\NonBankingServices\BelongsToStudy;
-use Illuminate\Database\Eloquent\Model;
-
-class BalanceSheet extends Model
+class CreateBalanceSheetsTable extends Migration
 {
-    
-    use BelongsToStudy,BelongsToCompany;
-    protected $connection =NON_BANKING_SERVICE_CONNECTION_NAME;
-    protected $guarded = ['id'];
-	protected $table = 'balance_sheets';
-    protected $casts = [
-			'monthly_non_currency_assets'=>'array',
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->create('balance_sheets', function (Blueprint $table) {
+            $table->id();
+			foreach([
+					'monthly_non_currency_assets'=>'array',
 			'total_non_currency_assets'=>'array',
 			'monthly_fixed_assets'=>'array',
 			'yearly_fixed_assets'=>'array',
@@ -40,7 +42,22 @@ class BalanceSheet extends Model
 			'yearly_long_term_liabilities'=>'array',
 			'monthly_shareholder_equity'=>'array',
 			'yearly_shareholder_equity'=>'array',
-			'mtls_structures'=>'array',
-    ];
+			'mtls_structures'=>'array'
+			] as $columnName => $castArr){
+				$table->json($columnName)->nullable();
+			}
+			$table->unsignedBigInteger('study_id');
+			$table->unsignedBigInteger('company_id');
+            $table->timestamps();
+        });
+    }
 
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+    }
 }
