@@ -14,8 +14,6 @@ class ConsolidationIncomeStatementController extends Controller
     public function index(Company $company, Request $request,Consolidation $consolidation)
     {
 		$studyIds = $consolidation->study_ids ;
-		// dd($studyIds);
-	//	$studyIds = [92,92];
 		$onlyViewVars= true;
 		$subIncomeStatements = [];
 		$mergedResult=[];
@@ -52,6 +50,5 @@ class ConsolidationIncomeStatementController extends Controller
 			'defaultClasses'=>$defaultClasses
 		]);
 		
-		// dd('d',$incomeStatements);
 	}
 }

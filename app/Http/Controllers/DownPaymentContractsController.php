@@ -160,8 +160,6 @@ class DownPaymentContractsController extends Controller
 	}
 	public function storeDownPaymentSettlement(StoreDownPaymentSettlementRequest $request,Company $company,int $downPaymentId,int $partnerId,string $modelType)
 	{
-				// dd('good',$request->all());
-		// dd();
 		/**
 		 * @var MoneyReceived $downPayment
 		 */
@@ -201,8 +199,8 @@ class DownPaymentContractsController extends Controller
 		// 		'amount'=>10000
 		// 	]
 		// ];
-		// dd($downPayment->odoo_move_id);
-		if($downPayment->odoo_move_id){
+		
+		if($company->hasOdooIntegrationCredentials() && $downPayment->odoo_move_id){
 			$fetch = (new OdooPayment($company));
 		$downPaymentOdooId = $downPayment->odoo_move_id;
 		$invoiceMatches =[];

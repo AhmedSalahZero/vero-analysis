@@ -5682,7 +5682,6 @@ class Study extends Model
                 $rates = $this->generalAndReserveAssumption->getBaseRatesPerMonths();
                 
             }
-            //   dd($baseRatesPerMonths);
             foreach ($monthlyPortfolioLoanAmounts as $loanStartDateAsIndex => $monthlyLoanAmount) {
                 if ($isPortfolio) {
                     $rates = $microfinanceProductSalesProject->generateDecreasingRate($loanStartDateAsIndex);
