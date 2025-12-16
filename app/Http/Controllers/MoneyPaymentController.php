@@ -461,11 +461,12 @@ class MoneyPaymentController
         /**
          * * For Money Payment Only
          */
-        $totalWithholdAmount = $moneyPayment->storeNewSettlement(
+        $totalWithholdAmountAndSettlements = $moneyPayment->storeNewSettlement(
             $request->get('settlements', []),
             $partnerId,
             $company
         );
+		$totalWithholdAmount = $totalWithholdAmountAndSettlements['total_withhold_amount'];
         $moneyPayment->update([
             'total_withhold_amount'=>$totalWithholdAmount
         ]);

@@ -70,28 +70,74 @@ use App\Models\NonBankingService\Study;
                 <div class="kt-portlet kt-portlet--mobile">
                     @include('non_banking_services.income-statement._valuation',['formattedDcfMethod'=>$formattedDcfMethod])
                 </div>
-
-
             </div>
 
 
-		@if(isset($nextButton))
+            @if(isset($nextButton))
             <div class="text-right mt-4 cash-flow-btn">
-					<a href="{{ $nextButton['link'] }}" class="btn btn-primary ">{{ $nextButton['title'] }}</a>
+                <a href="{{ $nextButton['link'] }}" class="btn btn-primary ">{{ $nextButton['title'] }}</a>
+            </div>
+            @endif
+
+
+
+            <!--End:: Tab Content-->
+
+
+
+            <!--End:: Tab Content-->
         </div>
-		@endif
-
-
-
-        <!--End:: Tab Content-->
-
-
-
-        <!--End:: Tab Content-->
     </div>
-</div>
 
 </div>
+
+<div class="kt-portlet kt-portlet--tabs">
+    <div class="kt-portlet__head">
+        <div class="kt-portlet__head-toolbar justify-content-between flex-grow-1">
+            <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link {{ !Request('active') || Request('active') == Study::STUDY ?'active':'' }}" data-toggle="tab" href="#{{Study::STUDY  }}" role="tab">
+                        <i class="fa fa-money-check-alt"></i> {{ __('Multipliers Valuations') }}
+                    </a>
+                </li>
+            </ul>
+
+
+
+        </div>
+    </div>
+    <div class="kt-portlet__body">
+        <div class="tab-content  kt-margin-t-20">
+
+            @php
+            $currentType = 'study' ;
+            @endphp
+            <!--Begin:: Tab Content-->
+            <div class="tab-pane {{  !Request('active') || Request('active') == $currentType ?'active':'' }}" id="{{ $currentType }}" role="tabpanel">
+                <div class="kt-portlet kt-portlet--mobile">
+                    @include('non_banking_services.income-statement._multipliers',['formattedDcfMethod'=>$formattedDcfMethod])
+                </div>
+            </div>
+
+
+            @if(isset($nextButton))
+            <div class="text-right mt-4 cash-flow-btn">
+                <a href="{{ $nextButton['link'] }}" class="btn btn-primary ">{{ $nextButton['title'] }}</a>
+            </div>
+            @endif
+
+
+
+            <!--End:: Tab Content-->
+
+
+
+            <!--End:: Tab Content-->
+        </div>
+    </div>
+
+</div>
+
 
 @endsection
 @section('js')
@@ -121,8 +167,7 @@ use App\Models\NonBankingService\Study;
         }
     })
 
-    $(function() {
-    })
+    $(function() {})
 
 </script>
 @endpush

@@ -4044,22 +4044,25 @@ class Study extends Model
 
             $title = $fixedAssetName->getName();
             $fixedAssetNameId = $fixedAssetName->id;
-            $currentFixedAsset = $fixedAssetStatements->where('name_id', $fixedAssetNameId)->first();
-            $currentEndBalance = $currentFixedAsset ? (json_decode($currentFixedAsset->depreciation_statement, true)['end_balance']??[]) : [];
-            $openingEndBalance = $fixedAssetOpeningBalances[$fixedAssetNameId]??[];
-            
-            $currentFixedAssetTotalPerName = $totalFixedAssetPerNames[$fixedAssetNameId] ?? [];
-            $totalFixedAssetPerNames[$fixedAssetNameId] = HArr::sumAtDates([$currentFixedAssetTotalPerName,$openingEndBalance,$currentEndBalance], $sumKeys);
+            $currentFixedAssets = $fixedAssetStatements->where('name_id', $fixedAssetNameId);
+			foreach($currentFixedAssets as $currentFixedAsset){
+				$currentEndBalance = $currentFixedAsset ? (json_decode($currentFixedAsset->depreciation_statement, true)['end_balance']??[]) : [];
+				$openingEndBalance = $fixedAssetOpeningBalances[$fixedAssetNameId]??[];
+				$currentFixedAssetTotalPerName = $totalFixedAssetPerNames[$fixedAssetNameId] ?? [];
+				$totalFixedAssetPerNames[$fixedAssetNameId] = HArr::sumAtDates([$currentFixedAssetTotalPerName,$openingEndBalance,$currentEndBalance], $sumKeys);
+			}
         }
         $totalFixedAssets = HArr::sumAtDates(array_values($totalFixedAssetPerNames), $sumKeys);
         foreach ($totalFixedAssetPerNames as $nameId => $endBalance) {
             $title = FixedAssetName::find($nameId)->getName();
+			// dump($title,$nameId);
             if (array_sum($endBalance)) {
                 $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['data']= $endBalance;
                 $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['year_total']= HArr::getPerYearIndexForEndBalance($endBalance, $yearWithItsMonths);
                 
             }
         }
+
         $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['data'] = $totalFixedAssets; // with subs [fixed asset statement end balance]
         $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['year_total'] =$totalFixedAssetsPerYears= HArr::getPerYearIndexForEndBalance($totalFixedAssets, $yearWithItsMonths);
         $currentTabIndex++;
@@ -4571,10 +4574,6 @@ class Study extends Model
         foreach ($fixedAssetStatements as $fixedAssetStatement) {
             $fixedAssetId = $fixedAssetStatement->fixed_asset_name_id ;
             $rate = $fixedAssetStatement->interest_rate ;
-			// $fixedAsset = FixedAsset::find($fixedAssetStatement->fixed_asset_id);
-			// $fundingStructure = $fixedAsset->getFixedAssetStructureForFixAssetType($fixedAsset->getType());
-			// dd($fundingStructure);
-			
             $currentEndBalance = json_decode($fixedAssetStatement->endBalance, true);
             $totalFixedAssetPerId[$fixedAssetId] = HArr::sumAtDates([($totalFixedAssetPerId[$fixedAssetId]??[]) ,$currentEndBalance], $sumKeys);
 			$currentEndBalancePerYear = HArr::getPerYearIndexForEndBalance($currentEndBalance,$yearWithItsMonths);
@@ -4593,15 +4592,6 @@ class Study extends Model
             $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['year_total']=  HArr::getPerYearIndexForEndBalance($totalFixedAssetEndBalance, $yearWithItsMonths);
            
         }
-		
-        // foreach ($fixedAssetStatements as $fixedAssetStatement) {
-        //     $title = $fixedAssetStatement->title;
-        //     $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['options']['title'] = $title;
-        //     $endBalance = json_decode($fixedAssetStatement->endBalance, true);
-        //     $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['data']= $endBalance;
-        //     $totalFixedAssets = HArr::sumAtDates([$totalFixedAssets , $endBalance  ], $sumKeys);
-        //     $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['year_total']= HArr::getPerYearIndexForEndBalance($endBalance, $yearWithItsMonths);
-        // }
      
         $totalLongTermLiabilities = HArr::sumAtDates([$totalLoansOpening,$totalOtherLongTermsOpening,$totalFixedAssets], $sumKeys);
         $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['data'] = $totalLongTermLiabilities;

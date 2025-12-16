@@ -122,7 +122,7 @@ use App\Models\MoneyReceived ;
 						 <div class="col-md-2">
                             <label>  {{ __('Down Payment Amount') }} </label>
 							<div class="form-group">
-							 <input data-max-cheque-value="0" disabled type="text" value="{{ $downPaymentAmount}}" name="received_amount" class="form-control only-greater-than-or-equal-zero-allowed   main-amount-class recalculate-amount-class" placeholder="{{__('Received Amount')}}">
+							 <input data-max-cheque-value="0" readonly type="text" value="{{ $downPaymentAmount}}" name="received_amount" class="form-control only-greater-than-or-equal-zero-allowed   main-amount-class recalculate-amount-class" placeholder="{{__('Received Amount')}}">
 							 
 							</div>
 
@@ -194,7 +194,11 @@ use App\Models\MoneyReceived ;
 					<div class="kt-input-icon">
 						<div class="kt-input-icon">
 							<div class="input-group date">
-								<input readonly class="form-control js-project-name" name="settlements['.$invoiceNumber.'][project_name]" value="{{ $invoice->getProjectName() }}">
+								<input readonly class="form-control js-project-name" 
+							
+								name="settlements[{{$index}}][project_name]"
+								
+								 value="{{ $invoice->getProjectName() }}">
 							</div>
 						</div>
 					</div>

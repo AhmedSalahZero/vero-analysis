@@ -487,8 +487,8 @@ class MoneyReceivedController
          * * For Money Received Only
          */
         
-        $totalWithholdAmount = $moneyReceived->storeNewSettlement($request->get('settlements', []), $partnerId, $company, false, $syncWithOdoo);
-        
+        $totalWithholdAmountAndSettlements = $moneyReceived->storeNewSettlement($request->get('settlements', []), $partnerId, $company, false, $syncWithOdoo);
+        $totalWithholdAmount = $totalWithholdAmountAndSettlements['total_withhold_amount'];
         $moneyReceived->update([
             'total_withhold_amount'=>$totalWithholdAmount
         ]);

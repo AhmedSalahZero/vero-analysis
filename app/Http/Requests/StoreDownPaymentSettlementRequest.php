@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Rules\DateMustBeGreaterThanOrEqualDate;
+use App\Rules\NumberMustBeGreaterThanOrEqualRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreDownPaymentSettlementRequest extends FormRequest
@@ -32,8 +33,13 @@ class StoreDownPaymentSettlementRequest extends FormRequest
 		$downPayment =$downPaymentModelFullName::find($downPaymentId);
 		$receivingDate  = $downPayment->getDate();
 		$settlementDate = Request('settlement_date');
+		$greaterNumber = Request()->get('received_amount',0);
+		$settlementAmount = array_sum(array_column(Request('settlements',[]),'settlement_amount'));
+		$message = __('Total Settlements Must Be Equal Or Less Than Down Payment Amounts');
+		
         return [
-            'settlement_date'=> ['required',new DateMustBeGreaterThanOrEqualDate($settlementDate,$receivingDate,__('Settlement Date Must Be Greater Or Equal Down Payment Receiving Date'))]
+            'settlement_date'=> ['required',new DateMustBeGreaterThanOrEqualDate($settlementDate,$receivingDate,__('Settlement Date Must Be Greater Or Equal Down Payment Receiving Date'))],
+			'received_amount'=>['required',new NumberMustBeGreaterThanOrEqualRule($greaterNumber,$settlementAmount,$message)]
         ];
     }
 }

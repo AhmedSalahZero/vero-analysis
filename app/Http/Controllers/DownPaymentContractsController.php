@@ -8,6 +8,8 @@ use App\Models\Contract;
 use App\Models\CustomerInvoice;
 use App\Models\MoneyReceived;
 use App\Models\Partner;
+use App\Models\SupplierInvoice;
+use App\Services\Api\OdooPayment;
 use App\Traits\Models\HasBasicFilter;
 use Illuminate\Http\Request;
 
@@ -86,6 +88,7 @@ class DownPaymentContractsController extends Controller
     }
 	public function downPaymentSettlements(Company $company,Request $request, int $downPaymentId ,string $modelType)
 	{
+
 		$fullClassName = 'App\Models\\'.$modelType;
 		$downPaymentModelName=$fullClassName::MONEY_MODEL_NAME;
 		$downPaymentModelFullName = 'App\Models\\'.$downPaymentModelName ;   
@@ -118,7 +121,7 @@ class DownPaymentContractsController extends Controller
 			 * ! $inEditMode always returns false 
 			 * * وبالتالي لو بتحاول تعدل مش هيجيب اللي اتقفلت خالص
 			 */
-			$invoices->where('net_balance','>',0);
+		//	$invoices->where('net_balance','>',0);
 		}
 
 		$invoices = $invoices->orderBy('invoice_date','asc')->get() ; 
@@ -127,6 +130,12 @@ class DownPaymentContractsController extends Controller
 		$isDownPaymentFromMoneyPayment = $downPayment->isInvoiceSettlementWithDownPayment();
 		$hasProjectNameColumn = $fullClassName::hasProjectNameColumn();
 		$clientName = (new $fullClassName)->getClientNameText();
+		
+		
+		
+		
+		
+		
 		return view('contracts-down-payment.settlement_form',[
 			'modelType'=>$downPaymentModelName,
 			'customerNameText'=>$clientName,
@@ -151,11 +160,14 @@ class DownPaymentContractsController extends Controller
 	}
 	public function storeDownPaymentSettlement(StoreDownPaymentSettlementRequest $request,Company $company,int $downPaymentId,int $partnerId,string $modelType)
 	{
+				// dd('good',$request->all());
+		// dd();
 		/**
 		 * @var MoneyReceived $downPayment
 		 */
 		$fullClassName = 'App\Models\\'.$modelType;
 		$downPaymentModelName=$fullClassName::MONEY_MODEL_NAME;
+		$isMoneyReceived  = $modelType =='CustomerInvoice';
 		$downPaymentModelFullName = 'App\Models\\'.$downPaymentModelName ;   
 		$downPayment =$downPaymentModelFullName::find($downPaymentId);
 		$downPayment->update([
@@ -173,7 +185,51 @@ class DownPaymentContractsController extends Controller
 			$settlement->delete();
 		});
 		$syncWithOdoo = false ;
-		$downPayment->storeNewSettlement($request->get('settlements',[]),$downPayment->getPartnerId(),$company,$isFromDownPayment,$syncWithOdoo);
+		$totalWithholdAmountAndSettlements = $downPayment->storeNewSettlement($request->get('settlements',[]),$downPayment->getPartnerId(),$company,$isFromDownPayment,$syncWithOdoo);
+		
+		
+		// $isCustomer = false;
+	
+		// $invoiceMatches = [
+		// 	[
+		// 		'invoice_id'=>14821 ,
+		// 		'amount'=>5000 ,
+		
+		// 	],
+		// 	[
+		// 		'invoice_id'=>14844,
+		// 		'amount'=>10000
+		// 	]
+		// ];
+		// dd($downPayment->odoo_move_id);
+		if($downPayment->odoo_move_id){
+			$fetch = (new OdooPayment($company));
+		$downPaymentOdooId = $downPayment->odoo_move_id;
+		$invoiceMatches =[];
+		$settlements = $totalWithholdAmountAndSettlements['settlements'];
+		$accountType = $isMoneyReceived  ? 'receivable' : 'payable';
+		// $downPaymentOdooId = 14849;
+		foreach($settlements as $settlement){
+			$amountInReceivingCurrency = $settlement->getAmountInReceivingCurrency();
+			$invoiceId = $settlement->invoice_id;
+			$invoice = $isMoneyReceived ? CustomerInvoice::find($invoiceId) : SupplierInvoice::find($invoiceId);
+			$invoiceMatches[] =[
+				'amount'=>$amountInReceivingCurrency,
+				'invoice_id'=>$invoice->odoo_id
+			];
+			
+		}
+			 $fetch->removeReconciliation($downPaymentOdooId);
+			$result = $fetch->matchDownPaymentToMultipleInvoices(
+				$downPaymentOdooId,
+				$invoiceMatches,
+				$accountType
+			);
+			
+		}
+		
+			
+		
 		return redirect()->route('view.contracts.down.payments',['company'=>$company->id,'partnerId'=>$partnerId,'modelType'=>$modelType,'currency'=>$downPayment->getCurrency()]);
 		
 	}

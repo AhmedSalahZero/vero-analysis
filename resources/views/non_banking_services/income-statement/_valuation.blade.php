@@ -20,13 +20,6 @@ $tableClasses =  'col-md-12 overflow-scroll';
             <td>
                 <div class="d-flex align-items-center ">
                     <input value="{{ __('+/- EBIT') }}" disabled class="form-control text-left min-w-300" type="text">
-                    {{-- <div>
-                        <i data-toggle="modal" data-target="#{{ $currentModalId }}" class="flaticon2-information kt-font-primary exclude-icon ml-2 cursor-pointer "></i>
-                        @include('non_banking_services.income-statement._expense-modal',['currentModalId'=>$currentModalId,'modalTitle'=>$currentModalTitle,'modalData'=>$formattedDcfMethod[$key] ?? []])
-                    </div> --}}
-
-              
-
                 </div>
             </td>
 

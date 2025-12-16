@@ -63,11 +63,11 @@ trait IsMoney
             'settlement_in_invoice_exchange_rate'=>0
         ];
     }
-    public function storeNewSettlement(array $settlements, int $partnerId, Company $company, bool $isFromDownPayment = false, bool $syncWithOdoo = true)
+    public function storeNewSettlement(array $settlements, int $partnerId, Company $company, bool $isFromDownPayment = false, bool $syncWithOdoo = true):array
     {
         $totalWithholdAmount= 0 ;
         $OdooPaymentService = null ;
-    
+		$storedSettlements = [];
         if ($company->hasOdooIntegrationCredentials() && $syncWithOdoo) {
             $OdooPaymentService = new OdooPayment($company);
         }
@@ -81,14 +81,18 @@ trait IsMoney
                 $settlementArr['withhold_amount'] = $withholdAmount ;
                 $totalWithholdAmount += $withholdAmount  ;
                 unset($settlementArr['net_balance']);
-                $payment = $this->settlements()->create($settlementArr);
+                $settlement = $this->settlements()->create($settlementArr);
                 if ($OdooPaymentService && $syncWithOdoo && $company->withinIntegrationDate($this->getDate())) {
-                    $OdooPaymentService->createPayment($payment);
+                    $OdooPaymentService->createPayment($settlement);
                 }
+				$storedSettlements[]=$settlement;
                 
             }
         }
-        return $totalWithholdAmount ;
+        return [
+			'total_withhold_amount'=>$totalWithholdAmount ,
+			'settlements'=>$storedSettlements
+			] ;
     }
     public function getTotalSettlementAmount()
     {

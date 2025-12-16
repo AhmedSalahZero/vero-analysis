@@ -91,9 +91,30 @@ class TestCommand extends Command
 		// $source = 'lg-facility';
 		// (new LetterOfGuaranteeIssuanceController)->backToRunningStatus($company,new Request , $letterOfGuaranteeIssuance,$source);
 		$fetch = (new OdooPayment(Company::find(92)));
-	$x = 	$fetch->fetchData(
-				'account.bank.statement.line',[],[[['id','!=',0],['payment_ref','=','Mahmoud']]]
-				);
+		$isCustomer = false;
+		 $accountType = $isCustomer === 'customer' ? 'receivable' : 'payable';
+		$invoiceMatches = [
+			[
+				'invoice_id'=>14821 ,
+				'amount'=>5000 ,
+				'amount_currency'
+			],
+			[
+				'invoice_id'=>14844,
+				'amount'=>10000
+			]
+		];
+		$downPaymentOdooId = 14849;
+        $result = $fetch->removeReconciliation(14849);
+        $result = $fetch->matchDownPaymentToMultipleInvoices(
+            $downPaymentOdooId,
+            $invoiceMatches,
+            $accountType
+        );
+		dd($result);
+	//	$x = 	$fetch->partialReconcile(14845,14844,'payable');
+	//	dd($x);
+	
 	// $lastIndex = count($x) -1 ;
 	// dd($x[$lastIndex]);
 	// dd($x);
