@@ -34,6 +34,7 @@ class MicrofinanceLoanController extends Controller
             $fundedBy = $salesProject->funded_by;
             $type = $salesProject->type;
             $monthlyLoanAmounts = $salesProject->monthly_loan_amounts?:[];
+			
 			$yearOrMonthsIndexes = $study->getYearOrMonthIndexes();
             foreach ($monthlyLoanAmounts as $dateAsIndex => $monthlyLoanAmount) {
 				$currentYearOrMonthIndex = $isYearsStudy ? $study->getYearIndexFromDateIndex($dateAsIndex) : $dateAsIndex;

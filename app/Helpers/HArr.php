@@ -1363,9 +1363,6 @@ public static function MultiplyWithNumberIfPositive(array $items , float $number
 			if($currentDateIndex==$firstDateIndex){
 				$formattedResult[$currentDateIndex] = $value;
 			}elseif($newIndex<=$firstDateIndex){
-				// if(!isset($formattedResult[0])){
-				// 	dd($dateAndValues);
-				// }
 				$formattedResult[$firstDateIndex]=$value +($formattedResult[$firstDateIndex]);
 				$formattedResult[$currentDateIndex]=0;
 			}else{

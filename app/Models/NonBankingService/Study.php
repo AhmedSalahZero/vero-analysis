@@ -27,7 +27,6 @@ use App\Traits\HasBasicStoreRequest;
 use App\Traits\HasCollectionOrPaymentStatement;
 use App\Traits\HasSeasonality;
 use Carbon\Carbon;
-use function Amp\Promise\wait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -5061,7 +5060,7 @@ class Study extends Model
     {
         RevenueContract::where('study_id', $this->id)->where('revenue_type', Study::MICROFINANCE)->delete();
         $monthlyAmountsAndContractsPerProductIds = [];
-        if ($this->isMonthlyStudy()) {
+        // if ($this->isMonthlyStudy()) {
             $totalLoanOfficerCases = [];
             $this->microfinanceLoanOfficerCases->where('type', $type)->each(function (MicrofinanceLoanOfficerCasesProjection $microfinanceLoanOfficerCasesProjection) use (&$totalLoanOfficerCases) {
                 $totalExistingOfficersCasesCounts = $microfinanceLoanOfficerCasesProjection->total_existing_officers_cases_count?:[];
@@ -5090,54 +5089,53 @@ class Study extends Model
                 
             });
             
-        } else {
+        // } 
+		
+		// else {
                 
-            $yearWithItsIndexes = $this->getOperationDurationPerYearFromIndexesForAllStudyInfo();
-            $monthIndexWithYearIndex = $this->getMonthsWithItsYear($yearWithItsIndexes);
-            $totalCasesPerYear=[];
-            $this->microfinanceLoanOfficerCases->where('type', $type)->each(function (MicrofinanceLoanOfficerCasesProjection $microfinanceLoanOfficerCasesProjection) use (&$totalCasesPerYear, $monthIndexWithYearIndex, $type) {
-                $totalExistingCasesCounts = $microfinanceLoanOfficerCasesProjection->total_existing_officers_cases_count ;
+        //     $yearWithItsIndexes = $this->getOperationDurationPerYearFromIndexesForAllStudyInfo();
+        //     $monthIndexWithYearIndex = $this->getMonthsWithItsYear($yearWithItsIndexes);
+        //     $totalCasesPerYear=[];
+        //     $this->microfinanceLoanOfficerCases->where('type', $type)->each(function (MicrofinanceLoanOfficerCasesProjection $microfinanceLoanOfficerCasesProjection) use (&$totalCasesPerYear, $monthIndexWithYearIndex, $type) {
+        //         $totalExistingCasesCounts = $microfinanceLoanOfficerCasesProjection->total_existing_officers_cases_count ;
+        //         $totalNewOfficersCaseCount  = $microfinanceLoanOfficerCasesProjection->total_new_officers_cases_count ;
+        //         $yearWithItsMonths=$this->getYearIndexWithItsMonths();
+        //         $totalExistingCasesCountsPerYear = HArr::sumPerYearIndex($totalExistingCasesCounts, $yearWithItsMonths);
+        //         $totalNewOfficersCaseCountPerYear = HArr::sumPerYearIndex($totalNewOfficersCaseCount, $yearWithItsMonths);
+        //         $years = count($totalNewOfficersCaseCountPerYear) ? array_keys($totalNewOfficersCaseCountPerYear) : array_keys($totalExistingCasesCountsPerYear);
+        //         $totalCasesPerYear = HArr::sumAtDates([$totalCasesPerYear,$totalExistingCasesCountsPerYear,$totalNewOfficersCaseCountPerYear], $years);
+        //     });
+        //     $result = [];
+        //     $this->microfinanceProductSalesProjects->where('type', $type)->each(function (MicrofinanceProductSalesProject $microfinanceProductSalesProject) use ($totalCasesPerYear, &$result, $monthIndexWithYearIndex) {
+        //         // $productId = $microfinanceProductSalesProject->microfinance_product_id;
+        //         foreach ($microfinanceProductSalesProject->product_mixes?:[] as $yearIndex => $productMixRate) {
+        //             $currentTotalCase = array_values($totalCasesPerYear)[$yearIndex]??0;
+        //             $result[$yearIndex] = $productMixRate /100  * $currentTotalCase;
+        //         }
+        //         $monthlySeasonality = $microfinanceProductSalesProject->monthly_seasonality;
+        //         $monthlyAmounts = $microfinanceProductSalesProject->monthly_amounts;
+        //         $monthlyCases = [];
                 
-                $totalNewOfficersCaseCount  = $microfinanceLoanOfficerCasesProjection->total_new_officers_cases_count ;
-                $yearWithItsMonths=$this->getYearIndexWithItsMonths();
-                // unset($yearWithItsMonths[array_key_last($yearWithItsMonths)]);
-                $totalExistingCasesCountsPerYear = HArr::sumPerYearIndex($totalExistingCasesCounts, $yearWithItsMonths);
-                $totalNewOfficersCaseCountPerYear = HArr::sumPerYearIndex($totalNewOfficersCaseCount, $yearWithItsMonths);
-                $years = count($totalNewOfficersCaseCountPerYear) ? array_keys($totalNewOfficersCaseCountPerYear) : array_keys($totalExistingCasesCountsPerYear);
-                $totalCasesPerYear = HArr::sumAtDates([$totalCasesPerYear,$totalExistingCasesCountsPerYear,$totalNewOfficersCaseCountPerYear], $years);
-               
-            });
-            $result = [];
-            $this->microfinanceProductSalesProjects->where('type', $type)->each(function (MicrofinanceProductSalesProject $microfinanceProductSalesProject) use ($totalCasesPerYear, &$result, $monthIndexWithYearIndex) {
-                // $productId = $microfinanceProductSalesProject->microfinance_product_id;
-                foreach ($microfinanceProductSalesProject->product_mixes?:[] as $yearIndex => $productMixRate) {
-                    $currentTotalCase = array_values($totalCasesPerYear)[$yearIndex]??0;
-                    $result[$yearIndex] = $productMixRate /100  * $currentTotalCase;
-                }
-                $monthlySeasonality = $microfinanceProductSalesProject->monthly_seasonality;
-                $monthlyAmounts = $microfinanceProductSalesProject->monthly_amounts;
-                $monthlyCases = [];
-                
-                foreach ($monthlySeasonality as $monthIndex => $seasonalityValue) {
-                    $currentYearIndex = $monthIndexWithYearIndex[$monthIndex];
-                    $currentResult = ($result[$currentYearIndex]??0) *$seasonalityValue;
+        //         foreach ($monthlySeasonality as $monthIndex => $seasonalityValue) {
+        //             $currentYearIndex = $monthIndexWithYearIndex[$monthIndex];
+        //             $currentResult = ($result[$currentYearIndex]??0) *$seasonalityValue;
                     
-                    $currentCases = $currentResult;
-                    $monthlyCases[$monthIndex] = $currentCases    ;
-                    $currentMonthlyLoanAmount = $currentCases  * ($monthlyAmounts[$monthIndex]??0);
-                    $monthlyLoanAmounts[$monthIndex] = isset($monthlyLoanAmounts[$monthIndex]) ?  $monthlyLoanAmounts[$monthIndex] + $currentMonthlyLoanAmount:$currentMonthlyLoanAmount;
-                }
+        //             $currentCases = $currentResult;
+        //             $monthlyCases[$monthIndex] = $currentCases    ;
+        //             $currentMonthlyLoanAmount = $currentCases  * ($monthlyAmounts[$monthIndex]??0);
+        //             $monthlyLoanAmounts[$monthIndex] = isset($monthlyLoanAmounts[$monthIndex]) ?  $monthlyLoanAmounts[$monthIndex] + $currentMonthlyLoanAmount:$currentMonthlyLoanAmount;
+        //         }
             
                 
-                $microfinanceProductSalesProject->update([
-                    'monthly_loan_amounts'=>$monthlyLoanAmounts,
-                    'total_cases_counts'=>$monthlyCases
-                ]);
-            });
+        //         $microfinanceProductSalesProject->update([
+        //             'monthly_loan_amounts'=>$monthlyLoanAmounts,
+        //             'total_cases_counts'=>$monthlyCases
+        //         ]);
+        //     });
             
             
             
-        }
+        // }
         $this->refresh();
         $monthlyAmountsAndContractsPerProductIds = [];
         foreach ($this->microfinanceProductSalesProjects as $microfinanceProductSalesProject) {
@@ -5668,6 +5666,7 @@ class Study extends Model
             // $decreasingRates  = $microfinanceProductSalesProject->decrease_rates ;
             // $baseRatesPerMonths = [];
             $isMonthlyStudy = $this->isMonthlyStudy();
+	
             //   $operationDurationPerYear = $this->getOperationDurationPerYearFromIndexes();
             // foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
             //     foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
@@ -5686,6 +5685,7 @@ class Study extends Model
                 if ($isPortfolio) {
                     $rates = $microfinanceProductSalesProject->generateDecreasingRate($loanStartDateAsIndex);
                 }
+			
                 $yearOrMonthIndex = $isMonthlyStudy ? $loanStartDateAsIndex : $this->getYearIndexFromDateIndex($loanStartDateAsIndex);
                 $fundingRate = ($eclAndNewPortfolioFundingRates[$yearOrMonthIndex]??0) /100 ;
                 $marginRate=  $isPortfolio ? 0 : $this->generalAndReserveAssumption->getBankLendingMarginRatesAtYearOrMonthIndex($yearOrMonthIndex);
@@ -5696,15 +5696,15 @@ class Study extends Model
           
                 $currentPortfolioLoans = [];
                 if ($isPortfolio) {
+					
                     $baseRate = is_array($rates) ?  ($rates[$loanStartDateAsString]??0) : $rates;
                     // $currentPortfolioLoans = (new CalculateFixedLoanAtBeginningService)->__calculate([], -1, 'normal', $loanStartDateAsString, $monthlyLoanAmount, $baseRate, $marginRate, $tenor, 'monthly', 1, null, 0, null, 0, $loanStartDateAsIndex);
                     $currentPortfolioLoans = (new CalculateFixedLoanAtEndService)->__calculateBasedOnDiffBaseRates($rates, 'normal', $loanStartDateAsString, $monthlyLoanAmount, $marginRate, $tenor, 'monthly', 1, 0, null, 0, null, 0, $loanStartDateAsIndex, $dateWithDateIndex, $dateIndexWithDate, $daysCount);
-                    if (isset($currentPortfolioLoans['interestAmount'][0])) {
-                        $currentPortfolioLoans['interestAmount'][0] = $monthlyLoanAmount * $microfinanceProductSalesProject->getSetupFeesRateAtYearOrMonthIndex($loanStartDateAsIndex)/100;
-                        $currentPortfolioLoans['schedulePayment'][0] = $monthlyLoanAmount * $microfinanceProductSalesProject->getSetupFeesRateAtYearOrMonthIndex($loanStartDateAsIndex)/100;
+					
+                    if (isset($currentPortfolioLoans['interestAmount'][$loanStartDateAsIndex])) {
+                        $currentPortfolioLoans['interestAmount'][$loanStartDateAsIndex] = $monthlyLoanAmount * $microfinanceProductSalesProject->getSetupFeesRateAtYearOrMonthIndex($loanStartDateAsIndex)/100;
+                        $currentPortfolioLoans['schedulePayment'][$loanStartDateAsIndex] = $monthlyLoanAmount * $microfinanceProductSalesProject->getSetupFeesRateAtYearOrMonthIndex($loanStartDateAsIndex)/100;
                     }
-
-                    
                 } else {
              
                     if (is_array($rates)) {
@@ -5716,7 +5716,11 @@ class Study extends Model
                 }
                 $finalResult = isset($currentPortfolioLoans['final_result']) ?  $currentPortfolioLoans['final_result'] : $currentPortfolioLoans;
                 unset($finalResult['totals']);
+				// if(!count($currentPortfolioLoans)){
+				// 	logger($productId.'-'.json_encode($currentPortfolioLoans));
+				// }
                 $currentPortfolioLoans = $finalResult ;
+			
 				
                 if (!count($finalResult)) {
                     continue;
@@ -5747,9 +5751,8 @@ class Study extends Model
                 })->toArray();
             }
         });
-		
         DB::connection('non_banking_service')->table('loan_schedule_payments')->insert($portfolioLoans);
-        // dd($portfolioLoans);
+	
 		return [
            'total_interests'=>$totalInterests,
            'total_schedule_payments'=>$totalSchedulePayments,

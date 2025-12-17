@@ -91,7 +91,7 @@ $titleFormatted = [
                                 $rowsTotals[$product->id] = isset($rowsTotals[$product->id] ) ? $rowsTotals[$product->id] +$currentVal : $currentVal;
                                 $currentYearTotal+=$currentVal;
                                 @endphp
-                                <x-repeat-right-dot-inputs data-group-index="{{ $currentYearRepeaterIndex }}" :disabled="true" :numberFormatDecimals="0" :formattedInputClasses="' '" :mark="''" :removeThreeDots="true" :removeCurrency="true" :currentVal="$currentVal" :classes="'repeater-with-collapse-input'" :is-percentage="false" :name="''" :columnIndex="-1"></x-repeat-right-dot-inputs>
+                                <x-repeat-right-dot-inputs data-group-index="{{ $currentYearRepeaterIndex }}" :disabled="true" :numberFormatDecimals="0" :formattedInputClasses="' '" :mark="''" :removeThreeDots="true" :removeCurrency="true" :currentVal="$currentVal" :classes="'repeater-with-collapse-input'" :is-percentage="false" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
                             </td>
 
 
@@ -141,12 +141,42 @@ $titleFormatted = [
 
 
 
-
+@php
+                                        $currentYearRepeaterIndex = 0;
+                                        $currentYearTotal = 0 ;
+                                        @endphp
                             @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                             <td>
+							
+							@php
+                                            $currentVal = $monthlyLoanAmounts[$yearOrMonthAsIndex]??0;
+                                            $columnsTotals[$yearOrMonthAsIndex] = isset($columnsTotals[$yearOrMonthAsIndex] ) ? $columnsTotals[$yearOrMonthAsIndex] +$currentVal : $currentVal;
+                                            $rowsTotals[$product->id] = isset($rowsTotals[$product->id] ) ? $rowsTotals[$product->id] +$currentVal : $currentVal;
+                                            $currentYearTotal+=$currentVal;
+                                            @endphp
+											
 
-                                <x-repeat-right-dot-inputs :disabled="true" :numberFormatDecimals="0" :formattedInputClasses="' '" :mark="''" :removeThreeDots="true" :removeCurrency="true" :currentVal="$columnsTotals[$yearOrMonthAsIndex]??0" :classes="''" :is-percentage="false" :name="''" :columnIndex="-1"></x-repeat-right-dot-inputs>
+                                <x-repeat-right-dot-inputs :disabled="true" :numberFormatDecimals="0" :formattedInputClasses="' '" :mark="''" :removeThreeDots="true" :removeCurrency="true" :currentVal="$columnsTotals[$yearOrMonthAsIndex]??0" :classes="''" :is-percentage="false" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
+								
+								
+								@php
+                                            $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                                            $currentMonthNumber = explode('-',$dateAsString)[1];
+                                            $currentYear= explode('-',$dateAsString)[0];
+                                            @endphp
+                                            @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                                 	       <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
+												<div class="d-flex align-items-center justify-content-center">
+													<x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="$currentYearTotal " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
+												</div>
+                                	        </td>
+                                    	    @php
+                                        $currentYearRepeaterIndex++;
+                                        $currentYearTotal = 0;
+                                        @endphp
+                                        @endif
+										
                             </td>
 
 
@@ -261,7 +291,7 @@ $fundedByFormatted = [
                                 $rowsTotals[$product->id] = isset($rowsTotals[$product->id] ) ? $rowsTotals[$product->id] +$currentVal : $currentVal;
                                 $currentYearTotal+=$currentVal;
                                 @endphp
-                                <x-repeat-right-dot-inputs data-group-index="{{ $currentYearRepeaterIndex }}" :disabled="true" :numberFormatDecimals="0" :formattedInputClasses="' '" :mark="''" :removeThreeDots="true" :removeCurrency="true" :currentVal="$currentVal" :classes="'repeater-with-collapse-input'" :is-percentage="false" :name="''" :columnIndex="-1"></x-repeat-right-dot-inputs>
+                                <x-repeat-right-dot-inputs data-group-index="{{ $currentYearRepeaterIndex }}" :disabled="true" :numberFormatDecimals="0" :formattedInputClasses="' '" :mark="''" :removeThreeDots="true" :removeCurrency="true" :currentVal="$currentVal" :classes="'repeater-with-collapse-input'" :is-percentage="false" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
                             </td>
 
 
@@ -306,14 +336,40 @@ $fundedByFormatted = [
                             </td>
 
 
-
+ @php
+                                        $currentYearRepeaterIndex = 0;
+                                        $currentYearTotal = 0 ;
+                                        @endphp
 
                             @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
-
+ @php
+                                            $currentVal = $columnsTotals[$yearOrMonthAsIndex]??0;
+											
+                                            $columnsTotals[$yearOrMonthAsIndex] = isset($columnsTotals[$yearOrMonthAsIndex] ) ? $columnsTotals[$yearOrMonthAsIndex] +$currentVal : $currentVal;
+                                            $rowsTotals[$product->id] = isset($rowsTotals[$product->id] ) ? $rowsTotals[$product->id] +$currentVal : $currentVal;
+                                            $currentYearTotal+=$currentVal;
+                                            @endphp
                             <td>
 
-                                <x-repeat-right-dot-inputs :disabled="true" :numberFormatDecimals="0" :formattedInputClasses="' '" :mark="''" :removeThreeDots="true" :removeCurrency="true" :currentVal="$columnsTotals[$yearOrMonthAsIndex]??0" :classes="''" :is-percentage="false" :name="''" :columnIndex="-1"></x-repeat-right-dot-inputs>
+                                <x-repeat-right-dot-inputs :disabled="true" :numberFormatDecimals="0" :formattedInputClasses="' '" :mark="''" :removeThreeDots="true" :removeCurrency="true" :currentVal="$columnsTotals[$yearOrMonthAsIndex]??0" :classes="''" :is-percentage="false" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
                             </td>
+							
+							 @php
+                                            $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                                            $currentMonthNumber = explode('-',$dateAsString)[1];
+                                            $currentYear= explode('-',$dateAsString)[0];
+                                            @endphp
+                                            @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                                 	       <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
+												<div class="d-flex align-items-center justify-content-center">
+													<x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="$currentYearTotal " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
+												</div>
+                                	        </td>
+                                    	    @php
+                                        $currentYearRepeaterIndex++;
+                                        $currentYearTotal = 0;
+                                        @endphp
+                                        @endif
 
 
                             @endforeach
@@ -401,7 +457,7 @@ $fundedByFormatted = [
 
 
                         <td>
-                            <input value="{{ __('Microfinance New Portfolio Amounts') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
+                            <input value="{{ __('Microfinance New Portfolio Amounts') }}" disabled class="form-control  text-left mt-2" type="text">
 
                         </td>
                         @php
@@ -466,7 +522,7 @@ $fundedByFormatted = [
 
 
                         <td>
-                            <input value="{{ __('Equity Funding Rate (%)') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
+                            <input value="{{ __('Equity Funding Rate (%)') }}" disabled class="form-control  text-left mt-2" type="text">
 
                         </td>
                         @php
@@ -530,7 +586,7 @@ $fundedByFormatted = [
 
 
                         <td>
-                            <input value="{{ __('Equity Funding Value') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
+                            <input value="{{ __('Equity Funding Value') }}" disabled class="form-control  text-left mt-2" type="text">
 
                         </td>
                         @php

@@ -120,100 +120,13 @@ $months = $study->getMicrofinanceMonths() ;
                                         $columnIndex = 0 ;
 
                                         @endphp
-                                        {{-- @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
-                                        <td>
-                                            @php
-                                            $currentVal = $subModel ? $subModel->getProductMixAtYearOrMonthIndex($yearOrMonthAsIndex) : 0;
-
-                                            $currentTotals[$yearOrMonthAsIndex] = isset($currentTotals[$yearOrMonthAsIndex]) ? $currentTotals[$yearOrMonthAsIndex] + $currentVal : $currentVal ;
-                                            @endphp
-
-                                            <x-repeat-with-calc :numberFormatDecimals="2" :formattedInputClasses="'calcField '" :mark="'%'" :removeThreeDots="false" :removeCurrency="true" :currentVal="number_format($currentVal,1)" :classes="'product-input-class'" :is-percentage="true" :name="'consumerfinanceProductSalesProjects['.$product->id.'][product_mixes]['.$yearOrMonthAsIndex.']'" :columnIndex="$yearOrMonthAsIndex"></x-repeat-with-calc>
-                                        </td>
-                                        @php
-                                        $columnIndex++ ;
-                                        @endphp
-
-                                        @endforeach --}}
+                                       
 
 
                                     </tr>
                                     @endforeach
 
-                                    {{-- <tr data-repeat-formatting-decimals="2" data-repeater-style>
-
-                                        <td>
-                                            <div class="">
-                                                <input value="{{ __('Total') }}" disabled class="form-control text-left mt-2 " type="text">
-                        </div>
-                        </td>
-
-                        <td>
-                            <div class="text-center">
-                                -
-                            </div>
-                        </td>
-
-                        <td>
-                            <div class="text-center">
-                                -
-                            </div>
-                        </td>
-                        <td>
-                            <div class="text-center">
-                                -
-                            </div>
-                        </td>
-                        @if(!$model->durationIsLessThanOneOrEqualYear())
-                        <td>
-                            <div class="text-center">
-                                -
-                            </div>
-                        </td>
-                        @endif
-
-
-                        @php
-                        $columnIndex = 0 ;
-                        @endphp
-                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
-                        @php
-                        $currentLoanTotal = 0 ;
-                        @endphp
-                        <td>
-                            <div class="d-flex align-items-center justify-content-center">
-
-
-                                <div class="form-group three-dots-parent">
-                                    <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
-                                        <div class="input-hidden-parent">
-                                            <input readonly class="form-control copy-value-to-his-input-hidden sum-total-row  expandable-percentage-input  repeat-to-right-input-formatted  " type="text" value="{{ number_format($currentTotals[$yearOrMonthAsIndex]??0,1)}}" data-column-index="{{ $columnIndex }}">
-                                        </div>
-
-                                        <span class="ml-2 currency-class">
-                                            %
-                                        </span>
-
-
-                                    </div>
-
-                                </div>
-
-
-
-                            </div>
-                        </td>
-                        @php
-                        $columnIndex++ ;
-                        @endphp
-
-                        @endforeach
-
-
-
-
-
-                        </tr> --}}
+                                
 
 
 

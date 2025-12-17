@@ -29,17 +29,15 @@ class MicrofinanceProductSalesProject extends Model
             }
             $model->decrease_rates = $decreaseRates;
                 
-            if ($study->isMonthlyStudy()) {
-                $model->monthly_product_mixes = $model->product_mixes;
-                $operationDates = range($study->getOperationStartDateAsIndex(), $study->getStudyEndDateAsIndex());
-                $model->monthly_amounts = HArr::repeatThrough($model->avg_amount, $operationDates);
-                
-            } else {
-                //  $model->monthly_product_mixes = ;
-                $dateIndexWithDate = $study->getDateIndexWithDate();
-                $yearsWithItsActiveMonths = $study->getYearIndexWithItsMonthsAsIndexAndString();
-                $model->monthly_seasonality = (new SeasonalityService())->calculateSeasonalityPercentagePerMonth($model->seasonality, $yearsWithItsActiveMonths, $dateIndexWithDate);
-                $model->monthly_product_mixes =$study->convertYearlyArrayToMonthly($model->product_mixes);
+            // if ($study->isMonthlyStudy()) {
+            //     $model->monthly_product_mixes = $model->product_mixes;
+            //     $operationDates = range($study->getOperationStartDateAsIndex(), $study->getStudyEndDateAsIndex());
+            //     $model->monthly_amounts = HArr::repeatThrough($model->avg_amount, $operationDates);
+            // } else {
+            //    $dateIndexWithDate = $study->getDateIndexWithDate();
+          //      $yearsWithItsActiveMonths = $study->getYearIndexWithItsMonthsAsIndexAndString();
+        //        $model->monthly_seasonality = (new SeasonalityService())->calculateSeasonalityPercentagePerMonth($model->seasonality, $yearsWithItsActiveMonths, $dateIndexWithDate);
+                $model->monthly_product_mixes =$model->product_mixes;
                     
                 $operationStartDateAsIndex = $study->getOperationStartDateAsIndex() ;
                 $operationEndDateAsIndex = $study->getStudyEndDateAsIndex();
@@ -68,7 +66,7 @@ class MicrofinanceProductSalesProject extends Model
                 }
                 $model->monthly_amounts = $resultWithoutVat;
                 
-            }
+            // }
         });
           
     }
@@ -170,8 +168,12 @@ class MicrofinanceProductSalesProject extends Model
 		$result = [];
 		$counter = 1 ;
 		$dateIndexWithDate = $this->study->getDateIndexWithDate();
-		for($i = $dateAsIndex ; $i< $this->tenor ; $i++){
-			$dateAsString = $dateIndexWithDate[$i] ;
+		
+		for($i = $dateAsIndex ; $i< $this->tenor+$dateAsIndex ; $i++){
+			$dateAsString = $dateIndexWithDate[$i]??null ;
+			if(is_null($dateAsString)){
+				continue;
+			}
 			if($counter<= $currentSetupFeesDuration){
 				$result[$dateAsString] =$setupDecreaseRate ;
 			}else{
@@ -179,6 +181,7 @@ class MicrofinanceProductSalesProject extends Model
 			}
 			$counter++;
 		}
+		
 		return $result;
 	}
 }

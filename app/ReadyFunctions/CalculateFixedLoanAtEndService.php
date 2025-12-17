@@ -21,9 +21,11 @@ class CalculateFixedLoanAtEndService
         if ($loanAmount <= 0) {
             return [] ;
         }
+		
         $fixedAtEndResult = [];
         $i = 0 ;
         $previousResult = [];
+		
         foreach ($baseRatesMapping as $currentBaseRateDate => $currentBaseRate) {
             if ($i != 0) {
                 $currentBaseRateDateAsIndex = $datesAsStringAndIndex[$currentBaseRateDate];
@@ -33,6 +35,7 @@ class CalculateFixedLoanAtEndService
 					$loanAmount =$fixedAtEndResult['current_result'][$i-1]['endBalance'][$currentStartDateAsIndex]??0;
 					}
                 $loanStartDate = $dateWithDateIndex[$currentStartDateAsIndex]??null;
+			
 				if(is_null($loanStartDate)){
 					continue;
 				}
@@ -50,7 +53,6 @@ class CalculateFixedLoanAtEndService
             }
             
         }
-		// dd($fixedAtEndResult['final_result']);
         $finalResult = $fixedAtEndResult['final_result']??[] ;
 		
         unset($finalResult['totals']);
@@ -98,11 +100,6 @@ class CalculateFixedLoanAtEndService
         $gracePlusInstallmentIntervalValue = (int) ($gracePeriod+$installmentPaymentIntervalValue);
         $dateAfterIndex = HDate::getDateAfterIndex($datesAsIndexString, $datesAsStringIndex, $startDate, $gracePlusInstallmentIntervalValue/$installmentPaymentIntervalValue);
         $installmentStartDateAsIndex = $datesAsStringIndex[$dateAfterIndex] ;
-		// if(is_null($installmentStartDateAsIndex)){
-		// 	dd($currentStartDateAsIndex, $startDate, $tenor);
-		// 	dd($datesAsIndexString,$datesAsStringIndex,$dateAfterIndex,$currentStartDateAsIndex ,$startDate );
-		// }
-     
         $endDateAsIndex = array_key_last($datesAsIndexString);
         $stepFactors = [];
         $currentStepFactorCounterValue = 0;

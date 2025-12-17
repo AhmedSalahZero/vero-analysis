@@ -46,7 +46,6 @@ class ExpensesController extends Controller
         Study $study
     ) {
         $modelId = $request->get('model_id');
-		// dd($request->all());
   
         $modelName = $request->get('model_name');
         $expenseType = $request->get('expense_type');

@@ -57,9 +57,7 @@ $months = $study->getMicrofinanceMonths() ;
                                     <tr>
                                         <th class=" form-label font-weight-bold text-center align-middle  header-border-down">{!! __('Product <br> Name') !!}</th>
                                         @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
-                                        <th data-column-index="{{ $yearOrMonthAsIndex }}" class=" form-label font-weight-bold text-center align-middle  header-border-down">{!! $yearOrMonthFormatted .' <br> ' . __('Loan <br> Amount') !!}</th>
-
-
+                                     	   <th data-column-index="{{ $yearOrMonthAsIndex }}" class=" form-label font-weight-bold text-center align-middle  header-border-down">{!! $yearOrMonthFormatted .' <br> ' . __('Loan <br> Amount') !!}</th>
                                         @php
                                         $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
                                         $currentMonthNumber = explode('-',$dateAsString)[1];
@@ -113,24 +111,21 @@ $months = $study->getMicrofinanceMonths() ;
                                             $rowsTotals[$product->id] = isset($rowsTotals[$product->id] ) ? $rowsTotals[$product->id] +$currentVal : $currentVal;
                                             $currentYearTotal+=$currentVal;
                                             @endphp
-
-
-
-
-                                            <x-repeat-right-dot-inputs data-group-index="{{ $currentYearRepeaterIndex }}" :classes="' repeater-with-collapse-input'" :disabled="true" :numberFormatDecimals="0" :formattedInputClasses="' '" :mark="''" :removeThreeDots="true" :removeCurrency="true" :currentVal="$currentVal"  :is-percentage="false" :name="''" :columnIndex="-1"></x-repeat-right-dot-inputs>
+											
+											
+                                            <x-repeat-right-dot-inputs data-group-index="{{ $currentYearRepeaterIndex }}" :classes="' repeater-with-collapse-input'" :disabled="true" :numberFormatDecimals="0" :formattedInputClasses="' '" :mark="''" :removeThreeDots="true" :removeCurrency="true" :currentVal="$currentVal"  :is-percentage="false" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
                                             @php
                                             $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
                                             $currentMonthNumber = explode('-',$dateAsString)[1];
                                             $currentYear= explode('-',$dateAsString)[0];
                                             @endphp
                                             @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
-                                        <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
-                                            <div class="d-flex align-items-center justify-content-center">
-                                                <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="$currentYearTotal " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
-                                            </div>
-
-                                        </td>
-                                        @php
+                                 	       <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
+												<div class="d-flex align-items-center justify-content-center">
+													<x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="$currentYearTotal " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
+												</div>
+                                	        </td>
+                                    	    @php
                                         $currentYearRepeaterIndex++;
                                         $currentYearTotal = 0;
                                         @endphp
@@ -158,16 +153,40 @@ $months = $study->getMicrofinanceMonths() ;
                                         </td>
 
 
-
+ @php
+                                        $currentYearRepeaterIndex = 0;
+                                        $currentYearTotal = 0 ;
+                                        @endphp
 
                                         @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
-
                                         <td>
-
-                                            <x-repeat-right-dot-inputs :disabled="true" :numberFormatDecimals="0" :formattedInputClasses="' '" :mark="''" :removeThreeDots="true" :removeCurrency="true" :currentVal="$columnsTotals[$yearOrMonthAsIndex]??0" :classes="''" :is-percentage="false" :name="''" :columnIndex="-1"></x-repeat-right-dot-inputs>
+											 @php
+                                            $currentVal = $columnsTotals[$yearOrMonthAsIndex]??0;
+                                            $columnsTotals[$yearOrMonthAsIndex] = isset($columnsTotals[$yearOrMonthAsIndex] ) ? $columnsTotals[$yearOrMonthAsIndex] +$currentVal : $currentVal;
+                                            $rowsTotals[$product->id] = isset($rowsTotals[$product->id] ) ? $rowsTotals[$product->id] +$currentVal : $currentVal;
+                                            $currentYearTotal+=$currentVal;
+                                            @endphp
+											
+                                            <x-repeat-right-dot-inputs :disabled="true" :numberFormatDecimals="0" :formattedInputClasses="' '" :mark="''" :removeThreeDots="true" :removeCurrency="true" :currentVal="$columnsTotals[$yearOrMonthAsIndex]??0" :classes="''" :is-percentage="false" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
+											
+											 @php
+                                            $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
+                                            $currentMonthNumber = explode('-',$dateAsString)[1];
+                                            $currentYear= explode('-',$dateAsString)[0];
+                                            @endphp
+                                            @if($study->isMonthlyStudy() && ($study->getFinancialYearEndMonthNumber() == $currentMonthNumber || $loop->last))
+                                 	       <td data-column-index="{{ $yearOrMonthAsIndex }}" class="exclude-from-collapse">
+												<div class="d-flex align-items-center justify-content-center">
+													<x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="$currentYearTotal " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat expandable-amount-input '" :classes="'exclude-from-total year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
+												</div>
+                                	        </td>
+                                    	    @php
+                                        $currentYearRepeaterIndex++;
+                                        $currentYearTotal = 0;
+                                        @endphp
+                                        @endif
+										
                                         </td>
-
-
                                         @endforeach
 
                                         <td>
