@@ -1326,5 +1326,54 @@ public static function MultiplyWithNumberIfPositive(array $items , float $number
 		}	
 		return $result;
 	}
+	public static function replacePreviousValues(array $items,int $backStepsNo):array 
+	{
 	
+		$formattedResult = $items;
+	
+		foreach($items as $keyName => $dateAndValues){
+			$formattedResult[$keyName] = $dateAndValues;
+			if($keyName == 'beginning' || $keyName == 'endBalance'){
+				$formattedResult[$keyName] = HArr::replaceNumberWithItsNextNumber($dateAndValues,$backStepsNo);
+			}else{
+				$formattedResult[$keyName] = HArr::addNumberWithItsPreviousNumberAndMakeItZero($dateAndValues,$backStepsNo);
+			}
+		}
+		return $formattedResult;
+	}
+	protected static function replaceNumberWithItsNextNumber($dateAndValues , int $backStepsNo )
+	{
+			$firstDateIndex = array_key_first($dateAndValues);
+		$formattedResult = [];
+		foreach($dateAndValues as $currentDateIndex => $value){
+			$newIndex = 	$currentDateIndex-$backStepsNo;
+			if($newIndex>=$firstDateIndex){
+				$formattedResult[$newIndex] = $value;
+			}
+			
+		}
+		return $formattedResult;
+	}
+	protected static function addNumberWithItsPreviousNumberAndMakeItZero($dateAndValues , int $backStepsNo )
+	{
+		$formattedResult = [];
+		$firstDateIndex = array_key_first($dateAndValues);
+		foreach($dateAndValues as $currentDateIndex => $value){
+			$newIndex = 	$currentDateIndex-$backStepsNo;
+			if($currentDateIndex==$firstDateIndex){
+				$formattedResult[$currentDateIndex] = $value;
+			}elseif($newIndex<=$firstDateIndex){
+				// if(!isset($formattedResult[0])){
+				// 	dd($dateAndValues);
+				// }
+				$formattedResult[$firstDateIndex]=$value +($formattedResult[$firstDateIndex]);
+				$formattedResult[$currentDateIndex]=0;
+			}else{
+				$formattedResult[$newIndex]=$value ;
+			}
+			
+		}
+	
+		return $formattedResult;
+	}
 }

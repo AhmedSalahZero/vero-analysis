@@ -27,6 +27,10 @@ class  MicrofinanceByBranchProductMix extends Model
     {
         return $this->avg_amount;
     }
+	public function getEarlyPaymentInstallmentCounts():int
+    {
+        return $this->early_payment_installment_counts?:0;
+    }
     public function getFundedBy():string
     {
         return $this->funded_by ;

@@ -100,6 +100,15 @@ class MicrofinanceProductSalesProject extends Model
 		}
         return $this->avg_amount;
     }
+	
+	 public function getEarlyPaymentInstallmentCounts():int
+    {
+		if($this->type =='by-branch'){
+			return $this->study->microfinanceByBranchProductMixes->where('microfinance_product_id',$this->microfinance_product_id)->first()->getEarlyPaymentInstallmentCounts();
+		}
+        return $this->early_payment_installment_counts;
+    }
+	
     public function getFundedBy():string
     {
 		if($this->type =='by-branch'){

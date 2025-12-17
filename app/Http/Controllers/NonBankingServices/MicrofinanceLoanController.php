@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers\NonBankingServices;
 
-use App\Helpers\HArr;
 use App\Http\Controllers\Controller;
-use App\Models\Branch;
 use App\Models\Company;
 use App\Models\NonBankingService\ExistingBranch;
-use App\Models\NonBankingService\MicrofinanceProductSalesProject;
 use App\Models\NonBankingService\Study;
 use App\ReadyFunctions\ConvertFlatRateToDecreasingRate;
 use App\Traits\NonBankingService;

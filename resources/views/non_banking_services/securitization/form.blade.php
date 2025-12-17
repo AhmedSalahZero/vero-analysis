@@ -233,7 +233,7 @@ use App\Models\NonBankingService\Securitization;
 
                                         <td class="td-classes">
                                             <div>
-                                                <input value="{{ number_format($securitizationCalculation['portfolio_disbursement_amount']) }}" disabled="" class="form-control " type="text">
+                                                <input value="{{ number_format($securitizationCalculation['portfolio_disbursement_amount']??0) }}" disabled="" class="form-control " type="text">
                                             </div>
 
                                         </td>

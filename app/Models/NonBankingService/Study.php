@@ -5661,11 +5661,12 @@ class Study extends Model
         $eclAndNewPortfolioFundingRates = $eclAndNewPortfolioFundingRate->new_loans_funding_rates['by-mtls']??[];
         $microfinanceSalesProjects->each(function (MicrofinanceProductSalesProject $microfinanceProductSalesProject) use ($isPortfolio, &$portfolioLoans, $operationDates, &$totalPortfolioEndBalance, $dateWithDateIndex, $dateIndexWithDate, $eclAndNewPortfolioFundingRates, &$totalInterests, &$totalSchedulePayments, &$totalEndBalances, $productColumnName, $daysCount) {
             $microfinanceProductSalesProject = $microfinanceProductSalesProject->refresh();
+			$earlyPaymentInstallmentCounts = $microfinanceProductSalesProject->getEarlyPaymentInstallmentCounts();
             $tenor  = $microfinanceProductSalesProject->tenor ;
             $productId  = $microfinanceProductSalesProject->{$productColumnName} ;
             $monthlyPortfolioLoanAmounts  = $microfinanceProductSalesProject->monthly_loan_amounts ;
-            $decreasingRates  = $microfinanceProductSalesProject->decrease_rates ;
-            $baseRatesPerMonths = [];
+            // $decreasingRates  = $microfinanceProductSalesProject->decrease_rates ;
+            // $baseRatesPerMonths = [];
             $isMonthlyStudy = $this->isMonthlyStudy();
             //   $operationDurationPerYear = $this->getOperationDurationPerYearFromIndexes();
             // foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
@@ -5716,9 +5717,13 @@ class Study extends Model
                 $finalResult = isset($currentPortfolioLoans['final_result']) ?  $currentPortfolioLoans['final_result'] : $currentPortfolioLoans;
                 unset($finalResult['totals']);
                 $currentPortfolioLoans = $finalResult ;
+				
                 if (!count($finalResult)) {
                     continue;
                 }
+				if($earlyPaymentInstallmentCounts>0){
+					$currentPortfolioLoans = HArr::replacePreviousValues($currentPortfolioLoans,$earlyPaymentInstallmentCounts);
+				}
                 $currentPortfolioLoans['study_id'] = $this->id ;
                 $currentPortfolioLoans['company_id'] = $this->company->id ;
                 $currentPortfolioLoans['month_as_index'] = $loanStartDateAsIndex ;
@@ -5742,8 +5747,10 @@ class Study extends Model
                 })->toArray();
             }
         });
+		
         DB::connection('non_banking_service')->table('loan_schedule_payments')->insert($portfolioLoans);
-        return [
+        // dd($portfolioLoans);
+		return [
            'total_interests'=>$totalInterests,
            'total_schedule_payments'=>$totalSchedulePayments,
            'total_end_balances'=>$totalEndBalances

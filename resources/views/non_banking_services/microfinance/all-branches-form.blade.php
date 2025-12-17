@@ -52,6 +52,7 @@ $months = $study->getMicrofinanceMonths() ;
                                     <tr>
                                         <th class=" form-label font-weight-bold text-center align-middle  header-border-down">{!! __('Product <br> Name') !!}</th>
                                         <th class=" form-label font-weight-bold text-center align-middle  header-border-down">{!! __('Tenor <br> (Months)') !!} </th>
+                                        <th class=" form-label font-weight-bold text-center align-middle  header-border-down">{!! __('Early Payment <br> Installments Count') !!}</th>
                                         <th class=" form-label font-weight-bold text-center align-middle  header-border-down">{!! __('Avg <br> Amount') !!}</th>
                                         @if(!$model->durationIsLessThanOneOrEqualYear())
                                         <th class=" form-label font-weight-bold text-center align-middle  header-border-down">{!! __('Annual <br> Increase %') !!}</th>
@@ -102,6 +103,16 @@ $months = $study->getMicrofinanceMonths() ;
                                             <x-repeat-right-dot-inputs :readonly="$isByBranch" :formattedInputClasses="'min-w-90'" :numberFormatDecimals="0" :removeThreeDots="true" :removeCurrency="true" :currentVal="number_format($currentVal,0)" :classes="'only-greater-than-zero-allowed '.$tenorClass" :is-percentage="false" :name="'microfinanceProductSalesProjects['.$product->id.'][tenor]'" :columnIndex="-1"></x-repeat-right-dot-inputs>
                                         </td>
 
+<td>
+                                            @php
+                                            $currentVal = $subModel ? $subModel->getEarlyPaymentInstallmentCounts() : 0 ;
+                                            if($isByBranch){
+                                            $currentVal = $productMix->early_payment_installment_counts;
+                                            }
+                                            @endphp
+                                            <x-repeat-right-dot-inputs :numberFormatDecimals="0" :readonly="$isByBranch" :removeThreeDots="true" :removeCurrency="true" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'microfinanceProductSalesProjects['.$product->id.'][early_payment_installment_counts]'" :columnIndex="-1"></x-repeat-right-dot-inputs>
+                                        </td>
+										
                                         <td>
                                             @php
                                             $currentVal = $subModel ? $subModel->getAvgAmount() : 0 ;
