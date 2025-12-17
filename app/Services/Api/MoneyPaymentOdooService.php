@@ -69,7 +69,7 @@ class MoneyPaymentOdooService
     }
 	protected function updatePartner($partner_id,$moveId,$context)
 	{
-		// return ;
+		return ;
 		$this->execute(
             'account.move',
             'button_draft',

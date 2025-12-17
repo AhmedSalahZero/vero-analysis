@@ -17,7 +17,6 @@ class MonthlyFixedRepeatingAmountEquation
             'annually'=>12
         ][$increaseInterval];
         $counter = 0 ;
-        
         for ($currentStartDateAsIndex ; $currentStartDateAsIndex <= $endDateAsIndex ; $currentStartDateAsIndex++) {
         
             $currentIncreaseRate = 0;

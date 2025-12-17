@@ -21,7 +21,8 @@
 'showRows'=>true,
 'fontSizeClass'=>'',
 'addExpenseType'=>false,
-'hideByDefault'=>true
+'hideByDefault'=>true,
+'triggerInputChangeWhenAddNew'=>false
 ])
 <style>
     .btn-div {
@@ -216,7 +217,7 @@ $canAddNewItem = true;
             , "loan_nature": "fixed-at-end"
             , "installment_interval": "monthly"
             , "step_interval": "annually",
-
+"monthly_cost_of_unit":0,
             "amount": 0
             , "increase_interval": "annually"
             , "payment_terms": "cash"
@@ -226,7 +227,8 @@ $canAddNewItem = true;
             , "withhold_tax_rate": 0
             , "increase_rate": 0
             , "contingency_rate": 0
-            , "cost_annual_increase_rate": 0
+            , "cost_annual_increase_rate": 0,
+			"amortization_months":12
 
         },
 
@@ -268,7 +270,6 @@ $canAddNewItem = true;
                 }
             }
             $(this).slideDown();
-
             $('input.trigger-change-repeater').trigger('change')
             $(this).find('.only-month-year-picker').each(function(index, dateInput) {
                 reinitalizeMonthYearInput(dateInput)
@@ -282,7 +283,11 @@ $canAddNewItem = true;
 			}else{
 			$(this).find('.input-hidden-parent input:not([type="hidden"])').val(0);
 			}
-			
+			const triggerInputChangeWhenAddNew = +"{{ $triggerInputChangeWhenAddNew }}"
+			if(triggerInputChangeWhenAddNew){
+				$(this).find('input:not([type="hidden"])').trigger('change')
+			}
+			console.log(triggerInputChangeWhenAddNew)
 			
 			
             //$('input.equity-funding-formatted-value-class').trigger('change');

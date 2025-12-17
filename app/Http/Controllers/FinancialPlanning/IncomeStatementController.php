@@ -32,6 +32,7 @@ class IncomeStatementController extends Controller
 		->get()->keyBy(function($item){
 			return $item->type .'$$$$'.$item->expense_type;
 		})->toArray();
+
         return view('financial_planning.income-statement.forecast', [
 			'company'=>$company,
 			'studyMonthsForViews'=>$studyMonthsForViews,

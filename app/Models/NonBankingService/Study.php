@@ -1240,7 +1240,7 @@ class Study extends Model
                  * * to repeat 2 years inside json
                  */
                 $loopEndDate = $tableDataArr['end_date'] >=  $studyEndDateAsIndex ? $studyExtendedEndDateAsIndex : $tableDataArr['end_date'];
-                $loopEndDate = $loopEndDate ==  0 ? $studyEndDateAsIndex : $loopEndDate ;
+            //    $loopEndDate = $loopEndDate ==  0 ? $studyEndDateAsIndex : $loopEndDate ;
 
                 $monthsAsIndexes = range(0, $studyEndDateAsIndex) ;
                 //    $tableDataArr['relation_name']  = $tableId ;
@@ -5305,7 +5305,6 @@ class Study extends Model
                 $tableDataArr['start_date_type'] = $tableDataArr['start_date_type']??null;
                 $tableDataArr['study_id'] = $this->id;
                 $withholdRate = $tableDataArr['withhold_tax_rate']??0;
-            
                 if (isset($tableDataArr['start_date']) && count(explode('-', $tableDataArr['start_date'])) == 2) {
                     $tableDataArr['start_date'] = $tableDataArr['start_date'].'-01';
                     
@@ -5315,7 +5314,6 @@ class Study extends Model
                 }
                 $tableDataArr['expense_type'] = $expenseType;
                 $name = $tableDataArr['expense_name_id']??null;
-                    
                 if (isset($tableDataArr['start_date'])) {
                     $tableDataArr['start_date'] = $datesAsStringDateIndex[$tableDataArr['start_date']];
                 } else {
@@ -5326,11 +5324,12 @@ class Study extends Model
                 } else {
                     $tableDataArr['end_date'] = $operationStartDateAsIndex;
                 }
+			
                 /**
                  * * to repeat 2 years inside json
                  */
                 $loopEndDate = $tableDataArr['end_date'] >=  $studyEndDateAsIndex ? $studyExtendedEndDateAsIndex : $tableDataArr['end_date'];
-                $loopEndDate = $loopEndDate ==  0 ? $studyEndDateAsIndex : $loopEndDate ;
+           //     $loopEndDate = $loopEndDate ==  0 ? $studyEndDateAsIndex : $loopEndDate ;
 
 
                 $tableDataArr['relation_name']  = $tableId ;

@@ -48,7 +48,6 @@ class ExpenseController extends Controller
 	
     public function index(Company $company , Request $request){
 		
-		
 		$expenseCategories = ExpenseName::where('company_id',$company->id)->pluck('expense_type')->unique()->toArray();
 		$items = [];
 	

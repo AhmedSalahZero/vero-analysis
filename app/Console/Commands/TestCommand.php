@@ -90,27 +90,41 @@ class TestCommand extends Command
 		// $company = $letterOfGuaranteeIssuance->company;
 		// $source = 'lg-facility';
 		// (new LetterOfGuaranteeIssuanceController)->backToRunningStatus($company,new Request , $letterOfGuaranteeIssuance,$source);
-		$fetch = (new OdooPayment(Company::find(92)));
-		$isCustomer = false;
-		 $accountType = $isCustomer === 'customer' ? 'receivable' : 'payable';
-		$invoiceMatches = [
-			[
-				'invoice_id'=>14821 ,
-				'amount'=>5000 ,
-				'amount_currency'
-			],
-			[
-				'invoice_id'=>14844,
-				'amount'=>10000
-			]
-		];
-		$downPaymentOdooId = 14849;
-        $result = $fetch->removeReconciliation(14849);
-        $result = $fetch->matchDownPaymentToMultipleInvoices(
-            $downPaymentOdooId,
-            $invoiceMatches,
-            $accountType
-        );
+		$odooPaymentService = (new OdooPayment(Company::find(92)));
+		// $res=$fetch->fetchData('account.move',[],[[['id','=',14783]]]);
+	//  $res=$odooPaymentService->fetchData('account.move.line',[],[[['id','=',33960]]]);
+	 
+		 $x = $odooPaymentService->execute(
+                'account.move.line',
+                'write',
+                [33960, [
+					// 'amount_currency'=>1800,
+					'currency_rate'=>(float)0.0111111111111
+                ]]
+            );
+			dd('good',$x);
+		// $res=$fetch->fetchData('account.payment',[],[[['id','=',466]]]);
+		dd($res);
+		// $isCustomer = false;
+		//  $accountType = $isCustomer === 'customer' ? 'receivable' : 'payable';
+		// $invoiceMatches = [
+		// 	[
+		// 		'invoice_id'=>14821 ,
+		// 		'amount'=>5000 ,
+		// 		'amount_currency'
+		// 	],
+		// 	[
+		// 		'invoice_id'=>14844,
+		// 		'amount'=>10000
+		// 	]
+		// ];
+		// $downPaymentOdooId = 14849;
+        // $result = $fetch->removeReconciliation(14849);
+        // $result = $fetch->matchDownPaymentToMultipleInvoices(
+        //     $downPaymentOdooId,
+        //     $invoiceMatches,
+        //     $accountType
+        // );
 		dd($result);
 	//	$x = 	$fetch->partialReconcile(14845,14844,'payable');
 	//	dd($x);
@@ -126,13 +140,13 @@ class TestCommand extends Command
 		// ]);
 		// $readInvoices = new ReadOdooInvoices();
 		// $readInvoices->handle($request,Company::find(92));
-		dd($readInvoices);
+		// dd($readInvoices);
 		// $x = $fetch->fetchData('account.bank.statement.line',[],[[['name','=','MISR/2025/00431']]]);
 		// dd($x);
 		// $x = $fetch->un('account.bank.statement.line',[],[[['name','=','MISR/2025/00431']]]);
 		// dd($x);
 		
-		// $x = $fetch->fetchData('account.payment',[],[[['id','>',0]]])[0];
+		$x = $fetch->fetchData('account.payment',[],[[['id','>',0]]])[0];
 		// dd($x);
 		// dd($x);
 		// dd($x);

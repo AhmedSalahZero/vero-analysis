@@ -359,7 +359,6 @@ class IncomeStatementController extends Controller
     
        
 		if(array_sum($odaInterestExpenses)){
-			// ddddddddddddd
 			$tableDataFormatted[1]['sub_items'][$odasInterestExpenseText]['data'] = $odaInterestExpenses;
 			$tableDataFormatted[1]['sub_items'][$odasInterestExpenseText]['year_total'] = HArr::sumPerYearIndex($odaInterestExpenses, $yearWithItsMonths);
 		}
@@ -723,6 +722,7 @@ class IncomeStatementController extends Controller
 				'defaultClasses'=>$defaultClasses
 			];
 		}
+	
 		$viewVars = [
             'company'=>$company,
             'studyMonthsForViews'=>$studyMonthsForViews,
@@ -742,10 +742,21 @@ class IncomeStatementController extends Controller
 			]
         ] ;
         return view('non_banking_services.income-statement.cash-flow',$viewVars );
-        
-        
-        
     }
+	public function viewPreviousTwoYearsIncomeStatement(Company $company , Study $study)
+	{
+		$viewVars = $this->index($company,$study,true);
+		$viewVars = array_merge($viewVars , [
+			'title'=>$title = __('Previous Two Years Income Statements'),
+			'tableTitle'=>$title,
+			'study'=>$study,
+			'financialYearEndMonthNumber'=>$study->getFinancialYearEndMonthNumber(),
+			'studyMonthsForViews'=>[
+				2023,2024
+			]
+		]);
+		  return view('non_banking_services.income-statement.previous_two_years_income_statements',$viewVars );
+	}
     // protected function getViewVars(Company $company, Study $model = null):array
     // {
     //     $actionRoute=isset($model) ? route('update.study', [$company->id , $model->id]) : route('store.financial.planning.study', ['company'=>$company->id]);

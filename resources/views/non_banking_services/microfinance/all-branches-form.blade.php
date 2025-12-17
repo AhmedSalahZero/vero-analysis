@@ -978,7 +978,7 @@ $months = $study->getMicrofinanceMonths() ;
 
                         @endphp
                         <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
-                        <x-tables.repeater-table :hideByDefault="false" :removeRepeater="false" :repeater-with-select2="true" :parentClass="'expenses-table js-toggle-visibility'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+                        <x-tables.repeater-table :triggerInputChangeWhenAddNew="true" :hideByDefault="false" :removeRepeater="false" :repeater-with-select2="true" :parentClass="'expenses-table js-toggle-visibility'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class="col-md-2 header-border-down" :title="__('Expense <br> Category')"></x-tables.repeater-table-th>
                                 <x-tables.repeater-table-th class="col-md-2 header-border-down" :title="__('Expense <br> Name')"></x-tables.repeater-table-th>
