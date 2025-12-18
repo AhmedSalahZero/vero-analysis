@@ -100,6 +100,7 @@ $months = $study->getMicrofinanceMonths() ;
                                         @php
                                         $currentYearRepeaterIndex = 0;
                                         $currentYearTotal = 0 ;
+										$rowTotal = 0 ;
                                         @endphp
                                         @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
@@ -108,7 +109,8 @@ $months = $study->getMicrofinanceMonths() ;
                                             @php
                                             $currentVal = $monthlyLoanAmounts[$yearOrMonthAsIndex]??0;
                                             $columnsTotals[$yearOrMonthAsIndex] = isset($columnsTotals[$yearOrMonthAsIndex] ) ? $columnsTotals[$yearOrMonthAsIndex] +$currentVal : $currentVal;
-                                            $rowsTotals[$product->id] = isset($rowsTotals[$product->id] ) ? $rowsTotals[$product->id] +$currentVal : $currentVal;
+                                         //   $rowsTotals[$product->id] = isset($rowsTotals[$product->id] ) ? $rowsTotals[$product->id] +$currentVal : $currentVal;
+										 $rowTotal+=$currentVal;
                                             $currentYearTotal+=$currentVal;
                                             @endphp
 											
@@ -136,7 +138,7 @@ $months = $study->getMicrofinanceMonths() ;
                                         @endforeach
 
                                         <td>
-                                            <x-repeat-right-dot-inputs :disabled="true" :numberFormatDecimals="0" :formattedInputClasses="' '" :mark="''" :removeThreeDots="true" :removeCurrency="true" :currentVal="$rowsTotals[$product->id]??0" :classes="''" :is-percentage="false" :name="''" :columnIndex="-1"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :disabled="true" :numberFormatDecimals="0" :formattedInputClasses="' '" :mark="''" :removeThreeDots="true" :removeCurrency="true" :currentVal="$rowTotal" :classes="''" :is-percentage="false" :name="''" :columnIndex="-1"></x-repeat-right-dot-inputs>
                                         </td>
 
 
@@ -156,18 +158,18 @@ $months = $study->getMicrofinanceMonths() ;
  @php
                                         $currentYearRepeaterIndex = 0;
                                         $currentYearTotal = 0 ;
+										$totalRow = 0 ;
                                         @endphp
 
                                         @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                         <td>
 											 @php
                                             $currentVal = $columnsTotals[$yearOrMonthAsIndex]??0;
-                                            $columnsTotals[$yearOrMonthAsIndex] = isset($columnsTotals[$yearOrMonthAsIndex] ) ? $columnsTotals[$yearOrMonthAsIndex] +$currentVal : $currentVal;
-                                            $rowsTotals[$product->id] = isset($rowsTotals[$product->id] ) ? $rowsTotals[$product->id] +$currentVal : $currentVal;
+											$totalRow+=$currentVal;
                                             $currentYearTotal+=$currentVal;
                                             @endphp
 											
-                                            <x-repeat-right-dot-inputs :disabled="true" :numberFormatDecimals="0" :formattedInputClasses="' '" :mark="''" :removeThreeDots="true" :removeCurrency="true" :currentVal="$columnsTotals[$yearOrMonthAsIndex]??0" :classes="''" :is-percentage="false" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :disabled="true" :numberFormatDecimals="0" :formattedInputClasses="' '" :mark="''" :removeThreeDots="true" :removeCurrency="true" :currentVal="$currentVal" :classes="''" :is-percentage="false" :name="''" :columnIndex="$yearOrMonthAsIndex"></x-repeat-right-dot-inputs>
 											
 											 @php
                                             $dateAsString = $dateIndexWithDate[$yearOrMonthAsIndex];
@@ -191,7 +193,7 @@ $months = $study->getMicrofinanceMonths() ;
 
                                         <td>
 
-                                            <x-repeat-right-dot-inputs :disabled="true" :numberFormatDecimals="0" :formattedInputClasses="' '" :mark="''" :removeThreeDots="true" :removeCurrency="true" :currentVal="array_sum($rowsTotals??[])" :classes="''" :is-percentage="false" :name="''" :columnIndex="-1"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :disabled="true" :numberFormatDecimals="0" :formattedInputClasses="' '" :mark="''" :removeThreeDots="true" :removeCurrency="true" :currentVal="$totalRow" :classes="''" :is-percentage="false" :name="''" :columnIndex="-1"></x-repeat-right-dot-inputs>
                                         </td>
 
 
