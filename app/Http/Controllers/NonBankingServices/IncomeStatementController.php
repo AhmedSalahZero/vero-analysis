@@ -11,6 +11,7 @@ use App\Models\NonBankingService\Expense;
 use App\Models\NonBankingService\Manpower;
 use App\Models\NonBankingService\SecuritizationLoanSchedule;
 use App\Models\NonBankingService\Study;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class IncomeStatementController extends Controller
@@ -750,12 +751,20 @@ class IncomeStatementController extends Controller
 			'title'=>$title = __('Previous Two Years Income Statements'),
 			'tableTitle'=>$title,
 			'study'=>$study,
+			'previous_years_income_statement'=>$study->previous_years_income_statement,
 			'financialYearEndMonthNumber'=>$study->getFinancialYearEndMonthNumber(),
 			'studyMonthsForViews'=>[
 				2023,2024
 			]
 		]);
 		  return view('non_banking_services.income-statement.previous_two_years_income_statements',$viewVars );
+	}
+	public function storePreviousTwoYearsIncomeStatement(Request $request, Company $company,Study $study )
+	{
+		$study->update([
+			'previous_years_income_statement'=>$request->except(['_token'])
+		]);
+		return redirect()->back()->with('success',__('Saved'));
 	}
     // protected function getViewVars(Company $company, Study $model = null):array
     // {

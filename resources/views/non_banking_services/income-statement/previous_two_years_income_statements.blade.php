@@ -68,194 +68,193 @@ use App\Models\NonBankingService\Study;
             <!--Begin:: Tab Content-->
             <div class="tab-pane {{  !Request('active') || Request('active') == $currentType ?'active':'' }}" id="{{ $currentType }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
+                    <form method="post" action="{{ route('store.previous.non.banking.forecast.income.statement',['company'=>$company->id,'study'=>$study->id]) }}">
+                        @csrf
 
-                    <x-tables.repeater-table :tableClasses="'table-condensed fixed-column-table table-row-spacing income-class-table'" :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden scrollable-table'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
-                        <x-slot name="ths">
-                            <x-tables.repeater-table-th :subParentClass="'plus-max-width-class fixed-column'" class="  header-border-down plus-max-width-class" :title="__('+/-')"></x-tables.repeater-table-th>
-                            <x-tables.repeater-table-th :subParentClass="'name-max-width-class fixed-column'" class="  header-border-down name-max-width-class exclude-from-collapse" :title="__('Name')"></x-tables.repeater-table-th>
-                            {{-- <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('')"></x-tables.repeater-table-th> --}}
-                            @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
-                            <x-tables.repeater-table-th data-column-index="{{ $dateAsIndex }}" class=" header-border-down " :title="$dateAsString"></x-tables.repeater-table-th>
-                            @endforeach
-                        </x-slot>
-                        <x-slot name="trs">
+                        <x-tables.repeater-table :tableClasses="'table-condensed fixed-column-table table-row-spacing income-class-table'" :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden scrollable-table'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+                            <x-slot name="ths">
+                                <x-tables.repeater-table-th :subParentClass="'plus-max-width-class fixed-column'" class="  header-border-down plus-max-width-class" :title="__('+/-')"></x-tables.repeater-table-th>
+                                <x-tables.repeater-table-th :subParentClass="'name-max-width-class fixed-column'" class="  header-border-down name-max-width-class exclude-from-collapse" :title="__('Name')"></x-tables.repeater-table-th>
+                                {{-- <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('')"></x-tables.repeater-table-th> --}}
+                                @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
+                                <x-tables.repeater-table-th data-column-index="{{ $dateAsIndex }}" class=" header-border-down " :title="$dateAsString"></x-tables.repeater-table-th>
+                                @endforeach
+                            </x-slot>
+                            <x-slot name="trs">
 
-                            @php
-                            @endphp
-                            @foreach($tableDataFormatted as $tableIndex => $currentTableData)
-                            @php
-                            $subItems = $currentTableData['sub_items']??[] ;
-                            $hasSubItems = count($subItems);
-                            if(!isset($currentTableData['main_items'])){
-                            continue;
-                            }
-                            @endphp
-                            <tr data-is-main-row data-repeat-formatting-decimals="0" data-repeater-style>
-                                <td class="fixed-column">
-                                    @if($hasSubItems)
-                                    <a href="#" class="btn btn-1-bg btn-sm btn-brand add-btn-class  text-center add-btn-js">
-                                        <i class="fas fa-angle-double-down expand-icon   exclude-icon"></i>
-                                    </a>
-                                    @endif
-                                </td>
-                                <td class="fixed-column">
-                                    <div class="d-flex align-items-center justify-content-center flex-column name-max-width-class" style="gap:10px">
-                                        @php
-                                        $currentIndex = 0 ;
+                                @php
+                                @endphp
+                                @foreach($tableDataFormatted as $tableIndex => $currentTableData)
+                                @php
+                                $subItems = $currentTableData['sub_items']??[] ;
+                                $hasSubItems = count($subItems);
+                                if(!isset($currentTableData['main_items'])){
+                                continue;
+                                }
+                                @endphp
+                                <tr data-is-main-row data-repeat-formatting-decimals="0" data-repeater-style>
+                                    <td class="fixed-column">
+                                        @if($hasSubItems)
+                                        <a href="#" class="btn btn-1-bg btn-sm btn-brand add-btn-class  text-center add-btn-js">
+                                            <i class="fas fa-angle-double-down expand-icon   exclude-icon"></i>
+                                        </a>
+                                        @endif
+                                    </td>
+                                    <td class="fixed-column">
+                                        <div class="d-flex align-items-center justify-content-center flex-column name-max-width-class" style="gap:10px">
+                                            @php
+                                            $currentIndex = 0 ;
 
-                                        @endphp
-                                        @foreach($currentTableData['main_items'] as $mainItemId => $mainItemArr)
-                                        <div class="input-hidden-parent">
-                                            <input readonly data-number-of-decimals="0" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control exclude-from-collapse text-left copy-value-to-his-input-hidden 
+                                            @endphp
+                                            @foreach($currentTableData['main_items'] as $mainItemId => $mainItemArr)
+                                            <div class="input-hidden-parent">
+                                                <input readonly data-number-of-decimals="0" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control exclude-from-collapse text-left copy-value-to-his-input-hidden 
 
 						 						  			  repeat-to-right-input-formatted  exclude-from-collapse custom-input-string-width input-text-left  " type="text" value="{{ $mainItemArr['options']['title']??$mainItemId }}" data-column-index="-1">
-                                        </div>
-                                        @php
-                                        @endphp
-                                        @endforeach
-
-                                    </div>
-                                </td>
-
-                                @php
-                                $currentYearRepeaterIndex = 0 ;
-                                @endphp
-
-                                @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
-
-                                <td data-column-index="{{ $dateAsIndex }}">
-
-                                    <div data-column-index="{{ $dateAsIndex }}" class="d-flex align-items-center justify-content-center flex-column" style="gap:10px">
-                                        @php
-                                        $currentIndex = 0 ;
-                                        $parentIndex = 0 ;
-                                        $firstMainItemId = null;
-                                        @endphp
-
-                                        @foreach($currentTableData['main_items'] as $mainItemId => $mainItemArr)
-                                        @php
-                                        if($loop->first){
-                                        $firstMainItemId =$mainItemId;
-                                        }
-                                        $isPercentage = $mainItemArr['options']['is-percentage']??$defaultClasses[$currentIndex]['is-percentage'] ;
-                                        $name=$firstMainItemId.'[main_items]['.$mainItemId.']['. $dateAsIndex .']';
-                                        @endphp
-                                        @if($isPercentage)
-                                        <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
-                                            <div class="input-hidden-parent">
-                                                <input disabled data-number-of-decimals="2" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
-
-							  expandable-percentage-input  			  repeat-to-right-input-formatted   " type="text" value="{{ number_format($mainItemArr['data'][$dateAsIndex]??0,2) }}" data-column-index="{{ $dateAsIndex }}">
-                                                <input data-number-of-decimals="2" data-group-index="{{ $currentIndex ==0   ? $currentYearRepeaterIndex : -1 }}" type="hidden" data-name="{{ $name }}" name="{{ $name }}" data-is-main data-is-percentage data-first-parent-id="{{ $firstMainItemId }}" data-id="{{ $mainItemId }}" class="repeat-to-right-input-hidden input-hidden-with-name  " value="{{ $mainItemArr['data'][$dateAsIndex]??0 }}" data-column-index="{{ $dateAsIndex }}">
                                             </div>
-                                            <span class="ml-2 currency-class">%</span>
+                                            @php
+                                            @endphp
+                                            @endforeach
+
                                         </div>
-                                        @else
-                                        <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
-                                            <div class="input-hidden-parent">
-                                                <input 
-												@if($mainItemId!='corporate-taxes')
-												disabled
-												@endif
-												 data-number-of-decimals="0" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+                                    </td>
 
-							  expandable-amount-input 			  repeat-to-right-input-formatted  custom-input-numeric-width  " type="text" value="{{ number_format($mainItemArr['data'][$dateAsIndex]??0) }}" data-column-index="{{ $dateAsIndex }}">
-                                                <input data-number-of-decimals="0" data-group-index="{{ $currentIndex ==0   ? $currentYearRepeaterIndex : -1 }}" type="hidden" data-name="{{ $name }}" name="{{ $name }}" data-id="{{ $mainItemId }}" data-is-main @if($mainItemId=='sales-revenue' ) data-is-sales-revenue @endif class="repeat-to-right-input-hidden input-hidden-with-name  repeater-with-collapse-input" value="{{ $mainItemArr['data'][$dateAsIndex]??0 }}" data-column-index="{{ $dateAsIndex }}">
-                                            </div>
-                                        </div>
-                                        @endif
+                                    @php
+                                    $currentYearRepeaterIndex = 0 ;
+                                    @endphp
 
+                                    @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
 
-                                        {{-- <x-repeat-right-dot-inputs :readonly="false" :classes="$mainItemArr['options']['classes']??$defaultClasses[$currentIndex]['classes']" data-group-index="{{ $currentIndex ==0   ? $currentYearRepeaterIndex : -1 }}" :formattedInputClasses="$mainItemArr['options']['formatted-input-classes']??$defaultClasses[$currentIndex]['formatted-input-classes']" :removeThreeDots="true" :removeCurrency="true" :mark="$isPercentage ? '%' : ''" :is-number="true" :removeThreeDotsClass="true" :numberFormatDecimals="$mainItemArr['options']['number-format-decimals']??$defaultClasses[$currentIndex]['number-format-decimals']" :currentVal="$mainItemArr['data'][$dateAsIndex]??0" :is-percentage="$isPercentage" :name="''" :columnIndex="$dateAsIndex"></x-repeat-right-dot-inputs> --}}
-                                        @php
-                                        $currentIndex++;
-                                        $parentIndex++;
-                                        @endphp
-                                        @endforeach
+                                    <td data-column-index="{{ $dateAsIndex }}">
 
-                                    </div>
+                                        <div data-column-index="{{ $dateAsIndex }}" class="d-flex align-items-center justify-content-center flex-column" style="gap:10px">
+                                            @php
+                                            $currentIndex = 0 ;
+                                            $parentIndex = 0 ;
+                                            $firstMainItemId = null;
+                                            @endphp
 
-
-
-
-                                </td>
-
-
-
-
-                                @endforeach
-
-                            </tr>
-                            @foreach($subItems as $subItemId => $subItemArr)
-                            <tr class="hidden" data-is-sub-row data-repeat-formatting-decimals="0">
-                                <td class="fixed-column">
-                                </td>
-                                <td class="fixed-column">
-                                    <div class="d-flex align-items-center justify-content-center flex-column ml-5" style="gap:10px">
-
-                                        <div class="">
+                                            @foreach($currentTableData['main_items'] as $mainItemId => $mainItemArr)
+                                            @php
+                                            if($loop->first){
+                                            $firstMainItemId =$mainItemId;
+                                            }
+                                            $isPercentage = $mainItemArr['options']['is-percentage']??$defaultClasses[$currentIndex]['is-percentage'] ;
+                                            $name=$firstMainItemId.'[main_items]['.$mainItemId.']['. $dateAsIndex .']';
+                                            @endphp
+                                            @if($isPercentage)
                                             <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
                                                 <div class="input-hidden-parent">
-                                                    <input style="text-align:left !important;" readonly data-number-of-decimals="0" readonly="" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+                                                    <input disabled data-number-of-decimals="2" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+
+							  expandable-percentage-input  			  repeat-to-right-input-formatted   " type="text" value="{{ number_format($previous_years_income_statement[$firstMainItemId]['main_items'][$mainItemId][$dateAsIndex]??0,2) }}" data-column-index="{{ $dateAsIndex }}">
+                                                    <input data-number-of-decimals="2" data-group-index="{{ $currentIndex ==0   ? $currentYearRepeaterIndex : -1 }}" type="hidden" data-name="{{ $name }}" name="{{ $name }}" data-is-main data-is-percentage data-first-parent-id="{{ $firstMainItemId }}" data-id="{{ $mainItemId }}" class="repeat-to-right-input-hidden input-hidden-with-name  " value="{{ $mainItemArr['data'][$dateAsIndex]??0 }}" data-column-index="{{ $dateAsIndex }}">
+                                                </div>
+                                                <span class="ml-2 currency-class">%</span>
+                                            </div>
+                                            @else
+										
+                                            <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+                                                <div class="input-hidden-parent">
+                                                    <input @if($mainItemId!='corporate-taxes' ) disabled @endif data-number-of-decimals="0" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+
+							  expandable-amount-input 			  repeat-to-right-input-formatted  custom-input-numeric-width  " type="text" value="{{ number_format($previous_years_income_statement[$firstMainItemId]['main_items'][$mainItemId][$dateAsIndex]??0) }}" data-column-index="{{ $dateAsIndex }}">
+                                                    <input data-number-of-decimals="0" data-group-index="{{ $currentIndex ==0   ? $currentYearRepeaterIndex : -1 }}" type="hidden" data-name="{{ $name }}" name="{{ $name }}" data-id="{{ $mainItemId }}" data-is-main @if($mainItemId=='sales-revenue' ) data-is-sales-revenue @endif class="repeat-to-right-input-hidden input-hidden-with-name  repeater-with-collapse-input" value="{{ $previous_years_income_statement[$firstMainItemId]['main_items'][$mainItemId][$dateAsIndex]??0 }}" data-column-index="{{ $dateAsIndex }}">
+                                                </div>
+                                            </div>
+                                            @endif
+
+
+                                            {{-- <x-repeat-right-dot-inputs :readonly="false" :classes="$mainItemArr['options']['classes']??$defaultClasses[$currentIndex]['classes']" data-group-index="{{ $currentIndex ==0   ? $currentYearRepeaterIndex : -1 }}" :formattedInputClasses="$mainItemArr['options']['formatted-input-classes']??$defaultClasses[$currentIndex]['formatted-input-classes']" :removeThreeDots="true" :removeCurrency="true" :mark="$isPercentage ? '%' : ''" :is-number="true" :removeThreeDotsClass="true" :numberFormatDecimals="$mainItemArr['options']['number-format-decimals']??$defaultClasses[$currentIndex]['number-format-decimals']" :currentVal="$mainItemArr['data'][$dateAsIndex]??0" :is-percentage="$isPercentage" :name="''" :columnIndex="$dateAsIndex"></x-repeat-right-dot-inputs> --}}
+                                            @php
+                                            $currentIndex++;
+                                            $parentIndex++;
+                                            @endphp
+                                            @endforeach
+
+                                        </div>
+
+
+
+
+                                    </td>
+
+
+
+
+                                    @endforeach
+
+                                </tr>
+                                @foreach($subItems as $subItemId => $subItemArr)
+                                <tr class="hidden" data-is-sub-row data-repeat-formatting-decimals="0">
+                                    <td class="fixed-column">
+                                    </td>
+                                    <td class="fixed-column">
+                                        <div class="d-flex align-items-center justify-content-center flex-column ml-5" style="gap:10px">
+
+                                            <div class="">
+                                                <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+                                                    <div class="input-hidden-parent">
+                                                        <input style="text-align:left !important;" readonly data-number-of-decimals="0" readonly="" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
 
 										  expandable-amount-input 			  repeat-to-right-input-formatted  custom-input-string-width  input-text-left  " type="text" value="{{ $subItemArr['options']['title']??$subItemId }}" data-column-index="-1">
-                                                    <input data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  " value="{{ $subItemArr['options']['title']??$subItemId }}" data-column-index="-1">
+                                                        <input data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  " value="{{ $subItemArr['options']['title']??$subItemId }}" data-column-index="-1">
+                                                    </div>
+                                                    <span class="ml-2 currency-class"> </span>
                                                 </div>
-                                                <span class="ml-2 currency-class"> </span>
+
                                             </div>
 
                                         </div>
-
-                                    </div>
-                                </td>
+                                    </td>
 
 
-                                @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
-                                @php
+                                    @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
+                                    @php
 
-                                $name=$firstMainItemId.'[sub_items]['.$subItemId.']['. $dateAsIndex .']';
-                                @endphp
-                                <td data-column-index="{{ $dateAsIndex }}">
+                                    $name=$firstMainItemId.'[sub_items]['.$subItemId.']['. $dateAsIndex .']';
+                                    @endphp
+                                    <td data-column-index="{{ $dateAsIndex }}">
 
-                                    <div data-column-index="{{ $dateAsIndex }}" class="d-flex align-items-center justify-content-center flex-column" style="gap:10px">
+                                        <div data-column-index="{{ $dateAsIndex }}" class="d-flex align-items-center justify-content-center flex-column" style="gap:10px">
 
-                                        <div class="">
-                                            <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
-                                                <div class="input-hidden-parent">
-                                                    <input data-number-of-decimals="0" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+                                            <div class="">
+                                                <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+                                                    <div class="input-hidden-parent">
+                                                        <input data-number-of-decimals="0" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
 
-			 							 expandable-amount-input 			  repeat-to-right-input-formatted  custom-input-numeric-width  " type="text" value="{{ number_format($subItemArr['data'][$dateAsIndex]??0) }}" data-column-index="{{ $dateAsIndex }}">
-                                                    <input data-name="{{ $name }}" name="{{ $name }}" data-id="{{ $firstMainItemId }}" data-is-sub data-sub-id="{{ $subItemId }}" data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  repeater-with-collapse-input" value="{{ $subItemArr['data'][$dateAsIndex]??0 }}" data-column-index="{{ $dateAsIndex }}">
+			 							 expandable-amount-input 			  repeat-to-right-input-formatted  custom-input-numeric-width  " type="text" value="{{ number_format($previous_years_income_statement[$firstMainItemId]['sub_items'][$subItemId][$dateAsIndex]??0) }}" data-column-index="{{ $dateAsIndex }}">
+                                                        <input data-name="{{ $name }}" name="{{ $name }}" data-id="{{ $firstMainItemId }}" data-is-sub data-sub-id="{{ $subItemId }}" data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  repeater-with-collapse-input" value="{{ $previous_years_income_statement[$firstMainItemId]['sub_items'][$subItemId][$dateAsIndex]??0 }}" data-column-index="{{ $dateAsIndex }}">
+                                                    </div>
+                                                    <span class="ml-2 currency-class"> </span>
                                                 </div>
-                                                <span class="ml-2 currency-class"> </span>
+
                                             </div>
-
                                         </div>
-                                    </div>
-                                </td>
+                                    </td>
 
 
+
+
+                                    @endforeach
+
+
+                                </tr>
 
 
                                 @endforeach
-
-
-                            </tr>
-
-
-                            @endforeach
-                            @endforeach
+                                @endforeach
 
 
 
-                        </x-slot>
+                            </x-slot>
 
 
 
 
-                    </x-tables.repeater-table>
-
-
+                        </x-tables.repeater-table>
+                        <button class="btn btn-primary">{{ __('Save') }}</button>
+                    </form>
                 </div>
 
 
@@ -325,15 +324,16 @@ use App\Models\NonBankingService\Study;
         var TotalMarketingExpenses = calculateTotalOfMainRowFromItsSubItems('marketing-expense');
         var totalGeneralExpenses = calculateTotalOfMainRowFromItsSubItems('general-expense');
         var totalEclAndDepreciationExpenses = calculateTotalOfMainRowFromItsSubItems('ecl-and-depreciation-expenses');
-        var totalEBITDA = calculateEBITDA(totalSalesRevenues,totalGrossProfit, totalSalesExpenses, totalOtherOperationExpenses, TotalMarketingExpenses, totalGeneralExpenses);
-        var totalEBIT = calculateEBIT(totalSalesRevenues,totalEBITDA);
+        var totalEBITDA = calculateEBITDA(totalSalesRevenues, totalGrossProfit, totalSalesExpenses, totalOtherOperationExpenses, TotalMarketingExpenses, totalGeneralExpenses);
+        var totalEBIT = calculateEBIT(totalSalesRevenues, totalEBITDA);
         var totalFinanceExpense = calculateTotalOfMainRowFromItsSubItems('finance_exp');
-        var totalEBT = calculateEBT(totalSalesRevenues,totalEBIT,totalFinanceExpense);
-        var totalNetProfit = calculateNetProfit(totalSalesRevenues,totalEBT);
-		
+        var totalEBT = calculateEBT(totalSalesRevenues, totalEBIT, totalFinanceExpense);
+        calculateCorporateTaxesPercentageOfRevenue(totalSalesRevenues);
+        var totalNetProfit = calculateNetProfit(totalSalesRevenues, totalEBT);
+
 
     }
-    recalculateIncomeStatement();
+    // recalculateIncomeStatement();
 
     function calculateTotalOfMainRowFromItsSubItems(firstMainRowId) {
         let total = {};
@@ -383,7 +383,7 @@ use App\Models\NonBankingService\Study;
         return totals;
     }
 
-    function calculateEBITDA(totalSalesRevenues,totalGrossProfit, totalSalesExpenses, totalOtherOperationExpenses, TotalMarketingExpenses, totalGeneralExpenses) {
+    function calculateEBITDA(totalSalesRevenues, totalGrossProfit, totalSalesExpenses, totalOtherOperationExpenses, TotalMarketingExpenses, totalGeneralExpenses) {
         var totals = {};
         $('input[type="hidden"][data-id="ebitda"]').each(function(index, inputHidden) {
             var columnIndex = $(inputHidden).attr('data-column-index');
@@ -397,59 +397,84 @@ use App\Models\NonBankingService\Study;
             var currentTotal = currentGrossProfit + currentTotalDepreciation - currentSalesExpenses - currentOtherOperationExpenses - currentMarketingExpenses - currentGeneralExpenses - currentEclExpense;
             totals[columnIndex] = currentTotal;
             $(inputHidden).val(currentTotal).trigger('change');
-			var currentSalesRevenueTotal = totalSalesRevenues[columnIndex];
-   		     percentageOfRevenue = currentSalesRevenueTotal ? currentTotal / currentSalesRevenueTotal * 100 : 0;
+            var currentSalesRevenueTotal = totalSalesRevenues[columnIndex];
+            percentageOfRevenue = currentSalesRevenueTotal ? currentTotal / currentSalesRevenueTotal * 100 : 0;
             $('input[data-first-parent-id="ebitda"][data-is-main][data-id="% Of Revenue"][data-column-index="' + columnIndex + '"]').val(percentageOfRevenue).trigger('change');
         })
         return totals;
     }
-	
-	 function calculateEBIT(totalSalesRevenues,totalEBITDA) {
+
+    function calculateEBIT(totalSalesRevenues, totalEBITDA) {
         var totals = {};
         $('input[type="hidden"][data-id="ebit"]').each(function(index, inputHidden) {
             var columnIndex = $(inputHidden).attr('data-column-index');
             var currentTotalEBITDA = totalEBITDA[columnIndex] ? totalEBITDA[columnIndex] : 0;
             var currentTotalDepreciation = parseFloat($('input[data-sub-id="total-depreciation"][data-column-index="' + columnIndex + '"]').val());
-            var currentTotal = currentTotalEBITDA-currentTotalDepreciation;
+            var currentTotal = currentTotalEBITDA - currentTotalDepreciation;
             totals[columnIndex] = currentTotal;
             $(inputHidden).val(currentTotal).trigger('change');
-			var currentSalesRevenueTotal = totalSalesRevenues[columnIndex];
-   		     percentageOfRevenue = currentSalesRevenueTotal ? currentTotal / currentSalesRevenueTotal * 100 : 0;
+            var currentSalesRevenueTotal = totalSalesRevenues[columnIndex];
+            percentageOfRevenue = currentSalesRevenueTotal ? currentTotal / currentSalesRevenueTotal * 100 : 0;
             $('input[data-first-parent-id="ebit"][data-is-main][data-id="% Of Revenue"][data-column-index="' + columnIndex + '"]').val(percentageOfRevenue).trigger('change');
         })
         return totals;
     }
-	 function calculateEBT(totalSalesRevenues,totalEBIT,totalFinanceExpense) {
+
+    function calculateEBT(totalSalesRevenues, totalEBIT, totalFinanceExpense) {
         var totals = {};
         $('input[type="hidden"][data-id="ebt"]').each(function(index, inputHidden) {
             var columnIndex = $(inputHidden).attr('data-column-index');
             var currentTotalEBIT = totalEBIT[columnIndex] ? totalEBIT[columnIndex] : 0;
             var currentTotalFinanceExpense = totalFinanceExpense[columnIndex] ? totalFinanceExpense[columnIndex] : 0;
-            var currentTotal = currentTotalEBIT-currentTotalFinanceExpense;
+            var currentTotal = currentTotalEBIT - currentTotalFinanceExpense;
             totals[columnIndex] = currentTotal;
             $(inputHidden).val(currentTotal).trigger('change');
-			var currentSalesRevenueTotal = totalSalesRevenues[columnIndex];
-   		     percentageOfRevenue = currentSalesRevenueTotal ? currentTotal / currentSalesRevenueTotal * 100 : 0;
+            var currentSalesRevenueTotal = totalSalesRevenues[columnIndex];
+            percentageOfRevenue = currentSalesRevenueTotal ? currentTotal / currentSalesRevenueTotal * 100 : 0;
             $('input[data-first-parent-id="ebt"][data-is-main][data-id="% Of Revenue"][data-column-index="' + columnIndex + '"]').val(percentageOfRevenue).trigger('change');
         })
         return totals;
     }
-	function calculateNetProfit(totalSalesRevenues,totalEBT) {
+
+    function calculateCorporateTaxesPercentageOfRevenue(totalSalesRevenues) {
+
+        $('input[type="hidden"][data-id="corporate-taxes"]').each(function(index, inputHidden) {
+            var columnIndex = $(inputHidden).attr('data-column-index');
+            var corporateTaxesValue = $(inputHidden).val();
+            var currentSalesRevenueTotal = totalSalesRevenues[columnIndex];
+            percentageOfRevenue = currentSalesRevenueTotal ? corporateTaxesValue / currentSalesRevenueTotal * 100 : 0;
+            $('input[data-first-parent-id="corporate-taxes"][data-is-main][data-id="% Of Revenue"][data-column-index="' + columnIndex + '"]').val(percentageOfRevenue).trigger('change');
+        })
+
+    }
+
+    function calculateNetProfit(totalSalesRevenues, totalEBT) {
         var totals = {};
         $('input[type="hidden"][data-id="net-profit"]').each(function(index, inputHidden) {
             var columnIndex = $(inputHidden).attr('data-column-index');
             var currentTotalEBT = totalEBT[columnIndex] ? totalEBT[columnIndex] : 0;
-			var currentCorporateTaxes = parseFloat($('input[data-id="corporate-taxes"][data-column-index="' + columnIndex + '"]').val());
-            var currentTotal = currentTotalEBT-currentCorporateTaxes;
+            var currentCorporateTaxes = parseFloat($('input[data-id="corporate-taxes"][data-column-index="' + columnIndex + '"]').val());
+            var currentTotal = currentTotalEBT - currentCorporateTaxes;
             totals[columnIndex] = currentTotal;
             $(inputHidden).val(currentTotal).trigger('change');
-			var currentSalesRevenueTotal = totalSalesRevenues[columnIndex];
-   		     percentageOfRevenue = currentSalesRevenueTotal ? currentTotal / currentSalesRevenueTotal * 100 : 0;
+            var currentSalesRevenueTotal = totalSalesRevenues[columnIndex];
+            percentageOfRevenue = currentSalesRevenueTotal ? currentTotal / currentSalesRevenueTotal * 100 : 0;
             $('input[data-first-parent-id="net-profit"][data-is-main][data-id="% Of Revenue"][data-column-index="' + columnIndex + '"]').val(percentageOfRevenue).trigger('change');
         })
         return totals;
     }
-	
+
+    function _debounce(func, delay) {
+        let timeoutId // لتخزين الـ timeout الحالي
+        return function(...args) {
+            const context = this
+            clearTimeout(timeoutId) // إلغاء أي timeout سابق
+            timeoutId = setTimeout(() => {
+                func.apply(context, args) // تنفيذ الدالة بعد انتهاء التأخير
+            }, delay)
+        }
+    }
+    $(document).on('change', 'input:not([type="hidden"])', _debounce(recalculateIncomeStatement, 500));
 
 </script>
 @endpush

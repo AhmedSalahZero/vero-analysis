@@ -14,7 +14,6 @@ use App\Models\NonBankingService\GeneralAndReserveAssumption;
 use App\Models\Traits\Scopes\BelongsToCompany;
 use App\Models\Traits\Scopes\CompanyScope;
 use App\Models\Traits\Scopes\HasFixedAsset;
-use App\Providers\NonBankingServiceProvider;
 use App\ReadyFunctions\CalculateDurationService;
 use App\ReadyFunctions\CalculateFixedLoanAtBeginningService;
 use App\ReadyFunctions\CalculateFixedLoanAtEndService;
@@ -72,6 +71,7 @@ class Study extends Model
         'microfinance_branch_ids'=>'array',
         'product_mix_senior_loan_officers'=>'array',
         'product_mix_loan_officers'=>'array',
+        'previous_years_income_statement'=>'array',
     ];
         
     public static function boot()
