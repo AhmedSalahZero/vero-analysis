@@ -30,6 +30,7 @@ class StoreExpensesRequest extends FormRequest
         	'cost_per_unit'=>[ new ExpenseStartDateAndEndDateRule($this->study,'monthly_cost_of_unit') ],
         	'one_time_expense'=>[ new ExpenseStartDateAndEndDateRule($this->study) ],
         	'expense_per_employee'=>[ new ExpenseStartDateAndEndDateRule($this->study,'monthly_cost_of_unit') ],
+		//	'*.*.expense_name_id'=>'required',
         ];
     }
 	

@@ -649,6 +649,7 @@ class IncomeStatementController extends Controller
         /**
         * * Start Nine Item
         */
+		
         // $corporateTaxesRate = $study->corporate_taxes_rate/100;
 		$annuallyCorporateTaxes = $incomeStatementReport ? $incomeStatementReport->corporate_taxes: [];
         // $annuallyCorporateTaxes =  HArr::MultiplyWithNumberIfPositiveAndZeroOtherValues($ebt, $corporateTaxesRate);

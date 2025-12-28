@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Models\NonBankingService\Expense;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,7 +14,15 @@ class DatabaseSeeder extends Seeder
 	
     public function run()
     {
-		$this->call(TestSeeder::class);
+		$companyId = 31 ;
+		$studyId = 86 ;
+		$expense = Expense::first();
+		$clonedExpense = $expense->replicate()->toArray();
+		
+		for($i = 0 ; $i<=200;$i++){
+			Expense::create();
+		}
+		// $this->call(TestSeeder::class);
 		// $this->call(AccountTypeSeeder::class);
 		// for($i = 0 ; $i<=159591;$i++){
 		// 	DB::table('money2')->insert([

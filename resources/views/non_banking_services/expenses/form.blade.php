@@ -78,8 +78,8 @@ use App\Models\NonBankingService\Expense;
                                 <x-tables.repeater-table-th class="col-md-1 header-border-down rate-class" :title="__('Annual <br> Increase%')"></x-tables.repeater-table-th>
                                 @endif
 								@if($study->hasMicrofinance())
-                    <x-tables.repeater-table-th class="col-md-1 header-border-down" :title="__('Allocation')"></x-tables.repeater-table-th>
-					@endif 
+         	           <x-tables.repeater-table-th class="col-md-1 header-border-down" :title="__('Allocation')"></x-tables.repeater-table-th>
+						@endif 
                                 {{-- <x-tables.repeater-table-th class="col-md-2 header-border-down" :title="__('Increase <br> Interval')"></x-tables.repeater-table-th> --}}
                             </x-slot>
                             <x-slot name="trs">
@@ -89,7 +89,7 @@ use App\Models\NonBankingService\Expense;
                                 @foreach( count($rows) ? $rows : [-1] as $subModel)
                                 @php
                                 if( !($subModel instanceof Expense) ){
-                                unset($subModel);
+                               	 unset($subModel);
                                 }
 
                                 @endphp
@@ -105,11 +105,10 @@ use App\Models\NonBankingService\Expense;
 
                                     <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
                                     <td>
-                                        <x-form.select :selectedValue="isset($subModel) ? $subModel->getExpenseCategory() : 'cash'" :options="getExpenseCategoriesForSelect2()" :add-new="false" class="select2-select repeater-select expense_category " :all="false" name="@if($isRepeater) expense_category @else {{ $tableId }}[0][expense_category] @endif"></x-form.select>
+                                        <x-form.select :selectedValue="$currentExpenseCategory = isset($subModel) ? $subModel->getExpenseCategory() : 'cash'" :options="getExpenseCategoriesForSelect2()" :add-new="false" class="select2-select repeater-select expense_category " :all="false" name="@if($isRepeater) expense_category @else {{ $tableId }}[0][expense_category] @endif"></x-form.select>
                                     </td>
-
                                     <td>
-                                        <x-form.select data-current-selected="{{ isset($subModel) ? $subModel->getExpenseNameId() : '' }}" :selectedValue="isset($subModel) ? $subModel->getExpenseNameId() : ''" :options="[]" :add-new="false" class="select2-select repeater-select expense_name_id " :all="false" name="@if($isRepeater) expense_name_id @else {{ $tableId }}[0][expense_name_id] @endif"></x-form.select>
+                                        <x-form.select data-current-selected="{{ isset($subModel) ? $subModel->getExpenseNameId() : '' }}" :selectedValue="isset($subModel) ? $subModel->getExpenseNameId() : 0" :options="$expenseNamesPerCategoryFormatted[$currentExpenseCategory]??[]" :add-new="false" class="select2-select repeater-select expense_name_id " :all="false" name="@if($isRepeater) expense_name_id @else {{ $tableId }}[0][expense_name_id] @endif"></x-form.select>
                                     </td>
 
                                     <td>
@@ -381,13 +380,13 @@ use App\Models\NonBankingService\Expense;
 
                                 <td>
                                     <div class="min-w-200">
-                                        <x-form.select :selectedValue="isset($subModel) ? $subModel->getExpenseCategory() : 'cash'" :options="getExpenseCategoriesForSelect2()" :add-new="false" class="select2-select repeater-select expense_category " :all="false" name="@if($isRepeater) expense_category @else {{ $tableId }}[0][expense_category] @endif"></x-form.select>
+                                        <x-form.select :selectedValue="$currentExpenseCategory=isset($subModel) ? $subModel->getExpenseCategory() : 'cash'" :options="getExpenseCategoriesForSelect2()" :add-new="false" class="select2-select repeater-select expense_category " :all="false" name="@if($isRepeater) expense_category @else {{ $tableId }}[0][expense_category] @endif"></x-form.select>
                                     </div>
                                 </td>
 
                                 <td>
                                     <div class="min-w-200">
-                                        <x-form.select data-current-selected="{{ isset($subModel) ? $subModel->getExpenseNameId() : '' }}" :selectedValue="isset($subModel) ? $subModel->getExpenseNameId() : ''" :options="[]" :add-new="false" class="select2-select repeater-select expense_name_id " :all="false" name="@if($isRepeater) expense_name_id @else {{ $tableId }}[0][expense_name_id] @endif"></x-form.select>
+                                        <x-form.select data-current-selected="{{ isset($subModel) ? $subModel->getExpenseNameId() : '' }}" :selectedValue="isset($subModel) ? $subModel->getExpenseNameId() : ''" :options="$expenseNamesPerCategoryFormatted[$currentExpenseCategory]??[]" :add-new="false" class="select2-select repeater-select expense_name_id " :all="false" name="@if($isRepeater) expense_name_id @else {{ $tableId }}[0][expense_name_id] @endif"></x-form.select>
                                     </div>
                                 </td>
                                 <td>
@@ -716,7 +715,7 @@ use App\Models\NonBankingService\Expense;
 
                         <td>
                             <div class="min-w-200">
-                                <x-form.select :selectedValue="isset($subModel) ? $subModel->getExpenseCategory() : 'cash'" :options="getExpenseCategoriesForSelect2()" :add-new="false" class="select2-select repeater-select expense_category " :all="false" name="@if($isRepeater) expense_category @else {{ $tableId }}[0][expense_category] @endif"></x-form.select>
+                                <x-form.select :selectedValue="$currentExpenseCategory = isset($subModel) ? $subModel->getExpenseCategory() : 'cash'" :options="getExpenseCategoriesForSelect2()" :add-new="false" class="select2-select repeater-select expense_category " :all="false" name="@if($isRepeater) expense_category @else {{ $tableId }}[0][expense_category] @endif"></x-form.select>
 
                             </div>
                         </td>
@@ -724,7 +723,7 @@ use App\Models\NonBankingService\Expense;
 
                         <td>
                             <div class="min-w-200">
-                                <x-form.select data-current-selected="{{ isset($subModel) ? $subModel->getExpenseNameId() : '' }}" :selectedValue="isset($subModel) ? $subModel->getExpenseNameId() : ''" :options="[]" :add-new="false" class="select2-select repeater-select expense_name_id " :all="false" name="@if($isRepeater) expense_name_id @else {{ $tableId }}[0][expense_name_id] @endif"></x-form.select>
+                                <x-form.select data-current-selected="{{ isset($subModel) ? $subModel->getExpenseNameId() : '' }}" :selectedValue="isset($subModel) ? $subModel->getExpenseNameId() : ''" :options="$expenseNamesPerCategoryFormatted[$currentExpenseCategory]??[]" :add-new="false" class="select2-select repeater-select expense_name_id " :all="false" name="@if($isRepeater) expense_name_id @else {{ $tableId }}[0][expense_name_id] @endif"></x-form.select>
                             </div>
                         </td>
 
@@ -1158,12 +1157,12 @@ use App\Models\NonBankingService\Expense;
                 </td>
 
                 <td>
-                    <x-form.select :selectedValue="isset($subModel) ? $subModel->getExpenseCategory() : 'cash'" :options="getExpenseCategoriesForSelect2()" :add-new="false" class="select2-select repeater-select expense_category " :all="false" name="@if($isRepeater) expense_category @else {{ $tableId }}[0][expense_category] @endif"></x-form.select>
+                    <x-form.select :selectedValue="$currentExpenseCategory=isset($subModel) ? $subModel->getExpenseCategory() : 'cash'" :options="getExpenseCategoriesForSelect2()" :add-new="false" class="select2-select repeater-select expense_category " :all="false" name="@if($isRepeater) expense_category @else {{ $tableId }}[0][expense_category] @endif"></x-form.select>
 
                 </td>
                 {{-- <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}"> --}}
                 <td>
-                    <x-form.select data-current-selected="{{ isset($subModel) ? $subModel->getExpenseNameId() : '' }}" :selectedValue="isset($subModel) ? $subModel->getExpenseNameId() : ''" :options="[]" :add-new="false" class="select2-select repeater-select expense_name_id " :all="false" name="@if($isRepeater) expense_name_id @else {{ $tableId }}[0][expense_name_id] @endif"></x-form.select>
+                    <x-form.select data-current-selected="{{ isset($subModel) ? $subModel->getExpenseNameId() : '' }}" :selectedValue="isset($subModel) ? $subModel->getExpenseNameId() : ''" :options="$expenseNamesPerCategoryFormatted[$currentExpenseCategory]??[]" :add-new="false" class="select2-select repeater-select expense_name_id " :all="false" name="@if($isRepeater) expense_name_id @else {{ $tableId }}[0][expense_name_id] @endif"></x-form.select>
                 </td>
 
                 <td>
@@ -1335,73 +1334,11 @@ use App\Models\NonBankingService\Expense;
 <x-js.commons></x-js.commons>
 
 <script>
-    $(document).on('change', '.financial-statement-type', function() {
-        validateDuration();
-    })
-    $(document).on('change', 'select[name="duration_type"]', function() {
-        validateDuration();
-    })
-    $(document).on('change', '#duration', function() {
-        validateDuration();
-    })
+ 
 
-    function validateDuration() {
-        let type = $('input[name="type"]:checked').val();
-        let durationType = $('select[name="duration_type"]').val();
-        let duration = $('#duration').val();
-        let isValid = true;
-        let allowedDuration = 24;
-        if (type == 'forecast' && durationType == 'monthly') {
-            allowedDuration = 24;
-            isValid = duration <= allowedDuration;
-        }
-        if (type == 'forecast' && durationType == 'quarterly') {
-            allowedDuration = 8;
-            isValid = duration <= allowedDuration
-        }
-        if (type == 'forecast' && durationType == 'semi-annually') {
-            allowedDuration = 4
-            isValid = duration <= allowedDuration
-        }
-        if (type == 'forecast' && durationType == 'annually') {
-            allowedDuration = 2;
-            isValid = duration <= allowedDuration
-        }
-        if (type == 'actual' && durationType == 'monthly') {
-            allowedDuration = 36;
-            isValid = duration <= allowedDuration;
-        }
-        if (type == 'actual' && durationType == 'quarterly') {
-            allowedDuration = 12
-            isValid = duration <= allowedDuration;
-        }
-        if (type == 'actual' && durationType == 'semi-annually') {
-            allowedDuration = 6;
-            isValid = duration <= allowedDuration
-        }
-        if (type == 'actual' && durationType == 'annually') {
-            allowedDuration = 3
-            isValid = duration <= allowedDuration
-        }
-        let allowedDurationText = "{{ __('Allowed Duration') }}";
-
-        $('#allowed-duration').html(allowedDurationText + '  ' + allowedDuration)
-
-        if (!isValid) {
-            Swal.fire({
-                icon: 'error'
-                , title: 'Invalid Duration. Allowed [ ' + allowedDuration + ' ]'
-            , })
-
-            $('#duration').val(allowedDuration).trigger('change');
-
-        }
-
-
-    }
 
     $(function() {
-        $('.financial-statement-type').trigger('change')
+ //       $('.financial-statement-type').trigger('change')
 
     })
 
@@ -1519,7 +1456,7 @@ use App\Models\NonBankingService\Expense;
 
     })
     $(function() {
-        $('#expense_type').trigger('change')
+      //  $('#expense_type').trigger('change')
         $('.js-type-btn.active').trigger('click')
     })
 
@@ -1602,31 +1539,8 @@ use App\Models\NonBankingService\Expense;
     })
 
 
-    $('select.js-condition-to-select').change(function() {
-        const value = $(this).val();
-        const conditionalValueTwoInput = $(this).closest('tr').find('input.conditional-b-input');
-        if (value == 'between-and-equal' || value == 'between') {
-            conditionalValueTwoInput.prop('disabled', false).trigger('change');
-        } else {
-            conditionalValueTwoInput.prop('disabled', true).trigger('change');
-        }
-    })
+  
 
-    $('select.js-condition-to-select').trigger('change');
-    $(document).on('change', '.conditional-input', function() {
-        if (!$(this).closest('tr').find('conditional-b-input').prop('disabled')) {
-            const conditionalA = $(this).closest('tr').find('.conditional-a-input').val();
-            const conditionalB = $(this).closest('tr').find('.conditional-b-input').val();
-            if (conditionalA >= conditionalB) {
-                if (conditionalA == 0 && conditionalB == 0) {
-                    return;
-                }
-                Swal.fire('conditional a must be less than conditional b value');
-                $(this).closest('tr').find('.conditional-a-input').val($(this).closest('tr').find('.conditional-b-input').val() - 1);
-            }
-        }
-
-    })
 
 </script>
 <script>
@@ -1664,7 +1578,7 @@ use App\Models\NonBankingService\Expense;
             }
         })
     })
-    $('select.expense_category').trigger('change')
+   // $('select.expense_category').trigger('change')
 
 </script>
 <script>

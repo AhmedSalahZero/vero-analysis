@@ -23,7 +23,20 @@ class ExpensesController extends Controller
     
     protected function getViewVars(Company $company, Study $study)
     {
+		$expenseType = HHelpers::getClassNameWithoutNameSpace((new Expense()));
         $selectedRevenueStreams = $study->getSelectedRevenueStreamTypesFormatted();
+		$expenseNamesPerCategoryFormatted = [];
+		$expenseNamesPerCategory = ExpenseName::where('company_id', $company->id)->get()->groupBy('expense_type')->toArray();
+		foreach($expenseNamesPerCategory as $categoryId => $expenseNames){
+			foreach($expenseNames as $expenseNameArr){
+				$expenseNamesPerCategoryFormatted[$categoryId][$expenseNameArr['id']] = [
+					'value'=>$expenseNameArr['id'],
+					'title'=>$expenseNameArr['name']
+				];
+			}
+			
+		}
+		// dd($expenseNamesPerCategoryFormatted);
         return [
             'selectedRevenueStreams'=>$selectedRevenueStreams,
             'company'=>$company ,
@@ -31,11 +44,13 @@ class ExpensesController extends Controller
             // 'revenueStreams'=>$revenueStreams,
             'study'=>$study,
             'model'=>$study ,
-            'expenseType'=>HHelpers::getClassNameWithoutNameSpace((new Expense())),
+            'expenseType'=>$expenseType,
             'title'=>__('Expenses'),
             'storeRoute'=>route('store.expenses', ['company'=>$company->id , 'study'=>$study->id]),
             'yearsWithItsMonths' => $study->getOperationDurationPerYearFromIndexes(),
-            'revenueStreamTypes'=>$study->getCheckedRevenueStreamTypesForSelect()
+            'revenueStreamTypes'=>$study->getCheckedRevenueStreamTypesForSelect(),
+			// 'expenseNamesPerCategory'=>$expenseNamesPerCategory,
+			'expenseNamesPerCategoryFormatted'=>$expenseNamesPerCategoryFormatted
         ];
     }
   
@@ -46,7 +61,7 @@ class ExpensesController extends Controller
         Study $study
     ) {
         $modelId = $request->get('model_id');
-  
+		
         $modelName = $request->get('model_name');
         $expenseType = $request->get('expense_type');
 		$expenseTypes = $request->get('tableIds',[]) ;
