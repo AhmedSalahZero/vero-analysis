@@ -34,9 +34,8 @@ class ExpensesController extends Controller
 					'title'=>$expenseNameArr['name']
 				];
 			}
-			
 		}
-		// dd($expenseNamesPerCategoryFormatted);
+		
         return [
             'selectedRevenueStreams'=>$selectedRevenueStreams,
             'company'=>$company ,

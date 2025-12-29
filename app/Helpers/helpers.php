@@ -8545,4 +8545,12 @@ function showCertificateOfDeposits():bool
         }
         return $distribution_analytic_account_ids;
     }
+	function mergeArrayPerSelected(array $positionsPerDepartments , array $selectedItems )
+	{
+		$result= [ ];
+		foreach($selectedItems as $id){
+			$result = array_merge($result ,  $positionsPerDepartments[$id]??[]);
+		}
+		return $result;
+	}
 	

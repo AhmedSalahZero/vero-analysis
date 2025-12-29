@@ -82,13 +82,12 @@ use App\Models\NonBankingService\Expense;
 
                                 <td>
                                     <div class="min-w-150">
-                                        <x-form.select :selectedValue="isset($subModel) ? $subModel->getExpenseCategory() : 'cash'" :options="getEmployeeExpenseCategoriesForSelect2()" :add-new="false" class="select2-select repeater-select expense_category " :all="false" name="@if($isRepeater) expense_category @else {{ $tableId }}[0][expense_category] @endif"></x-form.select>
+                                        <x-form.select :selectedValue="$currentCategoryId=isset($subModel) ? $subModel->getExpenseCategory() : 'cash'" :options="getEmployeeExpenseCategoriesForSelect2()" :add-new="false" class="select2-select repeater-select expense_category " :all="false" name="@if($isRepeater) expense_category @else {{ $tableId }}[0][expense_category] @endif"></x-form.select>
                                     </div>
                                 </td>
-
                                 <td>
                                     <div class="min-w-200">
-                                        <x-form.select data-current-selected="{{ isset($subModel) ? $subModel->getExpenseNameId() : '' }}" :selectedValue="isset($subModel) ? $subModel->getExpenseNameId() : ''" :options="[]" :add-new="false" class="select2-select repeater-select expense_name_id " :all="false" name="@if($isRepeater) expense_name_id @else {{ $tableId }}[0][expense_name_id] @endif"></x-form.select>
+                                        <x-form.select data-current-selected="{{ isset($subModel) ? $subModel->getExpenseNameId() : '' }}" :selectedValue="isset($subModel) ? $subModel->getExpenseNameId() : ''" :options="$expenseNamesPerCategoryFormatted[$currentCategoryId]??[]" :add-new="false" class="select2-select repeater-select expense_name_id " :all="false" name="@if($isRepeater) expense_name_id @else {{ $tableId }}[0][expense_name_id] @endif"></x-form.select>
                                     </div>
                                 </td>
 
@@ -102,10 +101,10 @@ use App\Models\NonBankingService\Expense;
                                     </div>
                                 </td>
 								
-								
+								{{-- {{ dd( ) }} --}}
                                 <td>
                                     <div class="min-w-200">
-                                        <x-form.select :multiple="true" :selectedValue="isset($subModel) ? $subModel->getPositionIds() : ''" :options="[]" :add-new="false" class="select2-select repeater-select  position-class" :all="false" name="@if($isRepeater) position_ids @else {{ $tableId }}[0][position_ids] @endif"></x-form.select>
+                                        <x-form.select :multiple="true" :selectedValue="isset($subModel) ? $subModel->getPositionIds() : ''" :options="mergeArrayPerSelected($positionsPerDepartments ,$subModel->getDepartmentIds())" :add-new="false" class="select2-select repeater-select  position-class" :all="false" name="@if($isRepeater) position_ids @else {{ $tableId }}[0][position_ids] @endif"></x-form.select>
 
                                     </div>
                                 </td>
@@ -338,7 +337,7 @@ use App\Models\NonBankingService\Expense;
     $('.js-parent-to-table').show();
 
     $(function() {
-        $('#expense_type').trigger('change')
+   //     $('#expense_type').trigger('change')
 
     })
 
@@ -491,7 +490,7 @@ use App\Models\NonBankingService\Expense;
             }
         })
     })
-    $('select.expense_category').trigger('change')
+ //   $('select.expense_category').trigger('change')
 
 </script>
 

@@ -156,7 +156,7 @@ $(document).on('change', 'select.js-update-positions-for-department', function (
 
 	})
 })
-$('select.js-update-positions-for-department').trigger('change')
+// $('select.js-update-positions-for-department').trigger('change')
 
 
 $(document).on('click', '.collapse-before-me', function () {
