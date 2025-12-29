@@ -104,7 +104,7 @@ use App\Models\NonBankingService\Expense;
 								{{-- {{ dd( ) }} --}}
                                 <td>
                                     <div class="min-w-200">
-                                        <x-form.select :multiple="true" :selectedValue="isset($subModel) ? $subModel->getPositionIds() : ''" :options="mergeArrayPerSelected($positionsPerDepartments ,$subModel->getDepartmentIds())" :add-new="false" class="select2-select repeater-select  position-class" :all="false" name="@if($isRepeater) position_ids @else {{ $tableId }}[0][position_ids] @endif"></x-form.select>
+                                        <x-form.select :multiple="true" :selectedValue="isset($subModel) ? $subModel->getPositionIds() : ''" :options="isset($subModel) ? mergeArrayPerSelected($positionsPerDepartments ,$subModel->getDepartmentIds()) : []" :add-new="false" class="select2-select repeater-select  position-class" :all="false" name="@if($isRepeater) position_ids @else {{ $tableId }}[0][position_ids] @endif"></x-form.select>
 
                                     </div>
                                 </td>
