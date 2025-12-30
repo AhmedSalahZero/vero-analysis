@@ -102,14 +102,116 @@ class OpeningBalancesController extends Controller
         DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('income_statement_reports')->where('study_id', $study->id)->update([
                 'existing_loans_interests_expense'=>json_encode($longTermLoanOpeningBalanceInterests)
         ]);
-			
-		if($request->get('total_liabilities_and_equity_minus_total_assets') != 0 ){
-			return redirect()->back()->with('fail',__('Total Assets Must Be Equal Total Liabilities & Owners Equity [ Difference = ' . $request->get('total_liabilities_and_equity_minus_total_assets') .' ]'));
+		$checkSettlementsValidations = $this->checkSettlementsOrPrincipleValidation($request);
+		if(!$checkSettlementsValidations['status']){
+			return redirect()->back()->with('fail',$checkSettlementsValidations['message']);
 		}
-		
+		if($request->get('total_liabilities_and_equity_minus_total_assets') != 0 ){
+			return redirect()->back()->with('fail',__('Total Assets Must Be Equal Total Liabilities And Owners Equity [ Difference = ' . $request->get('total_liabilities_and_equity_minus_total_assets') .' ]'));
+		}
         return redirect()->route('view.non.banking.forecast.income.statement', ['company'=>$company->id,'study'=>$study->id]);
     
     }
+	protected function checkSettlementsOrPrincipleValidation(Request $request):array 
+	{
+		foreach($request->get('otherLongTermAssetsOpeningBalances',[]) as $index=>$otherLongTermAssetsOpeningBalances){
+			$amount = $otherLongTermAssetsOpeningBalances['amount']??0;
+			$settlements = array_sum($otherLongTermAssetsOpeningBalances['payload']??[]);
+			if($settlements>$amount){
+				return [
+					'status'=>false ,
+					'message' => __('Settlements Must be Less Than Or Equal Amount In Other Long Term Assets Number ' . ($index+1) . ' [Amount =  ' . number_format($amount) . ' And Settlements = '  . number_format($settlements))
+				];
+			}
+		}
+		foreach($request->get('cashAndBankOpeningBalances',[]) as $index=>$cashAndBankOpeningBalances){
+			$amount = $cashAndBankOpeningBalances['customer_receivable_amount']??0;
+			$settlements = array_sum($cashAndBankOpeningBalances['payload']??[]);
+			if($settlements>$amount){
+				return [
+					'status'=>false ,
+					'message' => __('Principle Must be Less Than Or Equal Customer Outstanding In Cash And Banks & Customers Outstanding [Customer Outstanding =  ' . number_format($amount) . ' And Total Principle = '  . number_format($settlements))
+				];
+			}
+		}	
+		foreach($request->get('supplierPayableOpeningBalances',[]) as $index=>$supplierPayableOpeningBalances){
+			$amount = $supplierPayableOpeningBalances['amount']??0;
+			$settlements = array_sum($supplierPayableOpeningBalances['payload']??[]);
+			if($settlements>$amount){
+				return [
+					'status'=>false ,
+					'message' => __('Principle Must be Less Than Or Equal Portfolio Loans Outstanding In ODAs & Portfolio Loans Outstanding [Portfolio Loans Outstanding =  ' . number_format($amount) . ' And Total Principle = '  . number_format($settlements))
+				];
+			}
+		}
+		foreach($request->get('otherLongTermAssetsOpeningBalances',[]) as $index=>$otherLongTermAssetsOpeningBalances){
+			$amount = $otherLongTermAssetsOpeningBalances['amount']??0;
+			$settlements = array_sum($otherLongTermAssetsOpeningBalances['payload']??[]);
+			if($settlements>$amount){
+				return [
+					'status'=>false ,
+					'message' => __('Settlements Must be Less Than Or Equal Amount In Other Long Term Assets Number ' . ($index+1) . ' [Amount =  ' . number_format($amount) . ' And Total Settlements = '  . number_format($settlements))
+				];
+			}
+		}
+		
+			foreach($request->get('otherDebtorsOpeningBalances',[]) as $index=>$otherDebtorsOpeningBalances){
+			$amount = $otherDebtorsOpeningBalances['amount']??0;
+			$settlements = array_sum($otherDebtorsOpeningBalances['payload']??[]);
+			if($settlements>$amount){
+				return [
+					'status'=>false ,
+					'message' => __('Settlements Must be Less Than Or Equal Amount In Other Debtors Number ' . ($index+1) . ' [Amount =  ' . number_format($amount) . ' And Total Settlements = '  . number_format($settlements))
+				];
+			}
+		}	
+		foreach($request->get('otherCreditorsOpeningBalances',[]) as $index=>$otherCreditorsOpeningBalances){
+			$amount = $otherCreditorsOpeningBalances['amount']??0;
+			$settlements = array_sum($otherCreditorsOpeningBalances['payload']??[]);
+			if($settlements>$amount){
+				return [
+					'status'=>false ,
+					'message' => __('Settlements Must be Less Than Or Equal Amount In Other Creditors Number ' . ($index+1) . ' [Amount =  ' . number_format($amount) . ' And Total Settlements = '  . number_format($settlements))
+				];
+			}
+		}	foreach($request->get('longTermLoanOpeningBalances',[]) as $index=>$longTermLoanOpeningBalances){
+			$amount = $longTermLoanOpeningBalances['amount']??0;
+			$settlements = array_sum($longTermLoanOpeningBalances['installments']??[]);
+
+			if($settlements>$amount){
+				return [
+					'status'=>false ,
+					'message' => __('Installments Must be Less Than Or Equal Amount In Long Term Loan Number' . ($index+1) . ' [Amount =  ' . number_format($amount) . ' And Total Installments = '  . number_format($settlements))
+				];
+			}
+		}	
+		foreach($request->get('longTermLoanOpeningBalances',[]) as $index=>$longTermLoanOpeningBalances){
+			$amount = $longTermLoanOpeningBalances['amount']??0;
+			$settlements = array_sum($longTermLoanOpeningBalances['payload']??[]);
+			if($settlements>$amount){
+				return [
+					'status'=>false ,
+					'message' => __('Settlements Must be Less Than Or Equal Amount In Long Term Loan Number ' . ($index+1) . ' [Amount =  ' . number_format($amount) . ' And Total Settlements = '  . number_format($settlements))
+				];
+			}
+		}
+		foreach($request->get('otherLongTermLiabilitiesOpeningBalances',[]) as $index=>$otherLongTermLiabilitiesOpeningBalances){
+			$amount = $otherLongTermLiabilitiesOpeningBalances['amount']??0;
+			$settlements = array_sum($otherLongTermLiabilitiesOpeningBalances['payload']??[]);
+			if($settlements>$amount){
+				return [
+					'status'=>false ,
+					'message' => __('Settlements Must be Less Than Or Equal Amount In Other Long Term Liabilities Number ' . ($index+1) . ' [Amount =  ' . number_format($amount) . ' And Total Settlements = '  . number_format($settlements))
+				];
+			}
+		}
+		
+		
+
+		return [
+			'status'=>true
+		];
+	}
     public function getCommonData(Request $request, Company $company)
     {
         return [
