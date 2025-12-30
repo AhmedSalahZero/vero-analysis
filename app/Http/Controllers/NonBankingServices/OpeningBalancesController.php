@@ -104,7 +104,7 @@ class OpeningBalancesController extends Controller
         ]);
 			
 		if($request->get('total_liabilities_and_equity_minus_total_assets') != 0 ){
-			return redirect()->route('view.non.banking.forecast.income.statement', ['company'=>$company->id,'study'=>$study->id]);
+			return redirect()->back()->with('fail',__('Total Assets Must Be Equal Total Liabilities & Owners Equity [ Difference = ' . $request->get('total_liabilities_and_equity_minus_total_assets') .' ]'));
 		}
 		
         return redirect()->route('view.non.banking.forecast.income.statement', ['company'=>$company->id,'study'=>$study->id]);
