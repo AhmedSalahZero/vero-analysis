@@ -6333,20 +6333,18 @@ function getNonBankingNavigation(Company $company, User $user):array
                     'link'=>route('create.expense.per.employees', ['company'=>$company->id , 'study'=>$studyId]),
                     'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
                 ],
-                
-                
-                    [
-                        'title'=>__('Consumer Finance Existing Branches Expenses'),
-                        'show'=>$study->hasConsumerFinance() ,
-                        'link'=>route('view.manpower.for.non.banking', ['company'=>$company->id , 'study'=>$studyId]),
-                        'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-                ],
-                [
-                        'title'=>__('Consumer Finance New Branches Expenses'),
-                        'show'=>$study->hasConsumerFinance() ,
-                        'link'=>route('view.manpower.for.non.banking', ['company'=>$company->id , 'study'=>$studyId]),
-                        'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-                ],
+                //     [
+                //         'title'=>__('Consumer Finance Existing Branches Expenses'),
+                //         'show'=>$study->hasConsumerFinance() ,
+                //         'link'=>route('view.manpower.for.non.banking', ['company'=>$company->id , 'study'=>$studyId]),
+                //         'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+                // ],
+                // [
+                //         'title'=>__('Consumer Finance New Branches Expenses'),
+                //         'show'=>$study->hasConsumerFinance() ,
+                //         'link'=>route('view.manpower.for.non.banking', ['company'=>$company->id , 'study'=>$studyId]),
+                //         'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+                // ],
                 
         ]
         ];

@@ -428,7 +428,8 @@ class Loans2Controller extends Controller
         
         $company = Company::find($company_id);
    		  $loan = null;
-		return view('admin.loan2.variable', compact('company'  ,'loan'));
+		$title = 'Variable Payment Loan'; 
+		return view('admin.loan2.variable', compact('company'  ,'loan','title'));
     }
 	public function calculateFixedAtEndAndBeginning(Request $request,$company_id)
 	{
@@ -688,11 +689,12 @@ class Loans2Controller extends Controller
 			$isAtEnd = $request->get('nature_type') == 'variable_at_end' ;
 			$datesAsIndexString=HDate::generateDatesBetweenStartDateAndDuration(0,$loanStartDate,$tenor,'monthly');
 			$result = [];
+			$title = 'Variable Payments Loan At End';
 			if($isAtEnd){
 				$result = $calculateVariableLoanAtEndService->__calculate([],-1,$loanType, $loanStartDate, $loanAmount,$baseRate,  $marginRate,  $tenor, $installmentPaymentIntervalName,$interestInterval, $stepUpRate, $stepUpIntervalName ,$stepDownRate ,  $stepDownIntervalName ,$gracePeriod,0  );
 			}else{
+				$title = 'Variable Payments Loan At Beginning';
 				$result = $calculateVariableLoanAtBeginningService->__calculate([],-1,$loanType, $loanStartDate, $loanAmount,$baseRate,  $marginRate,  $tenor, $installmentPaymentIntervalName,$interestInterval, $stepUpRate, $stepUpIntervalName ,$stepDownRate ,  $stepDownIntervalName ,$gracePeriod,0  );
-				
 			}
 	
 		
@@ -700,7 +702,7 @@ class Loans2Controller extends Controller
 		
 		$loanDates = array_keys($result['beginning']??[]);
 		
-		return view('admin.loan2.variable',compact('company' ,'currentNatureType' ,'loan','loanDates','result','datesAsIndexString'));
+		return view('admin.loan2.variable',compact('company' ,'currentNatureType' ,'loan','loanDates','result','datesAsIndexString','title'));
 	}
 	
 }
