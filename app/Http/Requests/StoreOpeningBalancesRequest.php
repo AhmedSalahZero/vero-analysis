@@ -25,10 +25,6 @@ class StoreOpeningBalancesRequest extends FormRequest
     public function rules()
     {
 		return [];
-		
-		// return [
-		// 	'must_be_zero_rule'=> [new MustBeEqualZeroRule($totalAssets-$totalLiabilitiesAndEquity)]  
-		// ];
 
     }
 	

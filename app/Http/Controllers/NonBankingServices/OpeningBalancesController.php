@@ -76,7 +76,6 @@ class OpeningBalancesController extends Controller
         
         
         $supplierPayableOpeningBalance = $study->supplierPayableOpeningBalances->first() ;
-        // $openingCashAmount = $openingBalance ? $openingBalance->cash_and_bank_amount : 0;
         $totalExistingPortfolioLoansInterest = $supplierPayableOpeningBalance ? $supplierPayableOpeningBalance->portfolio_interest_expenses : [];
         $totalExistingPortfolioLoansPrinciple = $supplierPayableOpeningBalance ? $supplierPayableOpeningBalance->payload : [];
         $totalExistingPortfolioLoansPayments = HArr::sumAtDates([$totalExistingPortfolioLoansInterest ,$totalExistingPortfolioLoansPrinciple ], $sumKeys);
@@ -99,13 +98,15 @@ class OpeningBalancesController extends Controller
                     'existing_other_long_term_liabilities_payment'=>$existingOtherLongTermLiabilitiesPayment,
                     'total_existing_other_long_term_liabilities_payment'=>json_encode(HArr::sumAtDates(array_values($existingOtherLongTermLiabilitiesPayment), $sumKeys))
         ]);
-        
-        
-        
+		
         DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('income_statement_reports')->where('study_id', $study->id)->update([
                 'existing_loans_interests_expense'=>json_encode($longTermLoanOpeningBalanceInterests)
         ]);
-        // dd($request->all());
+			
+		if($request->get('total_liabilities_and_equity_minus_total_assets') != 0 ){
+			return redirect()->route('view.non.banking.forecast.income.statement', ['company'=>$company->id,'study'=>$study->id]);
+		}
+		
         return redirect()->route('view.non.banking.forecast.income.statement', ['company'=>$company->id,'study'=>$study->id]);
     
     }
