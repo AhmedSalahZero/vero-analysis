@@ -44,9 +44,7 @@ class OpeningBalancesController extends Controller
             $totalExistingLongTermLoansPayments[$longTermLoanOpeningBalance->id] =  HArr::sumAtDates([$currentInstallments,$currentInterest], $sumKeys);
             
         });
-        // $study->longTermLoanOpeningBalances->each(function (LongTermLoanOpeningBalance $longTermLoanOpeningBalance) use (&$longTermLoanOpeningBalanceInterests, $sumKeys) {
-        //     $longTermLoanOpeningBalanceInterests = HArr::sumAtDates([$longTermLoanOpeningBalanceInterests,$longTermLoanOpeningBalance->interests], $sumKeys);
-        // });
+       
         
         $totalOtherLongTermAssetOpeningBalances=[];
         $study->otherLongTermAssetsOpeningBalances->each(function (OtherLongTermAssetsOpeningBalance $otherLongTermAssetOpeningBalance) use (&$totalOtherLongTermAssetOpeningBalances) {
@@ -107,7 +105,7 @@ class OpeningBalancesController extends Controller
         DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('income_statement_reports')->where('study_id', $study->id)->update([
                 'existing_loans_interests_expense'=>json_encode($longTermLoanOpeningBalanceInterests)
         ]);
-        
+        // dd($request->all());
         return redirect()->route('view.non.banking.forecast.income.statement', ['company'=>$company->id,'study'=>$study->id]);
     
     }
